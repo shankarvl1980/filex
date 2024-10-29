@@ -263,7 +263,9 @@ public class FileDuplicationViewModel extends ViewModel {
                         String name=CopyToActivity.getFileNameOfUri(App.getAppContext(),uri);
                         uriDestNameMap.put(uri,name);
                         uri_name_list.add(name);
+
                     }
+                    files_selected_array=uri_name_list;
                 }
 
                 RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
@@ -386,6 +388,61 @@ public class FileDuplicationViewModel extends ViewModel {
             }
         });
     }
+
+    public void filterFileSelectedArrayUri(Context context, FileOperationMode fileOperationMode, boolean apply_to_all, ArrayList<Uri> data_list) {
+        if (filterSelectedArrayAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED)
+            return;
+        filterSelectedArrayAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        this.data_list = data_list;
+        this.fileOperationMode = fileOperationMode;
+        this.apply_to_all = apply_to_all;
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                if (fileOperationMode == FileOperationMode.REPLACE) {
+                    if (apply_to_all) {
+                        files_selected_array.removeAll(not_to_be_replaced_files_path_array);
+                        overwritten_file_path_list.addAll(destination_duplicate_file_path_array);
+                        for(String file_path:source_duplicate_file_path_array){
+                            sourceFileDestNameMap.put(file_path,new File(file_path).getName());
+                        }
+                        removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
+                    } else {
+                        files_selected_array.removeAll(not_to_be_replaced_files_path_array);
+                        removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
+                    }
+                } else if (fileOperationMode == FileOperationMode.RENAME) {
+                    if(apply_to_all){
+                        files_selected_array.removeAll(not_to_be_replaced_files_path_array);
+                        removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
+                    } else {
+                        files_selected_array.removeAll(not_to_be_replaced_files_path_array);
+                        removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
+                    }
+                } else if (fileOperationMode == FileOperationMode.SKIP) {
+                    if (apply_to_all) {
+                        files_selected_array.removeAll(source_duplicate_file_path_array);
+                        removeNotTobeCopiedUris(context, data_list, source_duplicate_file_path_array);
+                    } else {
+                        files_selected_array.removeAll(not_to_be_replaced_files_path_array);
+                        removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
+                    }
+                }
+
+
+                Iterator<Map.Entry<Uri, String>> iterator1= uriDestNameMap.iterator();
+                while(iterator1.hasNext()){
+                    Map.Entry<Uri, String> element=iterator1.next();
+                    if(!files_selected_array.contains(element.getValue())){
+                        iterator1.remove();
+                    }
+                }
+                filterSelectedArrayAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+            }
+        });
+    }
+
 
     private static void removeNotTobeCopiedUris(Context context, List<Uri> data_list, List<String> file_path_list) {
         if (data_list == null || data_list.isEmpty() || file_path_list.isEmpty()) return;

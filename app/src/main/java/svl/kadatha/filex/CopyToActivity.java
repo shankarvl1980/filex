@@ -72,7 +72,8 @@ public class CopyToActivity extends BaseActivity {
     private CopyToActivityViewModel viewModel;
     private FileDuplicationViewModel fileDuplicationViewModel;
     private FrameLayout progress_bar;
-    //private ArrayList<String> overwritten_file_path_list = new ArrayList<>();
+    private ArrayList<String> overwritten_file_path_list;
+    private ParcelableUriStringLinkedMap uriDestNameMap;
 
     public static String getFileNameOfUri(Context context, Uri uri) {
         String result = null;
@@ -131,7 +132,8 @@ public class CopyToActivity extends BaseActivity {
                 } else if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
                     progress_bar.setVisibility(View.GONE);
                     if (fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
-                        //overwritten_file_path_list = fileDuplicationViewModel.overwritten_file_path_list;
+                        uriDestNameMap=fileDuplicationViewModel.uriDestNameMap;
+                        overwritten_file_path_list = fileDuplicationViewModel.overwritten_file_path_list;
                         launchService();
                     } else {
                         FileReplaceConfirmationDialog fileReplaceConfirmationDialog = FileReplaceConfirmationDialog.getInstance(fileDuplicationViewModel.source_folder, fileDuplicationViewModel.sourceFileObjectType,
@@ -249,8 +251,8 @@ public class CopyToActivity extends BaseActivity {
                     if (fileDuplicationViewModel.directoriesRemoved) {
                         Global.print(context, getString(R.string.removed_directories));
                     }
-//                    overwritten_file_path_list = result.getStringArrayList("overwritten_file_path_list");
-                    data_list = result.getParcelableArrayList("data_list");
+                    uriDestNameMap=result.getParcelable("uriDestNameMap");
+                    overwritten_file_path_list = result.getStringArrayList("overwritten_file_path_list");
                     launchService();
                 }
             }
@@ -290,8 +292,8 @@ public class CopyToActivity extends BaseActivity {
         }
         String file_name = file_name_edit_text.getText().toString().trim();
         Bundle bundle = new Bundle();
-        bundle.putParcelable("uriDestNameMap", fileDuplicationViewModel.uriDestNameMap);
-        bundle.putStringArrayList("overwritten_file_path_list", fileDuplicationViewModel.overwritten_file_path_list);
+        bundle.putParcelable("uriDestNameMap", uriDestNameMap);
+        bundle.putStringArrayList("overwritten_file_path_list", overwritten_file_path_list);
         bundle.putString("dest_folder", folderclickselected);
         bundle.putString("file_name", file_name);
         bundle.putString("new_name", file_name);
