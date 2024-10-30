@@ -79,8 +79,6 @@ public class EquallyDistributedDialogButtonsLayout extends ViewGroup {
             height_used = v.getMeasuredHeight();
 
         }
-
-
         setMeasuredDimension(widthMeasureSpec, height_used);
     }
 
@@ -95,7 +93,6 @@ public class EquallyDistributedDialogButtonsLayout extends ViewGroup {
             x += v.getMeasuredWidth() + margin;
             v.setBackground(ContextCompat.getDrawable(context, R.drawable.select_dialog_button));
         }
-
     }
 
     @Override

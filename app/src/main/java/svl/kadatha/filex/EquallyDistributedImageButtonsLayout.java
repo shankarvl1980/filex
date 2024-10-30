@@ -17,7 +17,7 @@ public class EquallyDistributedImageButtonsLayout extends ViewGroup {
     private final Context context;
     private final int screen_width;
     private final int screen_height;
-    private int child_count, toppadding;
+    private int child_count, top_padding;
     private LinearLayout.LayoutParams params;
 
     EquallyDistributedImageButtonsLayout(Context context, int screen_width, int screen_height) {
@@ -51,7 +51,6 @@ public class EquallyDistributedImageButtonsLayout extends ViewGroup {
         setLayoutParams(new ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, ViewGroup.MarginLayoutParams.WRAP_CONTENT));
         LayoutInflater.from(context).inflate(R.layout.toobar_img_buttons_layout, this, true);
 
-
         int toolbar_width;
         if (Global.ORIENTATION == Configuration.ORIENTATION_LANDSCAPE) {
             toolbar_width = screen_height;
@@ -61,7 +60,7 @@ public class EquallyDistributedImageButtonsLayout extends ViewGroup {
 
         int icon_dimension = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 36, getResources().getDisplayMetrics());
 
-        toppadding = (Global.ACTION_BAR_HEIGHT - icon_dimension) / 4;
+        top_padding = (Global.ACTION_BAR_HEIGHT - icon_dimension) / 4;
 
         child_count = Math.min(child_count, getChildCount());
         int w = toolbar_width / child_count;
@@ -76,14 +75,13 @@ public class EquallyDistributedImageButtonsLayout extends ViewGroup {
         for (int i = 0; i < child_count; ++i) {
             View child = getChildAt(i);
             child.setLayoutParams(params);
-            child.setPadding(0, toppadding, 0, toppadding);
+            child.setPadding(0, top_padding, 0, top_padding);
             measureChildWithMargins(child, widthMeasureSpec, widthUsed, Global.ACTION_BAR_HEIGHT, heightUsed);
             widthUsed += child.getMeasuredWidth() + child.getPaddingStart() + child.getPaddingEnd();
             heightUsed = child.getMeasuredHeight() + child.getPaddingTop() + child.getPaddingBottom();
             maxHeight = Math.max(maxHeight, heightUsed);
         }
         setMeasuredDimension(widthMeasureSpec, Global.ACTION_BAR_HEIGHT);
-
     }
 
     @Override
@@ -95,9 +93,7 @@ public class EquallyDistributedImageButtonsLayout extends ViewGroup {
             child.layout(x, y, x + child.getMeasuredWidth(), y + child.getMeasuredHeight());
             x += child.getMeasuredWidth();
             child.setBackground(ContextCompat.getDrawable(context, R.drawable.select_detail_recyclerview));
-
         }
-
     }
 
     public void setResourceImageDrawables(@IdRes int[] drawables) {

@@ -148,13 +148,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 String dest_folder = bundle.getString("dest_folder");
                 FileObjectType sourceFileObjectType = (FileObjectType) bundle.getSerializable("sourceFileObjectType");
                 FileObjectType destFileObjectType = (FileObjectType) bundle.getSerializable("destFileObjectType");
-                if (sourceFileObjectType.equals(destFileObjectType) && source_folder.equals(dest_folder)) {
-                    Global.print(context, !cut ? getString(R.string.selected_files_have_been_copied) : getString(R.string.selected_filed_have_been_moved));
-                } else {
-                    DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-                    df.progress_bar.setVisibility(View.VISIBLE);
-                    fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder, sourceFileObjectType, dest_folder, destFileObjectType, files_selected_array, cut, false);
-                }
+                DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
+                df.progress_bar.setVisibility(View.VISIBLE);
+                fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder, sourceFileObjectType, dest_folder, destFileObjectType, files_selected_array, cut, false);
             }
         }
     });
@@ -2041,8 +2037,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     String source_folder = DetailFragment.CUT_COPY_FILE_CLICK_SELECTED;
                     if (sourceFileObjectType == null) {
                         Global.print(context, getString(R.string.could_not_perform_action));
-                    } else if (sourceFileObjectType.equals(df.fileObjectType) && source_folder.equals(df.fileclickselected)) {
-                        Global.print(context, DetailFragment.COPY_SELECTED ? getString(R.string.selected_files_have_been_copied) : getString(R.string.selected_filed_have_been_moved));
                     } else {
                         files_selected_array = new ArrayList<>(DetailFragment.FILE_SELECTED_FOR_CUT_COPY);
                         df.progress_bar.setVisibility(View.VISIBLE);

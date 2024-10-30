@@ -84,41 +84,56 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
         View v = inflater.inflate(R.layout.fragment_replace_confirmation, container, false);
         TextView confirmation_message_textview = v.findViewById(R.id.dialog_fragment_replace_message);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_replace_confirmation_button_layout);
-        buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context, 3, Global.DIALOG_WIDTH, Global.DIALOG_WIDTH));
-        Button replace_button = buttons_layout.findViewById(R.id.first_button);
-        replace_button.setText(R.string.replace);
-        Button rename_button = buttons_layout.findViewById(R.id.second_button);
-        rename_button.setText(R.string.rename);
-        Button skip_button = buttons_layout.findViewById(R.id.third_button);
-        skip_button.setText(R.string.skip);
+
+        Button replace_button = null,rename_button,skip_button;
+
+        if(sourceFileObjectType.equals(destFileObjectType) && source_folder.equals(dest_folder)){
+            buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context, 2, Global.DIALOG_WIDTH, Global.DIALOG_WIDTH));
+            rename_button = buttons_layout.findViewById(R.id.first_button);
+            rename_button.setText(R.string.rename);
+            skip_button = buttons_layout.findViewById(R.id.second_button);
+            skip_button.setText(R.string.skip);
+        } else{
+            buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context, 3, Global.DIALOG_WIDTH, Global.DIALOG_WIDTH));
+            replace_button = buttons_layout.findViewById(R.id.first_button);
+            replace_button.setText(R.string.replace);
+            rename_button = buttons_layout.findViewById(R.id.second_button);
+            rename_button.setText(R.string.rename);
+            skip_button = buttons_layout.findViewById(R.id.third_button);
+            skip_button.setText(R.string.skip);;
+        }
+
         apply_all_checkbox = v.findViewById(R.id.dialog_fragment_applyall_confirmationCheckBox);
         progress_bar = v.findViewById(R.id.file_replacement_dialog_progressbar);
 
-        replace_button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (progress_bar.getVisibility() == View.VISIBLE) {
-                    Global.print(context, getString(R.string.please_wait));
-                    return;
-                }
+        if(replace_button!=null){
+            replace_button.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    if (progress_bar.getVisibility() == View.VISIBLE) {
+                        Global.print(context, getString(R.string.please_wait));
+                        return;
+                    }
 
-                if (apply_all_checkbox.isChecked()) {
-                    progress_bar.setVisibility(View.VISIBLE);
-                    fileDuplicationViewModel.filterFileSelectedArray(context, FileOperationMode.REPLACE, true, data_list);
-                } else {
-                    String replacing_file_path=fileDuplicationViewModel.source_duplicate_file_path_array.remove(0);
-                    fileDuplicationViewModel.overwritten_file_path_list.add(fileDuplicationViewModel.destination_duplicate_file_path_array.remove(0));
-                    fileDuplicationViewModel.sourceFileDestNameMap.put(replacing_file_path,new File(replacing_file_path).getName());
-                    Uri uri=fileDuplicationViewModel.duplicateUriDestNameMap.removeAtIndex(0);
-                    if(uri!=null) fileDuplicationViewModel.uriDestNameMap.put(uri,new File(replacing_file_path).getName());
-                    if (fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
+                    if (apply_all_checkbox.isChecked()) {
                         progress_bar.setVisibility(View.VISIBLE);
-                        fileDuplicationViewModel.filterFileSelectedArray(context, FileOperationMode.REPLACE, false, data_list);
+                        fileDuplicationViewModel.filterFileSelectedArray(context, FileOperationMode.REPLACE, true, data_list);
                     } else {
-                        confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it) + " '" + new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName() + "'");
+                        String replacing_file_path=fileDuplicationViewModel.source_duplicate_file_path_array.remove(0);
+                        fileDuplicationViewModel.overwritten_file_path_list.add(fileDuplicationViewModel.destination_duplicate_file_path_array.remove(0));
+                        fileDuplicationViewModel.sourceFileDestNameMap.put(replacing_file_path,new File(replacing_file_path).getName());
+                        Uri uri=fileDuplicationViewModel.duplicateUriDestNameMap.removeAtIndex(0);
+                        if(uri!=null) fileDuplicationViewModel.uriDestNameMap.put(uri,new File(replacing_file_path).getName());
+                        if (fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
+                            progress_bar.setVisibility(View.VISIBLE);
+                            fileDuplicationViewModel.filterFileSelectedArray(context, FileOperationMode.REPLACE, false, data_list);
+                        } else {
+                            confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it) + " '" + new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName() + "'");
+                        }
                     }
                 }
-            }
-        });
+            });
+
+        }
 
         rename_button.setOnClickListener(new View.OnClickListener() {
             @Override
