@@ -37,9 +37,10 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
     private String source_folder;
     private String dest_folder;
     private FileObjectType sourceFileObjectType, destFileObjectType;
+    private String file_name;
 
     public static FileReplaceConfirmationDialog getInstance(String source_folder, FileObjectType sourceFileObjectType, String dest_folder, FileObjectType destFileObjectType,
-                                                            ArrayList<String> files_selected_array, List<Uri> data_list, boolean cut_selected) {
+                                                            ArrayList<String> files_selected_array, List<Uri> data_list,String file_name, boolean cut_selected) {
         FileReplaceConfirmationDialog fileReplaceConfirmationDialog = new FileReplaceConfirmationDialog();
         Bundle bundle = new Bundle();
         bundle.putString("source_folder", source_folder);
@@ -48,6 +49,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
         bundle.putSerializable("destFileObjectType", destFileObjectType);
         bundle.putString("dest_folder", dest_folder);
         bundle.putParcelableArrayList("data_list", (ArrayList<? extends Parcelable>) data_list);
+        bundle.putString("file_name",file_name);
         bundle.putBoolean("cut", cut_selected);
         fileReplaceConfirmationDialog.setArguments(bundle);
         return fileReplaceConfirmationDialog;
@@ -73,6 +75,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
             sourceFileObjectType = (FileObjectType) bundle.getSerializable("sourceFileObjectType");
             destFileObjectType = (FileObjectType) bundle.getSerializable("destFileObjectType");
             data_list = bundle.getParcelableArrayList("data_list");
+            file_name=bundle.getString("file_name");
         }
     }
 
@@ -168,7 +171,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
 
         fileDuplicationViewModel = new ViewModelProvider(this).get(FileDuplicationViewModel.class);
         if (data_list != null && !data_list.isEmpty()) {
-            fileDuplicationViewModel.checkForExistingFileWithSameNameUri(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,false,true,data_list);
+            fileDuplicationViewModel.checkForExistingFileWithSameNameUri(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,data_list,file_name,false,true);
         } else{
             fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder, sourceFileObjectType, dest_folder, destFileObjectType, files_selected_array, cut, true);
         }
@@ -195,24 +198,10 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
                 } else if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
                     progress_bar.setVisibility(View.GONE);
                     if (getActivity() instanceof CopyToActivity) {
-//                        if (!(fileDuplicationViewModel.fileOperationMode ==FileOperationMode.REPLACE) && !fileDuplicationViewModel.apply_to_all) {
-//                            if (fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
-//                                Bundle bundle = new Bundle();
-//                                bundle.putParcelable("uriDestNameMap", fileDuplicationViewModel.uriDestNameMap);
-//                                bundle.putStringArrayList("overwritten_file_path_list", fileDuplicationViewModel.overwritten_file_path_list);
-//                                getParentFragmentManager().setFragmentResult(CopyToActivity.DUPLICATE_FILE_NAMES_REQUEST_CODE, bundle);
-//                            } else {
-//                                confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it) + " '" + new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName() + "'");
-//                                fileDuplicationViewModel.filterSelectedArrayAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-//                                return;
-//                            }
-//                        } else
-                        {
-                            Bundle bundle = new Bundle();
-                            bundle.putParcelable("uriDestNameMap", fileDuplicationViewModel.uriDestNameMap);
-                            bundle.putStringArrayList("overwritten_file_path_list", fileDuplicationViewModel.overwritten_file_path_list);
-                            getParentFragmentManager().setFragmentResult(CopyToActivity.DUPLICATE_FILE_NAMES_REQUEST_CODE, bundle);
-                        }
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("uriDestNameMap", fileDuplicationViewModel.uriDestNameMap);
+                        bundle.putStringArrayList("overwritten_file_path_list", fileDuplicationViewModel.overwritten_file_path_list);
+                        getParentFragmentManager().setFragmentResult(CopyToActivity.DUPLICATE_FILE_NAMES_REQUEST_CODE, bundle);
                     } else {
                         PasteSetUpDialog pasteSetUpDialog = PasteSetUpDialog.getInstance(source_folder, sourceFileObjectType, dest_folder, destFileObjectType,
                                 fileDuplicationViewModel.sourceFileDestNameMap, fileDuplicationViewModel.overwritten_file_path_list, cut);

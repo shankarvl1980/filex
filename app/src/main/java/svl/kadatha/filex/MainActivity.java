@@ -422,7 +422,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                         pasteSetUpDialog.show(fm, "paste_dialog");
                     } else {
                         FileReplaceConfirmationDialog fileReplaceConfirmationDialog = FileReplaceConfirmationDialog.getInstance(fileDuplicationViewModel.source_folder, fileDuplicationViewModel.sourceFileObjectType,
-                                fileDuplicationViewModel.dest_folder, fileDuplicationViewModel.destFileObjectType, fileDuplicationViewModel.files_selected_array, null, fileDuplicationViewModel.cut);
+                                fileDuplicationViewModel.dest_folder, fileDuplicationViewModel.destFileObjectType, fileDuplicationViewModel.files_selected_array, null,null ,fileDuplicationViewModel.cut);
                         fileReplaceConfirmationDialog.show(fm, "paste_dialog");
                     }
                     fileDuplicationViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);

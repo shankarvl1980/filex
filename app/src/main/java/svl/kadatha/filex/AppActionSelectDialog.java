@@ -1,8 +1,10 @@
 package svl.kadatha.filex;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,7 +31,7 @@ import java.util.List;
 
 public class AppActionSelectDialog extends DialogFragment {
     private Context context;
-    private String app_name;
+    private String app_name,app_path;
     private String package_name;
     private String app_size;
     private String version;
@@ -62,7 +65,7 @@ public class AppActionSelectDialog extends DialogFragment {
         package_name = bundle.getString("package_name");
         app_size = bundle.getString("app_size");
         version = bundle.getString("version");
-        String app_path = bundle.getString("app_path");
+        app_path = bundle.getString("app_path");
         action_list = new ArrayList<>(Arrays.asList(AppManagerListFragment.BACKUP, AppManagerListFragment.SHARE, AppManagerListFragment.UNINSTALL, AppManagerListFragment.CONTROL_PANEL, AppManagerListFragment.PLAY_STORE));
     }
 
@@ -142,8 +145,22 @@ public class AppActionSelectDialog extends DialogFragment {
                         pos = getBindingAdapterPosition();
                         bundle.putString("app_action", action_list.get(pos));
                         if (action_list.get(pos).equals(AppManagerListFragment.BACKUP)) {
-                            ApkBackUpNameDialog apkBackUpNameDialog = ApkBackUpNameDialog.getInstance(bundle);
-                            apkBackUpNameDialog.show(getParentFragmentManager(), "");
+                            Intent copy_intent = new Intent(context, CopyToActivity.class);
+                            copy_intent.setAction(Intent.ACTION_SEND);
+                            Uri copy_uri = FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", new File(app_path));
+                            copy_intent.putExtra("file_name",app_name+"_"+version+".apk");
+                            copy_intent.putExtra(Intent.EXTRA_STREAM, copy_uri);
+                            copy_intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            copy_intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                            copy_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            try {
+                                startActivity(copy_intent);
+                            } catch (Exception e) {
+                                Global.print(context, getString(R.string.could_not_perform_action));
+                            }
+
+//                            ApkBackUpNameDialog apkBackUpNameDialog = ApkBackUpNameDialog.getInstance(bundle);
+//                            apkBackUpNameDialog.show(getParentFragmentManager(), "");
                         } else {
                             getParentFragmentManager().setFragmentResult(AppManagerListFragment.APP_ACTION_REQUEST_CODE, bundle);
                         }

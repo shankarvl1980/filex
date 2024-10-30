@@ -510,7 +510,7 @@ public class Global {
         }
     }
 
-    static void LOCAL_BROADCAST(String action, LocalBroadcastManager localBroadcastManager, Bundle bundle) {
+    public static void LOCAL_BROADCAST(String action, LocalBroadcastManager localBroadcastManager, Bundle bundle) {
         Intent intent = new Intent();
         intent.setAction(action);
         if(bundle!=null){

@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,7 @@ import svl.kadatha.filex.FileObjectType;
 import svl.kadatha.filex.FilePOJO;
 import svl.kadatha.filex.FilePOJOUtil;
 import svl.kadatha.filex.FileUtil;
+import svl.kadatha.filex.Global;
 import svl.kadatha.filex.ParcelableUriStringLinkedMap;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FileModelFactory;
@@ -101,6 +104,7 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
 
         if (counter_no_files > 0) {
             filePOJO = FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder, copied_files_name, destFileObjectType, overwritten_file_path_list);
+            Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(context), null);
         }
 
         copied_files_name.clear();

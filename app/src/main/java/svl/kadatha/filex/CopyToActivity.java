@@ -137,7 +137,7 @@ public class CopyToActivity extends BaseActivity {
                         launchService();
                     } else {
                         FileReplaceConfirmationDialog fileReplaceConfirmationDialog = FileReplaceConfirmationDialog.getInstance(fileDuplicationViewModel.source_folder, fileDuplicationViewModel.sourceFileObjectType,
-                                fileDuplicationViewModel.dest_folder, fileDuplicationViewModel.destFileObjectType, fileDuplicationViewModel.uri_name_list, data_list, fileDuplicationViewModel.cut);
+                                fileDuplicationViewModel.dest_folder, fileDuplicationViewModel.destFileObjectType, fileDuplicationViewModel.uri_name_list, data_list,file_name_edit_text.getText().toString().trim() ,fileDuplicationViewModel.cut);
                         fileReplaceConfirmationDialog.show(getSupportFragmentManager(), "paste_dialog");
                     }
                     fileDuplicationViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
@@ -205,26 +205,8 @@ public class CopyToActivity extends BaseActivity {
                     return;
                 }
 
-                if (data_list.size() == 1) {
-//                    if (Global.WHETHER_FILE_ALREADY_EXISTS(destFileObjectType, full_path, viewModel.destFilePOJOs)) {
-//                        if (!ArchiveSetUpDialog.isFilePathDirectory(full_path, destFileObjectType, viewModel.destFilePOJOs)) {
-//                            final Bundle bundle = new Bundle();
-//                            bundle.putString("file_name", file_name);
-//                            bundle.putString("new_name", file_name);
-//                            ArchiveReplaceConfirmationDialog archiveReplaceConfirmationDialog = ArchiveReplaceConfirmationDialog.getInstance(ARCHIVE_REPLACE_REQUEST_CODE, bundle);
-//                            archiveReplaceConfirmationDialog.show(getSupportFragmentManager(), null);
-//                        } else {
-//                            Global.print(context, getString(R.string.a_directory_with_output_file_name_already_exists) + " '" + file_name + "'");
-//                        }
-//                    } else
-                    {
-                        progress_bar.setVisibility(View.VISIBLE);
-                        fileDuplicationViewModel.checkForExistingFileWithSameNameUri("", FileObjectType.SEARCH_LIBRARY_TYPE, dest_folder, destFileObjectType, false, false, data_list);
-                    }
-                } else {
-                    progress_bar.setVisibility(View.VISIBLE);
-                    fileDuplicationViewModel.checkForExistingFileWithSameNameUri("", FileObjectType.SEARCH_LIBRARY_TYPE, dest_folder, destFileObjectType, false, false, data_list);
-                }
+                progress_bar.setVisibility(View.VISIBLE);
+                fileDuplicationViewModel.checkForExistingFileWithSameNameUri("", FileObjectType.SEARCH_LIBRARY_TYPE, dest_folder, destFileObjectType, data_list,file_name_edit_text.getText().toString().trim(), false, false);
             }
         });
 
@@ -326,6 +308,7 @@ public class CopyToActivity extends BaseActivity {
             Bundle bundle = intent.getExtras();
             dest_folder = intent.getStringExtra("dest_folder");
             String action = intent.getAction();
+            String file_name=intent.getStringExtra("file_name");
             if (action.equals(Intent.ACTION_SEND_MULTIPLE)) {
                 data_list = (ArrayList<Uri>) bundle.get(Intent.EXTRA_STREAM);
                 file_name_edit_text.setEnabled(false);
@@ -337,8 +320,10 @@ public class CopyToActivity extends BaseActivity {
             if (savedInstanceState == null) {
                 if (data_list != null && !data_list.isEmpty()) {
                     if (data_list.size() == 1) {
-                        String f_name = getFileNameOfUri(context,data_list.get(0));
-                        file_name_edit_text.setText(f_name == null ? "" : f_name);
+                        if(file_name==null){
+                            file_name = getFileNameOfUri(context,data_list.get(0));
+                        }
+                        file_name_edit_text.setText(file_name == null ? "" : file_name);
                     }
 
                     if (dest_folder == null || dest_folder.isEmpty()) {

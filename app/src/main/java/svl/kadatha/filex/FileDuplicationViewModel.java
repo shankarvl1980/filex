@@ -193,7 +193,7 @@ public class FileDuplicationViewModel extends ViewModel {
         });
     }
 
-    public void checkForExistingFileWithSameNameUri(String source_folder, FileObjectType sourceFileObjectType, String dest_folder, FileObjectType destFileObjectType, boolean cut, boolean findAllDuplicates, ArrayList<Uri> data_list) {
+    public void checkForExistingFileWithSameNameUri(String source_folder, FileObjectType sourceFileObjectType, String dest_folder, FileObjectType destFileObjectType, ArrayList<Uri> data_list, String file_name,boolean cut, boolean findAllDuplicates) {
         if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         this.source_folder = source_folder;
@@ -224,10 +224,14 @@ public class FileDuplicationViewModel extends ViewModel {
                 duplicateUriDestNameMap = new ParcelableUriStringLinkedMap();
 
                 if (data_list != null) {
-                    for (Uri uri : data_list) {
-                        String name = CopyToActivity.getFileNameOfUri(App.getAppContext(), uri);
-                        uriDestNameMap.put(uri, name);
-                        uri_name_list.add(name);
+                    if(data_list.size()==1 && file_name!=null){
+                        uriDestNameMap.put(data_list.get(0),file_name);
+                    } else{
+                        for (Uri uri : data_list) {
+                            String name = CopyToActivity.getFileNameOfUri(App.getAppContext(), uri);
+                            uriDestNameMap.put(uri, name);
+                            uri_name_list.add(name);
+                        }
                     }
                     files_selected_array = uri_name_list;
                 }
