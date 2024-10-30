@@ -108,7 +108,7 @@ public class CreateFileDialog extends DialogFragment {
         }
 
 
-        ViewModelCreateRename viewModel = new ViewModelProvider(this).get(ViewModelCreateRename.class);
+        CreateRenameViewModel viewModel = new ViewModelProvider(this).get(CreateRenameViewModel.class);
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
         viewModel.destFilePOJOs = repositoryClass.hashmap_file_pojo.get(fileObjectType + parent_folder);
         viewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {

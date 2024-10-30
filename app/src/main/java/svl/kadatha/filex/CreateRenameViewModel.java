@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutorService;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FileModelFactory;
 
-public class ViewModelCreateRename extends AndroidViewModel {
+public class CreateRenameViewModel extends AndroidViewModel {
 
     public static FileObjectType FILE_OBJECT_TYPE;
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
@@ -24,7 +24,7 @@ public class ViewModelCreateRename extends AndroidViewModel {
     public boolean fileNameChanged;
     public List<FilePOJO> destFilePOJOs;
 
-    public ViewModelCreateRename(@NonNull Application application) {
+    public CreateRenameViewModel(@NonNull Application application) {
         super(application);
     }
 
@@ -74,13 +74,11 @@ public class ViewModelCreateRename extends AndroidViewModel {
     }
 
 
-    public synchronized void renameFile(String parent_file_path, String existing_file_path, String existing_name, String new_file_path, String new_name, boolean isWritable, FileObjectType fileObjectType, boolean isDirectory, boolean overwrite, String tree_uri_path, Uri tree_uri, String filePOJOHashmapKeyPath, FileObjectType dfFileObjectType) {
+    public synchronized void renameFile(String parent_file_path, String existing_file_path, String existing_name, String new_file_path, String new_name, FileObjectType fileObjectType, boolean isDirectory, boolean overwrite, String tree_uri_path, Uri tree_uri, String filePOJOHashmapKeyPath, FileObjectType dfFileObjectType) {
         if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
         FILE_OBJECT_TYPE = fileObjectType;
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
-        File existing_file = new File(parent_file_path, existing_name);
-        File new_file = new File(new_file_path);
         executorService.execute(new Runnable() {
             @Override
             public void run() {

@@ -71,8 +71,8 @@ public class ArchiveDeletePasteServiceUtil {
         }
 
         //checking whether creating or renaming file is going on
-        if (noOperation && ViewModelCreateRename.FILE_OBJECT_TYPE != null) {
-            noOperation = ViewModelCreateRename.FILE_OBJECT_TYPE != fileObjectType;
+        if (noOperation && CreateRenameViewModel.FILE_OBJECT_TYPE != null) {
+            noOperation = CreateRenameViewModel.FILE_OBJECT_TYPE != fileObjectType;
         }
 
         //check whether app is being backed up

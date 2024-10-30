@@ -119,7 +119,7 @@ public class RenameFileDialog extends DialogFragment {
         imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
 
-        ViewModelCreateRename viewModel = new ViewModelProvider(this).get(ViewModelCreateRename.class);
+        CreateRenameViewModel viewModel = new ViewModelProvider(this).get(CreateRenameViewModel.class);
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
         viewModel.destFilePOJOs = repositoryClass.hashmap_file_pojo.get(fileObjectType + parent_file_path);
         viewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
@@ -141,10 +141,10 @@ public class RenameFileDialog extends DialogFragment {
                     String new_name = result.getString("rename_file_name");
                     if (fileObjectType == FileObjectType.FILE_TYPE && !isWritable) {
                         if (check_SAF_permission(parent_file_path, fileObjectType)) {
-                            viewModel.renameFile(parent_file_path, existing_file_path, existing_name, new_file_path, new_name, isWritable, fileObjectType, isDirectory, overwriting, tree_uri_path, tree_uri, filePOJOHashmapKeyPath, df.fileObjectType);
+                            viewModel.renameFile(parent_file_path, existing_file_path, existing_name, new_file_path, new_name, fileObjectType, isDirectory, overwriting, tree_uri_path, tree_uri, filePOJOHashmapKeyPath, df.fileObjectType);
                         }
                     } else {
-                        viewModel.renameFile(parent_file_path, existing_file_path, existing_name, new_file_path, new_name, isWritable, fileObjectType, isDirectory, overwriting, tree_uri_path, tree_uri, filePOJOHashmapKeyPath, df.fileObjectType);
+                        viewModel.renameFile(parent_file_path, existing_file_path, existing_name, new_file_path, new_name, fileObjectType, isDirectory, overwriting, tree_uri_path, tree_uri, filePOJOHashmapKeyPath, df.fileObjectType);
                     }
                 }
             }
@@ -218,10 +218,10 @@ public class RenameFileDialog extends DialogFragment {
                     }
                 } else if (fileObjectType == FileObjectType.FILE_TYPE && !isWritable) {
                     if (check_SAF_permission(parent_file_path, fileObjectType)) {
-                        viewModel.renameFile(parent_file_path, existing_file_path, existing_name, new_file_path, new_name, isWritable, fileObjectType, isDirectory, overwriting, tree_uri_path, tree_uri, filePOJOHashmapKeyPath, df.fileObjectType);
+                        viewModel.renameFile(parent_file_path, existing_file_path, existing_name, new_file_path, new_name, fileObjectType, isDirectory, overwriting, tree_uri_path, tree_uri, filePOJOHashmapKeyPath, df.fileObjectType);
                     }
                 } else {
-                    viewModel.renameFile(parent_file_path, existing_file_path, existing_name, new_file_path, new_name, isWritable, fileObjectType, isDirectory, overwriting, tree_uri_path, tree_uri, filePOJOHashmapKeyPath, df.fileObjectType);
+                    viewModel.renameFile(parent_file_path, existing_file_path, existing_name, new_file_path, new_name, fileObjectType, isDirectory, overwriting, tree_uri_path, tree_uri, filePOJOHashmapKeyPath, df.fileObjectType);
                 }
                 imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(), 0);
             }
