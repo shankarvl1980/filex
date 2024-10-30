@@ -309,6 +309,11 @@ public class FileDuplicationViewModel extends ViewModel {
                         for (String file_path : source_duplicate_file_path_array) {
                             sourceFileDestNameMap.put(file_path, new File(file_path).getName());
                         }
+
+                        for(Map.Entry<Uri,String> element:duplicateUriDestNameMap){
+                            Uri uri=element.getKey();
+                            uriDestNameMap.put(element.getKey(),CopyToActivity.getFileNameOfUri(context,uri));
+                        }
                         removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
                     } else {
                         files_selected_array.removeAll(not_to_be_replaced_files_path_array);
