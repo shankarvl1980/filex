@@ -309,26 +309,26 @@ public class FileDuplicationViewModel extends ViewModel {
                         for (String file_path : source_duplicate_file_path_array) {
                             sourceFileDestNameMap.put(file_path, new File(file_path).getName());
                         }
-                        //removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
+                        removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
                     } else {
                         files_selected_array.removeAll(not_to_be_replaced_files_path_array);
-                        //removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
+                        removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
                     }
                 } else if (fileOperationMode == FileOperationMode.RENAME) {
                     if (apply_to_all) {
                         files_selected_array.removeAll(not_to_be_replaced_files_path_array);
-                        //removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
+                        removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
                     } else {
                         files_selected_array.removeAll(not_to_be_replaced_files_path_array);
-                        //removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
+                        removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
                     }
                 } else if (fileOperationMode == FileOperationMode.SKIP) {
                     if (apply_to_all) {
                         files_selected_array.removeAll(source_duplicate_file_path_array);
-                        //removeNotTobeCopiedUris(context, data_list, source_duplicate_file_path_array);
+                        removeNotTobeCopiedUris(context, data_list, source_duplicate_file_path_array);
                     } else {
                         files_selected_array.removeAll(not_to_be_replaced_files_path_array);
-                        //removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
+                        removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
                     }
                 }
 
@@ -343,7 +343,7 @@ public class FileDuplicationViewModel extends ViewModel {
                 Iterator<Map.Entry<Uri, String>> iterator1 = uriDestNameMap.iterator();
                 while (iterator1.hasNext()) {
                     Map.Entry<Uri, String> element = iterator1.next();
-                    if (!files_selected_array.contains(element.getValue())) {
+                    if (!data_list.contains(element.getKey())) {
                         iterator1.remove();
                     }
                 }

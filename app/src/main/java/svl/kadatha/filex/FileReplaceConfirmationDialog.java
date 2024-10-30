@@ -154,7 +154,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
                 } else {
                     fileDuplicationViewModel.not_to_be_replaced_files_path_array.add(fileDuplicationViewModel.source_duplicate_file_path_array.remove(0));
                     fileDuplicationViewModel.files_selected_array.removeAll(fileDuplicationViewModel.not_to_be_replaced_files_path_array);
-                    //removeNotTobeCopiedUris(context, data_list, fileDuplicationViewModel.not_to_be_replaced_files_path_array);
+                    removeNotTobeCopiedUris(context, data_list, fileDuplicationViewModel.not_to_be_replaced_files_path_array);
                     fileDuplicationViewModel.destination_duplicate_file_path_array.remove(0);
                     if (fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
                         progress_bar.setVisibility(View.VISIBLE);
