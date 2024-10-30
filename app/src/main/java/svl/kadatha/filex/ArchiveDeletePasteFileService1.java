@@ -150,7 +150,7 @@ public class ArchiveDeletePasteFileService1 extends Service implements TaskProgr
             case CutCopyAsyncTask.TASK_TYPE_CUT:
             case CutCopyAsyncTask.TASK_TYPE_COPY:
                 if (bundle != null) {
-                    sourceFileDestNameMap =bundle.getParcelable("files_selected_array");
+                    sourceFileDestNameMap =bundle.getParcelable("sourceFileDestNameMap");
                     overwritten_file_path_list.addAll(bundle.getStringArrayList("overwritten_file_path_list"));
                     sourceFileObjectType = (FileObjectType) bundle.getSerializable("sourceFileObjectType");
                     dest_folder = bundle.getString("dest_folder");

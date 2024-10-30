@@ -153,7 +153,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 } else {
                     DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
                     df.progress_bar.setVisibility(View.VISIBLE);
-                    fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder, sourceFileObjectType, dest_folder, destFileObjectType, files_selected_array, cut, false, null);
+                    fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder, sourceFileObjectType, dest_folder, destFileObjectType, files_selected_array, cut, false);
                 }
             }
         }
@@ -2046,7 +2046,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     } else {
                         files_selected_array = new ArrayList<>(DetailFragment.FILE_SELECTED_FOR_CUT_COPY);
                         df.progress_bar.setVisibility(View.VISIBLE);
-                        fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder, sourceFileObjectType, df.fileclickselected, df.fileObjectType, files_selected_array, DetailFragment.CUT_SELECTED, false, null);
+                        fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder, sourceFileObjectType, df.fileclickselected, df.fileObjectType, files_selected_array, DetailFragment.CUT_SELECTED, false);
                     }
                 }
 

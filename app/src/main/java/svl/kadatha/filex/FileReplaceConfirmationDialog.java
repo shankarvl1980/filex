@@ -154,7 +154,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
                 } else {
                     fileDuplicationViewModel.not_to_be_replaced_files_path_array.add(fileDuplicationViewModel.source_duplicate_file_path_array.remove(0));
                     fileDuplicationViewModel.files_selected_array.removeAll(fileDuplicationViewModel.not_to_be_replaced_files_path_array);
-                    removeNotTobeCopiedUris(context, data_list, fileDuplicationViewModel.not_to_be_replaced_files_path_array);
+                    //removeNotTobeCopiedUris(context, data_list, fileDuplicationViewModel.not_to_be_replaced_files_path_array);
                     fileDuplicationViewModel.destination_duplicate_file_path_array.remove(0);
                     if (fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
                         progress_bar.setVisibility(View.VISIBLE);
@@ -170,7 +170,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
         if (data_list != null && !data_list.isEmpty()) {
             fileDuplicationViewModel.checkForExistingFileWithSameNameUri(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,false,true,data_list);
         } else{
-            fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder, sourceFileObjectType, dest_folder, destFileObjectType, files_selected_array, cut, true, data_list);
+            fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder, sourceFileObjectType, dest_folder, destFileObjectType, files_selected_array, cut, true);
         }
 
         fileDuplicationViewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
@@ -195,18 +195,19 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
                 } else if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
                     progress_bar.setVisibility(View.GONE);
                     if (getActivity() instanceof CopyToActivity) {
-                        if (!(fileDuplicationViewModel.fileOperationMode ==FileOperationMode.REPLACE) && !fileDuplicationViewModel.apply_to_all) {
-                            if (fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
-                                Bundle bundle = new Bundle();
-                                bundle.putParcelable("uriDestNameMap", fileDuplicationViewModel.uriDestNameMap);
-                                bundle.putStringArrayList("overwritten_file_path_list", fileDuplicationViewModel.overwritten_file_path_list);
-                                getParentFragmentManager().setFragmentResult(CopyToActivity.DUPLICATE_FILE_NAMES_REQUEST_CODE, bundle);
-                            } else {
-                                confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it) + " '" + new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName() + "'");
-                                fileDuplicationViewModel.filterSelectedArrayAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-                                return;
-                            }
-                        } else {
+//                        if (!(fileDuplicationViewModel.fileOperationMode ==FileOperationMode.REPLACE) && !fileDuplicationViewModel.apply_to_all) {
+//                            if (fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
+//                                Bundle bundle = new Bundle();
+//                                bundle.putParcelable("uriDestNameMap", fileDuplicationViewModel.uriDestNameMap);
+//                                bundle.putStringArrayList("overwritten_file_path_list", fileDuplicationViewModel.overwritten_file_path_list);
+//                                getParentFragmentManager().setFragmentResult(CopyToActivity.DUPLICATE_FILE_NAMES_REQUEST_CODE, bundle);
+//                            } else {
+//                                confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it) + " '" + new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName() + "'");
+//                                fileDuplicationViewModel.filterSelectedArrayAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+//                                return;
+//                            }
+//                        } else
+                        {
                             Bundle bundle = new Bundle();
                             bundle.putParcelable("uriDestNameMap", fileDuplicationViewModel.uriDestNameMap);
                             bundle.putStringArrayList("overwritten_file_path_list", fileDuplicationViewModel.overwritten_file_path_list);

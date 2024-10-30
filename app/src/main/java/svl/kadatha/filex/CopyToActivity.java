@@ -223,7 +223,7 @@ public class CopyToActivity extends BaseActivity {
                     }
                 } else {
                     progress_bar.setVisibility(View.VISIBLE);
-                    fileDuplicationViewModel.checkForExistingFileWithSameNameUri("", FileObjectType.SEARCH_LIBRARY_TYPE, folderclickselected, destFileObjectType, false, true, data_list);
+                    fileDuplicationViewModel.checkForExistingFileWithSameNameUri("", FileObjectType.SEARCH_LIBRARY_TYPE, folderclickselected, destFileObjectType, false, false, data_list);
                 }
             }
         });

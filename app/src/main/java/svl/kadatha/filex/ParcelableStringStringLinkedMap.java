@@ -12,7 +12,7 @@ public final class ParcelableStringStringLinkedMap implements Parcelable, Iterab
     private static final int MAX_SIZE = 100000; // Maximum allowable size to prevent memory issues
     private final LinkedHashMap<String, String> map;
     private final List<String> keyList; // Maintains insertion order for efficient access by index
-    private int modCount = 0; // Tracks structural modifications for fail-fast iterators
+    // Tracks structural modifications for fail-fast iterators
 
     /**
      * Constructs an empty ParcelableStringStringLinkedMap.
@@ -58,7 +58,6 @@ public final class ParcelableStringStringLinkedMap implements Parcelable, Iterab
         }
         if (!map.containsKey(key)) {
             keyList.add(key);
-            modCount++;
         }
         map.put(key, value);
     }
@@ -128,7 +127,6 @@ public final class ParcelableStringStringLinkedMap implements Parcelable, Iterab
     public void clear() {
         map.clear();
         keyList.clear();
-        modCount++;
     }
 
     /**
@@ -169,7 +167,6 @@ public final class ParcelableStringStringLinkedMap implements Parcelable, Iterab
     public String remove(String key) {
         if (map.containsKey(key)) {
             keyList.remove(key);
-            modCount++;
             return map.remove(key);
         }
         return null;
