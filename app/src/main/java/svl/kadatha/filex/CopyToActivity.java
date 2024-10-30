@@ -50,15 +50,15 @@ public class CopyToActivity extends BaseActivity {
     private Button browse_button;
     private EditText destination_folder_edittext;
     private TextView destination_fileObject_text_view;
-    private String folderclickselected;
+    private String dest_folder;
     private final ActivityResultLauncher<Intent> activityResultLauncher_file_select = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (result.getResultCode() == Activity.RESULT_OK) {
                 Intent intent = result.getData();
-                folderclickselected = intent.getStringExtra("folderclickselected");
+                dest_folder = intent.getStringExtra("dest_folder");
                 destFileObjectType = (FileObjectType) intent.getSerializableExtra("destFileObjectType");
-                destination_folder_edittext.setText(folderclickselected);
+                destination_folder_edittext.setText(dest_folder);
                 destination_fileObject_text_view.setText(Global.GET_FileObjectType(destFileObjectType));
             } else {
                 finish();
@@ -180,10 +180,10 @@ public class CopyToActivity extends BaseActivity {
 //                    file_name_list.add(file_name);
 //                }
                 RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
-                viewModel.destFilePOJOs = repositoryClass.hashmap_file_pojo.get(destFileObjectType + folderclickselected);
-                final String full_path = Global.CONCATENATE_PARENT_CHILD_PATH(folderclickselected, file_name);
+                viewModel.destFilePOJOs = repositoryClass.hashmap_file_pojo.get(destFileObjectType + dest_folder);
+                final String full_path = Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder, file_name);
 
-                if (!is_file_writable(folderclickselected, destFileObjectType)) {
+                if (!is_file_writable(dest_folder, destFileObjectType)) {
                     return;
                 }
 
@@ -219,11 +219,11 @@ public class CopyToActivity extends BaseActivity {
 //                    } else
                     {
                         progress_bar.setVisibility(View.VISIBLE);
-                        fileDuplicationViewModel.checkForExistingFileWithSameNameUri("", FileObjectType.SEARCH_LIBRARY_TYPE, folderclickselected, destFileObjectType, false, false, data_list);
+                        fileDuplicationViewModel.checkForExistingFileWithSameNameUri("", FileObjectType.SEARCH_LIBRARY_TYPE, dest_folder, destFileObjectType, false, false, data_list);
                     }
                 } else {
                     progress_bar.setVisibility(View.VISIBLE);
-                    fileDuplicationViewModel.checkForExistingFileWithSameNameUri("", FileObjectType.SEARCH_LIBRARY_TYPE, folderclickselected, destFileObjectType, false, false, data_list);
+                    fileDuplicationViewModel.checkForExistingFileWithSameNameUri("", FileObjectType.SEARCH_LIBRARY_TYPE, dest_folder, destFileObjectType, false, false, data_list);
                 }
             }
         });
@@ -294,7 +294,7 @@ public class CopyToActivity extends BaseActivity {
         Bundle bundle = new Bundle();
         bundle.putParcelable("uriDestNameMap", uriDestNameMap);
         bundle.putStringArrayList("overwritten_file_path_list", overwritten_file_path_list);
-        bundle.putString("dest_folder", folderclickselected);
+        bundle.putString("dest_folder", dest_folder);
         bundle.putString("file_name", file_name);
         bundle.putString("new_name", file_name);
         bundle.putString("tree_uri_path", tree_uri_path);
@@ -324,7 +324,7 @@ public class CopyToActivity extends BaseActivity {
     private void on_intent(Intent intent, Bundle savedInstanceState) throws Exception {
         if (intent != null) {
             Bundle bundle = intent.getExtras();
-            folderclickselected = intent.getStringExtra("folderclickselected");
+            dest_folder = intent.getStringExtra("dest_folder");
             String action = intent.getAction();
             if (action.equals(Intent.ACTION_SEND_MULTIPLE)) {
                 data_list = (ArrayList<Uri>) bundle.get(Intent.EXTRA_STREAM);
@@ -334,23 +334,19 @@ public class CopyToActivity extends BaseActivity {
                 data_list.add((Uri) bundle.get(Intent.EXTRA_STREAM));
             }
 
-//            for (Uri data : data_list) {
-//                file_name_list.add(getFileNameOfUri(context, data));
-//            }
-
             if (savedInstanceState == null) {
                 if (data_list != null && !data_list.isEmpty()) {
                     if (data_list.size() == 1) {
-                        String f_name = getFileNameOfUri(context,data_list.get(0));//file_name_list.get(0);
+                        String f_name = getFileNameOfUri(context,data_list.get(0));
                         file_name_edit_text.setText(f_name == null ? "" : f_name);
                     }
 
-                    if (folderclickselected == null || folderclickselected.isEmpty()) {
+                    if (dest_folder == null || dest_folder.isEmpty()) {
                         browse_button.callOnClick();
                     } else {
-                        folderclickselected = intent.getStringExtra("folderclickselected");
+                        dest_folder = intent.getStringExtra("dest_folder");
                         destFileObjectType = (FileObjectType) intent.getSerializableExtra("destFileObjectType");
-                        destination_folder_edittext.setText(folderclickselected);
+                        destination_folder_edittext.setText(dest_folder);
                         destination_fileObject_text_view.setText(Global.GET_FileObjectType(destFileObjectType));
                     }
                 }
@@ -396,7 +392,7 @@ public class CopyToActivity extends BaseActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("folderclickselected", folderclickselected);
+        outState.putString("dest_folder", dest_folder);
         outState.putSerializable("destFileObjectType", destFileObjectType);
         outState.putBoolean("clear_cache", clear_cache);
     }
@@ -404,7 +400,7 @@ public class CopyToActivity extends BaseActivity {
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        folderclickselected = savedInstanceState.getString("folderclickselected");
+        dest_folder = savedInstanceState.getString("dest_folder");
         destFileObjectType = (FileObjectType) savedInstanceState.getSerializable("destFileObjectType");
         clear_cache = savedInstanceState.getBoolean("clear_cache");
     }

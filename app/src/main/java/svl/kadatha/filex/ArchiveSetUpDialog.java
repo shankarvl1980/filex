@@ -71,9 +71,9 @@ public class ArchiveSetUpDialog extends DialogFragment {
         public void onActivityResult(ActivityResult result) {
             if (result.getResultCode() == Activity.RESULT_OK) {
                 Intent intent = result.getData();
-                viewModel.folderclickselected = intent.getStringExtra("folderclickselected");
+                viewModel.dest_folder = intent.getStringExtra("dest_folder");
                 viewModel.custom_dir_fileObjectType = (FileObjectType) intent.getSerializableExtra("destFileObjectType");
-                customdir_edittext.setText(viewModel.folderclickselected);
+                customdir_edittext.setText(viewModel.dest_folder);
                 destFileObjectType_text_view.setText(getDestFileObjectType());
             }
         }
@@ -256,7 +256,7 @@ public class ArchiveSetUpDialog extends DialogFragment {
             }
         });
 
-        customdir_edittext.setText(viewModel.folderclickselected);
+        customdir_edittext.setText(viewModel.dest_folder);
         create_folder_checkbox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton p1, boolean p2) {
                 if (p1.isChecked()) {

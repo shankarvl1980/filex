@@ -2031,7 +2031,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 //if intent is originated from outside
                 if (viewModel.send_intent != null) {
                     clear_cache = false;
-                    viewModel.send_intent.putExtra("folderclickselected", df.fileclickselected);
+                    viewModel.send_intent.putExtra("dest_folder", df.fileclickselected);
                     viewModel.send_intent.putExtra("destFileObjectType", df.fileObjectType);
                     viewModel.send_intent.setClass(context, CopyToActivity.class);
                     startActivity(viewModel.send_intent);

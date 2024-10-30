@@ -12,7 +12,7 @@ public class ArchiveSetUpViewModel extends ViewModel {
 
     public final MutableLiveData<AsyncTaskStatus> isRecursiveFilesRemoved = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public ArrayList<String> files_selected_array = new ArrayList<>();
-    public String folderclickselected = Global.INTERNAL_PRIMARY_STORAGE_PATH;
+    public String dest_folder = Global.INTERNAL_PRIMARY_STORAGE_PATH;
     public FileObjectType custom_dir_fileObjectType = FileObjectType.FILE_TYPE;
     public List<FilePOJO> destFilePOJOs;
     private boolean isCancelled;

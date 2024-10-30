@@ -361,7 +361,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                             setResult(Activity.RESULT_CANCELED);
                         } else {
                             Intent intent = new Intent();
-                            intent.putExtra("folderclickselected", fileSelectorFragment.folder_selected_textview.getText().toString());
+                            intent.putExtra("dest_folder", fileSelectorFragment.folder_selected_textview.getText().toString());
                             intent.putExtra("destFileObjectType", fileSelectorFragment.fileObjectType);
                             setResult(Activity.RESULT_OK, intent);
                         }
