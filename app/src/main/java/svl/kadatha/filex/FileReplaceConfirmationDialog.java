@@ -103,7 +103,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
             skip_button.setText(R.string.skip);;
         }
 
-        apply_all_checkbox = v.findViewById(R.id.dialog_fragment_applyall_confirmationCheckBox);
+        apply_all_checkbox = v.findViewById(R.id.dialog_fragment_apply_all_confirmation_CheckBox);
         progress_bar = v.findViewById(R.id.file_replacement_dialog_progressbar);
 
         if(replace_button!=null){
