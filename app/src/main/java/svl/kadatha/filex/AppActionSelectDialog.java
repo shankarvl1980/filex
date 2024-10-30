@@ -1,5 +1,6 @@
 package svl.kadatha.filex;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -145,6 +147,10 @@ public class AppActionSelectDialog extends DialogFragment {
                         pos = getBindingAdapterPosition();
                         bundle.putString("app_action", action_list.get(pos));
                         if (action_list.get(pos).equals(AppManagerListFragment.BACKUP)) {
+                            Activity activity=getActivity();
+                            if (activity instanceof AppManagerActivity) {
+                                ((AppManagerActivity) activity).clear_cache = false;
+                            }
                             Intent copy_intent = new Intent(context, CopyToActivity.class);
                             copy_intent.setAction(Intent.ACTION_SEND);
                             Uri copy_uri = FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", new File(app_path));

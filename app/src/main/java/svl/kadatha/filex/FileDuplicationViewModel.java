@@ -46,36 +46,51 @@ public class FileDuplicationViewModel extends ViewModel {
     private boolean isCancelled;
     private Future<?> future1, future2, future3;
 
-    public static boolean isDirectoryUri(Context context, @NonNull Uri uri) {
-        // First, try to get the mime type
-        String mimeType = null;
-        try {
-            mimeType = context.getContentResolver().getType(uri);
-        } catch (Exception e) {
-
-        }
-
-        // Check if it's a directory based on mime type
-        if (mimeType != null) {
-            if (DocumentsContract.Document.MIME_TYPE_DIR.equals(mimeType)) {
-                return true;
-            } else {
-                // If we have a non-null MIME type that isn't a directory, it's likely a file
-                return false;
-            }
-        }
-
-        try {
-            Uri childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(uri,
-                    DocumentsContract.getDocumentId(uri));
-            try (Cursor cursor = context.getContentResolver().query(childrenUri, new String[]{
-                    DocumentsContract.Document.COLUMN_DOCUMENT_ID}, null, null, null)) {
-                return (cursor != null && cursor.getCount() > 0);
-            }
-        } catch (Exception e) {
-            // An exception here likely means it's not a directory
+    public static boolean isUriDirectory(Context context, @NonNull Uri uri) {
+        // First, ensure the Uri is a document Uri
+        if (!DocumentsContract.isDocumentUri(context, uri)) {
             return false;
         }
+
+        Cursor cursor = null;
+        try {
+            // Define the columns to retrieve: MIME type and Flags
+            String[] projection = {
+                    DocumentsContract.Document.COLUMN_MIME_TYPE,
+                    DocumentsContract.Document.COLUMN_FLAGS
+            };
+
+            // Query the document for its MIME type and flags
+            cursor = context.getContentResolver().query(uri, projection, null, null, null);
+
+            if (cursor != null && cursor.moveToFirst()) {
+                // Retrieve the MIME type
+                int mimeTypeIndex = cursor.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_MIME_TYPE);
+                String mimeType = cursor.getString(mimeTypeIndex);
+
+                if (DocumentsContract.Document.MIME_TYPE_DIR.equals(mimeType)) {
+                    // The MIME type explicitly indicates a directory
+                    return true;
+                }
+
+                // Optional: Check if the document supports creating child documents
+                int flagsIndex = cursor.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_FLAGS);
+                int flags = cursor.getInt(flagsIndex);
+                boolean supportsCreate = (flags & DocumentsContract.Document.FLAG_DIR_SUPPORTS_CREATE) != 0;
+                if (supportsCreate) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            // Log the exception for debugging purposes
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        // If MIME type is not a directory and does not support child documents, return false
+        return false;
     }
 
     @Override
@@ -214,7 +229,7 @@ public class FileDuplicationViewModel extends ViewModel {
                     Iterator<Uri> data_list_iterator = data_list.iterator();
                     while (data_list_iterator.hasNext()) {
                         Uri data = data_list_iterator.next();
-                        if (isDirectoryUri(App.getAppContext(), data)) {
+                        if (isUriDirectory(App.getAppContext(), data)) {
                             data_list_iterator.remove();
                             directoriesRemoved = true;
                         }
