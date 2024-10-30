@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView.LayoutParams;
 import android.widget.Button;
@@ -45,7 +46,6 @@ public class RenameFileDialog extends DialogFragment {
     private boolean isWritable;
     private String other_file_permission, existing_file_path, new_file_path;
     private String new_name;
-    private Handler handler;
     private FrameLayout progress_bar;
 
     public static RenameFileDialog getInstance(String parent_file_path, String existing_name, boolean isDirectory, FileObjectType fileObjectType, String filePOJOHashmapKeyPath) {
@@ -80,7 +80,6 @@ public class RenameFileDialog extends DialogFragment {
         }
         existing_file_path = Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path, existing_name);
         other_file_permission = Global.GET_OTHER_FILE_PERMISSION(existing_file_path);
-        handler = new Handler(Looper.getMainLooper());
 
         if (savedInstanceState != null) {
             new_file_path = savedInstanceState.getString("new_file_path");
@@ -117,7 +116,6 @@ public class RenameFileDialog extends DialogFragment {
         new_file_name_edittext.setSelection(0, l);
         df = (DetailFragment) getParentFragmentManager().findFragmentById(R.id.detail_fragment);
         imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-
 
         CreateRenameViewModel viewModel = new ViewModelProvider(this).get(CreateRenameViewModel.class);
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
@@ -233,6 +231,10 @@ public class RenameFileDialog extends DialogFragment {
                 dismissAllowingStateLoss();
             }
         });
+        new_file_name_edittext.requestFocus();
+        if (imm != null) {
+            imm.showSoftInput(new_file_name_edittext, InputMethodManager.SHOW_IMPLICIT);
+        }
         return v;
     }
 
@@ -242,12 +244,6 @@ public class RenameFileDialog extends DialogFragment {
         outState.putString("new_file_path", new_file_path);
         outState.putBoolean("overwriting", overwriting);
         outState.putBoolean("isWritable", isWritable);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        handler.removeCallbacksAndMessages(null);
     }
 
     private void onRenameResult(boolean fileNameChanged, final String new_name, FilePOJO filePOJO) {
@@ -260,7 +256,6 @@ public class RenameFileDialog extends DialogFragment {
                 df.glm.scrollToPositionWithOffset(idx, 0);
             }
 
-
             Global.print(context, getString(R.string.renamed) + " '" + existing_name + "' " + getString(R.string.at) + " '" + new_name + "'");
         } else {
             Global.print(context, getString(R.string.could_not_be_renamed));
@@ -268,7 +263,6 @@ public class RenameFileDialog extends DialogFragment {
         Global.SET_OTHER_FILE_PERMISSION(other_file_permission, new_file_path);
         imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(), 0);
         dismissAllowingStateLoss();
-
     }
 
     private boolean check_SAF_permission(String parent_file_path, FileObjectType fileObjectType) {
@@ -295,7 +289,7 @@ public class RenameFileDialog extends DialogFragment {
         Window window = getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH, LayoutParams.WRAP_CONTENT);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        new_file_name_edittext.requestFocus();
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     }
 
     @Override

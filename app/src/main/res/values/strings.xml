@@ -126,6 +126,7 @@
     <string name="are_you_sure_to_delete_the_selected_file">Are you sure to delete the selected file?</string>
     <string name="are_you_sure_to_delete_the_selected_files">Are you sure to delete the selected files?</string>
     <string name="a_file_with_same_already_exists_do_you_want_to_replace_it">A file with same name already exists. Do you want to replace it?</string>
+    <string name="a_file_with_same_already_exists_do_you_want_to_rename_it">A file with same name already exists. Do you want to rename it?</string>
     <string name="a_folder_with_same_already_exists_do_you_want_to_overwrite_it">A folder with same name already exists. Do you want to overwrite it?</string>
     <string name="remove_selected">Remove selected</string>
     <string name="file_type">File type</string>

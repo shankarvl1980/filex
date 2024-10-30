@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView.LayoutParams;
 import android.widget.Button;
@@ -42,7 +43,6 @@ public class CreateFileDialog extends DialogFragment {
     private String parent_folder;
     private FileObjectType fileObjectType;
     private String other_file_permission;
-    private Handler handler;
     private FrameLayout progress_bar;
 
     public static CreateFileDialog getInstance(int file_type, String parent_folder, FileObjectType fileObjectType) {
@@ -73,10 +73,7 @@ public class CreateFileDialog extends DialogFragment {
             parent_folder = bundle.getString("parent_folder");
             fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
         }
-
         other_file_permission = Global.GET_OTHER_FILE_PERMISSION(parent_folder);
-        handler = new Handler(Looper.getMainLooper());
-
     }
 
     @Override
@@ -106,7 +103,6 @@ public class CreateFileDialog extends DialogFragment {
             dialog_heading_textview.setText(R.string.enter_folder_name);
             file_label_textview.setText(R.string.folder_name);
         }
-
 
         CreateRenameViewModel viewModel = new ViewModelProvider(this).get(CreateRenameViewModel.class);
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
@@ -148,7 +144,6 @@ public class CreateFileDialog extends DialogFragment {
             }
         });
 
-
         okbutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String new_name = new_file_name_edittext.getText().toString().trim();
@@ -178,10 +173,8 @@ public class CreateFileDialog extends DialogFragment {
                     imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(), 0);
                     return;
                 }
-
                 viewModel.createFile(file, fileObjectType, file_type, parent_folder, tree_uri_path, tree_uri);
             }
-
         });
 
         cancelbutton.setOnClickListener(new View.OnClickListener() {
@@ -199,16 +192,14 @@ public class CreateFileDialog extends DialogFragment {
                     tree_uri_path = result.getString("tree_uri_path");
                     okbutton.callOnClick();
                 }
-
             }
         });
-        return v;
-    }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        handler.removeCallbacksAndMessages(null);
+        new_file_name_edittext.requestFocus();
+        if (imm != null) {
+            imm.showSoftInput(new_file_name_edittext, InputMethodManager.SHOW_IMPLICIT);
+        }
+        return v;
     }
 
     private boolean is_file_writable(String file_path, FileObjectType fileObjectType) {
@@ -231,7 +222,7 @@ public class CreateFileDialog extends DialogFragment {
         Window window = getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH, LayoutParams.WRAP_CONTENT);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        new_file_name_edittext.requestFocus();
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     }
 
     private boolean check_SAF_permission(String new_file_path, FileObjectType fileObjectType) {
@@ -263,5 +254,4 @@ public class CreateFileDialog extends DialogFragment {
         imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(), 0);
         super.onDismiss(dialog);
     }
-
 }

@@ -38,6 +38,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
     private String dest_folder;
     private FileObjectType sourceFileObjectType, destFileObjectType;
     private String file_name;
+    private Button replace_button = null;
 
     public static FileReplaceConfirmationDialog getInstance(String source_folder, FileObjectType sourceFileObjectType, String dest_folder, FileObjectType destFileObjectType,
                                                             ArrayList<String> files_selected_array, List<Uri> data_list, String file_name, boolean cut_selected) {
@@ -99,8 +100,8 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
         TextView confirmation_message_textview = v.findViewById(R.id.dialog_fragment_replace_message);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_replace_confirmation_button_layout);
 
-        Button replace_button = null, rename_button, skip_button;
 
+        Button rename_button, skip_button;
         if (sourceFileObjectType.equals(destFileObjectType) && source_folder.equals(dest_folder)) {
             buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context, 2, Global.DIALOG_WIDTH, Global.DIALOG_WIDTH));
             rename_button = buttons_layout.findViewById(R.id.first_button);
@@ -142,12 +143,15 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
                             progress_bar.setVisibility(View.VISIBLE);
                             fileDuplicationViewModel.filterFileSelectedArray(context, FileOperationMode.REPLACE, false, data_list);
                         } else {
-                            confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it) + " '" + new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName() + "'");
+                            if(replace_button==null){
+                                confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_rename_it) + " '" + new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName() + "'");
+                            } else{
+                                confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it) + " '" + new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName() + "'");
+                            }
                         }
                     }
                 }
             });
-
         }
 
         rename_button.setOnClickListener(new View.OnClickListener() {
@@ -168,7 +172,11 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
                         progress_bar.setVisibility(View.VISIBLE);
                         fileDuplicationViewModel.filterFileSelectedArray(context, FileOperationMode.RENAME, false, data_list);
                     } else {
-                        confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it) + " '" + new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName() + "'");
+                        if(replace_button==null){
+                            confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_rename_it) + " '" + new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName() + "'");
+                        } else{
+                            confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it) + " '" + new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName() + "'");
+                        }
                     }
                 }
             }
@@ -193,7 +201,11 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
                         progress_bar.setVisibility(View.VISIBLE);
                         fileDuplicationViewModel.filterFileSelectedArray(context, FileOperationMode.SKIP, false, data_list);
                     } else {
-                        confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it) + " '" + new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName() + "'");
+                        if(replace_button==null){
+                            confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_rename_it) + " '" + new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName() + "'");
+                        } else{
+                            confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it) + " '" + new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName() + "'");
+                        }
                     }
                 }
             }
@@ -214,7 +226,11 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
                 } else if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
                     progress_bar.setVisibility(View.GONE);
                     if (!fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
-                        confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it) + " '" + new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName() + "'");
+                        if(replace_button==null){
+                            confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_rename_it) + " '" + new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName() + "'");
+                        } else{
+                            confirmation_message_textview.setText(getString(R.string.a_file_with_same_already_exists_do_you_want_to_replace_it) + " '" + new File(fileDuplicationViewModel.source_duplicate_file_path_array.get(0)).getName() + "'");
+                        }
                     }
                 }
             }
