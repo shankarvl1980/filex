@@ -66,9 +66,8 @@ public class RootUtils {
         }
 
         // Split the output using the null character as the delimiter
-        String[] filePaths = output.split("\0");
 
         // Return the array of file paths
-        return filePaths;
+        return output.split("\0");
     }
 }

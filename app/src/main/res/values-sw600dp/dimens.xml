@@ -4,7 +4,6 @@
     <dimen name="layout_margin">4dp</dimen>
     <dimen name="four_dp">4dp</dimen>
     <dimen name="ten_dp">10dp</dimen>
-    <dimen name="twenty_dp">20dp</dimen>
     <dimen name="image_preview_dimen">80dp</dimen>
     <dimen name="list_popup_window_width">180dp</dimen>
 
@@ -19,5 +18,4 @@
 
     <dimen name="higher_floating_button_margin_bottom">220dp</dimen>
     <dimen name="dialog_inner_padding">8dp</dimen>
-    <dimen name="space_between_dialog_item">4dp</dimen>
 </resources>

@@ -10,8 +10,6 @@ import android.os.IBinder;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import svl.kadatha.filex.asynctasks.ArchiveAsyncTask;

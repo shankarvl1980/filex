@@ -100,7 +100,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
             rename_button = buttons_layout.findViewById(R.id.second_button);
             rename_button.setText(R.string.rename);
             skip_button = buttons_layout.findViewById(R.id.third_button);
-            skip_button.setText(R.string.skip);;
+            skip_button.setText(R.string.skip);
         }
 
         apply_all_checkbox = v.findViewById(R.id.dialog_fragment_apply_all_confirmation_CheckBox);

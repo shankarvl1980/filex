@@ -160,9 +160,9 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
 
         // Inner class to hold the copy pair and top-level flag
         class CopyPair {
-            FileModel source;
-            FileModel dest;
-            boolean isTopLevel;
+            final FileModel source;
+            final FileModel dest;
+            final boolean isTopLevel;
 
             CopyPair(FileModel source, FileModel dest, boolean isTopLevel) {
                 this.source = source;

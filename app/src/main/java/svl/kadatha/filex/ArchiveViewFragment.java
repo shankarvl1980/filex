@@ -409,7 +409,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
             if (p.equals(File.separator)) {
                 filepath_string_array = new String[]{""};
             } else {
-                filepath_string_array = display_path.split(File.separator);
+                filepath_string_array = display_path.split("/");
             }
         }
 

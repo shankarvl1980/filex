@@ -300,8 +300,7 @@ public class SessionThread extends Thread {
     }
 
     public boolean isPasvMode() {
-        boolean pasvMode = false;
-        return pasvMode;
+        return false;
     }
 
     public boolean isBinaryMode() {

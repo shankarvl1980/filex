@@ -336,8 +336,7 @@ public class SftpFileModel implements FileModel {
             sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
             channelSftp = sftpChannelRepository.getSftpChannel();
             SftpATTRS attrs = channelSftp.lstat(path);
-            long size = attrs.getSize();
-            return size;
+            return attrs.getSize();
         } catch (SftpException | JSchException e) {
             Timber.tag(TAG).e("Failed to get length: %s", e.getMessage());
             return 0;
@@ -388,8 +387,7 @@ public class SftpFileModel implements FileModel {
             sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
             channelSftp = sftpChannelRepository.getSftpChannel();
             SftpATTRS attrs = channelSftp.lstat(path);
-            long mtime = ((long) attrs.getMTime()) * 1000;
-            return mtime;
+            return ((long) attrs.getMTime()) * 1000;
         } catch (SftpException | JSchException e) {
             Timber.tag(TAG).e("Failed to get last modified time: %s", e.getMessage());
             return 0;
