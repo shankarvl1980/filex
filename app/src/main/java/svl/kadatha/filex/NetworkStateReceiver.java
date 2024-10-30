@@ -16,7 +16,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                     ConnectivityManager.EXTRA_NO_CONNECTIVITY, false
             );
 
-            ExecutorService executorService=MyExecutorService.getExecutorService();
+            ExecutorService executorService = MyExecutorService.getExecutorService();
             executorService.submit(new Runnable() {
                 @Override
                 public void run() {

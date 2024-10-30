@@ -600,7 +600,7 @@ public class AudioPlayFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (audio_player_service != null){
+        if (audio_player_service != null) {
             audio_player_service.removeMediaPlayerPrepareListener();
             audio_player_service.removeAudioPlayerServiceBroadcastListener();
         }

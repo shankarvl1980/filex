@@ -57,6 +57,17 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
         this.counter_size_files[0] = 0;
     }
 
+    public static long getLengthUri(Context context, Uri uri) {
+        long fileSize = 0;
+        try (AssetFileDescriptor fileDescriptor = context.getContentResolver().openAssetFileDescriptor(uri, "r")) {
+            fileSize = fileDescriptor.getLength();
+        } catch (IOException e) {
+
+        } finally {
+            return fileSize;
+        }
+    }
+
     @Override
     protected Boolean doInBackground(Void... params) {
         if (destFileObjectType == FileObjectType.ROOT_TYPE) {
@@ -134,17 +145,6 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
         super.onCancelled(aBoolean);
         if (listener != null) {
             listener.onTaskCancelled(TASK_TYPE, filePOJO);
-        }
-    }
-
-    public static long getLengthUri(Context context, Uri uri) {
-        long fileSize = 0;
-        try (AssetFileDescriptor fileDescriptor = context.getContentResolver().openAssetFileDescriptor(uri, "r")) {
-            fileSize = fileDescriptor.getLength();
-        } catch (IOException e) {
-
-        } finally {
-            return fileSize;
         }
     }
 }

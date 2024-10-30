@@ -40,7 +40,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
     private String file_name;
 
     public static FileReplaceConfirmationDialog getInstance(String source_folder, FileObjectType sourceFileObjectType, String dest_folder, FileObjectType destFileObjectType,
-                                                            ArrayList<String> files_selected_array, List<Uri> data_list,String file_name, boolean cut_selected) {
+                                                            ArrayList<String> files_selected_array, List<Uri> data_list, String file_name, boolean cut_selected) {
         FileReplaceConfirmationDialog fileReplaceConfirmationDialog = new FileReplaceConfirmationDialog();
         Bundle bundle = new Bundle();
         bundle.putString("source_folder", source_folder);
@@ -49,10 +49,24 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
         bundle.putSerializable("destFileObjectType", destFileObjectType);
         bundle.putString("dest_folder", dest_folder);
         bundle.putParcelableArrayList("data_list", (ArrayList<? extends Parcelable>) data_list);
-        bundle.putString("file_name",file_name);
+        bundle.putString("file_name", file_name);
         bundle.putBoolean("cut", cut_selected);
         fileReplaceConfirmationDialog.setArguments(bundle);
         return fileReplaceConfirmationDialog;
+    }
+
+    private static void removeNotTobeCopiedUris(Context context, List<Uri> data_list, List<String> file_path_list) {
+        if (data_list == null || data_list.isEmpty() || file_path_list.isEmpty()) return;
+        Iterator<Uri> iterator = data_list.iterator();
+        while (iterator.hasNext()) {
+            String name = CopyToActivity.getFileNameOfUri(context, iterator.next());
+            for (String f_name : file_path_list) {
+                if (name.equals(f_name)) {
+                    iterator.remove();
+                    break;
+                }
+            }
+        }
     }
 
     @Override
@@ -75,7 +89,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
             sourceFileObjectType = (FileObjectType) bundle.getSerializable("sourceFileObjectType");
             destFileObjectType = (FileObjectType) bundle.getSerializable("destFileObjectType");
             data_list = bundle.getParcelableArrayList("data_list");
-            file_name=bundle.getString("file_name");
+            file_name = bundle.getString("file_name");
         }
     }
 
@@ -85,15 +99,15 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
         TextView confirmation_message_textview = v.findViewById(R.id.dialog_fragment_replace_message);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_replace_confirmation_button_layout);
 
-        Button replace_button = null,rename_button,skip_button;
+        Button replace_button = null, rename_button, skip_button;
 
-        if(sourceFileObjectType.equals(destFileObjectType) && source_folder.equals(dest_folder)){
+        if (sourceFileObjectType.equals(destFileObjectType) && source_folder.equals(dest_folder)) {
             buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context, 2, Global.DIALOG_WIDTH, Global.DIALOG_WIDTH));
             rename_button = buttons_layout.findViewById(R.id.first_button);
             rename_button.setText(R.string.rename);
             skip_button = buttons_layout.findViewById(R.id.second_button);
             skip_button.setText(R.string.skip);
-        } else{
+        } else {
             buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context, 3, Global.DIALOG_WIDTH, Global.DIALOG_WIDTH));
             replace_button = buttons_layout.findViewById(R.id.first_button);
             replace_button.setText(R.string.replace);
@@ -106,7 +120,7 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
         apply_all_checkbox = v.findViewById(R.id.dialog_fragment_apply_all_confirmation_CheckBox);
         progress_bar = v.findViewById(R.id.file_replacement_dialog_progressbar);
 
-        if(replace_button!=null){
+        if (replace_button != null) {
             replace_button.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     if (progress_bar.getVisibility() == View.VISIBLE) {
@@ -118,11 +132,12 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
                         progress_bar.setVisibility(View.VISIBLE);
                         fileDuplicationViewModel.filterFileSelectedArray(context, FileOperationMode.REPLACE, true, data_list);
                     } else {
-                        String replacing_file_path=fileDuplicationViewModel.source_duplicate_file_path_array.remove(0);
+                        String replacing_file_path = fileDuplicationViewModel.source_duplicate_file_path_array.remove(0);
                         fileDuplicationViewModel.overwritten_file_path_list.add(fileDuplicationViewModel.destination_duplicate_file_path_array.remove(0));
-                        fileDuplicationViewModel.sourceFileDestNameMap.put(replacing_file_path,new File(replacing_file_path).getName());
-                        Uri uri=fileDuplicationViewModel.duplicateUriDestNameMap.removeAtIndex(0);
-                        if(uri!=null) fileDuplicationViewModel.uriDestNameMap.put(uri,new File(replacing_file_path).getName());
+                        fileDuplicationViewModel.sourceFileDestNameMap.put(replacing_file_path, new File(replacing_file_path).getName());
+                        Uri uri = fileDuplicationViewModel.duplicateUriDestNameMap.removeAtIndex(0);
+                        if (uri != null)
+                            fileDuplicationViewModel.uriDestNameMap.put(uri, new File(replacing_file_path).getName());
                         if (fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
                             progress_bar.setVisibility(View.VISIBLE);
                             fileDuplicationViewModel.filterFileSelectedArray(context, FileOperationMode.REPLACE, false, data_list);
@@ -186,8 +201,8 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
 
         fileDuplicationViewModel = new ViewModelProvider(this).get(FileDuplicationViewModel.class);
         if (data_list != null && !data_list.isEmpty()) {
-            fileDuplicationViewModel.checkForExistingFileWithSameNameUri(source_folder,sourceFileObjectType,dest_folder,destFileObjectType,data_list,file_name,false,true);
-        } else{
+            fileDuplicationViewModel.checkForExistingFileWithSameNameUri(source_folder, sourceFileObjectType, dest_folder, destFileObjectType, data_list, file_name, false, true);
+        } else {
             fileDuplicationViewModel.checkForExistingFileWithSameName(source_folder, sourceFileObjectType, dest_folder, destFileObjectType, files_selected_array, cut, true);
         }
 
@@ -235,19 +250,5 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
         Window window = getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH, LayoutParams.WRAP_CONTENT);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-    }
-
-    private static void removeNotTobeCopiedUris(Context context, List<Uri> data_list, List<String> file_path_list) {
-        if (data_list == null || data_list.isEmpty() || file_path_list.isEmpty()) return;
-        Iterator<Uri> iterator = data_list.iterator();
-        while (iterator.hasNext()) {
-            String name = CopyToActivity.getFileNameOfUri(context, iterator.next());
-            for (String f_name : file_path_list) {
-                if (name.equals(f_name)) {
-                    iterator.remove();
-                    break;
-                }
-            }
-        }
     }
 }

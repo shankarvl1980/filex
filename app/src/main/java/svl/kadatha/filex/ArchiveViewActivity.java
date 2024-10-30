@@ -457,7 +457,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
 
     @Override
     public void onDeselectAll(Fragment fragment) {
-        DeselectAllAndAdjustToolbars((ArchiveViewFragment) fragment,((ArchiveViewFragment)fragment).fileclickselected);
+        DeselectAllAndAdjustToolbars((ArchiveViewFragment) fragment, ((ArchiveViewFragment) fragment).fileclickselected);
     }
 
     @Override
@@ -492,16 +492,16 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
 
     @Override
     public void onScrollRecyclerView(boolean showToolBar) {
-        if(showToolBar){
+        if (showToolBar) {
             bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-        } else{
+        } else {
             bottom_toolbar.animate().translationY(bottom_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
         }
     }
 
     @Override
     public void actionModeFinish(Fragment fragment, String fileclickeselected) {
-        action_mode_finish((ArchiveViewFragment) fragment,fileclickeselected);
+        action_mode_finish((ArchiveViewFragment) fragment, fileclickeselected);
     }
 
     @Override
@@ -630,7 +630,11 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
         imm.hideSoftInputFromWindow(search_edittext.getWindowToken(), 0);
     }
 
-    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
+    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -671,12 +675,6 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
         }
     });
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
-    }
-
     public void DeselectAllAndAdjustToolbars(ArchiveViewFragment archiveViewFragment, String detailfrag_tag) {
         bottom_toolbar.setVisibility(View.VISIBLE);
         bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
@@ -710,7 +708,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
         ArchiveDetailRecyclerViewAdapter(Context context, ArchiveViewFragment archiveViewFragment) {
             this.context = context;
             this.archiveViewFragment = archiveViewFragment;
-            if(archiveViewFragment.detailFragmentListener!=null){
+            if (archiveViewFragment.detailFragmentListener != null) {
                 archiveViewFragment.detailFragmentListener.setCurrentDirText(archiveViewFragment.file_click_selected_name);
                 archiveViewFragment.detailFragmentListener.setFileNumberView(archiveViewFragment.viewModel.mselecteditems.size() + "/" + archiveViewFragment.file_list_size);
                 if (archiveViewFragment.fileObjectType == FileObjectType.FILE_TYPE) {
@@ -777,7 +775,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                         archiveViewFragment.folder_empty.setVisibility(View.GONE);
                     }
 
-                    if(archiveViewFragment.detailFragmentListener!=null){
+                    if (archiveViewFragment.detailFragmentListener != null) {
                         archiveViewFragment.detailFragmentListener.setFileNumberView("" + t);
                     }
                 }
@@ -1042,6 +1040,8 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
             }
         }
     }
+
+
 
 
 }

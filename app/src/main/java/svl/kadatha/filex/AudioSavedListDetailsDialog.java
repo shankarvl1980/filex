@@ -563,7 +563,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
             String artist = getString(R.string.artists_colon) + " " + audio.getArtist();
             boolean item_selected = audioListViewModel.audio_pojo_selected_items.containsKey(p2);
 
-            if (!whether_saved_play_list && AudioPlayerActivity.AUDIO_FILE!=null && audio.getId() == AudioPlayerActivity.AUDIO_FILE.getId()) {
+            if (!whether_saved_play_list && AudioPlayerActivity.AUDIO_FILE != null && audio.getId() == AudioPlayerActivity.AUDIO_FILE.getId()) {
                 p1.view.titletextview.setTextColor(playing_audio_text_color);
                 p1.view.albumtextview.setTextColor(playing_audio_text_color);
                 p1.view.durationtextview.setTextColor(playing_audio_text_color);

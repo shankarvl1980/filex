@@ -90,8 +90,8 @@ public class FilePOJOViewModel extends AndroidViewModel {
 
         future1 = executorService.submit(() -> {
             filePOJOS = new ArrayList<>();
-                filePOJOS_filtered = new ArrayList<>();
-                FilePOJOUtil.FILL_FILE_POJO(filePOJOS, filePOJOS_filtered, fileObjectType, fileclickselected, currentUsbFile, archive_view);
+            filePOJOS_filtered = new ArrayList<>();
+            FilePOJOUtil.FILL_FILE_POJO(filePOJOS, filePOJOS_filtered, fileObjectType, fileclickselected, currentUsbFile, archive_view);
 
             if (fill_file_size_also) {
                 long storage_space = 0L;
@@ -148,7 +148,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 // Optionally, set the asyncTaskStatus to FAILED
                 // asyncTaskStatus.postValue(AsyncTaskStatus.FAILED);
                 return;
-            } finally{
+            } finally {
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
@@ -408,13 +408,13 @@ public class FilePOJOViewModel extends AndroidViewModel {
                     if (media_category != null && media_category.equals("Download")) {
                         search_download(filePOJOS, filePOJOS_filtered);
                     } else {
-                        start_distributed_search(search_lower_limit_size,search_upper_limit_size);
+                        start_distributed_search(search_lower_limit_size, search_upper_limit_size);
                     }
                 } else {
                     if (media_category != null && media_category.equals("Download")) {
                         search_download(filePOJOS, filePOJOS_filtered);
                     } else if (library_or_search.equals(DetailFragment.SEARCH_RESULT)) {
-                        start_distributed_search(search_lower_limit_size,search_upper_limit_size);
+                        start_distributed_search(search_lower_limit_size, search_upper_limit_size);
                     } else {
                         search_file(filePOJOS, filePOJOS_filtered);
                     }

@@ -86,11 +86,11 @@ public class AllAudioListFragment extends Fragment {
         audioChangeListener = new AudioPlayerActivity.AudioChangeListener() {
             @Override
             public void onAudioCompletion() {
-                if(audioListRecyclerViewAdapter!=null){
+                if (audioListRecyclerViewAdapter != null) {
                     audioListRecyclerViewAdapter.notifyDataSetChanged();
                 }
-                if(recyclerview!=null && AudioPlayerActivity.AUDIO_FILE!=null){
-                    int position=AudioPlayerActivity.AUDIO_FILE.getPosition();
+                if (recyclerview != null && AudioPlayerActivity.AUDIO_FILE != null) {
+                    int position = AudioPlayerActivity.AUDIO_FILE.getPosition();
                     recyclerview.scrollToPosition(position);
                 }
             }
@@ -547,7 +547,7 @@ public class AllAudioListFragment extends Fragment {
             p1.view.setData(album_id, title, album, duration_str, artist, item_selected);
             p1.view.setSelected(item_selected);
 
-            if (AudioPlayerActivity.AUDIO_FILE!=null && audio.getId() == AudioPlayerActivity.AUDIO_FILE.getId()) {
+            if (AudioPlayerActivity.AUDIO_FILE != null && audio.getId() == AudioPlayerActivity.AUDIO_FILE.getId()) {
                 p1.view.titletextview.setTextColor(playing_audio_text_color);
                 p1.view.albumtextview.setTextColor(playing_audio_text_color);
                 p1.view.durationtextview.setTextColor(playing_audio_text_color);

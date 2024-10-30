@@ -233,7 +233,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         totalFilePOJO_list_Size = totalFilePOJO_list.size();
         file_list_size = totalFilePOJO_list_Size;
         Collections.sort(filePOJO_list, viewModel.library_time_desc ? FileComparator.FilePOJOComparate("d_date_desc", false) : FileComparator.FilePOJOComparate(Global.SORT, false));
-        adapter = new ArchiveViewActivity.ArchiveDetailRecyclerViewAdapter(context,this);
+        adapter = new ArchiveViewActivity.ArchiveDetailRecyclerViewAdapter(context, this);
         set_adapter();
         progress_bar.setVisibility(View.GONE);
         detailFragmentListener.setFileNumberView(viewModel.mselecteditems.size() + "/" + file_list_size);

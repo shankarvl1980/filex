@@ -302,7 +302,6 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
     }
 
 
-
     public void file_open_intent_dispatch(final String file_path, final FileObjectType fileObjectType, String file_name, boolean select_app, long file_size) {
         int idx = file_name.lastIndexOf(".");
         String file_ext = "";

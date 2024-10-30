@@ -100,7 +100,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             current_file_name = sourceFileModel.getName();
 
             if (whether_copy_between_network_file_systems) {
-                copy_result = CopyFileModelForNetWorkDestFolders(sourceFileModel, destFileModel, destFileName,cut);
+                copy_result = CopyFileModelForNetWorkDestFolders(sourceFileModel, destFileModel, destFileName, cut);
             } else {
                 copy_result = CopyFileModel(sourceFileModel, destFileModel, destFileName, cut);
             }
@@ -246,7 +246,7 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     }
 
 
-    private boolean CopyFileModelForNetWorkDestFolders(FileModel sourceFileModel, FileModel destFileModel,String destFileName ,boolean cut) {
+    private boolean CopyFileModelForNetWorkDestFolders(FileModel sourceFileModel, FileModel destFileModel, String destFileName, boolean cut) {
         Timber.tag("CopyFileModel").d("Starting copy operation. Source: %s, Destination: %s", sourceFileModel.getPath(), destFileModel.getPath());
         List<FileModel> filesToCopy = new ArrayList<>();
         collectFilesToCopy(sourceFileModel, filesToCopy);

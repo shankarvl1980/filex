@@ -4,12 +4,31 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A Parcelable implementation of a LinkedHashMap with Uri keys and String values.
  */
 public class ParcelableUriStringLinkedMap implements Parcelable, Iterable<Map.Entry<Uri, String>> {
+    public static final Creator<ParcelableUriStringLinkedMap> CREATOR = new Creator<ParcelableUriStringLinkedMap>() {
+        @Override
+        public ParcelableUriStringLinkedMap createFromParcel(Parcel in) {
+            return new ParcelableUriStringLinkedMap(in);
+        }
+
+        @Override
+        public ParcelableUriStringLinkedMap[] newArray(int size) {
+            return new ParcelableUriStringLinkedMap[size];
+        }
+    };
     private static final int MAX_SIZE = 100000; // Maximum allowable size to prevent memory issues
     private final LinkedHashMap<Uri, String> map;
     private final List<Uri> keyList; // Maintains insertion order for efficient access by index
@@ -274,16 +293,4 @@ public class ParcelableUriStringLinkedMap implements Parcelable, Iterable<Map.En
     public int describeContents() {
         return 0;
     }
-
-    public static final Creator<ParcelableUriStringLinkedMap> CREATOR = new Creator<ParcelableUriStringLinkedMap>() {
-        @Override
-        public ParcelableUriStringLinkedMap createFromParcel(Parcel in) {
-            return new ParcelableUriStringLinkedMap(in);
-        }
-
-        @Override
-        public ParcelableUriStringLinkedMap[] newArray(int size) {
-            return new ParcelableUriStringLinkedMap[size];
-        }
-    };
 }

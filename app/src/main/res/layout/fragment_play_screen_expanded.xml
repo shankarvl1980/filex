@@ -198,14 +198,14 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/previous_icon"
-            android:scaleType="center"
             android:padding="10dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/back_10_image_button"
-            app:layout_constraintTop_toTopOf="parent"
+            android:scaleType="center"
+            android:src="@drawable/previous_icon"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_chainStyle="spread" />
+            app:layout_constraintEnd_toStartOf="@id/back_10_image_button"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Back 15 Seconds Button -->
         <ImageButton
@@ -213,28 +213,27 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/backward_10_icon"
-            android:scaleType="center"
             android:padding="10dp"
-            app:layout_constraintStart_toEndOf="@id/prev_image_button"
+            android:scaleType="center"
+            android:src="@drawable/backward_10_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/play_pause_image_button"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintStart_toEndOf="@id/prev_image_button"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
-
-            <ImageButton
-                android:id="@+id/play_pause_image_button"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/play_icon"
-                android:scaleType="center"
-                android:padding="10dp"
-                app:layout_constraintStart_toEndOf="@id/back_10_image_button"
-                app:layout_constraintEnd_toStartOf="@id/forward_10_image_button"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+        <ImageButton
+            android:id="@+id/play_pause_image_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="10dp"
+            android:scaleType="center"
+            android:src="@drawable/play_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/forward_10_image_button"
+            app:layout_constraintStart_toEndOf="@id/back_10_image_button"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
         <!-- Forward 15 Seconds Button -->
@@ -243,13 +242,13 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/forward_10_icon"
-            android:scaleType="center"
             android:padding="10dp"
-            app:layout_constraintStart_toEndOf="@id/play_pause_image_button"
+            android:scaleType="center"
+            android:src="@drawable/forward_10_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/next_image_button"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintStart_toEndOf="@id/play_pause_image_button"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Next Button -->
         <ImageButton
@@ -257,13 +256,13 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/next_icon"
-            android:scaleType="center"
             android:padding="10dp"
-            app:layout_constraintStart_toEndOf="@id/forward_10_image_button"
+            android:scaleType="center"
+            android:src="@drawable/next_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintStart_toEndOf="@id/forward_10_image_button"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

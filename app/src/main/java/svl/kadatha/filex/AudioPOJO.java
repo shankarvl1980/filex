@@ -63,12 +63,26 @@ public class AudioPOJO implements Parcelable {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getData() {
         return data;
     }
 
+    public void setData(String data) {
+        this.data = data;
+    }
+
     public String getTitle() {
         return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+        // Update lower_title whenever title is set
+        this.lower_title = title != null ? title.toLowerCase() : null;
     }
 
     public String getLowerTitle() {
@@ -79,60 +93,46 @@ public class AudioPOJO implements Parcelable {
         return album_id;
     }
 
+    public void setAlbumId(String album_id) {
+        this.album_id = album_id;
+    }
+
     public String getAlbum() {
         return album;
+    }
+
+    // Setters
+
+    public void setAlbum(String album) {
+        this.album = album;
     }
 
     public String getArtist() {
         return artist;
     }
 
-    public String getDuration() {
-        return duration;
-    }
-
-    public FileObjectType getFileObjectType() {
-        return fileObjectType;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    // Setters
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setData(String data) {
-        this.data = data;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-        // Update lower_title whenever title is set
-        this.lower_title = title != null ? title.toLowerCase() : null;
-    }
-
-    public void setAlbumId(String album_id) {
-        this.album_id = album_id;
-    }
-
-    public void setAlbum(String album) {
-        this.album = album;
-    }
-
     public void setArtist(String artist) {
         this.artist = artist;
+    }
+
+    public String getDuration() {
+        return duration;
     }
 
     public void setDuration(String duration) {
         this.duration = duration;
     }
 
+    public FileObjectType getFileObjectType() {
+        return fileObjectType;
+    }
+
     public void setFileObjectType(FileObjectType fileObjectType) {
         this.fileObjectType = fileObjectType;
+    }
+
+    public int getPosition() {
+        return position;
     }
 
     public void setPosition(int position) {

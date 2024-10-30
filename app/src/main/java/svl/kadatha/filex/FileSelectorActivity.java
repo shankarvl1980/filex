@@ -617,7 +617,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count - frag).getName());
                 String tag = fileSelectorFragment.getTag();
 
-                while (tag != null && !(fileSelectorFragment.fileObjectType==FileObjectType.FILE_TYPE && new File(tag).exists()) && fileSelectorFragment.currentUsbFile == null
+                while (tag != null && !(fileSelectorFragment.fileObjectType == FileObjectType.FILE_TYPE && new File(tag).exists()) && fileSelectorFragment.currentUsbFile == null
                         && !Global.WHETHER_FILE_OBJECT_TYPE_NETWORK_TYPE_AND_CONTAINED_IN_STORAGE_DIR(fileSelectorFragment.fileObjectType)) {
                     fm.popBackStack();
                     ++frag;
@@ -704,6 +704,10 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                     fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
                 break;
         }
+    }
+
+    interface RecentDialogListener {
+        void onMediaAttachedAndRemoved();
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_files_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -743,10 +747,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         }
     });
-
-    interface RecentDialogListener {
-        void onMediaAttachedAndRemoved();
-    }
 
     public static class PopupWindowAdapter extends ArrayAdapter<FilePOJO> {
         final Context context;
@@ -985,8 +985,8 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         public void onReceive(Context context, Intent intent) {
             FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
             FileObjectType fileObjectType = null;
-            Bundle bundle=intent.getExtras();
-            if(bundle!=null){
+            Bundle bundle = intent.getExtras();
+            if (bundle != null) {
                 fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
             }
             switch (intent.getAction()) {
@@ -1001,9 +1001,9 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 case Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION:
                     break;
                 case Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT:
-                    if(fileSelectorFragment!=null && fileObjectType!=null && fileObjectType==fileSelectorFragment.fileObjectType){
-                    onbackpressed(false);
-                }
+                    if (fileSelectorFragment != null && fileObjectType != null && fileObjectType == fileSelectorFragment.fileObjectType) {
+                        onbackpressed(false);
+                    }
                     break;
             }
         }

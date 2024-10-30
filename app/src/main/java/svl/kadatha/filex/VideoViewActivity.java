@@ -101,6 +101,7 @@ public class VideoViewActivity extends BaseActivity {
 
     public interface VideoControlListener {
         void showControls(boolean autoHide);
+
         void hideControls();
     }
 

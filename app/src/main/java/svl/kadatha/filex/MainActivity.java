@@ -418,7 +418,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                         pasteSetUpDialog.show(fm, "paste_dialog");
                     } else {
                         FileReplaceConfirmationDialog fileReplaceConfirmationDialog = FileReplaceConfirmationDialog.getInstance(fileDuplicationViewModel.source_folder, fileDuplicationViewModel.sourceFileObjectType,
-                                fileDuplicationViewModel.dest_folder, fileDuplicationViewModel.destFileObjectType, fileDuplicationViewModel.files_selected_array, null,null ,fileDuplicationViewModel.cut);
+                                fileDuplicationViewModel.dest_folder, fileDuplicationViewModel.destFileObjectType, fileDuplicationViewModel.files_selected_array, null, null, fileDuplicationViewModel.cut);
                         fileReplaceConfirmationDialog.show(fm, "paste_dialog");
                     }
                     fileDuplicationViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
@@ -909,7 +909,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
     @Override
     public void onDeselectAll(Fragment fragment) {
-        if(fragment instanceof DetailFragment){
+        if (fragment instanceof DetailFragment) {
             DeselectAllAndAdjustToolbars((DetailFragment) fragment);
         }
     }
@@ -1278,10 +1278,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 int frag = 2;
                 df = (DetailFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count - frag).getName());
                 String df_tag = df.getTag();
-                while (!(df.fileObjectType==FileObjectType.FILE_TYPE && new File(df_tag).exists()) && !LIBRARY_CATEGORIES.contains(df_tag) && !df_tag.equals("Large Files")
+                while (!(df.fileObjectType == FileObjectType.FILE_TYPE && new File(df_tag).exists()) && !LIBRARY_CATEGORIES.contains(df_tag) && !df_tag.equals("Large Files")
                         && !df_tag.equals("Duplicate Files") && df.currentUsbFile == null
-                        && !Global.WHETHER_FILE_OBJECT_TYPE_NETWORK_TYPE_AND_CONTAINED_IN_STORAGE_DIR(df.fileObjectType))
-                {
+                        && !Global.WHETHER_FILE_OBJECT_TYPE_NETWORK_TYPE_AND_CONTAINED_IN_STORAGE_DIR(df.fileObjectType)) {
                     fm.popBackStack();
                     ++frag;
                     if (frag > entry_count) break;
@@ -1304,7 +1303,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         }
     }
 
-    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    @Override
+    protected void onPause() {
+        super.onPause();
+        imm.hideSoftInputFromWindow(search_view.getWindowToken(), 0);
+    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -1343,12 +1346,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     });
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        imm.hideSoftInputFromWindow(search_view.getWindowToken(), 0);
-    }
 
     @Override
     protected void onDestroy() {
@@ -2373,8 +2370,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         public void onReceive(Context context, Intent intent) {
             DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
             FileObjectType fileObjectType = null;
-            Bundle bundle=intent.getExtras();
-            if(bundle!=null){
+            Bundle bundle = intent.getExtras();
+            if (bundle != null) {
                 fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
             }
 
@@ -2389,11 +2386,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     storageRecyclerAdapter.notifyDataSetChanged();
                     break;
                 case Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT:
-                    if(df!=null && fileObjectType!=null && fileObjectType==df.fileObjectType){
+                    if (df != null && fileObjectType != null && fileObjectType == df.fileObjectType) {
                         onbackpressed(false);
                     }
                     break;
             }
         }
     }
+
+
 }

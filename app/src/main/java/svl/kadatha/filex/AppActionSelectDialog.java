@@ -32,7 +32,7 @@ import java.util.List;
 
 public class AppActionSelectDialog extends DialogFragment {
     private Context context;
-    private String app_name,app_path;
+    private String app_name, app_path;
     private String package_name;
     private String app_size;
     private String version;
@@ -146,14 +146,14 @@ public class AppActionSelectDialog extends DialogFragment {
                         pos = getBindingAdapterPosition();
                         bundle.putString("app_action", action_list.get(pos));
                         if (action_list.get(pos).equals(AppManagerListFragment.BACKUP)) {
-                            Activity activity=getActivity();
+                            Activity activity = getActivity();
                             if (activity instanceof AppManagerActivity) {
                                 ((AppManagerActivity) activity).clear_cache = false;
                             }
                             Intent copy_intent = new Intent(context, CopyToActivity.class);
                             copy_intent.setAction(Intent.ACTION_SEND);
                             Uri copy_uri = FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", new File(app_path));
-                            copy_intent.putExtra("file_name",app_name+"_"+version+".apk");
+                            copy_intent.putExtra("file_name", app_name + "_" + version + ".apk");
                             copy_intent.putExtra(Intent.EXTRA_STREAM, copy_uri);
                             copy_intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                             copy_intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);

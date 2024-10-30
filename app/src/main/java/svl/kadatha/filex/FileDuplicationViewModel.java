@@ -25,6 +25,7 @@ public class FileDuplicationViewModel extends ViewModel {
 
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> filterSelectedArrayAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final ArrayList<String> uri_name_list = new ArrayList<>();
     public List<FilePOJO> filePOJOS;
     public List<String> source_duplicate_file_path_array;
     public List<String> destination_duplicate_file_path_array;
@@ -38,11 +39,10 @@ public class FileDuplicationViewModel extends ViewModel {
     public ParcelableStringStringLinkedMap duplicateSourceFileDestNameMap = new ParcelableStringStringLinkedMap();
     public ParcelableUriStringLinkedMap uriDestNameMap = new ParcelableUriStringLinkedMap();
     public ParcelableUriStringLinkedMap duplicateUriDestNameMap = new ParcelableUriStringLinkedMap();
-    public final ArrayList<String> uri_name_list = new ArrayList<>();
     public ArrayList<Uri> data_list = new ArrayList<>();
     public boolean apply_to_all;
-    boolean cut;
     public FileOperationMode fileOperationMode;
+    boolean cut;
     private boolean isCancelled;
     private Future<?> future1, future2, future3;
 
@@ -91,6 +91,21 @@ public class FileDuplicationViewModel extends ViewModel {
 
         // If MIME type is not a directory and does not support child documents, return false
         return false;
+    }
+
+    private static void removeNotTobeCopiedUris(Context context, List<Uri> data_list, List<String> file_path_list) {
+        if (data_list == null || data_list.isEmpty() || file_path_list.isEmpty()) return;
+        Iterator<Uri> iterator = data_list.iterator();
+        while (iterator.hasNext()) {
+            String name = CopyToActivity.getFileNameOfUri(context, iterator.next());
+            for (String f_name : file_path_list) {
+                Timber.tag("removeNotTobeCopiedUris").d("uri_name: " + name + " not_tobe_removed_file_path: " + f_name);
+                if (name.equals(f_name)) {
+                    iterator.remove();
+                    break;
+                }
+            }
+        }
     }
 
     @Override
@@ -208,7 +223,7 @@ public class FileDuplicationViewModel extends ViewModel {
         });
     }
 
-    public void checkForExistingFileWithSameNameUri(String source_folder, FileObjectType sourceFileObjectType, String dest_folder, FileObjectType destFileObjectType, ArrayList<Uri> data_list, String file_name,boolean cut, boolean findAllDuplicates) {
+    public void checkForExistingFileWithSameNameUri(String source_folder, FileObjectType sourceFileObjectType, String dest_folder, FileObjectType destFileObjectType, ArrayList<Uri> data_list, String file_name, boolean cut, boolean findAllDuplicates) {
         if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         this.source_folder = source_folder;
@@ -239,9 +254,9 @@ public class FileDuplicationViewModel extends ViewModel {
                 duplicateUriDestNameMap = new ParcelableUriStringLinkedMap();
 
                 if (data_list != null) {
-                    if(data_list.size()==1 && file_name!=null){
-                        uriDestNameMap.put(data_list.get(0),file_name);
-                    } else{
+                    if (data_list.size() == 1 && file_name != null) {
+                        uriDestNameMap.put(data_list.get(0), file_name);
+                    } else {
                         for (Uri uri : data_list) {
                             String name = CopyToActivity.getFileNameOfUri(App.getAppContext(), uri);
                             uriDestNameMap.put(uri, name);
@@ -329,9 +344,9 @@ public class FileDuplicationViewModel extends ViewModel {
                             sourceFileDestNameMap.put(file_path, new File(file_path).getName());
                         }
 
-                        for(Map.Entry<Uri,String> element:duplicateUriDestNameMap){
-                            Uri uri=element.getKey();
-                            uriDestNameMap.put(element.getKey(),CopyToActivity.getFileNameOfUri(context,uri));
+                        for (Map.Entry<Uri, String> element : duplicateUriDestNameMap) {
+                            Uri uri = element.getKey();
+                            uriDestNameMap.put(element.getKey(), CopyToActivity.getFileNameOfUri(context, uri));
                         }
                         removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
                     } else {
@@ -374,21 +389,5 @@ public class FileDuplicationViewModel extends ViewModel {
                 filterSelectedArrayAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
-    }
-
-
-    private static void removeNotTobeCopiedUris(Context context, List<Uri> data_list, List<String> file_path_list) {
-        if (data_list == null || data_list.isEmpty() || file_path_list.isEmpty()) return;
-        Iterator<Uri> iterator = data_list.iterator();
-        while (iterator.hasNext()) {
-            String name = CopyToActivity.getFileNameOfUri(context, iterator.next());
-            for (String f_name : file_path_list) {
-                Timber.tag("removeNotTobeCopiedUris").d("uri_name: " + name + " not_tobe_removed_file_path: " + f_name);
-                if (name.equals(f_name)) {
-                    iterator.remove();
-                    break;
-                }
-            }
-        }
     }
 }

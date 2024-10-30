@@ -343,7 +343,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
             }
         });
 
-        viewModel.disconnectNetworkConnectionAsyncTaskStatus.observe(this,new Observer<AsyncTaskStatus>() {
+        viewModel.disconnectNetworkConnectionAsyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
             @Override
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
                 if (asyncTaskStatus == AsyncTaskStatus.STARTED) {

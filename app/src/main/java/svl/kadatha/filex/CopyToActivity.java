@@ -132,12 +132,12 @@ public class CopyToActivity extends BaseActivity {
                 } else if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
                     progress_bar.setVisibility(View.GONE);
                     if (fileDuplicationViewModel.source_duplicate_file_path_array.isEmpty()) {
-                        uriDestNameMap=fileDuplicationViewModel.uriDestNameMap;
+                        uriDestNameMap = fileDuplicationViewModel.uriDestNameMap;
                         overwritten_file_path_list = fileDuplicationViewModel.overwritten_file_path_list;
                         launchService();
                     } else {
                         FileReplaceConfirmationDialog fileReplaceConfirmationDialog = FileReplaceConfirmationDialog.getInstance(fileDuplicationViewModel.source_folder, fileDuplicationViewModel.sourceFileObjectType,
-                                fileDuplicationViewModel.dest_folder, fileDuplicationViewModel.destFileObjectType, fileDuplicationViewModel.uri_name_list, data_list,file_name_edit_text.getText().toString().trim() ,fileDuplicationViewModel.cut);
+                                fileDuplicationViewModel.dest_folder, fileDuplicationViewModel.destFileObjectType, fileDuplicationViewModel.uri_name_list, data_list, file_name_edit_text.getText().toString().trim(), fileDuplicationViewModel.cut);
                         fileReplaceConfirmationDialog.show(getSupportFragmentManager(), "paste_dialog");
                     }
                     fileDuplicationViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
@@ -206,7 +206,7 @@ public class CopyToActivity extends BaseActivity {
                 }
 
                 progress_bar.setVisibility(View.VISIBLE);
-                fileDuplicationViewModel.checkForExistingFileWithSameNameUri("", FileObjectType.SEARCH_LIBRARY_TYPE, dest_folder, destFileObjectType, data_list,file_name_edit_text.getText().toString().trim(), false, false);
+                fileDuplicationViewModel.checkForExistingFileWithSameNameUri("", FileObjectType.SEARCH_LIBRARY_TYPE, dest_folder, destFileObjectType, data_list, file_name_edit_text.getText().toString().trim(), false, false);
             }
         });
 
@@ -233,7 +233,7 @@ public class CopyToActivity extends BaseActivity {
                     if (fileDuplicationViewModel.directoriesRemoved) {
                         Global.print(context, getString(R.string.removed_directories));
                     }
-                    uriDestNameMap=result.getParcelable("uriDestNameMap");
+                    uriDestNameMap = result.getParcelable("uriDestNameMap");
                     overwritten_file_path_list = result.getStringArrayList("overwritten_file_path_list");
                     launchService();
                 }
@@ -263,7 +263,7 @@ public class CopyToActivity extends BaseActivity {
     }
 
     private void launchService() {
-        if (data_list!=null && data_list.isEmpty()) {
+        if (data_list != null && data_list.isEmpty()) {
             Global.print(context, getString(R.string.there_are_no_files_to_copy));
             finish();
         }
@@ -308,7 +308,7 @@ public class CopyToActivity extends BaseActivity {
             Bundle bundle = intent.getExtras();
             dest_folder = intent.getStringExtra("dest_folder");
             String action = intent.getAction();
-            String file_name=intent.getStringExtra("file_name");
+            String file_name = intent.getStringExtra("file_name");
             if (action.equals(Intent.ACTION_SEND_MULTIPLE)) {
                 data_list = (ArrayList<Uri>) bundle.get(Intent.EXTRA_STREAM);
                 file_name_edit_text.setEnabled(false);
@@ -320,8 +320,8 @@ public class CopyToActivity extends BaseActivity {
             if (savedInstanceState == null) {
                 if (data_list != null && !data_list.isEmpty()) {
                     if (data_list.size() == 1) {
-                        if(file_name==null){
-                            file_name = getFileNameOfUri(context,data_list.get(0));
+                        if (file_name == null) {
+                            file_name = getFileNameOfUri(context, data_list.get(0));
                         }
                         file_name_edit_text.setText(file_name == null ? "" : file_name);
                     }

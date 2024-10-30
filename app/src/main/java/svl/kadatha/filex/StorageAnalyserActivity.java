@@ -923,6 +923,49 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
             };
         }
 
+        public void selectAll() {
+            storageAnalyserFragment.viewModel.mselecteditems = new IndexedLinkedHashMap<>();
+            int size = storageAnalyserFragment.filePOJO_list.size();
+
+            for (int i = 0; i < size; ++i) {
+                storageAnalyserFragment.viewModel.mselecteditems.put(i, storageAnalyserFragment.filePOJO_list.get(i).getPath());
+            }
+
+            int s = storageAnalyserFragment.viewModel.mselecteditems.size();
+
+            if (storageAnalyserFragment.detailFragmentListener != null) {
+                storageAnalyserFragment.detailFragmentListener.setFileNumberView(s + "/" + size);
+                storageAnalyserFragment.detailFragmentListener.onLongClickItem(size);
+            }
+            notifyDataSetChanged();
+        }
+
+        public void selectInterval() {
+            int size = storageAnalyserFragment.viewModel.mselecteditems.size();
+            if (size < 2) return;
+            int last_key = storageAnalyserFragment.viewModel.mselecteditems.getKeyAtIndex(size - 1);
+            int previous_to_last_key = storageAnalyserFragment.viewModel.mselecteditems.getKeyAtIndex(size - 2);
+            if (last_key == previous_to_last_key) return;
+            int min = Math.min(last_key, previous_to_last_key);
+            int max = Math.max(last_key, previous_to_last_key);
+            if (max - min == 1) return;
+            for (int i = min + 1; i < max; ++i) {
+                storageAnalyserFragment.viewModel.mselecteditems.put(i, storageAnalyserFragment.filePOJO_list.get(i).getPath());
+            }
+            int s = storageAnalyserFragment.viewModel.mselecteditems.size();
+
+            if (storageAnalyserFragment.detailFragmentListener != null) {
+                storageAnalyserFragment.detailFragmentListener.setFileNumberView(s + "/" + size);
+                storageAnalyserFragment.detailFragmentListener.onLongClickItem(s);
+            }
+            notifyDataSetChanged();
+        }
+
+        public void deselectAll() {
+            if (storageAnalyserFragment.detailFragmentListener != null) {
+                storageAnalyserFragment.detailFragmentListener.onDeselectAll(storageAnalyserFragment);
+            }
+        }
 
         class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
             final StorageAnalyserRecyclerViewLayout v;
@@ -981,50 +1024,6 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                     storageAnalyserFragment.detailFragmentListener.onLongClickItem(size);
                     storageAnalyserFragment.detailFragmentListener.setFileNumberView(size + "/" + storageAnalyserFragment.file_list_size);
                 }
-            }
-        }
-
-        public void selectAll() {
-            storageAnalyserFragment.viewModel.mselecteditems = new IndexedLinkedHashMap<>();
-            int size = storageAnalyserFragment.filePOJO_list.size();
-
-            for (int i = 0; i < size; ++i) {
-                storageAnalyserFragment.viewModel.mselecteditems.put(i, storageAnalyserFragment.filePOJO_list.get(i).getPath());
-            }
-
-            int s = storageAnalyserFragment.viewModel.mselecteditems.size();
-
-            if (storageAnalyserFragment.detailFragmentListener != null) {
-                storageAnalyserFragment.detailFragmentListener.setFileNumberView(s + "/" + size);
-                storageAnalyserFragment.detailFragmentListener.onLongClickItem(size);
-            }
-            notifyDataSetChanged();
-        }
-
-        public void selectInterval() {
-            int size = storageAnalyserFragment.viewModel.mselecteditems.size();
-            if (size < 2) return;
-            int last_key = storageAnalyserFragment.viewModel.mselecteditems.getKeyAtIndex(size - 1);
-            int previous_to_last_key = storageAnalyserFragment.viewModel.mselecteditems.getKeyAtIndex(size - 2);
-            if (last_key == previous_to_last_key) return;
-            int min = Math.min(last_key, previous_to_last_key);
-            int max = Math.max(last_key, previous_to_last_key);
-            if (max - min == 1) return;
-            for (int i = min + 1; i < max; ++i) {
-                storageAnalyserFragment.viewModel.mselecteditems.put(i, storageAnalyserFragment.filePOJO_list.get(i).getPath());
-            }
-            int s = storageAnalyserFragment.viewModel.mselecteditems.size();
-
-            if (storageAnalyserFragment.detailFragmentListener != null) {
-                storageAnalyserFragment.detailFragmentListener.setFileNumberView(s + "/" + size);
-                storageAnalyserFragment.detailFragmentListener.onLongClickItem(s);
-            }
-            notifyDataSetChanged();
-        }
-
-        public void deselectAll() {
-            if (storageAnalyserFragment.detailFragmentListener != null) {
-                storageAnalyserFragment.detailFragmentListener.onDeselectAll(storageAnalyserFragment);
             }
         }
 

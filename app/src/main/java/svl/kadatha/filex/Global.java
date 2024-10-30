@@ -71,7 +71,7 @@ public class Global {
     static public final String LOCAL_BROADCAST_DELETE_FILE_ACTION = FILEX_PACKAGE + ".FILE_DELETE";
     static public final String LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION = FILEX_PACKAGE + ".MODIFICATION_OBSERVED";
     static public final String LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION = FILEX_PACKAGE + ".STORAGE_DIR_REFRESH";
-    static public final String LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT =FILEX_PACKAGE+".POP_UP_NETWORK_FILE_TYPE_FRAGMENT";
+    static public final String LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT = FILEX_PACKAGE + ".POP_UP_NETWORK_FILE_TYPE_FRAGMENT";
     static public final String TAG = "shankar";
     public static final List<FileObjectType> NETWORK_FILE_OBJECT_TYPES = Arrays.asList(FileObjectType.FTP_TYPE, FileObjectType.SFTP_TYPE, FileObjectType.WEBDAV_TYPE, FileObjectType.SMB_TYPE);
     static final List<String> APK_ICON_PACKAGE_NAME_LIST = new ArrayList<>();
@@ -513,7 +513,7 @@ public class Global {
     public static void LOCAL_BROADCAST(String action, LocalBroadcastManager localBroadcastManager, Bundle bundle) {
         Intent intent = new Intent();
         intent.setAction(action);
-        if(bundle!=null){
+        if (bundle != null) {
             intent.putExtras(bundle);
         }
         localBroadcastManager.sendBroadcast(intent);
@@ -892,12 +892,12 @@ public class Global {
             Iterator<FilePOJO> iterator = repositoryClass.storage_dir.iterator();
             while (iterator.hasNext()) {
                 if (iterator.next().getFileObjectType() == fileObjectType) {
-                    Timber.tag("loop-").d("whether network type and in storage dir "+true);
+                    Timber.tag("loop-").d("whether network type and in storage dir " + true);
                     return true;
                 }
             }
         }
-        Timber.tag("loop-").d("whether network type and in storage dir "+true);
+        Timber.tag("loop-").d("whether network type and in storage dir " + true);
         return false;
     }
 
@@ -1199,7 +1199,8 @@ public class Global {
             }
 
             @Override
-            public void onAnimationRepeat(Animation animation) {}
+            public void onAnimationRepeat(Animation animation) {
+            }
         });
 
         view.startAnimation(animation);

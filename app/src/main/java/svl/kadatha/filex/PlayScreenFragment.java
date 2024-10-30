@@ -63,9 +63,9 @@ import timber.log.Timber;
 
 public class PlayScreenFragment extends Fragment {
 
+    public static final String TAG = "PlayScreenFragment";
     private static final String DELETE_FILE_REQUEST_CODE = "audio_play_file_delete_request_code";
     private static final String AUDIO_SELECT_REQUEST_CODE = "audio_play_audio_select_request_code";
-    public static final String TAG = "PlayScreenFragment";
     public AudioPlayerService audio_player_service;
     private ImageView album_art_imageview;
     private ImageButton previous_btn;
@@ -640,7 +640,7 @@ public class PlayScreenFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (audio_player_service != null){
+        if (audio_player_service != null) {
             audio_player_service.removeMediaPlayerPrepareListener();
             audio_player_service.removeAudioPlayerServiceBroadcastListener();
         }

@@ -3,16 +3,39 @@ package svl.kadatha.filex;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * A Parcelable implementation of a LinkedHashMap with String keys and String values.
  */
 public final class ParcelableStringStringLinkedMap implements Parcelable, Iterable<Map.Entry<String, String>> {
+    /**
+     * Parcelable.Creator that generates instances of ParcelableStringStringLinkedMap from a Parcel.
+     */
+    public static final Creator<ParcelableStringStringLinkedMap> CREATOR = new Creator<ParcelableStringStringLinkedMap>() {
+        @Override
+        public ParcelableStringStringLinkedMap createFromParcel(Parcel in) {
+            return new ParcelableStringStringLinkedMap(in);
+        }
+
+        @Override
+        public ParcelableStringStringLinkedMap[] newArray(int size) {
+            return new ParcelableStringStringLinkedMap[size];
+        }
+    };
     private static final int MAX_SIZE = 100000; // Maximum allowable size to prevent memory issues
     private final LinkedHashMap<String, String> map;
-    private final List<String> keyList; // Maintains insertion order for efficient access by index
     // Tracks structural modifications for fail-fast iterators
+    private final List<String> keyList; // Maintains insertion order for efficient access by index
 
     /**
      * Constructs an empty ParcelableStringStringLinkedMap.
@@ -263,21 +286,6 @@ public final class ParcelableStringStringLinkedMap implements Parcelable, Iterab
     public int describeContents() {
         return 0;
     }
-
-    /**
-     * Parcelable.Creator that generates instances of ParcelableStringStringLinkedMap from a Parcel.
-     */
-    public static final Creator<ParcelableStringStringLinkedMap> CREATOR = new Creator<ParcelableStringStringLinkedMap>() {
-        @Override
-        public ParcelableStringStringLinkedMap createFromParcel(Parcel in) {
-            return new ParcelableStringStringLinkedMap(in);
-        }
-
-        @Override
-        public ParcelableStringStringLinkedMap[] newArray(int size) {
-            return new ParcelableStringStringLinkedMap[size];
-        }
-    };
 
     /**
      * Checks if this map is equal to another object.
