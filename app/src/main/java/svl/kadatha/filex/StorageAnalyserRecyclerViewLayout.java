@@ -298,8 +298,11 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
 
     void setDivider(boolean set) {
 
-        if (set) item_separator.setVisibility(VISIBLE);
-        else item_separator.setVisibility(GONE);
+        if (set) {
+            item_separator.setVisibility(VISIBLE);
+        } else {
+            item_separator.setVisibility(GONE);
+        }
     }
 
     void setWhetherExternal(FilePOJO filePOJO) {

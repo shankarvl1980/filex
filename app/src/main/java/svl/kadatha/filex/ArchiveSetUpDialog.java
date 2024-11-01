@@ -97,7 +97,9 @@ public class ArchiveSetUpDialog extends DialogFragment {
             File f = new File(file_path);
             String file_name = f.getName();
             if (filePOJOs != null) {
-                if (filePOJOs.isEmpty()) return true; //folder is blank, so folder can be created
+                if (filePOJOs.isEmpty()) {
+                    return true; //folder is blank, so folder can be created
+                }
                 for (FilePOJO filePOJO : filePOJOs) {
                     if (filePOJO.getName().equals(file_name)) {
                         return filePOJO.getIsDirectory();
@@ -150,7 +152,9 @@ public class ArchiveSetUpDialog extends DialogFragment {
         TextView dialog_heading = zipdialogview.findViewById(R.id.dialog_archive_heading);
         TextView outputfilename = zipdialogview.findViewById(R.id.dialog_archive_output_filename);
         TextView zip_name_suffix = zipdialogview.findViewById(R.id.dialog_archive_textview_zip_suffix);
-        if (archive_action.equals(ARCHIVE_ACTION_UNZIP)) zip_name_suffix.setVisibility(View.GONE);
+        if (archive_action.equals(ARCHIVE_ACTION_UNZIP)) {
+            zip_name_suffix.setVisibility(View.GONE);
+        }
         create_folder_checkbox = zipdialogview.findViewById(R.id.dialog_archive_checkbox);
         zip_file_edittext = zipdialogview.findViewById(R.id.dialog_archive_textview_zip_name);
         if (archive_action.equals(ARCHIVE_ACTION_UNZIP)) {

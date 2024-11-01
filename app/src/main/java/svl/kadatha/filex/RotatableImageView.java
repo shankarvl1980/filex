@@ -68,7 +68,9 @@ public class RotatableImageView extends FrameLayout {
     private void adjustSize() {
         float scale = touchImageView.getCurrentZoom();
         Drawable drawable = touchImageView.getDrawable();
-        if (drawable == null) return;
+        if (drawable == null) {
+            return;
+        }
 
         int imageWidth = drawable.getIntrinsicWidth();
         int imageHeight = drawable.getIntrinsicHeight();
@@ -94,7 +96,9 @@ public class RotatableImageView extends FrameLayout {
             @Override
             public void run() {
                 Drawable drawable = touchImageView.getDrawable();
-                if (drawable == null) return;
+                if (drawable == null) {
+                    return;
+                }
 
                 int viewWidth = getWidth();
                 int viewHeight = getHeight();

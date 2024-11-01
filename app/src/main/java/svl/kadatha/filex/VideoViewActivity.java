@@ -46,7 +46,9 @@ public class VideoViewActivity extends BaseActivity {
             fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
             String file_path = intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
             boolean fromArchive = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
-            if (file_path == null) file_path = RealPathUtil.getLastSegmentPath(data);
+            if (file_path == null) {
+                file_path = RealPathUtil.getLastSegmentPath(data);
+            }
 
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.activity_blank_view_container, VideoViewContainerFragment.getNewInstance(file_path, fileObjectType, fromArchive), "").commit();

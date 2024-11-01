@@ -158,12 +158,14 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
 
                 if (audioListViewModel.audio_pojo_selected_items.size() < size) {
                     audioListViewModel.audio_pojo_selected_items = new IndexedLinkedHashMap<>();
-                    if (whether_saved_play_list)
+                    if (whether_saved_play_list) {
                         audioListViewModel.selected_audio_rowid_list = new ArrayList<>();
+                    }
                     for (int i = 0; i < size; ++i) {
                         audioListViewModel.audio_pojo_selected_items.put(i, clicked_audio_list.get(i));
-                        if (whether_saved_play_list)
+                        if (whether_saved_play_list) {
                             audioListViewModel.selected_audio_rowid_list.add(audioListViewModel.audio_rowid_list.get(i));
+                        }
                     }
 
                     currentAudioListRecyclerViewAdapter.notifyDataSetChanged();
@@ -256,7 +258,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
                     dismissAllowingStateLoss();
                 }
             }
-
         });
 
         progress_bar = v.findViewById(R.id.album_details_progressbar);
@@ -287,7 +288,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
             overflow_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_4);
             add_to_list_btn.setOnClickListener(toolbarButtonClickListener);
         } else {
-
             overflow_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_3);
         }
 
@@ -326,8 +326,9 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
                         empty_audio_list_tv.setVisibility(View.VISIBLE);
                     }
                     file_number_view.setText(audioListViewModel.audio_pojo_selected_items.size() + "/" + num_all_audio);
-                    if (!whether_saved_play_list)
+                    if (!whether_saved_play_list) {
                         currentAudioListRecyclerview.scrollToPosition(AudioPlayerService.CURRENT_PLAY_NUMBER);
+                    }
                 }
             }
         });
@@ -411,8 +412,9 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
     public void clear_selection() {
         audioListViewModel.audio_pojo_selected_items = new IndexedLinkedHashMap<>();
         audioListViewModel.selected_audio_rowid_list = new ArrayList<>();
-        if (currentAudioListRecyclerViewAdapter != null)
+        if (currentAudioListRecyclerViewAdapter != null) {
             currentAudioListRecyclerViewAdapter.notifyDataSetChanged();
+        }
         bottom_toolbar.animate().translationY(bottom_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
         toolbar_visible = false;
         scroll_distance = 0;
@@ -506,7 +508,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
         }
     }
 
-
     private class ListPopupWindowClickListener implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> p1, View p2, int p3, long p4) {
@@ -558,7 +559,9 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
             String album = getString(R.string.album_colon) + " " + audio.getAlbum();
             long duration = 0L;
             String duration_string = audio.getDuration();
-            if (duration_string != null) duration = Long.parseLong(duration_string);
+            if (duration_string != null) {
+                duration = Long.parseLong(duration_string);
+            }
             String duration_str = getString(R.string.duration) + " " + (String.format("%d:%02d", duration / 1000 / 60, duration / 1000 % 60));
             String artist = getString(R.string.artists_colon) + " " + audio.getArtist();
             boolean item_selected = audioListViewModel.audio_pojo_selected_items.containsKey(p2);
@@ -665,8 +668,9 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
 
                 if (audioListViewModel.audio_pojo_selected_items.containsKey(pos)) {
                     audioListViewModel.audio_pojo_selected_items.remove(pos);
-                    if (whether_saved_play_list)
+                    if (whether_saved_play_list) {
                         audioListViewModel.selected_audio_rowid_list.remove(audioListViewModel.audio_rowid_list.get(pos));
+                    }
 
                     v.setSelected(false);
                     ((AudioListRecyclerViewItem) v).set_selected(false);
@@ -686,8 +690,9 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
                     }
                 } else {
                     audioListViewModel.audio_pojo_selected_items.put(pos, clicked_audio_list.get(pos));
-                    if (whether_saved_play_list)
+                    if (whether_saved_play_list) {
                         audioListViewModel.selected_audio_rowid_list.add(audioListViewModel.audio_rowid_list.get(pos));
+                    }
                     v.setSelected(true);
                     ((AudioListRecyclerViewItem) v).set_selected(true);
                     bottom_toolbar.setVisibility(View.VISIBLE);

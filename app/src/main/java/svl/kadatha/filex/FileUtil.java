@@ -266,7 +266,9 @@ public final class FileUtil {
     }
 
     public static UsbFile getUsbFile(UsbFile rootUsbFile, String file_path) {
-        if (rootUsbFile == null) return null;
+        if (rootUsbFile == null) {
+            return null;
+        }
         UsbFile usbFile = null;
         try {
             usbFile = rootUsbFile.search(Global.GET_TRUNCATED_FILE_PATH_USB(file_path));
@@ -531,8 +533,9 @@ public final class FileUtil {
 
 
     public static boolean isFromInternal(FileObjectType fileObjectType, @NonNull final String file_path) {
-        if (!fileObjectType.equals(FileObjectType.FILE_TYPE) && !fileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE))
+        if (!fileObjectType.equals(FileObjectType.FILE_TYPE) && !fileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE)) {
             return false;
+        }
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
         for (String internal_storage_path : repositoryClass.internal_storage_path_list) {
             if (Global.IS_CHILD_FILE(file_path, internal_storage_path)) {
@@ -543,12 +546,14 @@ public final class FileUtil {
     }
 
     public static boolean isFilePathFromExternalStorage(FileObjectType fileObjectType, String file_path) {
-        if (!fileObjectType.equals(FileObjectType.FILE_TYPE) && !fileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE))
+        if (!fileObjectType.equals(FileObjectType.FILE_TYPE) && !fileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE)) {
             return false;
+        }
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
         for (String external_path : repositoryClass.external_storage_path_list) {
-            if (Global.IS_CHILD_FILE(file_path, external_path))
+            if (Global.IS_CHILD_FILE(file_path, external_path)) {
                 return true;
+            }
         }
         return false;
     }
@@ -559,7 +564,9 @@ public final class FileUtil {
     }
 
     public static String humanReadableByteCount(long bytes) {
-        if (bytes < 1024) return bytes + " B";
+        if (bytes < 1024) {
+            return bytes + " B";
+        }
         int z = (63 - Long.numberOfLeadingZeros(bytes)) / 10;
         return String.format("%.2f %sB", (double) bytes / (1L << (z * 10)), " KMGTPE".charAt(z));
     }

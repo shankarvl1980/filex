@@ -188,7 +188,7 @@ public class AudioSavedListFragment extends Fragment {
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 if (requestKey.equals(AUDIO_SELECT_REQUEST_CODE)) {
                     AudioPOJO audio = result.getParcelable("audio");
-                    int id = audio.getId();
+                    long id = audio.getId();
                     Uri data;
                     if (id == 0) {
                         File file = new File(audio.getData());
@@ -239,7 +239,9 @@ public class AudioSavedListFragment extends Fragment {
     public void clear_selection() {
         audioListViewModel.audio_saved_list_selected_items = new IndexedLinkedHashMap<>();
         //audioListViewModel.audio_list_selected_array=new ArrayList<>();
-        if (audio_saved_list_adapter != null) audio_saved_list_adapter.notifyDataSetChanged();
+        if (audio_saved_list_adapter != null) {
+            audio_saved_list_adapter.notifyDataSetChanged();
+        }
         enable_disable_buttons(false);
         file_number_view.setText(audioListViewModel.audio_saved_list_selected_items.size() + "/" + num_all_audio_list);
         all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.select_icon, 0, 0);

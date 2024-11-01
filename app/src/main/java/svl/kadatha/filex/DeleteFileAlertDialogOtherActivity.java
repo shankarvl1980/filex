@@ -114,13 +114,17 @@ public class DeleteFileAlertDialogOtherActivity extends DialogFragment {
                 if (fileObjectType == FileObjectType.FILE_TYPE) {
                     String file_path = files_selected_array.get(0);
                     if (!FileUtil.isWritable(fileObjectType, file_path)) {
-                        if (!check_SAF_permission(file_path, fileObjectType)) return;
+                        if (!check_SAF_permission(file_path, fileObjectType)) {
+                            return;
+                        }
                     }
                 } else if (fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
                     for (int i = 0; i < size; ++i) {
                         String file_path = files_selected_array.get(i);
                         if (!FileUtil.isFromInternal(FileObjectType.FILE_TYPE, file_path)) {
-                            if (!check_SAF_permission(file_path, FileObjectType.FILE_TYPE)) return;
+                            if (!check_SAF_permission(file_path, FileObjectType.FILE_TYPE)) {
+                                return;
+                            }
                         }
                     }
                 }

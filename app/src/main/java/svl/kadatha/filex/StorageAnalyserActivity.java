@@ -203,11 +203,13 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
 
 
         int imageview_dimension;
-        if (Global.RECYCLER_VIEW_FONT_SIZE_FACTOR == 0)
+        if (Global.RECYCLER_VIEW_FONT_SIZE_FACTOR == 0) {
             imageview_dimension = Global.IMAGEVIEW_DIMENSION_SMALL_LIST;
-        else if (Global.RECYCLER_VIEW_FONT_SIZE_FACTOR == 2)
+        } else if (Global.RECYCLER_VIEW_FONT_SIZE_FACTOR == 2) {
             imageview_dimension = Global.IMAGEVIEW_DIMENSION_LARGE_LIST;
-        else imageview_dimension = Global.IMAGEVIEW_DIMENSION_MEDIUM_LIST;
+        } else {
+            imageview_dimension = Global.IMAGEVIEW_DIMENSION_MEDIUM_LIST;
+        }
 
 
         LinearLayout size_description_layout = findViewById(R.id.storage_analyser_size_description);
@@ -460,8 +462,9 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
             search_edittext.setText("");
             search_edittext.clearFocus();
             DeselectAllAndAdjustToolbars(storageAnalyserFragment);
-            if (storageAnalyserFragment.adapter != null)
+            if (storageAnalyserFragment.adapter != null) {
                 storageAnalyserFragment.adapter.getFilter().filter(null);
+            }
         }
     }
 
@@ -497,14 +500,17 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
 
     @Override
     public void actionModeFinish(Fragment fragment, String fileclickeselected) {
-        if (fragment instanceof StorageAnalyserFragment)
+        if (fragment instanceof StorageAnalyserFragment) {
             DeselectAllAndAdjustToolbars((StorageAnalyserFragment) fragment);
+        }
     }
 
     @Override
     public void onLongClickItem(int size) {
         StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
-        if (storageAnalyserFragment == null) return;
+        if (storageAnalyserFragment == null) {
+            return;
+        }
         if (size >= 1) {
             bottom_toolbar.setVisibility(View.GONE);
             actionmode_toolbar.setVisibility(View.VISIBLE);
@@ -565,7 +571,9 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
     @Override
     public void rescanLargeDuplicateFilesLibrary(String type) {
         StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
-        if (storageAnalyserFragment == null) return;
+        if (storageAnalyserFragment == null) {
+            return;
+        }
         if (storageAnalyserFragment.fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
             if (storageAnalyserFragment.progress_bar.getVisibility() == View.VISIBLE) {
                 Global.print(context, getString(R.string.please_wait));
@@ -593,8 +601,9 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
 
     @Override
     public void onDeselectAll(Fragment fragment) {
-        if (fragment instanceof StorageAnalyserFragment)
+        if (fragment instanceof StorageAnalyserFragment) {
             DeselectAllAndAdjustToolbars((StorageAnalyserFragment) fragment);
+        }
     }
 
     public void rescan_large_files_library() {
@@ -616,7 +625,9 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
 
                 viewModel.getLargeFileList(false);
                 StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
-                if (storageAnalyserFragment == null) return;
+                if (storageAnalyserFragment == null) {
+                    return;
+                }
                 if (storageAnalyserFragment.fileclickselected.equals("Large Files")) {
                     fm.beginTransaction().detach(storageAnalyserFragment).commit();
                     fm.beginTransaction().attach(storageAnalyserFragment).commit();
@@ -647,7 +658,9 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
 
                 viewModel.getDuplicateFileList(false);
                 StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
-                if (storageAnalyserFragment == null) return;
+                if (storageAnalyserFragment == null) {
+                    return;
+                }
                 if (storageAnalyserFragment.fileclickselected.equals("Duplicate Files")) {
                     fm.beginTransaction().detach(storageAnalyserFragment).commit();
                     fm.beginTransaction().attach(storageAnalyserFragment).commit();
@@ -705,7 +718,9 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                 while (tag != null && !new File(tag).exists() && !tag.equals("Large Files") && !tag.equals("Duplicate Files") && storageAnalyserFragment.currentUsbFile == null) {
                     fm.popBackStack();
                     ++frag;
-                    if (frag > entry_count) break;
+                    if (frag > entry_count) {
+                        break;
+                    }
                     storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count - frag).getName());
                     tag = storageAnalyserFragment.getTag();
                 }
@@ -797,8 +812,9 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                 }
                 FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(repositoryClass.external_storage_path_list, FileObjectType.FILE_TYPE);
                 StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
-                if (storageAnalyserFragment != null)
+                if (storageAnalyserFragment != null) {
                     storageAnalyserFragment.clearSelectionAndNotifyDataSetChanged();
+                }
 
                 break;
         }
@@ -942,13 +958,19 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
 
         public void selectInterval() {
             int size = storageAnalyserFragment.viewModel.mselecteditems.size();
-            if (size < 2) return;
+            if (size < 2) {
+                return;
+            }
             int last_key = storageAnalyserFragment.viewModel.mselecteditems.getKeyAtIndex(size - 1);
             int previous_to_last_key = storageAnalyserFragment.viewModel.mselecteditems.getKeyAtIndex(size - 2);
-            if (last_key == previous_to_last_key) return;
+            if (last_key == previous_to_last_key) {
+                return;
+            }
             int min = Math.min(last_key, previous_to_last_key);
             int max = Math.max(last_key, previous_to_last_key);
-            if (max - min == 1) return;
+            if (max - min == 1) {
+                return;
+            }
             for (int i = min + 1; i < max; ++i) {
                 storageAnalyserFragment.viewModel.mselecteditems.put(i, storageAnalyserFragment.filePOJO_list.get(i).getPath());
             }
@@ -1038,12 +1060,14 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
             FileObjectType fileObjectType = (FileObjectType) intent.getSerializableExtra("fileObjectType");
             switch (intent.getAction()) {
                 case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
-                    if (storageAnalyserFragment != null)
+                    if (storageAnalyserFragment != null) {
                         storageAnalyserFragment.local_activity_delete = true;
+                    }
                     break;
                 case Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION:
-                    if (storageAnalyserFragment != null)
+                    if (storageAnalyserFragment != null) {
                         storageAnalyserFragment.modification_observed = true;
+                    }
                     break;
             }
         }

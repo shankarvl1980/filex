@@ -80,7 +80,9 @@ public class FilePOJOUtil {
             filePOJOs = repositoryClass.hashmap_file_pojo.get(fileObjectType + source_folder);
             filePOJOs_filtered = repositoryClass.hashmap_file_pojo_filtered.get(fileObjectType + source_folder);
         }
-        if (filePOJOs == null || filePOJOs_filtered == null) return;
+        if (filePOJOs == null || filePOJOs_filtered == null) {
+            return;
+        }
         String name;
         for (int i = 0; i < size; ++i) {
             name = deleted_files_name_list.get(i);
@@ -137,7 +139,9 @@ public class FilePOJOUtil {
     }
 
     private static boolean REMOVE_FROM_LIBRARY_CACHE(FileObjectType fileObjectType, String file_path, String media_category) {
-        if (fileObjectType != FileObjectType.FILE_TYPE) return false;
+        if (fileObjectType != FileObjectType.FILE_TYPE) {
+            return false;
+        }
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
         List<FilePOJO> filePOJOs = repositoryClass.hashmap_file_pojo.get(FileObjectType.SEARCH_LIBRARY_TYPE + media_category);
         List<FilePOJO> filePOJOs_filtered = repositoryClass.hashmap_file_pojo_filtered.get(FileObjectType.SEARCH_LIBRARY_TYPE + media_category);
@@ -146,7 +150,9 @@ public class FilePOJOUtil {
             while (iterator.hasNext()) {
                 FilePOJO filePOJO = iterator.next();
                 if (file_path.equals(filePOJO.getPath())) {
-                    if (filePOJOs_filtered != null) filePOJOs_filtered.remove(filePOJO);
+                    if (filePOJOs_filtered != null) {
+                        filePOJOs_filtered.remove(filePOJO);
+                    }
                     iterator.remove();
                     return true;
                 }
@@ -156,7 +162,9 @@ public class FilePOJOUtil {
     }
 
     private static void REMOVE_FROM_AUDIO_CACHE(FileObjectType fileObjectType, String file_path_to_be_removed) {
-        if (fileObjectType != FileObjectType.FILE_TYPE) return;
+        if (fileObjectType != FileObjectType.FILE_TYPE) {
+            return;
+        }
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
         List<AudioPOJO> audioPOJOS = repositoryClass.audio_pojo_hashmap.get("audio");
         if (audioPOJOS != null) {
@@ -192,7 +200,9 @@ public class FilePOJOUtil {
             FILL_FILE_POJO(new ArrayList<>(), new ArrayList<>(), fileObjectType, dest_folder, currentUsbFile, false);
             filePOJOs = repositoryClass.hashmap_file_pojo.get(fileObjectType + dest_folder);
             filePOJOs_filtered = repositoryClass.hashmap_file_pojo_filtered.get(fileObjectType + dest_folder);
-            if (filePOJOs == null) return null;
+            if (filePOJOs == null) {
+                return null;
+            }
         } else {
             if (overwritten_file_path_list != null) // while creating new file, overwritten_file_path_list is null
             {
@@ -284,7 +294,9 @@ public class FilePOJOUtil {
         FilePOJO removed_filePOJO = remove_from_FilePOJO(name, filePOJOs);
         remove_from_FilePOJO(name, filePOJOs_filtered);
         FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(fileObjectType, dest_folder);
-        if (filePOJO == null) filePOJO = removed_filePOJO;
+        if (filePOJO == null) {
+            filePOJO = removed_filePOJO;
+        }
         if (filePOJO != null) {
             filePOJOs.add(filePOJO);
             if (filePOJO.getAlfa() == Global.ENABLE_ALFA) {
@@ -296,13 +308,17 @@ public class FilePOJOUtil {
     }
 
     public static void REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(List<String> file_path_list, FileObjectType fileObjectType) {
-        if (file_path_list == null) return;
+        if (file_path_list == null) {
+            return;
+        }
         int size = file_path_list.size();
         for (int i = 0; i < size; ++i) {
             String file_path = file_path_list.get(i);
             REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL__(file_path, fileObjectType);
         }
-        if (size > 0) SET_PARENT_HASHMAP_FILE_POJO_SIZE_NULL(file_path_list.get(0), fileObjectType);
+        if (size > 0) {
+            SET_PARENT_HASHMAP_FILE_POJO_SIZE_NULL(file_path_list.get(0), fileObjectType);
+        }
     }
 
     private static void REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL__(String file_path, FileObjectType fileObjectType) {

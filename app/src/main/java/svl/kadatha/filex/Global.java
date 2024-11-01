@@ -301,7 +301,9 @@ public class Global {
                     return uriPOJO;
                 }
             } else if (fileObjectType == FileObjectType.FILE_TYPE && uriPOJO.get_authority().equals("com.android.externalstorage.documents")) {
-                if (uriPOJO.get_path().equals(File.separator)) return null;
+                if (uriPOJO.get_path().equals(File.separator)) {
+                    return null;
+                }
                 if (IS_CHILD_FILE(file_path, uriPOJO.get_path())) {
                     return uriPOJO;
                 }
@@ -568,7 +570,9 @@ public class Global {
 
     public static String GET_OTHER_FILE_PERMISSION(String file_path) {
         String permission_string = GET_FILE_PERMISSION(file_path);
-        if (permission_string == null) return null;
+        if (permission_string == null) {
+            return null;
+        }
         String other_permission_string = permission_string.replaceAll(".*?(.?.?.?)?$", "$1");
         return other_permission_string.replaceAll("-", "");
     }
@@ -582,7 +586,9 @@ public class Global {
     static void WORKOUT_AVAILABLE_SPACE() {
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
         for (FilePOJO filePOJO : repositoryClass.storage_dir) {
-            if (filePOJO == null) continue;
+            if (filePOJO == null) {
+                continue;
+            }
             long totalspace = 0, availabelspace = 0;
             FileObjectType fileObjectType = filePOJO.getFileObjectType();
             if (fileObjectType == FileObjectType.FILE_TYPE) {
@@ -591,7 +597,9 @@ public class Global {
 
                 SPACE_ARRAY.put(fileObjectType + filePOJO.getPath(), new SpacePOJO(filePOJO.getPath(), totalspace, availabelspace));
             } else if (fileObjectType == FileObjectType.USB_TYPE) {
-                if (MainActivity.usbFileRoot == null) return;
+                if (MainActivity.usbFileRoot == null) {
+                    return;
+                }
                 String name = MainActivity.usbFileRoot.getName();
                 totalspace = MainActivity.usbCurrentFs.getCapacity();
                 availabelspace = MainActivity.usbCurrentFs.getOccupiedSpace();
@@ -738,7 +746,9 @@ public class Global {
                             break;
                         }
                     }
-                    if (sameHost) break;
+                    if (sameHost) {
+                        break;
+                    }
                 }
                 if (!sameHost) {
                     // Hosts are different; file systems are different
@@ -795,7 +805,9 @@ public class Global {
 
 
     private static String extractHost(String host) {
-        if (host == null) return null;
+        if (host == null) {
+            return null;
+        }
         host = host.trim();
 
         // Check if the host string contains a scheme
@@ -855,7 +867,9 @@ public class Global {
 
 
     private static String normalizePath(String path) {
-        if (path == null) return "";
+        if (path == null) {
+            return "";
+        }
         // Replace backslashes with forward slashes
         path = path.replace('\\', '/');
         // Remove redundant slashes
@@ -922,7 +936,9 @@ public class Global {
     }
 
     public static String GET_TRUNCATED_FILE_PATH_USB(String file_path) {
-        if (file_path.equals(File.separator)) return file_path;
+        if (file_path.equals(File.separator)) {
+            return file_path;
+        }
         if (file_path.startsWith(File.separator)) {
             return file_path.substring(1);
         } else {
@@ -931,7 +947,9 @@ public class Global {
     }
 
     public static FileObjectType GET_FILE_OBJECT_TYPE(String file_object_type) {
-        if (file_object_type == null) return null;
+        if (file_object_type == null) {
+            return null;
+        }
         switch (file_object_type) {
             case "ROOT_TYPE":
                 return FileObjectType.ROOT_TYPE;
@@ -1012,7 +1030,9 @@ public class Global {
 
 
     public static String CONCATENATE_PARENT_CHILD_PATH(String parent_file_path, String child_file_name) {
-        if (parent_file_path == null) parent_file_path = "";
+        if (parent_file_path == null) {
+            parent_file_path = "";
+        }
         return parent_file_path.endsWith(File.separator) ? parent_file_path + child_file_name : parent_file_path + File.separator + child_file_name;
     }
 
@@ -1028,7 +1048,9 @@ public class Global {
     }
 
     public static void WARN_NOTIFICATIONS_DISABLED(Context context, String channelId, boolean[] alreadyWarned) {
-        if (alreadyWarned[0]) return;
+        if (alreadyWarned[0]) {
+            return;
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (Build.VERSION.SDK_INT >= 33) {
                 if (context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {

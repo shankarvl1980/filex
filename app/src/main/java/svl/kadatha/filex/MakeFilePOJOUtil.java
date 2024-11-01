@@ -172,7 +172,9 @@ public class MakeFilePOJOUtil {
             }
             try (ZipFile zipFile = new ZipFile(ArchiveViewActivity.ZIP_FILE)) {
                 ZipEntry zipEntry = zipFile.getEntry(path.substring(Global.ARCHIVE_CACHE_DIR_LENGTH + 1));
-                if (zipEntry != null) sizeLong = zipEntry.getSize();
+                if (zipEntry != null) {
+                    sizeLong = zipEntry.getSize();
+                }
             } catch (IOException e) {
 
             }
@@ -204,7 +206,9 @@ public class MakeFilePOJOUtil {
             BasicFileAttributes basicFileAttributes = Files.readAttributes(p, BasicFileAttributes.class);
             isDirectory = basicFileAttributes.isDirectory();
             dateLong = basicFileAttributes.lastModifiedTime().toMillis();
-            if (!isDirectory) sizeLong = basicFileAttributes.size();
+            if (!isDirectory) {
+                sizeLong = basicFileAttributes.size();
+            }
         } catch (IOException e) {
             isDirectory = Files.isDirectory(p);
             try {
@@ -266,7 +270,9 @@ public class MakeFilePOJOUtil {
             BasicFileAttributes basicFileAttributes = Files.readAttributes(p, BasicFileAttributes.class);
             isDirectory = basicFileAttributes.isDirectory();
             dateLong = basicFileAttributes.lastModifiedTime().toMillis();
-            if (!isDirectory) sizeLong = basicFileAttributes.size();
+            if (!isDirectory) {
+                sizeLong = basicFileAttributes.size();
+            }
         } catch (IOException e) {
             isDirectory = Files.isDirectory(p);
             try {
@@ -298,7 +304,9 @@ public class MakeFilePOJOUtil {
             }
             try (ZipFile zipFile = new ZipFile(ArchiveViewActivity.ZIP_FILE)) {
                 ZipEntry zipEntry = zipFile.getEntry(path.substring(Global.ARCHIVE_CACHE_DIR_LENGTH + 1));
-                if (zipEntry != null) sizeLong = zipEntry.getSize();
+                if (zipEntry != null) {
+                    sizeLong = zipEntry.getSize();
+                }
             } catch (IOException e) {
             }
             si = FileUtil.humanReadableByteCount(sizeLong);
@@ -803,10 +811,14 @@ public class MakeFilePOJOUtil {
     }
 
     static String EXTRACT_ICON(PackageManager packageManager, String file_path, String file_ext) {
-        if (packageManager == null) return null;
+        if (packageManager == null) {
+            return null;
+        }
         if (file_ext.matches(Global.APK_REGEX)) {
             PackageInfo PI = packageManager.getPackageArchiveInfo(file_path, 0);
-            if (PI == null) return null;
+            if (PI == null) {
+                return null;
+            }
             PI.applicationInfo.publicSourceDir = file_path;
             String package_name = PI.packageName;
             String file_with_package_name = package_name + ".png";

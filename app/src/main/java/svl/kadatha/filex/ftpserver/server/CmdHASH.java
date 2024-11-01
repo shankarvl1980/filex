@@ -101,8 +101,9 @@ public class CmdHASH extends FtpCmd implements Runnable {
                 break mainblock;
             } finally {
                 try {
-                    if (in != null)
+                    if (in != null) {
                         in.close();
+                    }
                 } catch (IOException ignore) {
                 }
             }

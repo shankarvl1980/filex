@@ -103,7 +103,9 @@ public class PropertiesDialog extends DialogFragment {
         } else if (files_selected_array.size() > 1) {
             filename_str = files_selected_array.size() + " " + getString(R.string.files);
             file_path_str = new File(files_selected_array.get(0)).getParent();
-            if (fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) file_path_str = "NA";
+            if (fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
+                file_path_str = "NA";
+            }
             file_date_str = "NA";
             file_type_str = "NA";
             symbolic_link_str = "NA";

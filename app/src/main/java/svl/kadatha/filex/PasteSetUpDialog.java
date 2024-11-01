@@ -75,7 +75,9 @@ public class PasteSetUpDialog extends DialogFragment {
             dismissAllowingStateLoss();
         }
 
-        if (sourceFileDestNameMap.isEmpty()) dismissAllowingStateLoss();
+        if (sourceFileDestNameMap.isEmpty()) {
+            dismissAllowingStateLoss();
+        }
     }
 
     @Override
@@ -155,8 +157,9 @@ public class PasteSetUpDialog extends DialogFragment {
             for (int n = 0; n < size; ++n) {
                 file_path = sourceFileDestNameMap.getKeyAtIndex(n);
                 if (!FileUtil.isFromInternal(FileObjectType.FILE_TYPE, file_path)) {
-                    if (!check_SAF_permission_source(file_path, FileObjectType.FILE_TYPE))
+                    if (!check_SAF_permission_source(file_path, FileObjectType.FILE_TYPE)) {
                         return false;
+                    }
                 }
             }
             return true;

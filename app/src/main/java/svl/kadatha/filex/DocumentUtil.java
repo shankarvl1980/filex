@@ -98,8 +98,9 @@ public class DocumentUtil {
     @Nullable
     public static String getRoot(@NonNull String documentId) {
         String[] parts = documentId.split(":");
-        if (parts.length > 0)
+        if (parts.length > 0) {
             return parts[0];
+        }
         return null;
     }
 
@@ -135,8 +136,9 @@ public class DocumentUtil {
     @Nullable
     public static String[] getPathSegments(Uri documentUri) {
         String documentId = getDocumentId(documentUri);
-        if (documentId == null)
+        if (documentId == null) {
             return null;
+        }
         return getPathSegments(documentId);
     }
 
@@ -198,8 +200,9 @@ public class DocumentUtil {
      */
     public static String getNicePath(Uri uri) {
         String documentId = getDocumentId(uri);
-        if (documentId == null)
+        if (documentId == null) {
             documentId = getTreeDocumentId(uri);    // If there's no document id resort to tree id
+        }
         return documentId;
     }
 
@@ -234,16 +237,19 @@ public class DocumentUtil {
     @Nullable
     public static Uri getNeighborUri(@NonNull Uri hierarchicalTreeUri, String filename) {
         String documentId = getDocumentId(hierarchicalTreeUri);
-        if (documentId == null)
+        if (documentId == null) {
             return null;
+        }
 
         String root = getRoot(documentId);
-        if (root == null)
+        if (root == null) {
             return null;
+        }
 
         String[] parts = getPathSegments(documentId);
-        if (parts == null)
+        if (parts == null) {
             return null;
+        }
 
         parts[parts.length - 1] = filename; // replace the filename
         String path = TextUtils.join("/", parts);

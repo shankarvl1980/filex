@@ -256,7 +256,9 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
                     data = ((VideoViewActivity) activity).data;
                 }
 
-                if (data == null) return;
+                if (data == null) {
+                    return;
+                }
                 if (fromThirdPartyApp) {
                     mp.setDataSource(context, data);
                 } else if (fileObjectType == FileObjectType.FILE_TYPE) {
@@ -282,7 +284,9 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
     }
 
     private void setSurfaceViewSize() {
-        if (mp == null) return;
+        if (mp == null) {
+            return;
+        }
         // // Get the dimensions of the video
         int videoWidth = mp.getVideoWidth();
         int videoHeight = mp.getVideoHeight();
@@ -459,7 +463,9 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 
     public void mp_pause() {
         if (prepared) {
-            if (mp.isPlaying()) mp.pause();
+            if (mp.isPlaying()) {
+                mp.pause();
+            }
             viewModel.playmode = false;
             play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.video_play_icon));
             if (controlListener != null) {

@@ -100,8 +100,9 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
 
         file_click_selected_name = new File(fileclickselected).getName();
 
-        if (Global.ARCHIVE_EXTRACT_DIR == null)
+        if (Global.ARCHIVE_EXTRACT_DIR == null) {
             Global.ARCHIVE_EXTRACT_DIR = new File(context.getFilesDir(), "Archive");
+        }
 
     }
 
@@ -250,7 +251,9 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         super.onDestroyView();
         fileModifyObserver.stopWatching();
         fileModifyObserver.setFileObserverListener(null);
-        if (adapter != null) adapter.setCardViewClickListener(null);
+        if (adapter != null) {
+            adapter.setCardViewClickListener(null);
+        }
     }
 
     @Override
@@ -466,8 +469,9 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         @Override
         public void onActivityResult(ActivityResult result) {
             if (result.getResultCode() == Activity.RESULT_OK) {
-                if (clicked_filepojo != null)
+                if (clicked_filepojo != null) {
                     file_open_intent_dispatch(clicked_filepojo.getPath(), clicked_filepojo.getFileObjectType(), clicked_filepojo.getName(), false, clicked_filepojo.getSizeLong());
+                }
                 clicked_filepojo = null;
             } else {
                 Global.print(context, getString(R.string.permission_not_granted));

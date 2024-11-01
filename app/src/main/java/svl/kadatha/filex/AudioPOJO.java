@@ -16,7 +16,7 @@ public class AudioPOJO implements Parcelable {
         }
     };
 
-    private int id;
+    private long id;  // Changed from int to long
     private String data;
     private String title;
     private String lower_title;
@@ -24,10 +24,10 @@ public class AudioPOJO implements Parcelable {
     private String album;
     private String artist;
     private String duration;
-    private FileObjectType fileObjectType; // Enum type
+    private FileObjectType fileObjectType;
     private int position;
 
-    public AudioPOJO(int id, String data, String title, String album_id, String album, String artist, String duration, FileObjectType fileObjectType) {
+    public AudioPOJO(long id, String data, String title, String album_id, String album, String artist, String duration, FileObjectType fileObjectType) {  // Changed parameter type to long
         this.id = id;
         this.data = data;
         this.title = title;
@@ -40,10 +40,10 @@ public class AudioPOJO implements Parcelable {
     }
 
     protected AudioPOJO(Parcel in) {
-        id = in.readInt();
+        id = in.readLong();  // Changed from readInt to readLong
         data = in.readString();
         title = in.readString();
-        lower_title = title != null ? title.toLowerCase() : null; // Recompute lower_title
+        lower_title = title != null ? title.toLowerCase() : null;
         album_id = in.readString();
         album = in.readString();
         artist = in.readString();
@@ -51,19 +51,18 @@ public class AudioPOJO implements Parcelable {
         position = in.readInt();
         String fileObjectTypeName = in.readString();
         if (fileObjectTypeName != null) {
-            fileObjectType = FileObjectType.valueOf(fileObjectTypeName); // Convert String back to enum
+            fileObjectType = FileObjectType.valueOf(fileObjectTypeName);
         } else {
             fileObjectType = null;
         }
     }
 
     // Getters
-
-    public int getId() {
+    public long getId() {  // Changed return type to long
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {  // Changed parameter type to long
         this.id = id;
     }
 
@@ -81,7 +80,6 @@ public class AudioPOJO implements Parcelable {
 
     public void setTitle(String title) {
         this.title = title;
-        // Update lower_title whenever title is set
         this.lower_title = title != null ? title.toLowerCase() : null;
     }
 
@@ -100,8 +98,6 @@ public class AudioPOJO implements Parcelable {
     public String getAlbum() {
         return album;
     }
-
-    // Setters
 
     public void setAlbum(String album) {
         this.album = album;
@@ -139,8 +135,6 @@ public class AudioPOJO implements Parcelable {
         this.position = position;
     }
 
-    // Parcelable implementation
-
     @Override
     public int describeContents() {
         return 0;
@@ -148,15 +142,14 @@ public class AudioPOJO implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
-        parcel.writeInt(id);
+        parcel.writeLong(id);  // Changed from writeInt to writeLong
         parcel.writeString(data);
         parcel.writeString(title);
-        // lower_title is derived from title; no need to write it
         parcel.writeString(album_id);
         parcel.writeString(album);
         parcel.writeString(artist);
         parcel.writeString(duration);
         parcel.writeInt(position);
-        parcel.writeString(fileObjectType != null ? fileObjectType.name() : null); // Write enum as String
+        parcel.writeString(fileObjectType != null ? fileObjectType.name() : null);
     }
 }

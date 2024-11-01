@@ -64,16 +64,18 @@ public class PlayerScreenMotionLayout extends MotionLayout {
             @Override
             public void onTransitionChange(MotionLayout motionLayout, int startId, int endId, float progress) {
                 for (TransitionListener transitionListener : transitionListenerList) {
-                    if (transitionListener != null)
+                    if (transitionListener != null) {
                         transitionListener.onTransitionChange(motionLayout, startId, endId, progress);
+                    }
                 }
             }
 
             @Override
             public void onTransitionCompleted(MotionLayout motionLayout, int currentId) {
                 for (TransitionListener transitionListener : transitionListenerList) {
-                    if (transitionListener != null)
+                    if (transitionListener != null) {
                         transitionListener.onTransitionCompleted(motionLayout, currentId);
+                    }
                 }
             }
 
@@ -103,7 +105,9 @@ public class PlayerScreenMotionLayout extends MotionLayout {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 hasTouchStarted = false;
-                if (listener != null) listener.onListeningTransition();
+                if (listener != null) {
+                    listener.onListeningTransition();
+                }
                 return super.onTouchEvent(event);
         }
 

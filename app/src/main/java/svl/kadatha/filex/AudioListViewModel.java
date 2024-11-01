@@ -57,12 +57,24 @@ public class AudioListViewModel extends AndroidViewModel {
     }
 
     private void cancel(boolean mayInterruptRunning) {
-        if (future1 != null) future1.cancel(mayInterruptRunning);
-        if (future2 != null) future2.cancel(mayInterruptRunning);
-        if (future3 != null) future3.cancel(mayInterruptRunning);
-        if (future4 != null) future4.cancel(mayInterruptRunning);
-        if (future5 != null) future5.cancel(mayInterruptRunning);
-        if (future6 != null) future6.cancel(mayInterruptRunning);
+        if (future1 != null) {
+            future1.cancel(mayInterruptRunning);
+        }
+        if (future2 != null) {
+            future2.cancel(mayInterruptRunning);
+        }
+        if (future3 != null) {
+            future3.cancel(mayInterruptRunning);
+        }
+        if (future4 != null) {
+            future4.cancel(mayInterruptRunning);
+        }
+        if (future5 != null) {
+            future5.cancel(mayInterruptRunning);
+        }
+        if (future6 != null) {
+            future6.cancel(mayInterruptRunning);
+        }
         isCancelled = true;
     }
 
@@ -73,7 +85,9 @@ public class AudioListViewModel extends AndroidViewModel {
 
     public void listAudio() {
         synchronized (audio_pojo_lock) {
-            if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+            if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+                return;
+            }
             asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
             ExecutorService executorService = MyExecutorService.getExecutorService();
             future1 = executorService.submit(new Runnable() {
@@ -83,7 +97,9 @@ public class AudioListViewModel extends AndroidViewModel {
                     audio_list = new ArrayList<>();
                     repositoryClass.getAudioPOJOList(false);
                     List<AudioPOJO> temp_audio_pojos = repositoryClass.audio_pojo_hashmap.get("audio");
-                    if (temp_audio_pojos != null) audio_list = temp_audio_pojos;
+                    if (temp_audio_pojos != null) {
+                        audio_list = temp_audio_pojos;
+                    }
                     asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
                 }
             });
@@ -92,7 +108,9 @@ public class AudioListViewModel extends AndroidViewModel {
 
 
     public synchronized void listAudio(List<AlbumPOJO> album_list, String action, String list_name) {
-        if (isAudioFetchingFromAlbumFinished.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (isAudioFetchingFromAlbumFinished.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         isAudioFetchingFromAlbumFinished.setValue(AsyncTaskStatus.STARTED);
         this.action = action;
         ExecutorService executorService = MyExecutorService.getExecutorService();
@@ -166,7 +184,9 @@ public class AudioListViewModel extends AndroidViewModel {
     }
 
     public synchronized void save_audio(String action, String list_name) {
-        if (isSavingAudioFinished.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (isSavingAudioFinished.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         isSavingAudioFinished.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future3 = executorService.submit(new Runnable() {
@@ -213,7 +233,9 @@ public class AudioListViewModel extends AndroidViewModel {
 
     public void listAlbum() {
         synchronized (album_pojo_lock) {
-            if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+            if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+                return;
+            }
             asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
             ExecutorService executorService = MyExecutorService.getExecutorService();
             future4 = executorService.submit(new Runnable() {
@@ -223,7 +245,9 @@ public class AudioListViewModel extends AndroidViewModel {
                     album_list = new ArrayList<>();
                     repositoryClass.getAlbumList(false);
                     List<AlbumPOJO> temp_album_pojos = repositoryClass.album_pojo_hashmap.get("album");
-                    if (temp_album_pojos != null) album_list = temp_album_pojos;
+                    if (temp_album_pojos != null) {
+                        album_list = temp_album_pojos;
+                    }
                     asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
                 }
             });
@@ -233,7 +257,9 @@ public class AudioListViewModel extends AndroidViewModel {
 
 
     public synchronized void fetch_saved_audio_list(String list_name, boolean whether_saved_play_list) {
-        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future5 = executorService.submit(new Runnable() {
@@ -269,7 +295,9 @@ public class AudioListViewModel extends AndroidViewModel {
 
 
     public synchronized void fetch_saved_audio_list(List<String> audio_selected_list) {
-        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future6 = executorService.submit(new Runnable() {

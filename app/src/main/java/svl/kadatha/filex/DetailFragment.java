@@ -469,7 +469,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
             }
             TO_BE_MOVED_TO_FILE_POJO = null;
         }
-        if (detailFragmentListener != null){
+        if (detailFragmentListener != null) {
             detailFragmentListener.setFileNumberView(viewModel.mselecteditems.size() + "/" + file_list_size);
         }
     }
@@ -485,7 +485,9 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
         super.onDestroyView();
         fileModifyObserver.stopWatching();
         fileModifyObserver.setFileObserverListener(null);
-        if (adapter != null) adapter.setCardViewClickListener(null);
+        if (adapter != null) {
+            adapter.setCardViewClickListener(null);
+        }
     }
 
     @Override
@@ -579,8 +581,9 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
             public void onClick(FilePOJO filePOJO) {
                 clicked_filepojo = filePOJO;
                 if (filePOJO.getIsDirectory()) {
-                    if (detailFragmentListener != null)
+                    if (detailFragmentListener != null) {
                         detailFragmentListener.createFragmentTransaction(filePOJO.getPath(), filePOJO.getFileObjectType());
+                    }
                 } else {
                     file_open_intent_dispatch(filePOJO.getPath(), filePOJO.getFileObjectType(), filePOJO.getName(), false, filePOJO.getSizeLong());
                 }
@@ -603,8 +606,9 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
             local_activity_delete = false;
             totalFilePOJO_list_Size = totalFilePOJO_list.size();
             file_list_size = totalFilePOJO_list_Size;
-            if (detailFragmentListener != null)
+            if (detailFragmentListener != null) {
                 detailFragmentListener.setFileNumberView(viewModel.mselecteditems.size() + "/" + file_list_size);
+            }
             if (fileclickselected.equals("Large Files")) {
                 Collections.sort(filePOJO_list, viewModel.library_size_desc ? FileComparator.FilePOJOComparate("d_size_desc", false) : FileComparator.FilePOJOComparate(Global.SORT, false));
             } else if (fileclickselected.equals("Duplicate Files")) {
@@ -717,8 +721,9 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
                             String fp = file_path.toString();
                             File f = new File(fp);
                             if (f.exists() && f.list() != null) {
-                                if (detailFragmentListener != null)
+                                if (detailFragmentListener != null) {
                                     detailFragmentListener.createFragmentTransaction(fp, fileObjectType);
+                                }
                             }
                         } else if (fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
                             if (p2 == 0) {
@@ -734,19 +739,25 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
                                 return;
                             }
                             try {
-                                if (p2 == 0) file_path.append(File.separator);
+                                if (p2 == 0) {
+                                    file_path.append(File.separator);
+                                }
                                 String fp = file_path.toString();
                                 UsbFile f = MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(fp));
-                                if (detailFragmentListener != null)
+                                if (detailFragmentListener != null) {
                                     detailFragmentListener.createFragmentTransaction(fp, fileObjectType);
+                                }
                             } catch (IOException e) {
 
                             }
                         } else if (fileObjectType == FileObjectType.FTP_TYPE || fileObjectType == FileObjectType.SFTP_TYPE || fileObjectType == FileObjectType.WEBDAV_TYPE || fileObjectType == FileObjectType.SMB_TYPE) {
                             String fp = file_path.toString();
-                            if (fp.isEmpty()) fp = File.separator;
-                            if (detailFragmentListener != null)
+                            if (fp.isEmpty()) {
+                                fp = File.separator;
+                            }
+                            if (detailFragmentListener != null) {
                                 detailFragmentListener.createFragmentTransaction(fp, fileObjectType);
+                            }
                         }
                     }
                 });
@@ -758,8 +769,9 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
         @Override
         public void onActivityResult(ActivityResult result) {
             if (result.getResultCode() == Activity.RESULT_OK) {
-                if (clicked_filepojo != null)
+                if (clicked_filepojo != null) {
                     file_open_intent_dispatch(clicked_filepojo.getPath(), clicked_filepojo.getFileObjectType(), clicked_filepojo.getName(), false, clicked_filepojo.getSizeLong());
+                }
                 clicked_filepojo = null;
             } else {
                 Global.print(context, getString(R.string.permission_not_granted));

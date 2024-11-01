@@ -380,8 +380,9 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
         @Override
         public void onActivityResult(ActivityResult result) {
             if (result.getResultCode() == Activity.RESULT_OK) {
-                if (clicked_filepojo != null)
+                if (clicked_filepojo != null) {
                     file_open_intent_dispatch(clicked_filepojo.getPath(), clicked_filepojo.getFileObjectType(), clicked_filepojo.getName(), false, clicked_filepojo.getSizeLong());
+                }
                 clicked_filepojo = null;
             } else {
                 Global.print(context, getString(R.string.permission_not_granted));

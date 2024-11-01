@@ -27,8 +27,9 @@ public class DuplicateFiles {
                 return fileMap;
             }
             List<String> map = fileMap.get(checksum);
-            if (map == null)
+            if (map == null) {
                 fileMap.put(checksum, map = new ArrayList<>());
+            }
             map.add(file_path);
         }
         return fileMap;

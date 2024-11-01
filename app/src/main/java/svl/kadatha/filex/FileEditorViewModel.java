@@ -74,11 +74,21 @@ public class FileEditorViewModel extends AndroidViewModel {
     }
 
     public void cancel(boolean mayInterruptRunning) {
-        if (future1 != null) future1.cancel(mayInterruptRunning);
-        if (future2 != null) future2.cancel(mayInterruptRunning);
-        if (future3 != null) future3.cancel(mayInterruptRunning);
-        if (future4 != null) future4.cancel(mayInterruptRunning);
-        if (future5 != null) future5.cancel(mayInterruptRunning);
+        if (future1 != null) {
+            future1.cancel(mayInterruptRunning);
+        }
+        if (future2 != null) {
+            future2.cancel(mayInterruptRunning);
+        }
+        if (future3 != null) {
+            future3.cancel(mayInterruptRunning);
+        }
+        if (future4 != null) {
+            future4.cancel(mayInterruptRunning);
+        }
+        if (future5 != null) {
+            future5.cancel(mayInterruptRunning);
+        }
         isCancelled = true;
     }
 
@@ -106,7 +116,9 @@ public class FileEditorViewModel extends AndroidViewModel {
                 while (skippedBytes < filePointer) {
                     long remainingToSkip = filePointer - skippedBytes;
                     long actualSkipped = fileInputStream.skip(remainingToSkip);
-                    if (actualSkipped == 0) break;  // In case skipping fails
+                    if (actualSkipped == 0) {
+                        break;  // In case skipping fails
+                    }
                     skippedBytes += actualSkipped;
                 }
                 Timber.tag(TAG).d("Skipped %d bytes to reach filePointer %d", skippedBytes, filePointer);
@@ -199,7 +211,9 @@ public class FileEditorViewModel extends AndroidViewModel {
 
 
     public synchronized void setUpInitialization(FileObjectType fileObjectType, String file_path) {
-        if (initializedSetUp.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (initializedSetUp.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         initializedSetUp.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future2 = executorService.submit(new Runnable() {
@@ -226,7 +240,9 @@ public class FileEditorViewModel extends AndroidViewModel {
     }
 
     public synchronized void saveContentInTempFile(String content) {
-        if (saveContentInTempFile.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (saveContentInTempFile.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         saveContentInTempFile.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future3 = executorService.submit(new Runnable() {

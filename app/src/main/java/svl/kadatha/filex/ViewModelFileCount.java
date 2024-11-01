@@ -59,7 +59,9 @@ public class ViewModelFileCount extends ViewModel {
     }
 
     private void cancel(boolean mayInterruptRunning) {
-        if (future != null) future.cancel(mayInterruptRunning);
+        if (future != null) {
+            future.cancel(mayInterruptRunning);
+        }
         isCancelled = true;
     }
 

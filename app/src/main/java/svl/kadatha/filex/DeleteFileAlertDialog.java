@@ -133,7 +133,9 @@ public class DeleteFileAlertDialog extends DialogFragment {
                 if (sourceFileObjectType == FileObjectType.FILE_TYPE) {
                     String file_path = files_selected_array.get(0);
                     if (!FileUtil.isWritable(sourceFileObjectType, file_path)) {
-                        if (!check_SAF_permission(file_path, sourceFileObjectType)) return;
+                        if (!check_SAF_permission(file_path, sourceFileObjectType)) {
+                            return;
+                        }
 
                     }
                     Class emptyService = ArchiveDeletePasteServiceUtil.getEmptyService(context);
@@ -148,7 +150,9 @@ public class DeleteFileAlertDialog extends DialogFragment {
                         String file_path = files_selected_array.get(i);
                         if (FileUtil.isFromInternal(FileObjectType.FILE_TYPE, file_path)) {
                         } else {
-                            if (!check_SAF_permission(file_path, FileObjectType.FILE_TYPE)) return;
+                            if (!check_SAF_permission(file_path, FileObjectType.FILE_TYPE)) {
+                                return;
+                            }
                         }
                     }
 
@@ -185,8 +189,9 @@ public class DeleteFileAlertDialog extends DialogFragment {
                     }
                     start_delete_progress_activity(emptyService);
                 }
-                if (okButtonClickListener != null)
+                if (okButtonClickListener != null) {
                     okButtonClickListener.deleteDialogOKButtonClick();
+                }
                 dismissAllowingStateLoss();
             }
         });

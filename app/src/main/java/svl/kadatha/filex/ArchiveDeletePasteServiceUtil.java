@@ -110,19 +110,26 @@ public class ArchiveDeletePasteServiceUtil {
         FileSelectorFragment fileSelectorFragment = null;
         StorageAnalyserFragment storageAnalyserFragment = null;
 
-        if (MainActivity.FM != null)
+        if (MainActivity.FM != null) {
             df = (DetailFragment) MainActivity.FM.findFragmentById(R.id.detail_fragment);
-        if (FileSelectorActivity.FM != null)
+        }
+        if (FileSelectorActivity.FM != null) {
             fileSelectorFragment = (FileSelectorFragment) FileSelectorActivity.FM.findFragmentById(R.id.file_selector_container);
-        if (StorageAnalyserActivity.FM != null)
+        }
+        if (StorageAnalyserActivity.FM != null) {
             storageAnalyserFragment = (StorageAnalyserFragment) StorageAnalyserActivity.FM.findFragmentById(R.id.storage_analyser_container);
+        }
 
 
-        if (df != null) df.adapter.clear_cache_and_refresh(file_path, fileObjectType);
-        if (fileSelectorFragment != null)
+        if (df != null) {
+            df.adapter.clear_cache_and_refresh(file_path, fileObjectType);
+        }
+        if (fileSelectorFragment != null) {
             fileSelectorFragment.clear_cache_and_refresh(file_path, fileObjectType);
-        if (storageAnalyserFragment != null)
+        }
+        if (storageAnalyserFragment != null) {
             storageAnalyserFragment.clear_cache_and_refresh(file_path, fileObjectType);
+        }
     }
 
     public static void NOTIFY_ALL_DIALOG_FRAGMENTS_ON_DELETE(String source_folder, FileObjectType fileObjectType) {
@@ -130,16 +137,21 @@ public class ArchiveDeletePasteServiceUtil {
         FileSelectorFragment fileSelectorFragment = null;
         StorageAnalyserFragment storageAnalyserFragment = null;
 
-        if (MainActivity.FM != null)
+        if (MainActivity.FM != null) {
             df = (DetailFragment) MainActivity.FM.findFragmentById(R.id.detail_fragment);
-        if (FileSelectorActivity.FM != null)
+        }
+        if (FileSelectorActivity.FM != null) {
             fileSelectorFragment = (FileSelectorFragment) FileSelectorActivity.FM.findFragmentById(R.id.file_selector_container);
-        if (StorageAnalyserActivity.FM != null)
+        }
+        if (StorageAnalyserActivity.FM != null) {
             storageAnalyserFragment = (StorageAnalyserFragment) StorageAnalyserActivity.FM.findFragmentById(R.id.storage_analyser_container);
+        }
 
 
         String parent_source_folder = new File(source_folder).getParent();
-        if (parent_source_folder == null) parent_source_folder = source_folder;
+        if (parent_source_folder == null) {
+            parent_source_folder = source_folder;
+        }
 
         if (df != null && df.fileObjectType == fileObjectType) {
             String tag = df.getTag();
@@ -160,8 +172,9 @@ public class ArchiveDeletePasteServiceUtil {
             if (Global.IS_CHILD_FILE(tag, parent_source_folder)) {
                 storageAnalyserFragment.clearSelectionAndNotifyDataSetChanged();
             }
-            if (df != null)
+            if (df != null) {
                 df.local_activity_delete = true; //to avoid modification observed which causes re-populate of filepojos
+            }
         }
     }
 
@@ -170,19 +183,26 @@ public class ArchiveDeletePasteServiceUtil {
         FileSelectorFragment fileSelectorFragment = null;
         StorageAnalyserFragment storageAnalyserFragment = null;
 
-        if (MainActivity.FM != null)
+        if (MainActivity.FM != null) {
             df = (DetailFragment) MainActivity.FM.findFragmentById(R.id.detail_fragment);
-        if (FileSelectorActivity.FM != null)
+        }
+        if (FileSelectorActivity.FM != null) {
             fileSelectorFragment = (FileSelectorFragment) FileSelectorActivity.FM.findFragmentById(R.id.file_selector_container);
-        if (StorageAnalyserActivity.FM != null)
+        }
+        if (StorageAnalyserActivity.FM != null) {
             storageAnalyserFragment = (StorageAnalyserFragment) StorageAnalyserActivity.FM.findFragmentById(R.id.storage_analyser_container);
+        }
 
 
         String parent_dest_folder = new File(dest_folder).getParent();
-        if (parent_dest_folder == null) parent_dest_folder = dest_folder;
+        if (parent_dest_folder == null) {
+            parent_dest_folder = dest_folder;
+        }
 
         String parent_source_folder = new File(source_folder).getParent();
-        if (parent_source_folder == null) parent_source_folder = source_folder;
+        if (parent_source_folder == null) {
+            parent_source_folder = source_folder;
+        }
 
         if (df != null) {
             String tag = df.getTag();
@@ -238,15 +258,20 @@ public class ArchiveDeletePasteServiceUtil {
         FileSelectorFragment fileSelectorFragment = null;
         StorageAnalyserFragment storageAnalyserFragment = null;
 
-        if (MainActivity.FM != null)
+        if (MainActivity.FM != null) {
             df = (DetailFragment) MainActivity.FM.findFragmentById(R.id.detail_fragment);
-        if (FileSelectorActivity.FM != null)
+        }
+        if (FileSelectorActivity.FM != null) {
             fileSelectorFragment = (FileSelectorFragment) FileSelectorActivity.FM.findFragmentById(R.id.file_selector_container);
-        if (StorageAnalyserActivity.FM != null)
+        }
+        if (StorageAnalyserActivity.FM != null) {
             storageAnalyserFragment = (StorageAnalyserFragment) StorageAnalyserActivity.FM.findFragmentById(R.id.storage_analyser_container);
+        }
 
         String parent_dest_folder = new File(dest_folder).getParent();
-        if (parent_dest_folder == null) parent_dest_folder = dest_folder;
+        if (parent_dest_folder == null) {
+            parent_dest_folder = dest_folder;
+        }
         if (df != null) {
             if (Global.AFTER_ARCHIVE_GOTO_DEST_FOLDER) {
                 DetailFragment.TO_BE_MOVED_TO_FILE_POJO = filePOJO;
@@ -296,16 +321,21 @@ public class ArchiveDeletePasteServiceUtil {
         FileSelectorFragment fileSelectorFragment = null;
         StorageAnalyserFragment storageAnalyserFragment = null;
 
-        if (MainActivity.FM != null)
+        if (MainActivity.FM != null) {
             df = (DetailFragment) MainActivity.FM.findFragmentById(R.id.detail_fragment);
-        if (FileSelectorActivity.FM != null)
+        }
+        if (FileSelectorActivity.FM != null) {
             fileSelectorFragment = (FileSelectorFragment) FileSelectorActivity.FM.findFragmentById(R.id.file_selector_container);
-        if (StorageAnalyserActivity.FM != null)
+        }
+        if (StorageAnalyserActivity.FM != null) {
             storageAnalyserFragment = (StorageAnalyserFragment) StorageAnalyserActivity.FM.findFragmentById(R.id.storage_analyser_container);
+        }
 
 
         String parent_dest_folder = new File(dest_folder).getParent();
-        if (parent_dest_folder == null) parent_dest_folder = dest_folder;
+        if (parent_dest_folder == null) {
+            parent_dest_folder = dest_folder;
+        }
 
 
         if (df != null) {
@@ -371,8 +401,9 @@ public class ArchiveDeletePasteServiceUtil {
 
         if (cancelled) {
             CLEAR_CACHE_AND_REFRESH(dest_folder, destFileObjectType);  //for dest_folder
-            if (cut)
+            if (cut) {
                 CLEAR_CACHE_AND_REFRESH(source_folder, sourceFileObjectType);  // for source_folder
+            }
             return null;
         }
 

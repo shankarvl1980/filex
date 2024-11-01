@@ -157,13 +157,19 @@ public abstract class DetailRecyclerViewAdapter extends RecyclerView.Adapter<Det
 
     public void selectInterval() {
         int size = df.viewModel.mselecteditems.size();
-        if (size < 2) return;
+        if (size < 2) {
+            return;
+        }
         int last_key = df.viewModel.mselecteditems.getKeyAtIndex(size - 1);
         int previous_to_last_key = df.viewModel.mselecteditems.getKeyAtIndex(size - 2);
-        if (last_key == previous_to_last_key) return;
+        if (last_key == previous_to_last_key) {
+            return;
+        }
         int min = Math.min(last_key, previous_to_last_key);
         int max = Math.max(last_key, previous_to_last_key);
-        if (max - min == 1) return;
+        if (max - min == 1) {
+            return;
+        }
         for (int i = min + 1; i < max; ++i) {
             df.viewModel.mselecteditems.put(i, df.filePOJO_list.get(i).getPath());
         }

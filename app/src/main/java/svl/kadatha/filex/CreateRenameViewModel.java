@@ -35,7 +35,9 @@ public class CreateRenameViewModel extends AndroidViewModel {
     }
 
     public synchronized void createFile(File file, FileObjectType fileObjectType, int file_type, String parent_folder, String tree_uri_path, Uri tree_uri) {
-        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         FILE_OBJECT_TYPE = fileObjectType;
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         final String new_name = file.getName();
@@ -75,7 +77,9 @@ public class CreateRenameViewModel extends AndroidViewModel {
 
 
     public synchronized void renameFile(String parent_file_path, String existing_file_path, String existing_name, String new_file_path, String new_name, FileObjectType fileObjectType, boolean isDirectory, boolean overwrite, String tree_uri_path, Uri tree_uri, String filePOJOHashmapKeyPath, FileObjectType dfFileObjectType) {
-        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         FILE_OBJECT_TYPE = fileObjectType;
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();

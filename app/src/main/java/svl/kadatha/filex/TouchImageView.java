@@ -460,10 +460,12 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
             minTrans = viewSize - contentSize;
             maxTrans = 0;
         }
-        if (trans < minTrans)
+        if (trans < minTrans) {
             return -trans + minTrans;
-        if (trans > maxTrans)
+        }
+        if (trans > maxTrans) {
             return -trans + maxTrans;
+        }
         return 0;
     }
 
@@ -683,7 +685,9 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
             return false;
         } else if (x >= -1 && direction < 0) {
             return false;
-        } else return !(Math.abs(x) + viewWidth + 1 >= getImageWidth()) || direction <= 0;
+        } else {
+            return !(Math.abs(x) + viewWidth + 1 >= getImageWidth()) || direction <= 0;
+        }
     }
 
     private void scaleImage(double deltaScale, float focusX, float focusY, boolean stretchImageToSuper) {
@@ -922,8 +926,9 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         last.set(curr);
-                        if (fling != null)
+                        if (fling != null) {
                             fling.cancelFling();
+                        }
                         setState(State.DRAG);
                         break;
                     case MotionEvent.ACTION_MOVE:

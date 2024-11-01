@@ -21,16 +21,20 @@ public class StorageUtil {
 
     public static ArrayList<FilePOJO> getSdCardPaths(final Context context, final boolean includePrimaryExternalStorage) {
         final File[] externalFilesDirs = ContextCompat.getExternalFilesDirs(context, null);
-        if (externalFilesDirs.length == 0)
+        if (externalFilesDirs.length == 0) {
             return null;
+        }
         if (externalFilesDirs.length == 1) {
-            if (externalFilesDirs[0] == null)
+            if (externalFilesDirs[0] == null) {
                 return null;
+            }
             final String storageState = EnvironmentCompat.getStorageState(externalFilesDirs[0]);
-            if (!Environment.MEDIA_MOUNTED.equals(storageState))
+            if (!Environment.MEDIA_MOUNTED.equals(storageState)) {
                 return null;
-            if (!includePrimaryExternalStorage && Environment.isExternalStorageEmulated())
+            }
+            if (!includePrimaryExternalStorage && Environment.isExternalStorageEmulated()) {
                 return null;
+            }
         }
         final ArrayList<FilePOJO> result = new ArrayList<>();
         STORAGE_DIR = new ArrayList<>(); //This is to ensure check on duplicate file paths
@@ -42,8 +46,9 @@ public class StorageUtil {
         int length = externalFilesDirs.length;
         for (int i = 0; i < length; ++i) {
             final File file = externalFilesDirs[i];
-            if (file == null)
+            if (file == null) {
                 continue;
+            }
             if (Environment.MEDIA_MOUNTED.equals(EnvironmentCompat.getStorageState(file))) {
                 File f = new File(getRootOfInnerSdCardFolder(file));
                 verify_add_file_path(f, result);
@@ -51,8 +56,9 @@ public class StorageUtil {
         }
 
         File mnt = new File("/storage");
-        if (!mnt.exists())
+        if (!mnt.exists()) {
             mnt = new File("/mnt");
+        }
 
         File[] fileList = mnt.listFiles(new FileFilter() {
 
@@ -74,13 +80,16 @@ public class StorageUtil {
             }
         }
 
-        if (result.isEmpty())
+        if (result.isEmpty()) {
             return null;
+        }
         return result;
     }
 
     private static void verify_add_file_path(File f, List<FilePOJO> result) {
-        if (STORAGE_DIR.contains(f)) return;
+        if (STORAGE_DIR.contains(f)) {
+            return;
+        }
         STORAGE_DIR.add(f);
         result.add(MakeFilePOJOUtil.MAKE_FilePOJO(f, false, FileObjectType.FILE_TYPE));
         int j = 0;
@@ -94,8 +103,9 @@ public class StorageUtil {
         if (isWritable(dummy_file)) {
             repositoryClass.internal_storage_path_list.add(f.getAbsolutePath());
         }
-        if (Environment.isExternalStorageRemovable(f))
+        if (Environment.isExternalStorageRemovable(f)) {
             repositoryClass.external_storage_path_list.add(f.getAbsolutePath());
+        }
     }
 
     public static boolean isWritable(@NonNull final File file) {
@@ -140,8 +150,9 @@ public class StorageUtil {
      * Given any file/folder inside an sd card, this will return the path of the sd card
      */
     private static String getRootOfInnerSdCardFolder(File file) {
-        if (file == null)
+        if (file == null) {
             return null;
+        }
 
         String absolutePath = file.getAbsolutePath();
         return absolutePath.substring(0, absolutePath.indexOf("Android/data"));

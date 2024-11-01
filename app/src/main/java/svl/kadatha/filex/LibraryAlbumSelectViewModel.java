@@ -21,8 +21,12 @@ public class LibraryAlbumSelectViewModel extends ViewModel {
     }
 
     public void cancel(boolean mayInterruptRunning) {
-        if (future1 != null) future1.cancel(mayInterruptRunning);
-        if (future2 != null) future2.cancel(mayInterruptRunning);
+        if (future1 != null) {
+            future1.cancel(mayInterruptRunning);
+        }
+        if (future2 != null) {
+            future2.cancel(mayInterruptRunning);
+        }
         isCancelled = true;
     }
 
@@ -31,7 +35,9 @@ public class LibraryAlbumSelectViewModel extends ViewModel {
     }
 
     public void fetchAlbumDirectories(String library_type) {
-        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future1 = executorService.submit(new Runnable() {

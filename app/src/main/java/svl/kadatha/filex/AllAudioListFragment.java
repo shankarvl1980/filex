@@ -369,8 +369,9 @@ public class AllAudioListFragment extends Fragment {
         }
 
         audioListViewModel.audio_pojo_selected_items = new IndexedLinkedHashMap<>();
-        if (audioListRecyclerViewAdapter != null)
+        if (audioListRecyclerViewAdapter != null) {
             audioListRecyclerViewAdapter.notifyDataSetChanged();
+        }
         enable_disable_buttons(false);
         if (num_all_audio <= 0) {
             recyclerview.setVisibility(View.GONE);
@@ -540,7 +541,9 @@ public class AllAudioListFragment extends Fragment {
             String album = getString(R.string.album_colon) + " " + audio.getAlbum();
             long duration = 0L;
             String duration_string = audio.getDuration();
-            if (duration_string != null) duration = Long.parseLong(duration_string);
+            if (duration_string != null) {
+                duration = Long.parseLong(duration_string);
+            }
             String duration_str = getString(R.string.duration) + " " + (String.format("%d:%02d", duration / 1000 / 60, duration / 1000 % 60));
             String artist = getString(R.string.artists_colon) + " " + audio.getArtist();
             boolean item_selected = audioListViewModel.audio_pojo_selected_items.containsKey(p2);
@@ -618,7 +621,7 @@ public class AllAudioListFragment extends Fragment {
                     onLongClickProcedure(p1, size);
                 } else {
                     AudioPOJO audio = audio_list.get(pos);
-                    int id = audio.getId();
+                    long id = audio.getId();
                     Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
                     Uri data = Uri.withAppendedPath(uri, String.valueOf(id));
 

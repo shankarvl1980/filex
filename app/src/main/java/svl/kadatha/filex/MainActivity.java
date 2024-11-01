@@ -392,7 +392,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             @Override
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
                 DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-                if (df == null) return;
+                if (df == null) {
+                    return;
+                }
                 if (asyncTaskStatus == AsyncTaskStatus.STARTED) {
                     df.progress_bar.setVisibility(View.VISIBLE);
                 } else if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
@@ -868,7 +870,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 viewModel.getApkList(false);
 
                 DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-                if (df == null) return;
+                if (df == null) {
+                    return;
+                }
                 if (df.fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
                     fm.beginTransaction().detach(df).commit();
                     fm.beginTransaction().attach(df).commit();
@@ -879,7 +883,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
     public void rescanLargeDuplicateFilesLibrary(String type) {
         DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-        if (df == null) return;
+        if (df == null) {
+            return;
+        }
         if (df.fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
             if (df.progress_bar.getVisibility() == View.VISIBLE) {
                 Global.print(context, getString(R.string.please_wait));
@@ -934,7 +940,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
                 viewModel.getLargeFileList(false);
                 DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-                if (df == null) return;
+                if (df == null) {
+                    return;
+                }
                 if (df.fileclickselected.equals("Large Files")) {
                     fm.beginTransaction().detach(df).commit();
                     fm.beginTransaction().attach(df).commit();
@@ -962,7 +970,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
                 viewModel.getDuplicateFileList(false);
                 DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-                if (df == null) return;
+                if (df == null) {
+                    return;
+                }
                 if (df.fileclickselected.equals("Duplicate Files")) {
                     fm.beginTransaction().detach(df).commit();
                     fm.beginTransaction().attach(df).commit();
@@ -1283,7 +1293,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                         && !Global.WHETHER_FILE_OBJECT_TYPE_NETWORK_TYPE_AND_CONTAINED_IN_STORAGE_DIR(df.fileObjectType)) {
                     fm.popBackStack();
                     ++frag;
-                    if (frag > entry_count) break;
+                    if (frag > entry_count) {
+                        break;
+                    }
                     df = (DetailFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count - frag).getName());
                     df_tag = df.getTag();
                 }
@@ -1307,6 +1319,20 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     protected void onPause() {
         super.onPause();
         imm.hideSoftInputFromWindow(search_view.getWindowToken(), 0);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        workingDirRecyclerAdapter.setOnItemClickListenerForWorkingDirAdapter(null);
+        mediaMountReceiver.removeMediaMountListener(this);
+        localBroadcastManager.unregisterReceiver(usbReceiver);
+        localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
+        unregisterReceiver(networkStateReceiver);
+        context.unregisterReceiver(mediaMountReceiver);
+        listPopWindow.dismiss(); // to avoid memory leak on orientation change
+        h.removeCallbacksAndMessages(null);
+        Timber.tag(Global.TAG).d("main activity destroyed");
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -1346,20 +1372,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     });
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        workingDirRecyclerAdapter.setOnItemClickListenerForWorkingDirAdapter(null);
-        mediaMountReceiver.removeMediaMountListener(this);
-        localBroadcastManager.unregisterReceiver(usbReceiver);
-        localBroadcastManager.unregisterReceiver(localBroadcastReceiver);
-        unregisterReceiver(networkStateReceiver);
-        context.unregisterReceiver(mediaMountReceiver);
-        listPopWindow.dismiss(); // to avoid memory leak on orientation change
-        h.removeCallbacksAndMessages(null);
-        Timber.tag(Global.TAG).d("main activity destroyed");
-    }
 
     public void DeselectAllAndAdjustToolbars(DetailFragment df) {
         listPopWindow.dismiss();
@@ -1501,8 +1513,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
     @Override
     public void actionModeFinish(Fragment fragment, String fileclickeselected) {
-        if (fragment instanceof DetailFragment)
+        if (fragment instanceof DetailFragment) {
             action_mode_finish((DetailFragment) fragment);
+        }
     }
 
     @Override
@@ -1608,7 +1621,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
             }
         }
-        if (usbFileRoot == null) return;
+        if (usbFileRoot == null) {
+            return;
+        }
         for (FilePOJO filePOJO : repositoryClass.storage_dir) {
             if (filePOJO.getFileObjectType() == FileObjectType.USB_TYPE && filePOJO.getPath().equals(Global.USB_STORAGE_PATH)) {
                 usb_path_added = true;
@@ -1652,7 +1667,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 storageRecyclerAdapter.notifyDataSetChanged();
                 FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(repositoryClass.external_storage_path_list, FileObjectType.FILE_TYPE);
                 DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-                if (df != null) df.clearSelectionAndNotifyDataSetChanged();
+                if (df != null) {
+                    df.clearSelectionAndNotifyDataSetChanged();
+                }
                 if (recentDialogListener != null) {
                     recentDialogListener.onMediaAttachedAndRemoved();
                 }
@@ -1943,7 +1960,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                                 break;
 
                         }
-                        if (item_id != 2) action_mode_finish(df);
+                        if (item_id != 2) {
+                            action_mode_finish(df);
+                        }
                         listPopWindow.dismiss();
                     }
                 });
@@ -2103,7 +2122,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         @Override
         public void onBindViewHolder(ViewHolder p1, int p2) {
             FilePOJO filePOJO = storage_dir_arraylist.get(p2);
-            if (filePOJO == null) return;
+            if (filePOJO == null) {
+                return;
+            }
             String file_path = filePOJO.getPath();
             FileObjectType fileObjectType = filePOJO.getFileObjectType();
 
@@ -2378,10 +2399,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
             switch (intent.getAction()) {
                 case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
-                    if (df != null) df.local_activity_delete = true;
+                    if (df != null) {
+                        df.local_activity_delete = true;
+                    }
                     break;
                 case Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION:
-                    if (df != null) df.modification_observed = true;
+                    if (df != null) {
+                        df.modification_observed = true;
+                    }
                     break;
                 case Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION:
                     storageRecyclerAdapter.notifyDataSetChanged();
@@ -2394,6 +2419,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     }
+
+
 
 
 }

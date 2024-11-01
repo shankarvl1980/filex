@@ -52,16 +52,36 @@ public class MainActivityViewModel extends AndroidViewModel {
     }
 
     public void cancel(boolean mayInterruptRunning) {
-        if (future1 != null) future1.cancel(mayInterruptRunning);
-        if (future2 != null) future2.cancel(mayInterruptRunning);
-        if (future3 != null) future3.cancel(mayInterruptRunning);
-        if (future4 != null) future4.cancel(mayInterruptRunning);
-        if (future5 != null) future5.cancel(mayInterruptRunning);
-        if (future6 != null) future6.cancel(mayInterruptRunning);
-        if (future7 != null) future7.cancel(mayInterruptRunning);
-        if (future8 != null) future8.cancel(mayInterruptRunning);
-        if (future9 != null) future9.cancel(mayInterruptRunning);
-        if (future10 != null) future10.cancel(mayInterruptRunning);
+        if (future1 != null) {
+            future1.cancel(mayInterruptRunning);
+        }
+        if (future2 != null) {
+            future2.cancel(mayInterruptRunning);
+        }
+        if (future3 != null) {
+            future3.cancel(mayInterruptRunning);
+        }
+        if (future4 != null) {
+            future4.cancel(mayInterruptRunning);
+        }
+        if (future5 != null) {
+            future5.cancel(mayInterruptRunning);
+        }
+        if (future6 != null) {
+            future6.cancel(mayInterruptRunning);
+        }
+        if (future7 != null) {
+            future7.cancel(mayInterruptRunning);
+        }
+        if (future8 != null) {
+            future8.cancel(mayInterruptRunning);
+        }
+        if (future9 != null) {
+            future9.cancel(mayInterruptRunning);
+        }
+        if (future10 != null) {
+            future10.cancel(mayInterruptRunning);
+        }
         isCancelled = true;
     }
 
@@ -71,7 +91,9 @@ public class MainActivityViewModel extends AndroidViewModel {
 
 
     public void deleteDirectory(File dir) {
-        if (isDeletionCompleted.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (isDeletionCompleted.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         isDeletionCompleted.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         executorService.execute(new Runnable() {

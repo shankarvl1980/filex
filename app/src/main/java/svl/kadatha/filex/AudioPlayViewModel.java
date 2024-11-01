@@ -41,8 +41,12 @@ public class AudioPlayViewModel extends AndroidViewModel {
     }
 
     public void cancel(boolean mayInterruptRunning) {
-        if (future1 != null) future1.cancel(mayInterruptRunning);
-        if (future2 != null) future2.cancel(mayInterruptRunning);
+        if (future1 != null) {
+            future1.cancel(mayInterruptRunning);
+        }
+        if (future2 != null) {
+            future2.cancel(mayInterruptRunning);
+        }
         isCancelled = true;
     }
 
@@ -51,7 +55,9 @@ public class AudioPlayViewModel extends AndroidViewModel {
     }
 
     public synchronized void albumPolling(String source_folder, FileObjectType fileObjectType, boolean fromThirdPartyApp) {
-        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future1 = executorService.submit(new Runnable() {
@@ -94,19 +100,20 @@ public class AudioPlayViewModel extends AndroidViewModel {
                             if (idx != -1) {
                                 file_ext = filePOJO.getName().substring(idx + 1);
                                 if (file_ext.matches(Global.AUDIO_REGEX)) {
-                                    AudioPOJO audio = new AudioPOJO(0, filePOJO.getPath(), filePOJO.getName(), null, null, null, "0", fileObjectType);
-                                    AudioPlayerService.AUDIO_QUEUED_ARRAY.add(audio);
-
-                                    if (AudioPlayerActivity.AUDIO_FILE.getTitle().equals(filePOJO.getName()))
-                                        AudioPlayerService.CURRENT_PLAY_NUMBER = count;
-                                    count++;
+                                    AudioPOJO audio = AudioPlayerActivity.getAudioPojo(App.getAppContext(), filePOJO.getPath(), fileObjectType);
+                                    if (audio != null) {
+                                        AudioPlayerService.AUDIO_QUEUED_ARRAY.add(audio);
+                                        if (AudioPlayerActivity.AUDIO_FILE.getTitle().equals(filePOJO.getName())) {
+                                            AudioPlayerService.CURRENT_PLAY_NUMBER = count;
+                                        }
+                                        count++;
+                                    }
                                 } else if (filePOJO.getName().equals(AudioPlayerActivity.AUDIO_FILE.getTitle())) {
                                     AudioPlayerService.AUDIO_QUEUED_ARRAY.add(AudioPlayerActivity.AUDIO_FILE);
                                     AudioPlayerService.CURRENT_PLAY_NUMBER = count;
                                     count++;
                                 }
                             } else if (filePOJO.getName().equals(AudioPlayerActivity.AUDIO_FILE.getTitle())) {
-
                                 AudioPlayerService.AUDIO_QUEUED_ARRAY.add(AudioPlayerActivity.AUDIO_FILE);
                                 AudioPlayerService.CURRENT_PLAY_NUMBER = count;
                                 count++;
@@ -119,8 +126,10 @@ public class AudioPlayViewModel extends AndroidViewModel {
         });
     }
 
-    public void fetchAlbumArt(int audio_id, String audiofilename, String audiofilepath) {
-        if (isAlbumArtFetched.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+    public void fetchAlbumArt(long audio_id, String audiofilename, String audiofilepath) {
+        if (isAlbumArtFetched.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         this.audio_file_name = audiofilename;
         isAlbumArtFetched.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();

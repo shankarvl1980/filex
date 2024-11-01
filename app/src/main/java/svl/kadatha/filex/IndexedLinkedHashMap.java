@@ -11,7 +11,9 @@ public class IndexedLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
 
     @Override
     public V put(K key, V val) {
-        if (!super.containsKey(key)) al_Index.add(key);
+        if (!super.containsKey(key)) {
+            al_Index.add(key);
+        }
         return super.put(key, val);
     }
 

@@ -34,8 +34,11 @@ public class PermissionsUtil {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             int i, j;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                if (Environment.isExternalStorageManager()) i = PackageManager.PERMISSION_GRANTED;
-                else i = PackageManager.PERMISSION_DENIED;
+                if (Environment.isExternalStorageManager()) {
+                    i = PackageManager.PERMISSION_GRANTED;
+                } else {
+                    i = PackageManager.PERMISSION_DENIED;
+                }
                 if (i != PackageManager.PERMISSION_GRANTED) {
                     permissions_not_granted_list.add(Manifest.permission.MANAGE_EXTERNAL_STORAGE);
                 }

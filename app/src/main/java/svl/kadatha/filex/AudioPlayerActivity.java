@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -42,7 +44,7 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
     public static final String ACTIVITY_NAME = "AUDIO_PLAYER_ACTIVITY";
     static final int WRITE_SETTINGS_PERMISSION_REQUEST_CODE = 59;
     private static final boolean[] alreadyNotificationWarned = new boolean[1];
-    public static HashMap<Integer, String> EXISTING_AUDIOS_ID;
+    public static HashMap<Long, String> EXISTING_AUDIOS_ID;
     static AudioPOJO AUDIO_FILE;
     static ArrayList<String> AUDIO_SAVED_LIST = new ArrayList<>();
     static String AUDIO_NOTIFICATION_INTENT_ACTION;
@@ -68,6 +70,47 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
     private AudioSavedListFragment aslf;
     private PlayScreenFragment psf;
     private AudioPlayViewModel audioPlayViewModel;
+
+    public static AudioPOJO getAudioPojo(Context context, String filePath, FileObjectType fileObjectType) {
+        try {
+            Uri contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+            String selection = MediaStore.Audio.Media.DATA + "=?";
+            String[] selectionArgs = new String[]{filePath};
+            String[] projection = new String[]{
+                    MediaStore.Audio.Media._ID,
+                    MediaStore.Audio.Media.DATA,
+                    MediaStore.Audio.Media.TITLE,
+                    MediaStore.Audio.Media.ALBUM_ID,
+                    MediaStore.Audio.Media.ALBUM,
+                    MediaStore.Audio.Media.ARTIST,
+                    MediaStore.Audio.Media.DURATION
+            };
+
+            try (Cursor cursor = context.getContentResolver().query(
+                    contentUri,
+                    projection,
+                    selection,
+                    selectionArgs,
+                    null)) {
+
+                if (cursor != null && cursor.moveToFirst()) {
+                    return new AudioPOJO(
+                            cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)),
+                            cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)),
+                            cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)),
+                            cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)),
+                            cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM)),
+                            cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)),
+                            cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)),
+                            fileObjectType  // Assuming this is the appropriate FileObjectType
+                    );
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -244,7 +287,9 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
             fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
             file_path = intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
             boolean fromArchive = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
-            if (file_path == null) file_path = RealPathUtil.getLastSegmentPath(data);
+            if (file_path == null) {
+                file_path = RealPathUtil.getLastSegmentPath(data);
+            }
             if (fileObjectType == null || fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
                 fileObjectType = FileObjectType.FILE_TYPE;
                 fromThirdPartyApp = true;
@@ -282,7 +327,6 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
         on_intent(intent, null);
     }
 
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -313,7 +357,6 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
     public void clearCache() {
         Global.CLEAR_CACHE();
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

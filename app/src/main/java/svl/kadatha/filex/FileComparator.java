@@ -22,12 +22,18 @@ public class FileComparator {
                 return new SORT_D_FILE_POJO_TIME_DESC();
 
             case "d_size_desc":
-                if (compare_total_file_size) return new SORT_D_FILE_POJO_TOTAL_SIZE_DESC();
-                else return new SORT_D_FILE_POJO_SIZE_DESC();
+                if (compare_total_file_size) {
+                    return new SORT_D_FILE_POJO_TOTAL_SIZE_DESC();
+                } else {
+                    return new SORT_D_FILE_POJO_SIZE_DESC();
+                }
 
             case "d_size_asc":
-                if (compare_total_file_size) return new SORT_D_FILE_POJO_TOTAL_SIZE_ASC();
-                else return new SORT_D_FILE_POJO_SIZE_ASC();
+                if (compare_total_file_size) {
+                    return new SORT_D_FILE_POJO_TOTAL_SIZE_ASC();
+                } else {
+                    return new SORT_D_FILE_POJO_SIZE_ASC();
+                }
 
             case "f_name_asc":
                 return new SORT_F_FILE_POJO_NAME_ASC();
@@ -42,12 +48,18 @@ public class FileComparator {
                 return new SORT_F_FILE_POJO_TIME_DESC();
 
             case "f_size_desc":
-                if (compare_total_file_size) return new SORT_F_FILE_POJO_TOTAL_SIZE_DESC();
-                else return new SORT_F_FILE_POJO_SIZE_DESC();
+                if (compare_total_file_size) {
+                    return new SORT_F_FILE_POJO_TOTAL_SIZE_DESC();
+                } else {
+                    return new SORT_F_FILE_POJO_SIZE_DESC();
+                }
 
             case "f_size_asc":
-                if (compare_total_file_size) return new SORT_F_FILE_POJO_TOTAL_SIZE_ASC();
-                else return new SORT_F_FILE_POJO_SIZE_ASC();
+                if (compare_total_file_size) {
+                    return new SORT_F_FILE_POJO_TOTAL_SIZE_ASC();
+                } else {
+                    return new SORT_F_FILE_POJO_SIZE_ASC();
+                }
 
             default:
                 return new SORT_D_FILE_POJO_NAME_ASC();
@@ -121,11 +133,13 @@ public class FileComparator {
                 if (isDigitA && isDigitB) {
                     // Remove leading zeros
                     int nonZeroA = 0;
-                    while (nonZeroA < chunkAStr.length() && chunkAStr.charAt(nonZeroA) == '0')
+                    while (nonZeroA < chunkAStr.length() && chunkAStr.charAt(nonZeroA) == '0') {
                         nonZeroA++;
+                    }
                     int nonZeroB = 0;
-                    while (nonZeroB < chunkBStr.length() && chunkBStr.charAt(nonZeroB) == '0')
+                    while (nonZeroB < chunkBStr.length() && chunkBStr.charAt(nonZeroB) == '0') {
                         nonZeroB++;
+                    }
 
                     // Compare lengths of remaining digits
                     int lenA = chunkAStr.length() - nonZeroA;
@@ -162,35 +176,37 @@ public class FileComparator {
     private static class SORT_D_FILE_POJO_NAME_ASC implements Comparator<FilePOJO> {
         @Override
         public int compare(FilePOJO f1, FilePOJO f2) {
-            if (f1.getIsDirectory() && !f2.getIsDirectory())
+            if (f1.getIsDirectory() && !f2.getIsDirectory()) {
                 return -1;
-            else if (!f1.getIsDirectory() && f2.getIsDirectory())
+            } else if (!f1.getIsDirectory() && f2.getIsDirectory()) {
                 return 1;
-            else
+            } else {
                 return NATURAL_SORT_COMPARATOR.compare(f1.getLowerName(), f2.getLowerName());
+            }
         }
     }
 
     private static class SORT_F_FILE_POJO_NAME_ASC implements Comparator<FilePOJO> {
         @Override
         public int compare(FilePOJO f1, FilePOJO f2) {
-            if (!f1.getIsDirectory() && f2.getIsDirectory())
+            if (!f1.getIsDirectory() && f2.getIsDirectory()) {
                 return -1;
-            else if (f1.getIsDirectory() && !f2.getIsDirectory())
+            } else if (f1.getIsDirectory() && !f2.getIsDirectory()) {
                 return 1;
-            else
+            } else {
                 return NATURAL_SORT_COMPARATOR.compare(f1.getLowerName(), f2.getLowerName());
+            }
         }
     }
 
     private static class SORT_D_FILE_POJO_NAME_DESC implements Comparator<FilePOJO> {
         @Override
         public int compare(FilePOJO f1, FilePOJO f2) {
-            if (f1.getIsDirectory() && !f2.getIsDirectory())
+            if (f1.getIsDirectory() && !f2.getIsDirectory()) {
                 return -1;
-            else if (!f1.getIsDirectory() && f2.getIsDirectory())
+            } else if (!f1.getIsDirectory() && f2.getIsDirectory()) {
                 return 1;
-            else {
+            } else {
                 int i = NATURAL_SORT_COMPARATOR.compare(f1.getLowerName(), f2.getLowerName());
                 return -i;
             }
@@ -200,11 +216,11 @@ public class FileComparator {
     private static class SORT_F_FILE_POJO_NAME_DESC implements Comparator<FilePOJO> {
         @Override
         public int compare(FilePOJO f1, FilePOJO f2) {
-            if (!f1.getIsDirectory() && f2.getIsDirectory())
+            if (!f1.getIsDirectory() && f2.getIsDirectory()) {
                 return -1;
-            else if (f1.getIsDirectory() && !f2.getIsDirectory())
+            } else if (f1.getIsDirectory() && !f2.getIsDirectory()) {
                 return 1;
-            else {
+            } else {
                 int i = NATURAL_SORT_COMPARATOR.compare(f1.getLowerName(), f2.getLowerName());
                 return -i;
             }
@@ -214,35 +230,37 @@ public class FileComparator {
     private static class SORT_D_FILE_POJO_TIME_ASC implements Comparator<FilePOJO> {
         @Override
         public int compare(FilePOJO f1, FilePOJO f2) {
-            if (f1.getIsDirectory() && !f2.getIsDirectory())
+            if (f1.getIsDirectory() && !f2.getIsDirectory()) {
                 return -1;
-            else if (!f1.getIsDirectory() && f2.getIsDirectory())
+            } else if (!f1.getIsDirectory() && f2.getIsDirectory()) {
                 return 1;
-            else
+            } else {
                 return Long.compare(f1.getDateLong(), f2.getDateLong());
+            }
         }
     }
 
     private static class SORT_F_FILE_POJO_TIME_ASC implements Comparator<FilePOJO> {
         @Override
         public int compare(FilePOJO f1, FilePOJO f2) {
-            if (!f1.getIsDirectory() && f2.getIsDirectory())
+            if (!f1.getIsDirectory() && f2.getIsDirectory()) {
                 return -1;
-            else if (f1.getIsDirectory() && !f2.getIsDirectory())
+            } else if (f1.getIsDirectory() && !f2.getIsDirectory()) {
                 return 1;
-            else
+            } else {
                 return Long.compare(f1.getDateLong(), f2.getDateLong());
+            }
         }
     }
 
     private static class SORT_D_FILE_POJO_TIME_DESC implements Comparator<FilePOJO> {
         @Override
         public int compare(FilePOJO f1, FilePOJO f2) {
-            if (f1.getIsDirectory() && !f2.getIsDirectory())
+            if (f1.getIsDirectory() && !f2.getIsDirectory()) {
                 return -1;
-            else if (!f1.getIsDirectory() && f2.getIsDirectory())
+            } else if (!f1.getIsDirectory() && f2.getIsDirectory()) {
                 return 1;
-            else {
+            } else {
                 int i = Long.compare(f1.getDateLong(), f2.getDateLong());
                 return -i;
             }
@@ -252,11 +270,11 @@ public class FileComparator {
     private static class SORT_F_FILE_POJO_TIME_DESC implements Comparator<FilePOJO> {
         @Override
         public int compare(FilePOJO f1, FilePOJO f2) {
-            if (!f1.getIsDirectory() && f2.getIsDirectory())
+            if (!f1.getIsDirectory() && f2.getIsDirectory()) {
                 return -1;
-            else if (f1.getIsDirectory() && !f2.getIsDirectory())
+            } else if (f1.getIsDirectory() && !f2.getIsDirectory()) {
                 return 1;
-            else {
+            } else {
                 int i = Long.compare(f1.getDateLong(), f2.getDateLong());
                 return -i;
             }
@@ -266,13 +284,13 @@ public class FileComparator {
     private static class SORT_D_FILE_POJO_SIZE_ASC implements Comparator<FilePOJO> {
         @Override
         public int compare(FilePOJO f1, FilePOJO f2) {
-            if (f1.getIsDirectory() && !f2.getIsDirectory())
+            if (f1.getIsDirectory() && !f2.getIsDirectory()) {
                 return -1;
-            else if (!f1.getIsDirectory() && f2.getIsDirectory())
+            } else if (!f1.getIsDirectory() && f2.getIsDirectory()) {
                 return 1;
-            else if (f1.getIsDirectory() && f2.getIsDirectory())
+            } else if (f1.getIsDirectory() && f2.getIsDirectory()) {
                 return NATURAL_SORT_COMPARATOR.compare(f1.getLowerName(), f2.getLowerName());
-            else {
+            } else {
                 return Long.compare(f1.getSizeLong(), f2.getSizeLong());
             }
         }
@@ -281,25 +299,26 @@ public class FileComparator {
     private static class SORT_F_FILE_POJO_SIZE_ASC implements Comparator<FilePOJO> {
         @Override
         public int compare(FilePOJO f1, FilePOJO f2) {
-            if (!f1.getIsDirectory() && f2.getIsDirectory())
+            if (!f1.getIsDirectory() && f2.getIsDirectory()) {
                 return -1;
-            else if (f1.getIsDirectory() && !f2.getIsDirectory())
+            } else if (f1.getIsDirectory() && !f2.getIsDirectory()) {
                 return 1;
-            else if (f1.getIsDirectory() && f2.getIsDirectory())
+            } else if (f1.getIsDirectory() && f2.getIsDirectory()) {
                 return NATURAL_SORT_COMPARATOR.compare(f1.getLowerName(), f2.getLowerName());
-            else
+            } else {
                 return Long.compare(f1.getSizeLong(), f2.getSizeLong());
+            }
         }
     }
 
     private static class SORT_D_FILE_POJO_SIZE_DESC implements Comparator<FilePOJO> {
         @Override
         public int compare(FilePOJO f1, FilePOJO f2) {
-            if (f1.getIsDirectory() && !f2.getIsDirectory())
+            if (f1.getIsDirectory() && !f2.getIsDirectory()) {
                 return -1;
-            else if (!f1.getIsDirectory() && f2.getIsDirectory())
+            } else if (!f1.getIsDirectory() && f2.getIsDirectory()) {
                 return 1;
-            else if (f1.getIsDirectory() && f2.getIsDirectory()) {
+            } else if (f1.getIsDirectory() && f2.getIsDirectory()) {
                 int i = Long.compare(f1.getTotalSizeLong(), f2.getTotalSizeLong());
                 return -i;
             } else {
@@ -312,11 +331,11 @@ public class FileComparator {
     private static class SORT_F_FILE_POJO_SIZE_DESC implements Comparator<FilePOJO> {
         @Override
         public int compare(FilePOJO f1, FilePOJO f2) {
-            if (!f1.getIsDirectory() && f2.getIsDirectory())
+            if (!f1.getIsDirectory() && f2.getIsDirectory()) {
                 return -1;
-            else if (f1.getIsDirectory() && !f2.getIsDirectory())
+            } else if (f1.getIsDirectory() && !f2.getIsDirectory()) {
                 return 1;
-            else if (f1.getIsDirectory() && f2.getIsDirectory()) {
+            } else if (f1.getIsDirectory() && f2.getIsDirectory()) {
                 int i = Long.compare(f1.getTotalSizeLong(), f2.getTotalSizeLong());
                 return -i;
             } else {
@@ -371,25 +390,26 @@ public class FileComparator {
     private static class SORT_F_FILE_POJO_TOTAL_SIZE_ASC implements Comparator<FilePOJO> {
         @Override
         public int compare(FilePOJO f1, FilePOJO f2) {
-            if (!f1.getIsDirectory() && f2.getIsDirectory())
+            if (!f1.getIsDirectory() && f2.getIsDirectory()) {
                 return -1;
-            else if (f1.getIsDirectory() && !f2.getIsDirectory())
+            } else if (f1.getIsDirectory() && !f2.getIsDirectory()) {
                 return 1;
-            else if (f1.getIsDirectory() && f2.getIsDirectory())
+            } else if (f1.getIsDirectory() && f2.getIsDirectory()) {
                 return Long.compare(f1.getTotalSizeLong(), f2.getTotalSizeLong());
-            else
+            } else {
                 return Long.compare(f1.getSizeLong(), f2.getSizeLong());
+            }
         }
     }
 
     private static class SORT_F_FILE_POJO_TOTAL_SIZE_DESC implements Comparator<FilePOJO> {
         @Override
         public int compare(FilePOJO f1, FilePOJO f2) {
-            if (!f1.getIsDirectory() && f2.getIsDirectory())
+            if (!f1.getIsDirectory() && f2.getIsDirectory()) {
                 return -1;
-            else if (f1.getIsDirectory() && !f2.getIsDirectory())
+            } else if (f1.getIsDirectory() && !f2.getIsDirectory()) {
                 return 1;
-            else if (f1.getIsDirectory() && f2.getIsDirectory()) {
+            } else if (f1.getIsDirectory() && f2.getIsDirectory()) {
                 int i = Long.compare(f1.getTotalSizeLong(), f2.getTotalSizeLong());
                 return -i;
             } else {

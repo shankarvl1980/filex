@@ -148,8 +148,12 @@ public class FileSaveHelper {
             return new SaveResult(false, pagePointerHashmap, "Error saving file: " + e.getMessage());
         } finally {
             try {
-                if (inputStream != null) inputStream.close();
-                if (outputStream != null) outputStream.close();
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+                if (outputStream != null) {
+                    outputStream.close();
+                }
             } catch (IOException e) {
                 Timber.tag(TAG).e(e, "Error closing streams");
             }

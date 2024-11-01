@@ -294,7 +294,9 @@ public class AppManagerListFragment extends Fragment {
         getParentFragmentManager().setFragmentResultListener(APP_ACTION_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                if (!requestKey.equals(APP_ACTION_REQUEST_CODE)) return;
+                if (!requestKey.equals(APP_ACTION_REQUEST_CODE)) {
+                    return;
+                }
                 String app_action = result.getString("app_action");
                 String app_path = result.getString("app_path");
                 String package_name = result.getString("package_name");

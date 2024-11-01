@@ -295,8 +295,12 @@ public final class ParcelableStringStringLinkedMap implements Parcelable, Iterab
      */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ParcelableStringStringLinkedMap)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ParcelableStringStringLinkedMap)) {
+            return false;
+        }
         ParcelableStringStringLinkedMap that = (ParcelableStringStringLinkedMap) o;
         return map.equals(that.map) && keyList.equals(that.keyList);
     }

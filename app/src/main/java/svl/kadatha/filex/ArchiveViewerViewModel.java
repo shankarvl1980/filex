@@ -36,15 +36,33 @@ public class ArchiveViewerViewModel extends AndroidViewModel {
     }
 
     public void cancel(boolean mayInterruptRunning) {
-        if (future1 != null) future1.cancel(mayInterruptRunning);
-        if (future2 != null) future2.cancel(mayInterruptRunning);
-        if (future3 != null) future3.cancel(mayInterruptRunning);
-        if (future4 != null) future4.cancel(mayInterruptRunning);
-        if (future5 != null) future5.cancel(mayInterruptRunning);
-        if (future6 != null) future6.cancel(mayInterruptRunning);
-        if (future7 != null) future7.cancel(mayInterruptRunning);
-        if (future8 != null) future8.cancel(mayInterruptRunning);
-        if (future9 != null) future9.cancel(mayInterruptRunning);
+        if (future1 != null) {
+            future1.cancel(mayInterruptRunning);
+        }
+        if (future2 != null) {
+            future2.cancel(mayInterruptRunning);
+        }
+        if (future3 != null) {
+            future3.cancel(mayInterruptRunning);
+        }
+        if (future4 != null) {
+            future4.cancel(mayInterruptRunning);
+        }
+        if (future5 != null) {
+            future5.cancel(mayInterruptRunning);
+        }
+        if (future6 != null) {
+            future6.cancel(mayInterruptRunning);
+        }
+        if (future7 != null) {
+            future7.cancel(mayInterruptRunning);
+        }
+        if (future8 != null) {
+            future8.cancel(mayInterruptRunning);
+        }
+        if (future9 != null) {
+            future9.cancel(mayInterruptRunning);
+        }
         isCancelled = true;
     }
 
@@ -53,7 +71,9 @@ public class ArchiveViewerViewModel extends AndroidViewModel {
     }
 
     public synchronized void extractArchive(ZipFile zipfile) {
-        if (isExtractionCompleted.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (isExtractionCompleted.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         isExtractionCompleted.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future1 = executorService.submit(new Runnable() {

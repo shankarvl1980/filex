@@ -45,9 +45,15 @@ public class AppManagerListViewModel extends AndroidViewModel {
     }
 
     public void cancel(boolean mayInterruptRunning) {
-        if (future1 != null) future1.cancel(mayInterruptRunning);
-        if (future2 != null) future2.cancel(mayInterruptRunning);
-        if (future3 != null) future3.cancel(mayInterruptRunning);
+        if (future1 != null) {
+            future1.cancel(mayInterruptRunning);
+        }
+        if (future2 != null) {
+            future2.cancel(mayInterruptRunning);
+        }
+        if (future3 != null) {
+            future3.cancel(mayInterruptRunning);
+        }
         isCancelled = true;
         FILE_OBJECT_TYPE = null;
     }
@@ -57,7 +63,9 @@ public class AppManagerListViewModel extends AndroidViewModel {
     }
 
     public synchronized void populateApps() {
-        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future1 = executorService.submit(new Runnable() {
@@ -84,7 +92,9 @@ public class AppManagerListViewModel extends AndroidViewModel {
             return;
         }
 
-        if (isBackedUp.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (isBackedUp.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         FILE_OBJECT_TYPE = destFileObjectType;
         isBackedUp.setValue(AsyncTaskStatus.STARTED);
 

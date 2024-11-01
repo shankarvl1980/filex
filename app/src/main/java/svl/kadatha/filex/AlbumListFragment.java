@@ -217,7 +217,7 @@ public class AlbumListFragment extends Fragment {
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 if (requestKey.equals(AUDIO_SELECT_REQUEST_CODE)) {
                     AudioPOJO audio = result.getParcelable("audio");
-                    int id = audio.getId();
+                    long id = audio.getId();
                     Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
                     Uri data = Uri.withAppendedPath(uri, String.valueOf(id));
                     if (audioSelectListener != null) {
@@ -274,8 +274,9 @@ public class AlbumListFragment extends Fragment {
 
     public void clear_selection() {
         audioListViewModel.album_pojo_selected_items = new IndexedLinkedHashMap<>();
-        if (albumListRecyclerViewAdapter != null)
+        if (albumListRecyclerViewAdapter != null) {
             albumListRecyclerViewAdapter.notifyDataSetChanged();
+        }
         enable_disable_buttons(false);
         file_number_view.setText(audioListViewModel.album_pojo_selected_items.size() + "/" + num_all_album);
         all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.select_icon, 0, 0);

@@ -124,7 +124,9 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
         boolean success = false, isWritable = false;
         FileModel destFileModel = FileModelFactory.getFileModel(dest_folder, destFileObjectType, tree_uri, tree_uri_path);
         if (zip_folder_name != null) {
-            if (!destFileModel.makeDirIfNotExists(zip_folder_name)) return false;
+            if (!destFileModel.makeDirIfNotExists(zip_folder_name)) {
+                return false;
+            }
         }
 
         if (destFileObjectType == FileObjectType.FILE_TYPE) {
@@ -245,7 +247,9 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
         ZipInputStream zipInputStream;
         FileModel sourceZipFileModel = FileModelFactory.getFileModel(zip_file_path, sourceFileObjectType, uri, uri_path);
         InputStream inputStream = sourceZipFileModel.getInputStream();
-        if (inputStream == null) return false;
+        if (inputStream == null) {
+            return false;
+        }
         bufferedInputStream = new BufferedInputStream(inputStream);
         zipInputStream = new ZipInputStream(bufferedInputStream);
 
@@ -285,8 +289,9 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
             }
             zipInputStream.close();
             bufferedInputStream.close();
-            if (counter_no_files > 0)
+            if (counter_no_files > 0) {
                 filePOJO = FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder, written_file_name_list, destFileObjectType, written_file_path_list);
+            }
             return true;
         } catch (IOException e) {
             return false;

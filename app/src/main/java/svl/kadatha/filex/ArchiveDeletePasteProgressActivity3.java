@@ -139,7 +139,9 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity {
                 if (archiveDeletePasteFileService != null) {
                     bind_data();
                 }
-                if (ArchiveDeletePasteFileService3.SERVICE_COMPLETED) finish();
+                if (ArchiveDeletePasteFileService3.SERVICE_COMPLETED) {
+                    finish();
+                }
             }
 
             public void onServiceDisconnected(ComponentName componentName) {
@@ -318,7 +320,9 @@ public class ArchiveDeletePasteProgressActivity3 extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (serviceConnection != null) unbindService(serviceConnection);
+        if (serviceConnection != null) {
+            unbindService(serviceConnection);
+        }
         PROGRESS_ACTIVITY_SHOWN = false;
         handler.removeCallbacksAndMessages(null);
     }

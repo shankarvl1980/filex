@@ -64,17 +64,39 @@ public class FilePOJOViewModel extends AndroidViewModel {
     }
 
     public void cancel(boolean mayInterruptRunning) {
-        if (future1 != null) future1.cancel(mayInterruptRunning);
-        if (future2 != null) future2.cancel(mayInterruptRunning);
-        if (future3 != null) future3.cancel(mayInterruptRunning);
-        if (future4 != null) future4.cancel(mayInterruptRunning);
-        if (future5 != null) future5.cancel(mayInterruptRunning);
-        if (future6 != null) future6.cancel(mayInterruptRunning);
-        if (future7 != null) future7.cancel(mayInterruptRunning);
-        if (future8 != null) future8.cancel(mayInterruptRunning);
-        if (future9 != null) future9.cancel(mayInterruptRunning);
-        if (future10 != null) future10.cancel(mayInterruptRunning);
-        if (future11 != null) future11.cancel(mayInterruptRunning);
+        if (future1 != null) {
+            future1.cancel(mayInterruptRunning);
+        }
+        if (future2 != null) {
+            future2.cancel(mayInterruptRunning);
+        }
+        if (future3 != null) {
+            future3.cancel(mayInterruptRunning);
+        }
+        if (future4 != null) {
+            future4.cancel(mayInterruptRunning);
+        }
+        if (future5 != null) {
+            future5.cancel(mayInterruptRunning);
+        }
+        if (future6 != null) {
+            future6.cancel(mayInterruptRunning);
+        }
+        if (future7 != null) {
+            future7.cancel(mayInterruptRunning);
+        }
+        if (future8 != null) {
+            future8.cancel(mayInterruptRunning);
+        }
+        if (future9 != null) {
+            future9.cancel(mayInterruptRunning);
+        }
+        if (future10 != null) {
+            future10.cancel(mayInterruptRunning);
+        }
+        if (future11 != null) {
+            future11.cancel(mayInterruptRunning);
+        }
         isCancelled = true;
     }
 
@@ -84,7 +106,9 @@ public class FilePOJOViewModel extends AndroidViewModel {
 
 
     public synchronized void populateFilePOJO(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile, boolean archive_view, boolean fill_file_size_also) {
-        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
 
@@ -120,7 +144,9 @@ public class FilePOJOViewModel extends AndroidViewModel {
 
 
     public synchronized void fill_filePOJOs_size(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile) {
-        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
 
@@ -192,7 +218,9 @@ public class FilePOJOViewModel extends AndroidViewModel {
     }
 
     private void fill_file_size(long volume_storage_size, String fileclickselected, int start, int end) {
-        if (filePOJOS == null) return;
+        if (filePOJOS == null) {
+            return;
+        }
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
         int[] total_no_of_files = new int[1];
         long[] total_size_of_files = new long[1];
@@ -204,7 +232,9 @@ public class FilePOJOViewModel extends AndroidViewModel {
         }
 
         for (int i = start; i < end; ++i) {
-            if (isCancelled()) return;
+            if (isCancelled()) {
+                return;
+            }
             FilePOJO filePOJO = filePOJOS.get(i);
             total_no_of_files[0] = 0;
             total_size_of_files[0] = 0;
@@ -236,14 +266,16 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 filePOJO.setTotalSizeLong(total_size_of_files[0]);
                 filePOJO.setTotalSize(FileUtil.humanReadableByteCount(total_size_of_files[0]));
                 double percentage = 0;
-                if (volume_storage_size != 0)
+                if (volume_storage_size != 0) {
                     percentage = total_size_of_files[0] * 100.0 / volume_storage_size;
+                }
                 filePOJO.setTotalSizePercentageDouble(percentage);
                 filePOJO.setTotalSizePercentage(String.format("%.2f", percentage) + "%");
             } else {
                 double percentage = 0;
-                if (volume_storage_size != 0)
+                if (volume_storage_size != 0) {
                     percentage = filePOJO.getSizeLong() * 100.0 / volume_storage_size;
+                }
                 filePOJO.setTotalSizePercentageDouble(percentage);
                 filePOJO.setTotalSizePercentage(String.format("%.2f", percentage) + "%");
             }
@@ -281,7 +313,9 @@ public class FilePOJOViewModel extends AndroidViewModel {
     }
 
     public synchronized void getLibraryList(String media_category) {
-        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future3 = executorService.submit(new Runnable() {
@@ -327,7 +361,9 @@ public class FilePOJOViewModel extends AndroidViewModel {
     }
 
     public synchronized void populateLibrarySearchFilePOJO(FileObjectType fileObjectType, Set<FilePOJO> search_in_dir, String library_or_search, String fileclickselected, String search_file_name, String search_file_type, boolean search_whole_word, boolean search_case_sensitive, boolean search_regex, long search_lower_limit_size, long search_upper_limit_size) {
-        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         count = 0;
         ExecutorService executorService = MyExecutorService.getExecutorService();
@@ -517,7 +553,9 @@ public class FilePOJOViewModel extends AndroidViewModel {
 
 
     private void search_file(List<FilePOJO> f_pojos, List<FilePOJO> f_pojos_filtered) {
-        if (media_category == null) return;
+        if (media_category == null) {
+            return;
+        }
         Cursor cursor = null;
         switch (media_category) {
             case "Download":
@@ -720,7 +758,9 @@ public class FilePOJOViewModel extends AndroidViewModel {
             } else if (file.isDirectory()) {
                 // search_dir is a directory
                 File[] list = file.listFiles();
-                if (list == null) return;
+                if (list == null) {
+                    return;
+                }
                 int size = list.length;
                 for (int i = 0; i < size; ++i) {
                     File f = list[i];
@@ -844,7 +884,9 @@ public class FilePOJOViewModel extends AndroidViewModel {
             } else if (file.isDirectory()) {
                 // search_dir is a directory
                 File[] list = file.listFiles();
-                if (list == null) return;
+                if (list == null) {
+                    return;
+                }
                 int size = list.length;
                 for (int i = 0; i < size; ++i) {
                     File f = list[i];

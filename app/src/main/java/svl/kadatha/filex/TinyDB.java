@@ -109,8 +109,9 @@ public class TinyDB {
      * @return returns the full path(file system address) of the saved image
      */
     public String putImage(String theFolder, String theImageName, Bitmap theBitmap) {
-        if (theFolder == null || theImageName == null || theBitmap == null)
+        if (theFolder == null || theImageName == null || theBitmap == null) {
             return null;
+        }
 
         this.DEFAULT_APP_IMAGEDATA_DIRECTORY = theFolder;
         String mFullPath = setupFullPath(theImageName);
@@ -163,8 +164,9 @@ public class TinyDB {
      * @return true if it successfully saved, false otherwise
      */
     private boolean saveBitmap(String fullPath, Bitmap bitmap) {
-        if (fullPath == null || bitmap == null)
+        if (fullPath == null || bitmap == null) {
             return false;
+        }
 
         boolean fileCreated = false;
         boolean bitmapCompressed;
@@ -172,9 +174,11 @@ public class TinyDB {
 
         File imageFile = new File(fullPath);
 
-        if (imageFile.exists())
-            if (!imageFile.delete())
+        if (imageFile.exists()) {
+            if (!imageFile.delete()) {
                 return false;
+            }
+        }
 
         try {
             fileCreated = imageFile.createNewFile();
@@ -231,8 +235,9 @@ public class TinyDB {
         ArrayList<String> arrayToList = new ArrayList<>(Arrays.asList(myList));
         ArrayList<Integer> newList = new ArrayList<>();
 
-        for (String item : arrayToList)
+        for (String item : arrayToList) {
             newList.add(Integer.parseInt(item));
+        }
 
         return newList;
     }
@@ -288,8 +293,9 @@ public class TinyDB {
         ArrayList<String> arrayToList = new ArrayList<>(Arrays.asList(myList));
         ArrayList<Double> newList = new ArrayList<>();
 
-        for (String item : arrayToList)
+        for (String item : arrayToList) {
             newList.add(Double.parseDouble(item));
+        }
 
         return newList;
     }
@@ -305,8 +311,9 @@ public class TinyDB {
         ArrayList<String> arrayToList = new ArrayList<>(Arrays.asList(myList));
         ArrayList<Long> newList = new ArrayList<>();
 
-        for (String item : arrayToList)
+        for (String item : arrayToList) {
             newList.add(Long.parseLong(item));
+        }
 
         return newList;
     }

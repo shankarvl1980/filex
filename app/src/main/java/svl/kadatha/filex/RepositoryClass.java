@@ -201,7 +201,9 @@ public class RepositoryClass {
     }
 
     private void search_file(String media_category, List<FilePOJO> f_pojos, List<FilePOJO> f_pojos_filtered, Boolean isCancelled, int count, MutableLiveData<Integer> mutable_file_count) {
-        if (media_category == null) return;
+        if (media_category == null) {
+            return;
+        }
         Context context = App.getAppContext();
         Cursor cursor = null;
         switch (media_category) {
@@ -413,7 +415,9 @@ public class RepositoryClass {
 
     public void populateAppsList() {
         synchronized (app_lock) {
-            if (app_pojo_hashmap.containsKey("system")) return;
+            if (app_pojo_hashmap.containsKey("system")) {
+                return;
+            }
             Context context = App.getAppContext();
             List<AppManagerListFragment.AppPOJO> userAppPOJOList = new ArrayList<>();
             List<AppManagerListFragment.AppPOJO> systemAppPOJOList = new ArrayList<>();
@@ -462,7 +466,9 @@ public class RepositoryClass {
 
     public void getAudioPOJOList(boolean isCancelled) {
         synchronized (audio_pojo_lock) {
-            if (audio_pojo_hashmap.containsKey("audio")) return;
+            if (audio_pojo_hashmap.containsKey("audio")) {
+                return;
+            }
             Context context = App.getAppContext();
             List<AudioPOJO> audio_list = new ArrayList<>();
             AudioPlayerActivity.EXISTING_AUDIOS_ID = new HashMap<>();
@@ -475,7 +481,9 @@ public class RepositoryClass {
 
             if (cursor != null && cursor.getCount() > 0) {
                 while (cursor.moveToNext()) {
-                    if (isCancelled) break;
+                    if (isCancelled) {
+                        break;
+                    }
                     String album_id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums._ID));
                     String album_path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
 
@@ -483,8 +491,10 @@ public class RepositoryClass {
                     audio_cursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, null, where, null, null);
                     if (audio_cursor != null && audio_cursor.getCount() > 0) {
                         while (audio_cursor.moveToNext()) {
-                            if (isCancelled) break;
-                            int id = audio_cursor.getInt(audio_cursor.getColumnIndex(MediaStore.Audio.Media._ID));
+                            if (isCancelled) {
+                                break;
+                            }
+                            long id = audio_cursor.getLong(audio_cursor.getColumnIndex(MediaStore.Audio.Media._ID));
                             String data = audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
                             String title = audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
                             String album = audio_cursor.getString(audio_cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
@@ -507,7 +517,9 @@ public class RepositoryClass {
 
     public void getAlbumList(boolean isCancelled) {
         synchronized (album_pojo_lock) {
-            if (album_pojo_hashmap.containsKey("album")) return;
+            if (album_pojo_hashmap.containsKey("album")) {
+                return;
+            }
             Context context = App.getAppContext();
             List<AlbumPOJO> album_list = new ArrayList<>();
             Cursor cursor = null;
@@ -518,7 +530,9 @@ public class RepositoryClass {
 
             if (cursor != null && cursor.getCount() > 0) {
                 while (cursor.moveToNext()) {
-                    if (isCancelled) break;
+                    if (isCancelled) {
+                        break;
+                    }
                     String id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums._ID));
                     String album_name = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM));
                     String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST));

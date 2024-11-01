@@ -125,7 +125,9 @@ public class UsbDocumentProvider extends DocumentsProvider {
         BroadcastReceiver usbPermissionBroadcastReceiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-                if (CHECKED_TIMES < 2) onCreate();
+                if (CHECKED_TIMES < 2) {
+                    onCreate();
+                }
                 if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                     discoverDevice(device);
                 }
@@ -178,11 +180,15 @@ public class UsbDocumentProvider extends DocumentsProvider {
     }
 
     private void discoverDevice(UsbDevice device) {
-        if (!Global.RECOGNISE_USB) return;
+        if (!Global.RECOGNISE_USB) {
+            return;
+        }
         Timber.tag(TAG).d("discoverDevice() " + device.toString());
         Context context = getContext();
         assert context != null;
-        if (!USB_MASS_STORAGE_DEVICES.isEmpty()) return;
+        if (!USB_MASS_STORAGE_DEVICES.isEmpty()) {
+            return;
+        }
         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
 
         for (UsbMassStorageDevice massStorageDevice : UsbMassStorageDevice.getMassStorageDevices(getContext())) {

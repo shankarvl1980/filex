@@ -395,8 +395,9 @@ public class AlbumDetailsDialog extends DialogFragment {
     public void clear_selection() {
         //audioListViewModel.audio_selected_array=new ArrayList<>();
         audioListViewModel.audio_pojo_selected_items = new IndexedLinkedHashMap<>();
-        if (audioListRecyclerViewAdapter != null)
+        if (audioListRecyclerViewAdapter != null) {
             audioListRecyclerViewAdapter.notifyDataSetChanged();
+        }
         bottom_toolbar.animate().translationY(bottom_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
         toolbar_visible = false;
         scroll_distance = 0;
@@ -519,7 +520,9 @@ public class AlbumDetailsDialog extends DialogFragment {
             String album = getString(R.string.album_colon) + " " + audio.getAlbum();
             long duration = 0L;
             String duration_string = audio.getDuration();
-            if (duration_string != null) duration = Long.parseLong(duration_string);
+            if (duration_string != null) {
+                duration = Long.parseLong(duration_string);
+            }
             String duration_str = getString(R.string.duration) + " " + (String.format("%d:%02d", duration / 1000 / 60, duration / 1000 % 60));
             String artist = getString(R.string.artists_colon) + " " + audio.getArtist();
             boolean item_selected = audioListViewModel.audio_pojo_selected_items.containsKey(p2);

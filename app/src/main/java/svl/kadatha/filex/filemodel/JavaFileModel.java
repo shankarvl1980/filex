@@ -109,9 +109,13 @@ public class JavaFileModel implements FileModel {
 
         if (writeable) {
             File targetFile = new File(getParentPath(), new_name);
-            if (file.renameTo(targetFile)) return true;
+            if (file.renameTo(targetFile)) {
+                return true;
+            }
 
-            if (targetFile.exists()) return false;
+            if (targetFile.exists()) {
+                return false;
+            }
 
             return false;
         } else {

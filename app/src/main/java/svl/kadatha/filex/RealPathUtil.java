@@ -93,8 +93,9 @@ public class RealPathUtil {
         else if ("content".equalsIgnoreCase(uri.getScheme())) {
 
             // Return the remote address
-            if (isGooglePhotosUri(uri))
+            if (isGooglePhotosUri(uri)) {
                 return uri.getLastPathSegment();
+            }
 
             return getDataColumn(context, uri, null, null);
         }
@@ -135,15 +136,18 @@ public class RealPathUtil {
         } catch (IllegalArgumentException e) {
             return kadathaUriGetPath(uri);
         } finally {
-            if (cursor != null)
+            if (cursor != null) {
                 cursor.close();
+            }
         }
         return null;
     }
 
     @SuppressLint("NewApi")
     private static String kadathaUriGetPath(Uri uri) {
-        if (uri == null) return "";
+        if (uri == null) {
+            return "";
+        }
         final boolean needToCheckUri = true;
         final boolean isOreoOrMore = Build.VERSION.SDK_INT >= 26;
         String selection = null;
@@ -156,7 +160,9 @@ public class RealPathUtil {
 
     @SuppressLint("NewApi")
     public static String getLastSegmentPath(Uri uri) {
-        if (uri == null) return "";
+        if (uri == null) {
+            return "";
+        }
         uri.normalizeScheme();
         String path = uri.getPath();
         path = path.substring(path.lastIndexOf(File.separator));

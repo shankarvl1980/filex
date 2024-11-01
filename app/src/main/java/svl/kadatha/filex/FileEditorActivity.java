@@ -489,8 +489,9 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
             viewModel.fileObjectType = Global.GET_FILE_OBJECT_TYPE(intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE));
             viewModel.file_path = intent.getStringExtra(FileIntentDispatch.EXTRA_FILE_PATH);
             viewModel.fromArchive = intent.getBooleanExtra(FileIntentDispatch.EXTRA_FROM_ARCHIVE, false);
-            if (viewModel.file_path == null)
+            if (viewModel.file_path == null) {
                 viewModel.file_path = RealPathUtil.getLastSegmentPath(viewModel.data);
+            }
 
             if (viewModel.fileObjectType == null || viewModel.fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
                 viewModel.fileObjectType = FileObjectType.FILE_TYPE;
@@ -966,11 +967,15 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
         @Override
         public void onServiceDisconnected(ComponentName p1) {
-            if (service != null) service = null;
-            if (fileSaveService1 != null)
+            if (service != null) {
+                service = null;
+            }
+            if (fileSaveService1 != null) {
                 fileSaveService1.setFileSaveServiceCompletionListener(null);
-            if (fileSaveService2 != null)
+            }
+            if (fileSaveService2 != null) {
                 fileSaveService2.setFileSaveServiceCompletionListener(null);
+            }
         }
     }
 }

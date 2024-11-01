@@ -33,10 +33,12 @@ public class RepeatListener implements OnTouchListener {
      *                        periodically
      */
     public RepeatListener(int initialInterval, int normalInterval, OnClickListener clickListener) {
-        if (clickListener == null)
+        if (clickListener == null) {
             throw new IllegalArgumentException("null runnable");
-        if (initialInterval < 0 || normalInterval < 0)
+        }
+        if (initialInterval < 0 || normalInterval < 0) {
             throw new IllegalArgumentException("negative interval");
+        }
 
         this.initialInterval = initialInterval;
         this.normalInterval = normalInterval;

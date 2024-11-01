@@ -116,11 +116,13 @@ public class AudioPlayFragment extends Fragment {
             @Override
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
                 if (asyncTaskStatus == AsyncTaskStatus.STARTED) {
-                    if (progress_bar != null)
+                    if (progress_bar != null) {
                         progress_bar.setVisibility(View.VISIBLE);  //because on_intent is called before inflation of view
+                    }
                 } else if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
-                    if (progress_bar != null)
+                    if (progress_bar != null) {
                         progress_bar.setVisibility(View.GONE);  //because on_intent is called before inflation of view
+                    }
                     if (Global.whether_file_cached(audioPlayViewModel.fileObjectType)) {
                         if (activity instanceof AudioPlayerActivity) {
                             ((AudioPlayerActivity) activity).data = FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", new File(audioPlayViewModel.currently_shown_file.getPath()));
@@ -173,8 +175,9 @@ public class AudioPlayFragment extends Fragment {
         }
 
         if (data != null) {
-            if (progress_bar != null)
+            if (progress_bar != null) {
                 progress_bar.setVisibility(View.VISIBLE); //because on_intent is called before inflation of view
+            }
         }
     }
 
@@ -300,21 +303,27 @@ public class AudioPlayFragment extends Fragment {
 
         previous_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (progress_bar.getVisibility() == View.VISIBLE) return;
+                if (progress_bar.getVisibility() == View.VISIBLE) {
+                    return;
+                }
                 audio_player_service.handler.obtainMessage(AudioPlayerService.GOTO_PREVIOUS).sendToTarget();
             }
         });
 
         backward_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (progress_bar.getVisibility() == View.VISIBLE) return;
+                if (progress_bar.getVisibility() == View.VISIBLE) {
+                    return;
+                }
                 audio_player_service.handler.obtainMessage(AudioPlayerService.MOVE_BACKWARD).sendToTarget();
             }
         });
 
         play_pause_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (progress_bar.getVisibility() == View.VISIBLE) return;
+                if (progress_bar.getVisibility() == View.VISIBLE) {
+                    return;
+                }
                 if (audio_player_service.prepared && !audio_player_service.playmode) {
                     audio_player_service.handler.obtainMessage(AudioPlayerService.START).sendToTarget();
                     play_pause_btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.pause_icon));
@@ -328,14 +337,18 @@ public class AudioPlayFragment extends Fragment {
 
         forward_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (progress_bar.getVisibility() == View.VISIBLE) return;
+                if (progress_bar.getVisibility() == View.VISIBLE) {
+                    return;
+                }
                 audio_player_service.handler.obtainMessage(AudioPlayerService.MOVE_FORWARD).sendToTarget();
             }
         });
 
         next_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (progress_bar.getVisibility() == View.VISIBLE) return;
+                if (progress_bar.getVisibility() == View.VISIBLE) {
+                    return;
+                }
                 audio_player_service.handler.obtainMessage(AudioPlayerService.GOTO_NEXT).sendToTarget();
             }
         });
@@ -399,7 +412,7 @@ public class AudioPlayFragment extends Fragment {
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 if (requestKey.equals(AUDIO_SELECT_REQUEST_CODE)) {
                     AudioPOJO audio = result.getParcelable("audio");
-                    int id = audio.getId();
+                    long id = audio.getId();
                     Uri data;
                     if (id == 0) {
                         File file = new File(audio.getData());
@@ -495,7 +508,9 @@ public class AudioPlayFragment extends Fragment {
     }
 
     private void setupAudioServiceListeners() {
-        if (audio_player_service == null) return;
+        if (audio_player_service == null) {
+            return;
+        }
 
         audio_player_service.setMediaPlayerPrepareListener(new AudioPlayerService.MediaPlayerServicePrepareListener() {
             public void onMediaPrepare() {
@@ -606,7 +621,7 @@ public class AudioPlayFragment extends Fragment {
         }
     }
 
-    public void setTitleArt(int audio_id, String audiofilename, final String audiofilepath) {
+    public void setTitleArt(long audio_id, String audiofilename, final String audiofilepath) {
         audioPlayViewModel.fetchAlbumArt(audio_id, audiofilename, audiofilepath);
     }
 
@@ -664,7 +679,9 @@ public class AudioPlayFragment extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> p1, View p2, int p3, long p4) {
             final ArrayList<String> files_selected_array = new ArrayList<>();
-            if (AudioPlayerActivity.AUDIO_FILE == null) return;
+            if (AudioPlayerActivity.AUDIO_FILE == null) {
+                return;
+            }
             if (activity instanceof AudioPlayerActivity) {
                 data = ((AudioPlayerActivity) activity).data;
             }

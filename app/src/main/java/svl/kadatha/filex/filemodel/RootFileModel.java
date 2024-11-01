@@ -35,7 +35,9 @@ public class RootFileModel implements FileModel {
     @Override
     public String getParentName() {
         String parentPath = getParentPath();
-        if (parentPath == null) return null;
+        if (parentPath == null) {
+            return null;
+        }
         int lastSlash = parentPath.lastIndexOf('/');
         if (lastSlash >= 0 && lastSlash < parentPath.length() - 1) {
             return parentPath.substring(lastSlash + 1);
@@ -51,7 +53,9 @@ public class RootFileModel implements FileModel {
 
     @Override
     public String getParentPath() {
-        if (path == null) return null;
+        if (path == null) {
+            return null;
+        }
         int lastSlash = path.lastIndexOf('/');
         if (lastSlash > 0) {
             return path.substring(0, lastSlash);
@@ -138,7 +142,9 @@ public class RootFileModel implements FileModel {
         }
         String command = "ls -a '" + path + "'";
         String output = RootUtils.executeCommand(command);
-        if (output == null) return null;
+        if (output == null) {
+            return null;
+        }
         String[] names = output.split("\n");
         ArrayList<FileModel> fileModels = new ArrayList<>();
         for (String fileName : names) {
@@ -176,7 +182,9 @@ public class RootFileModel implements FileModel {
     public long getLength() {
         String command = "stat -c '%s' '" + path + "'";
         String output = RootUtils.executeCommand(command);
-        if (output == null) return 0;
+        if (output == null) {
+            return 0;
+        }
         try {
             return Long.parseLong(output.trim());
         } catch (NumberFormatException e) {
@@ -195,7 +203,9 @@ public class RootFileModel implements FileModel {
     public long lastModified() {
         String command = "stat -c '%Y' '" + path + "'";
         String output = RootUtils.executeCommand(command);
-        if (output == null) return 0;
+        if (output == null) {
+            return 0;
+        }
         try {
             return Long.parseLong(output.trim()) * 1000L; // Convert seconds to milliseconds
         } catch (NumberFormatException e) {

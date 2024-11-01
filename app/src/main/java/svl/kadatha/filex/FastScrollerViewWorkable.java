@@ -83,7 +83,9 @@ public class FastScrollerViewWorkable extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (recyclerView == null) return super.onTouchEvent(event);
+        if (recyclerView == null) {
+            return super.onTouchEvent(event);
+        }
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:

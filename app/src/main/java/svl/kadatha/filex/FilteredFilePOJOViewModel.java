@@ -68,12 +68,24 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
     }
 
     public void cancel(boolean mayInterruptRunning) {
-        if (future1 != null) future1.cancel(mayInterruptRunning);
-        if (future2 != null) future2.cancel(mayInterruptRunning);
-        if (future3 != null) future3.cancel(mayInterruptRunning);
-        if (future4 != null) future4.cancel(mayInterruptRunning);
-        if (future5 != null) future5.cancel(mayInterruptRunning);
-        if (future6 != null) future6.cancel(mayInterruptRunning);
+        if (future1 != null) {
+            future1.cancel(mayInterruptRunning);
+        }
+        if (future2 != null) {
+            future2.cancel(mayInterruptRunning);
+        }
+        if (future3 != null) {
+            future3.cancel(mayInterruptRunning);
+        }
+        if (future4 != null) {
+            future4.cancel(mayInterruptRunning);
+        }
+        if (future5 != null) {
+            future5.cancel(mayInterruptRunning);
+        }
+        if (future6 != null) {
+            future6.cancel(mayInterruptRunning);
+        }
         isCancelled = true;
     }
 
@@ -83,7 +95,9 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
 
 
     public synchronized void getAlbumFromCurrentFolder(String regex, boolean whetherVideo) {
-        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         firststart = true;
         source_folder = new File(file_path).getParent();
@@ -138,8 +152,9 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                                     } else {
                                         album_file_pojo_list.add(filePOJO);
                                     }
-                                    if (filePOJO.getName().equals(currently_shown_file.getName()))
+                                    if (filePOJO.getName().equals(currently_shown_file.getName())) {
                                         file_selected_idx = count;
+                                    }
                                     count++;
                                 } else if (filePOJO.getName().equals(currently_shown_file.getName())) {
                                     if (whetherVideo) {
@@ -173,7 +188,9 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
     }
 
     public void setWallPaper(ActivityResult result, File temporaryDir) {
-        if (hasWallPaperSet.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (hasWallPaperSet.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         hasWallPaperSet.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future2 = executorService.submit(new Runnable() {
@@ -217,7 +234,9 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
     }
 
     public void initializePdfRenderer(FileObjectType fileObjectType, String file_path, Uri data, boolean fromThirdPartyApp) {
-        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         this.file_path = file_path;
         source_folder = new File(file_path).getParent();
@@ -262,7 +281,9 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
     }
 
     public void rotate(int degrees, Uri tree_uri, String tree_uri_path) {
-        if (isRotated.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (isRotated.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         isRotated.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future5 = executorService.submit(new Runnable() {

@@ -398,8 +398,9 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                     String host = result.getString("host");
                     int port = result.getInt("port");
                     String user_name = result.getString("user_name");
-                    if (new_name != null)
+                    if (new_name != null) {
                         viewModel.changeNetworkAccountPojoDisplay(host, port, user_name, new_name, type);
+                    }
                 }
             }
         });
@@ -744,7 +745,9 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                     deleteFtpAlertDialog.show(getParentFragmentManager(), "");
                 }
             } else if (id == R.id.toolbar_btn_3) {
-                if (connected_network_account_pojo == null) return;
+                if (connected_network_account_pojo == null) {
+                    return;
+                }
                 progress_bar.setVisibility(View.VISIBLE);
                 viewModel.disconnectNetworkConnection();
             } else if (id == R.id.toolbar_btn_4) {

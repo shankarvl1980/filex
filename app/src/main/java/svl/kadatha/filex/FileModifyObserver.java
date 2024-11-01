@@ -22,7 +22,9 @@ public class FileModifyObserver extends FileObserver {
     }
 
     public static FileModifyObserver getInstance(String file_path) {
-        if (file_path == null) return null;
+        if (file_path == null) {
+            return null;
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             return new FileModifyObserver(new File(file_path));
         } else {
@@ -40,7 +42,9 @@ public class FileModifyObserver extends FileObserver {
             case MOVED_TO:
             case DELETE:
             case DELETE_SELF:
-                if (fileObserverListener != null) fileObserverListener.onFileModified();
+                if (fileObserverListener != null) {
+                    fileObserverListener.onFileModified();
+                }
                 break;
         }
     }

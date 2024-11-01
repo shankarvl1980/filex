@@ -75,16 +75,36 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
     }
 
     private void cancel(boolean mayInterruptRunning) {
-        if (future1 != null) future1.cancel(mayInterruptRunning);
-        if (future2 != null) future2.cancel(mayInterruptRunning);
-        if (future3 != null) future3.cancel(mayInterruptRunning);
-        if (future4 != null) future4.cancel(mayInterruptRunning);
-        if (future5 != null) future5.cancel(mayInterruptRunning);
-        if (future6 != null) future6.cancel(mayInterruptRunning);
-        if (future7 != null) future7.cancel(mayInterruptRunning);
-        if (future8 != null) future8.cancel(mayInterruptRunning);
-        if (future9 != null) future9.cancel(mayInterruptRunning);
-        if (future10 != null) future10.cancel(mayInterruptRunning);
+        if (future1 != null) {
+            future1.cancel(mayInterruptRunning);
+        }
+        if (future2 != null) {
+            future2.cancel(mayInterruptRunning);
+        }
+        if (future3 != null) {
+            future3.cancel(mayInterruptRunning);
+        }
+        if (future4 != null) {
+            future4.cancel(mayInterruptRunning);
+        }
+        if (future5 != null) {
+            future5.cancel(mayInterruptRunning);
+        }
+        if (future6 != null) {
+            future6.cancel(mayInterruptRunning);
+        }
+        if (future7 != null) {
+            future7.cancel(mayInterruptRunning);
+        }
+        if (future8 != null) {
+            future8.cancel(mayInterruptRunning);
+        }
+        if (future9 != null) {
+            future9.cancel(mayInterruptRunning);
+        }
+        if (future10 != null) {
+            future10.cancel(mayInterruptRunning);
+        }
         isCancelled = true;
     }
 
@@ -93,7 +113,9 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
     }
 
     public synchronized void fetchNetworkAccountPojoList(String type) {
-        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future1 = executorService.submit(new Runnable() {
@@ -106,7 +128,9 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
     }
 
     public synchronized void deleteNetworkAccountPojo(List<NetworkAccountsDetailsDialog.NetworkAccountPOJO> networkAccountPOJOS_for_delete) {
-        if (deleteAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (deleteAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         deleteAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future2 = executorService.submit(new Runnable() {
@@ -127,7 +151,9 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
     }
 
     public synchronized void connectNetworkAccount(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) {
-        if (networkConnectAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (networkConnectAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         networkConnectAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future3 = executorService.submit(new Runnable() {
@@ -148,8 +174,9 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
     }
 
     public synchronized void replaceAndConnectNetworkAccount(Bundle bundle) {
-        if (replaceAndConnectNetworkAccountAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED)
+        if (replaceAndConnectNetworkAccountAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
             return;
+        }
         replaceAndConnectNetworkAccountAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future5 = executorService.submit(new Runnable() {
@@ -322,8 +349,12 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO = bundle.getParcelable("networkAccountPOJO");
         boolean update = bundle.getBoolean("update");
         boolean replace = bundle.getBoolean("replace");
-        if (original_host == null) original_host = "";
-        if (original_user_name == null) original_user_name = "";
+        if (original_host == null) {
+            original_host = "";
+        }
+        if (original_user_name == null) {
+            original_user_name = "";
+        }
         if (replace) {
             networkAccountsDatabaseHelper.delete(networkAccountPOJO.host, networkAccountPOJO.port, networkAccountPOJO.user_name, networkAccountPOJO.type);
         }
@@ -337,8 +368,9 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
     }
 
     public synchronized void replaceNetworkAccountPojoList(Bundle bundle) {
-        if (replaceNetworkAccountAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED)
+        if (replaceNetworkAccountAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
             return;
+        }
         replaceNetworkAccountAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future4 = executorService.submit(new Runnable() {
@@ -352,8 +384,9 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
 
 
     public synchronized void changeNetworkAccountPojoDisplay(String host, int port, String user_name, String new_name, String type) {
-        if (changeNetworkAccountDisplayAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED)
+        if (changeNetworkAccountDisplayAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
             return;
+        }
         changeNetworkAccountDisplayAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future6 = executorService.submit(new Runnable() {
@@ -367,8 +400,9 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
     }
 
     public synchronized void checkWhetherNetworkAccountPojoAlreadyExists(String host, int port, String user_name) {
-        if (checkDuplicateNetworkAccountDisplayAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED)
+        if (checkDuplicateNetworkAccountDisplayAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
             return;
+        }
         checkDuplicateNetworkAccountDisplayAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future7 = executorService.submit(new Runnable() {
@@ -383,8 +417,9 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
     }
 
     public synchronized void testServiceConnection() {
-        if (testServiceConnectionAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED)
+        if (testServiceConnectionAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
             return;
+        }
         testServiceConnectionAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         isNetworkConnected = false;
         ExecutorService executorService = MyExecutorService.getExecutorService();
@@ -411,8 +446,9 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
     }
 
     public synchronized void disconnectNetworkConnection() {
-        if (disconnectNetworkConnectionAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED)
+        if (disconnectNetworkConnectionAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
             return;
+        }
         disconnectNetworkConnectionAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future9 = executorService.submit(new Runnable() {

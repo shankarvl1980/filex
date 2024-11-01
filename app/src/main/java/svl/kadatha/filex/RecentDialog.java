@@ -242,13 +242,16 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
         @Override
         public void onBindViewHolder(RecentRecyclerAdapter.ViewHolder p1, int p2) {
             FilePOJO filePOJO = dir_linkedlist.get(p2);
-            if (filePOJO == null) return;
+            if (filePOJO == null) {
+                return;
+            }
             if (storage_dir) {
                 FileObjectType fileObjectType = filePOJO.getFileObjectType();
                 String space = "";
                 SpacePOJO spacePOJO = Global.SPACE_ARRAY.get(fileObjectType + filePOJO.getPath());
-                if (spacePOJO != null)
+                if (spacePOJO != null) {
                     space = " (" + spacePOJO.getUsedSpaceReadable() + "/" + spacePOJO.getTotalSpaceReadable() + ")";
+                }
                 if (fileObjectType == FileObjectType.FILE_TYPE) {
                     if (Global.GET_INTERNAL_STORAGE_FILE_POJO_STORAGE_DIR().getPath().equals(filePOJO.getPath())) {
                         p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.device_icon));
@@ -324,7 +327,9 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
                     public void onClick(View p) {
                         pos = getBindingAdapterPosition();
                         final FilePOJO filePOJO = dir_linkedlist.get(pos);
-                        if (filePOJO == null) return;
+                        if (filePOJO == null) {
+                            return;
+                        }
                         clicked_filepojo = filePOJO;
                         if (filePOJO.getIsDirectory()) {
                             AppCompatActivity activity = (AppCompatActivity) getActivity();
@@ -347,8 +352,9 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
         @Override
         public void onActivityResult(ActivityResult result) {
             if (result.getResultCode() == Activity.RESULT_OK) {
-                if (clicked_filepojo != null)
+                if (clicked_filepojo != null) {
                     file_open_intent_dispatch(clicked_filepojo.getPath(), clicked_filepojo.getFileObjectType(), clicked_filepojo.getName(), clicked_filepojo.getSizeLong());
+                }
                 clicked_filepojo = null;
             } else {
                 Global.print(context, getString(R.string.permission_not_granted));

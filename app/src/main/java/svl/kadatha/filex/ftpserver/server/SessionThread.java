@@ -411,8 +411,9 @@ public class SessionThread extends Thread {
     }
 
     public void setChrootDir(String chrootPath) {
-        if (chrootPath == null)
+        if (chrootPath == null) {
             return;
+        }
         File chrootDir = new File(chrootPath);
         if (chrootDir.isDirectory()) {
             this.chrootDir = chrootDir;

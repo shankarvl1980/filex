@@ -54,7 +54,9 @@ public abstract class FtpServerFileUtil {
             } else {
                 // Storage Access Framework
                 DocumentFile targetDocument = getDocumentFile(target, false, context);
-                if (targetDocument == null) return false;
+                if (targetDocument == null) {
+                    return false;
+                }
                 outStream =
                         context.getContentResolver().openOutputStream(targetDocument.getUri());
 
@@ -109,8 +111,9 @@ public abstract class FtpServerFileUtil {
         } else {
             // Storage Access Framework
             DocumentFile targetDocument = getDocumentFile(target, false, context);
-            if (targetDocument != null)
+            if (targetDocument != null) {
                 outStream = new ParcelFileDescriptor.AutoCloseOutputStream(context.getContentResolver().openFileDescriptor(targetDocument.getUri(), "rw"));
+            }
         }
         return outStream;
     }
@@ -123,14 +126,17 @@ public abstract class FtpServerFileUtil {
      */
     public static boolean deleteFile(@NonNull final File file, Context context) {
         // First try the normal deletion.
-        if (file == null) return true;
+        if (file == null) {
+            return true;
+        }
 
         boolean fileDelete = false;
         if (file.isDirectory()) {
             fileDelete = rmdir(file, context);
         }
-        if (file.delete() || fileDelete)
+        if (file.delete() || fileDelete) {
             return true;
+        }
 
         // Try with Storage Access Framework.
         if (FtpServerFileUtil.isOnExtSdCard(file, context)) {
@@ -256,8 +262,9 @@ public abstract class FtpServerFileUtil {
      * @deprecated use {@link #mkdirs(Context, File)}
      */
     public static boolean mkdir(final File file, Context context) {
-        if (file == null)
+        if (file == null) {
             return false;
+        }
         if (file.exists()) {
             // nothing to create.
             return file.isDirectory();
@@ -290,8 +297,9 @@ public abstract class FtpServerFileUtil {
     }
 
     public static boolean mkfile(final File file, Context context) {
-        if (file == null)
+        if (file == null) {
             return false;
+        }
         if (file.exists()) {
             // nothing to create.
             return !file.isDirectory();
@@ -333,7 +341,9 @@ public abstract class FtpServerFileUtil {
      * @return true if successful.
      */
     private static boolean rmdir(@NonNull final File file, Context context) {
-        if (!file.exists()) return true;
+        if (!file.exists()) {
+            return true;
+        }
 
         File[] files = file.listFiles();
         if (files != null) {
@@ -365,9 +375,12 @@ public abstract class FtpServerFileUtil {
      * @return true if the file is readable.
      */
     public static boolean isReadable(final File file) {
-        if (file == null)
+        if (file == null) {
             return false;
-        if (!file.exists()) return false;
+        }
+        if (!file.exists()) {
+            return false;
+        }
 
         boolean result;
         try {
@@ -386,8 +399,9 @@ public abstract class FtpServerFileUtil {
      * @return true if the file is writable.
      */
     public static boolean isWritable(final File file) {
-        if (file == null)
+        if (file == null) {
             return false;
+        }
         boolean isExisting = file.exists();
 
         try {
@@ -421,8 +435,9 @@ public abstract class FtpServerFileUtil {
      */
     public static boolean isWritableNormalOrSaf(final File folder, Context c) {
         // Verify that this is a directory.
-        if (folder == null)
+        if (folder == null) {
             return false;
+        }
         if (!folder.exists() || !folder.isDirectory()) {
             return false;
         }
@@ -478,7 +493,9 @@ public abstract class FtpServerFileUtil {
                 }
             }
         }
-        if (paths.isEmpty()) paths.add("/storage/sdcard1");
+        if (paths.isEmpty()) {
+            paths.add("/storage/sdcard1");
+        }
         return paths.toArray(new String[0]);
     }
 
@@ -500,7 +517,9 @@ public abstract class FtpServerFileUtil {
                 }
             }
         }
-        if (paths.isEmpty()) paths.add("/storage/sdcard1");
+        if (paths.isEmpty()) {
+            paths.add("/storage/sdcard1");
+        }
         return paths.toArray(new String[0]);
     }
 
@@ -553,9 +572,11 @@ public abstract class FtpServerFileUtil {
         String relativePath = null;
         try {
             String fullPath = file.getCanonicalPath();
-            if (!baseFolder.equals(fullPath))
+            if (!baseFolder.equals(fullPath)) {
                 relativePath = fullPath.substring(baseFolder.length() + 1);
-            else originalDirectory = true;
+            } else {
+                originalDirectory = true;
+            }
         } catch (IOException e) {
             return null;
         } catch (Exception f) {
@@ -567,7 +588,9 @@ public abstract class FtpServerFileUtil {
         Uri treeUri = null;
         File parent_file = file.getParentFile();
         if (parent_file != null) {
-            if (!parent_file.exists()) return null;
+            if (!parent_file.exists()) {
+                return null;
+            }
         } else {
             return null;
         }
@@ -593,7 +616,9 @@ public abstract class FtpServerFileUtil {
 
         // start with root of SD card and then parse through document tree.
         DocumentFile document = DocumentFile.fromTreeUri(context, treeUri);
-        if (originalDirectory) return document;
+        if (originalDirectory) {
+            return document;
+        }
         String[] parts = relativePath.split("/");
         for (int i = 0; i < parts.length; i++) {
             DocumentFile nextDocument = document.findFile(parts[i]);
@@ -621,7 +646,9 @@ public abstract class FtpServerFileUtil {
      * @return 1 if exists or writable, 0 if not writable
      */
     public static int checkFolder(final String f, Context context) {
-        if (f == null) return 0;
+        if (f == null) {
+            return 0;
+        }
 
         File folder = new File(f);
         if (FtpServerFileUtil.isOnExtSdCard(folder, context)) {

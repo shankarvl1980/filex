@@ -217,7 +217,9 @@ public class CopyToActivity extends BaseActivity {
             }
         });
 
-        if (savedInstanceState == null) first_start = true;
+        if (savedInstanceState == null) {
+            first_start = true;
+        }
         Intent intent = getIntent();
         try {
             on_intent(intent, savedInstanceState);

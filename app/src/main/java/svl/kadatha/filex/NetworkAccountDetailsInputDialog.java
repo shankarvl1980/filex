@@ -209,13 +209,18 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
             } else if (type.equals(NetworkAccountsDetailsDialog.SFTP)) {
                 port = 22;
             } else if (type.equals(NetworkAccountsDetailsDialog.WebDAV)) {
-                if (useHTTPS) port = 443;
-                else port = 80;
+                if (useHTTPS) {
+                    port = 443;
+                } else {
+                    port = 80;
+                }
             }
         }
         port_tv.setText(String.valueOf(port));
 
-        if (mode == null || mode.isEmpty()) mode = "passive";
+        if (mode == null || mode.isEmpty()) {
+            mode = "passive";
+        }
         if (mode.equals("active")) {
             mode_active_radio_btn.setChecked(true);
         } else {
@@ -235,7 +240,9 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
         useHTTPS_check_box.setChecked(useHTTPS);
         domain_tv.setText(domain);
         share_name_tv.setText(shareName);
-        if (smbVersion == null || smbVersion.isEmpty()) smbVersion = "SMB2";
+        if (smbVersion == null || smbVersion.isEmpty()) {
+            smbVersion = "SMB2";
+        }
         smbVersion_spinner.setSelection(smbVersionArrayAdapter.getPosition(smbVersion));
 
         Button private_key_select_button = v.findViewById(R.id.fragment_network_details_input_select_private_key);
@@ -256,8 +263,11 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
         useHTTPS_check_box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) port = 443;
-                else port = 80;
+                if (isChecked) {
+                    port = 443;
+                } else {
+                    port = 80;
+                }
                 port_tv.setText(String.valueOf(port));
             }
         });

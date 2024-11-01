@@ -25,8 +25,12 @@ public class ArchiveSetUpViewModel extends ViewModel {
     }
 
     public void cancel(boolean mayInterruptRunning) {
-        if (future1 != null) future1.cancel(mayInterruptRunning);
-        if (future2 != null) future2.cancel(mayInterruptRunning);
+        if (future1 != null) {
+            future1.cancel(mayInterruptRunning);
+        }
+        if (future2 != null) {
+            future2.cancel(mayInterruptRunning);
+        }
         isCancelled = true;
     }
 
@@ -35,7 +39,9 @@ public class ArchiveSetUpViewModel extends ViewModel {
     }
 
     public void removeRecursiveFiles(ArrayList<String> files_selected_array, String archivedestfolder, FileObjectType destFileObjectType, FileObjectType sourceFileObjectType) {
-        if (isRecursiveFilesRemoved.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (isRecursiveFilesRemoved.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         isRecursiveFilesRemoved.setValue(AsyncTaskStatus.STARTED);
         this.files_selected_array = files_selected_array;
         ExecutorService executorService = MyExecutorService.getExecutorService();

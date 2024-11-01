@@ -79,7 +79,9 @@ class FileIntentDispatch {
     private static void dispatch_intent(final Context context, Uri uri, String file_path, String file_extn, String mime_type, FileObjectType fileObjectType, boolean select_app, long file_size, boolean fromArchive) {
         final Intent intent = new Intent(Intent.ACTION_VIEW);
         mime_type = SET_INTENT_FOR_VIEW(intent, mime_type, file_path, file_extn, fileObjectType, fromArchive, uri);
-        if (mime_type == null || mime_type.isEmpty()) return;
+        if (mime_type == null || mime_type.isEmpty()) {
+            return;
+        }
 
         DefaultAppDatabaseHelper defaultAppDatabaseHelper = new DefaultAppDatabaseHelper(context);
         final String package_name = defaultAppDatabaseHelper.getPackageName(mime_type);

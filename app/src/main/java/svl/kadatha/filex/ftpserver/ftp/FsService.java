@@ -131,8 +131,9 @@ public class FsService extends Service implements Runnable {
             ArrayList<NetworkInterface> networkInterfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
             for (NetworkInterface networkInterface : networkInterfaces) {
                 // only check network interfaces that give local connection
-                if (!networkInterface.getName().matches("^(eth|wlan).*"))
+                if (!networkInterface.getName().matches("^(eth|wlan).*")) {
                     continue;
+                }
                 for (InetAddress address : Collections.list(networkInterface.getInetAddresses())) {
                     if (!address.isLoopbackAddress()
                             && !address.isLinkLocalAddress()

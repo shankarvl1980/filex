@@ -235,8 +235,11 @@ public class RecyclerViewLayoutGrid extends RecyclerViewLayout {
 
     @Override
     void setDivider(boolean set) {
-        if (set) item_separator.setVisibility(VISIBLE);
-        else item_separator.setVisibility(GONE);
+        if (set) {
+            item_separator.setVisibility(VISIBLE);
+        } else {
+            item_separator.setVisibility(GONE);
+        }
     }
 
     @Override

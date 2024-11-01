@@ -137,7 +137,7 @@ public class AudioDatabaseHelper {
      * @param id    The audio ID to delete.
      * @return The number of rows affected.
      */
-    public int deleteByAudioId(String table, int id) {
+    public int deleteByAudioId(String table, long id) {
         if (!isValidTableName(table)) {
             throw new IllegalArgumentException("Invalid table name: " + table);
         }
@@ -267,7 +267,7 @@ public class AudioDatabaseHelper {
 
                 do {
                     long rowId = cursor.getLong(rowIdIndex);
-                    int id = cursor.getInt(idIndex);
+                    long id = cursor.getLong(idIndex);
                     String data = cursor.getString(dataIndex);
                     String title = cursor.getString(titleIndex);
                     String albumId = cursor.getString(albumIdIndex);

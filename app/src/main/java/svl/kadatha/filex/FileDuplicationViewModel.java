@@ -94,7 +94,9 @@ public class FileDuplicationViewModel extends ViewModel {
     }
 
     private static void removeNotTobeCopiedUris(Context context, List<Uri> data_list, List<String> file_path_list) {
-        if (data_list == null || data_list.isEmpty() || file_path_list.isEmpty()) return;
+        if (data_list == null || data_list.isEmpty() || file_path_list.isEmpty()) {
+            return;
+        }
         Iterator<Uri> iterator = data_list.iterator();
         while (iterator.hasNext()) {
             String name = CopyToActivity.getFileNameOfUri(context, iterator.next());
@@ -115,9 +117,15 @@ public class FileDuplicationViewModel extends ViewModel {
     }
 
     public void cancel(boolean mayInterruptRunning) {
-        if (future1 != null) future1.cancel(mayInterruptRunning);
-        if (future2 != null) future2.cancel(mayInterruptRunning);
-        if (future3 != null) future3.cancel(mayInterruptRunning);
+        if (future1 != null) {
+            future1.cancel(mayInterruptRunning);
+        }
+        if (future2 != null) {
+            future2.cancel(mayInterruptRunning);
+        }
+        if (future3 != null) {
+            future3.cancel(mayInterruptRunning);
+        }
         isCancelled = true;
     }
 
@@ -126,7 +134,9 @@ public class FileDuplicationViewModel extends ViewModel {
     }
 
     public void checkForExistingFileWithSameName(String source_folder, FileObjectType sourceFileObjectType, String dest_folder, FileObjectType destFileObjectType, ArrayList<String> files_selected_array, boolean cut, boolean findAllDuplicates) {
-        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         this.source_folder = source_folder;
         this.sourceFileObjectType = sourceFileObjectType;
@@ -212,7 +222,9 @@ public class FileDuplicationViewModel extends ViewModel {
                             }
                         }
                     }
-                    if (stop_loop) break;
+                    if (stop_loop) {
+                        break;
+                    }
                 }
 
                 for (Map.Entry<String, String> element : duplicateSourceFileDestNameMap.entrySet()) {
@@ -224,7 +236,9 @@ public class FileDuplicationViewModel extends ViewModel {
     }
 
     public void checkForExistingFileWithSameNameUri(String source_folder, FileObjectType sourceFileObjectType, String dest_folder, FileObjectType destFileObjectType, ArrayList<Uri> data_list, String file_name, boolean cut, boolean findAllDuplicates) {
-        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         this.source_folder = source_folder;
         this.sourceFileObjectType = sourceFileObjectType;
@@ -314,7 +328,9 @@ public class FileDuplicationViewModel extends ViewModel {
                             }
                         }
                     }
-                    if (stop_loop) break;
+                    if (stop_loop) {
+                        break;
+                    }
                 }
 
                 for (Map.Entry<Uri, String> element : duplicateUriDestNameMap.entrySet()) {
@@ -326,8 +342,9 @@ public class FileDuplicationViewModel extends ViewModel {
     }
 
     public void filterFileSelectedArray(Context context, FileOperationMode fileOperationMode, boolean apply_to_all, ArrayList<Uri> data_list) {
-        if (filterSelectedArrayAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED)
+        if (filterSelectedArrayAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
             return;
+        }
         filterSelectedArrayAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         this.data_list = data_list;
         this.fileOperationMode = fileOperationMode;
