@@ -469,8 +469,9 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
             }
             TO_BE_MOVED_TO_FILE_POJO = null;
         }
-        if (detailFragmentListener != null)
+        if (detailFragmentListener != null){
             detailFragmentListener.setFileNumberView(viewModel.mselecteditems.size() + "/" + file_list_size);
+        }
     }
 
     @Override
@@ -765,7 +766,5 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
             }
         }
     });
-
-
 }
 

@@ -1388,15 +1388,16 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     }
 
     public void action_mode_finish(DetailFragment df) {
+        if (df.adapter != null) {
+            df.adapter.getFilter().filter(null);
+        }
         DeselectAllAndAdjustToolbars(df);
         imm.hideSoftInputFromWindow(search_view.getWindowToken(), 0);
         search_view.setText("");
         search_view.clearFocus();
         search_toolbar.setVisibility(View.GONE); //no need to call adapter.filter with null to refill filepjos as calling datasetchanged replenished df.adapter.filepojo listUri
         search_toolbar_visible = false;
-        if (df.adapter != null) {
-            df.adapter.getFilter().filter(null);
-        }
+
     }
 
     public void workingDirAdd() {

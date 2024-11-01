@@ -687,15 +687,15 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
     }
 
     public void action_mode_finish(ArchiveViewFragment archiveViewFragment, String archive_view_fragment_tag) {
+        if (archiveViewFragment.adapter != null) {
+            archiveViewFragment.adapter.getFilter().filter(null);
+        }
         DeselectAllAndAdjustToolbars(archiveViewFragment, archive_view_fragment_tag);
         imm.hideSoftInputFromWindow(search_edittext.getWindowToken(), 0);
         search_edittext.setText("");
         search_edittext.clearFocus();
         search_toolbar.setVisibility(View.GONE); //no need to call adapter.filter with null to refill filepjos as calling datasetchanged replenished archiveViewFragment.adapter.filepojo listUri
         search_toolbar_visible = false;
-        if (archiveViewFragment.adapter != null) {
-            archiveViewFragment.adapter.getFilter().filter(null);
-        }
     }
 
     public static class ArchiveDetailRecyclerViewAdapter extends RecyclerView.Adapter<ArchiveDetailRecyclerViewAdapter.ViewHolder> implements Filterable {
