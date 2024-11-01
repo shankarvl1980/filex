@@ -107,7 +107,6 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
         }
         return null;
     }
