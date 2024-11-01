@@ -542,11 +542,16 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
     }
 
     public void set_adapter() {
-        if (file_click_selected_name.equals("Document") || file_click_selected_name.equals("Image")
+        if (fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE && (file_click_selected_name.equals("Download") || file_click_selected_name.equals("Document") || file_click_selected_name.equals("Image")
                 || file_click_selected_name.equals("Audio") || file_click_selected_name.equals("Video")
-                || file_click_selected_name.equals("Large Files")
+                || file_click_selected_name.equals("Large Files"))
         ) {
-            filter_image_view.setVisibility(View.VISIBLE);
+            if (fileclickselected.equals("Download")) {
+                filter_image_view.setVisibility(View.GONE);
+            } else {
+                filter_image_view.setVisibility(View.VISIBLE);
+            }
+
             if (fileclickselected.equals("Large Files")) {
                 size_image_view.setVisibility(View.VISIBLE);
                 size_image_view.setSelected(viewModel.library_size_desc);

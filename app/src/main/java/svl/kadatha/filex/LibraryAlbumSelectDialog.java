@@ -95,7 +95,6 @@ public class LibraryAlbumSelectDialog extends DialogFragment {
         } else {
             progress_bar.setVisibility(View.GONE);
         }
-
         return v;
     }
 
