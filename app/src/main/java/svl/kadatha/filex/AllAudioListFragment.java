@@ -85,13 +85,15 @@ public class AllAudioListFragment extends Fragment {
 
         audioChangeListener = new AudioPlayerActivity.AudioChangeListener() {
             @Override
-            public void onAudioCompletion() {
+            public void onAudioChange() {
                 if (audioListRecyclerViewAdapter != null) {
                     audioListRecyclerViewAdapter.notifyDataSetChanged();
                 }
                 if (recyclerview != null && AudioPlayerActivity.AUDIO_FILE != null) {
                     int position = AudioPlayerActivity.AUDIO_FILE.getPosition();
-                    recyclerview.scrollToPosition(position);
+                    if(position!=-1){
+                        recyclerview.scrollToPosition(position);
+                    }
                 }
             }
         };

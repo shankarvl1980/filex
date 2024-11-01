@@ -57,7 +57,7 @@ public class AudioSavedListFragment extends Fragment {
         this.context = context;
         audioChangeListener = new AudioPlayerActivity.AudioChangeListener() {
             @Override
-            public void onAudioCompletion() {
+            public void onAudioChange() {
                 AudioSavedListDetailsDialog audioSavedListDetailsDialog = (AudioSavedListDetailsDialog) getParentFragmentManager().findFragmentByTag("audioSavedListDetailsDialog");
                 if (audioSavedListDetailsDialog != null) {
                     audioSavedListDetailsDialog.onAudioChange();
@@ -444,11 +444,6 @@ public class AudioSavedListFragment extends Fragment {
                 }
                 file_number_view.setText(size + "/" + num_all_audio_list);
             }
-
         }
-
-
     }
-
-
 }

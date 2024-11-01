@@ -97,12 +97,12 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
                     return new AudioPOJO(
                             cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)),
                             cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)),
-                            cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)),
+                            new File(filePath).getName(),//instead of title from media store, setting the title as file name because to get correct position of current audio in the AUDIO_QUEUED_ARRAY
                             cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)),
                             cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM)),
                             cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)),
                             cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)),
-                            fileObjectType  // Assuming this is the appropriate FileObjectType
+                            fileObjectType
                     );
                 }
             }
@@ -297,7 +297,10 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
             if (savedInstanceState == null) {
                 if (data != null) {
                     String name = new File(file_path).getName();
-                    AUDIO_FILE = new AudioPOJO(0, file_path, name, null, null, null, "0", (fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) ? FileObjectType.FILE_TYPE : fileObjectType);
+                    AUDIO_FILE=AudioPlayerActivity.getAudioPojo(context,file_path,(fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) ? FileObjectType.FILE_TYPE : fileObjectType);
+                    if(AUDIO_FILE==null){
+                        AUDIO_FILE = new AudioPOJO(0, file_path, name, null, null, null, "0", (fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) ? FileObjectType.FILE_TYPE : fileObjectType);
+                    }
 
                     audioPlayViewModel.fileObjectType = fileObjectType;
                     audioPlayViewModel.fromThirdPartyApp = fromThirdPartyApp;
@@ -510,13 +513,13 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
     public void on_audio_change() {
         if (!audioChangeListeners.isEmpty()) {
             for (AudioChangeListener listener : audioChangeListeners) {
-                listener.onAudioCompletion();
+                listener.onAudioChange();
             }
         }
     }
 
     interface AudioChangeListener {
-        void onAudioCompletion();
+        void onAudioChange();
     }
 
     interface SearchFilterListener {

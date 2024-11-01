@@ -415,7 +415,6 @@ public class PlayScreenFragment extends Fragment {
                         }
                         AudioPlayerActivity.AUDIO_FILE = null;
                     }
-
                     deleteFileOtherActivityViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                 }
             }
