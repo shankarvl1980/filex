@@ -727,7 +727,7 @@ public class PlayScreenFragment extends Fragment {
 
             switch (p3) {
                 case 0:
-                    if (audioPlayViewModel.fromArchive || !new File(AudioPlayerActivity.AUDIO_FILE.getData()).exists() || Global.whether_file_cached(audioPlayViewModel.fileObjectType) || AudioPlayerActivity.AUDIO_FILE.getFileObjectType() == null) {
+                    if (audioPlayViewModel.fromArchive || audioPlayViewModel.fromThirdPartyApp || !new File(AudioPlayerActivity.AUDIO_FILE.getData()).exists() || Global.whether_file_cached(audioPlayViewModel.fileObjectType) || AudioPlayerActivity.AUDIO_FILE.getFileObjectType() == null) {
                         Global.print(context, getString(R.string.not_able_to_process));
                         break;
                     }
@@ -790,7 +790,7 @@ public class PlayScreenFragment extends Fragment {
                     }
                     break;
                 case 3:
-                    if (audioPlayViewModel.fromArchive || AudioPlayerActivity.AUDIO_FILE.getFileObjectType() == null || Global.whether_file_cached(audioPlayViewModel.fileObjectType)) {
+                    if (audioPlayViewModel.fromArchive || audioPlayViewModel.fromThirdPartyApp || AudioPlayerActivity.AUDIO_FILE.getFileObjectType() == null || Global.whether_file_cached(audioPlayViewModel.fileObjectType)) {
                         Global.print(context, getString(R.string.not_able_to_process));
                         break;
                     }

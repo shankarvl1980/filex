@@ -338,21 +338,7 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
         });
         return v;
     }
-
-    public void onVideoViewClick() {
-        if (toolbar_visible) {
-            hideControls();
-        } else {
-            showControls();
-        }
-    }
-
-    public void showControls() {
-        toolbar.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
-        floating_back_button.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
-        toolbar_visible = true;
-        handler.removeCallbacks(runnable);
-    }
+    
 
     @Override
     public void showControls(boolean autoHide) {

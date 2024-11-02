@@ -97,7 +97,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     private InputMethodManager imm;
     private RepositoryClass repositoryClass;
     private NetworkStateReceiver networkStateReceiver;
-    private ImageButton parent_dir_btn;
+    private ImageButton parent_dir_btn,directory_select_btn;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -197,6 +197,15 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         });
 
+        directory_select_btn=findViewById(R.id.file_selector_directory_btn);
+        directory_select_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FileSelectorRecentDialog fileSelectorRecentDialog = new FileSelectorRecentDialog();
+                fileSelectorRecentDialog.show(fm, "file_selector_recent_file_dialog");
+            }
+        });
+
         View containerLayout = findViewById(R.id.file_selector_container_layout);
         keyBoardUtil = new KeyBoardUtil(containerLayout);
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -246,14 +255,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         } else {
             heading.setText(getString(R.string.pick_file));
         }
-
-        toolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FileSelectorRecentDialog fileSelectorRecentDialog = new FileSelectorRecentDialog();
-                fileSelectorRecentDialog.show(fm, "file_selector_recent_file_dialog");
-            }
-        });
 
         storage_filePOJO_list = getFilePOJO_list();
         listPopWindow = new PopupWindow(context);
@@ -1062,8 +1063,4 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         }
     }
-
-
-
-
 }

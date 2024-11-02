@@ -163,7 +163,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                                         album_file_pojo_list.add(currently_shown_file);
                                     }
                                     file_selected_idx = count;
-                                    count++;
+                                    ++count;
                                 }
                             } else if (filePOJO.getName().equals(currently_shown_file.getName())) {
                                 if (whetherVideo) {
@@ -172,7 +172,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                                     album_file_pojo_list.add(currently_shown_file);
                                 }
                                 file_selected_idx = count;
-                                count++;
+                                ++count;
                             }
                         }
                     }
