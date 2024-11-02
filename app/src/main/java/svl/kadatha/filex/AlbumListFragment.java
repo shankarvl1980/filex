@@ -242,7 +242,6 @@ public class AlbumListFragment extends Fragment {
         if (activity instanceof AudioPlayerActivity) {
             ((AudioPlayerActivity) activity).addSearchFilterListener(searchFilterListener);
         }
-
     }
 
     @Override

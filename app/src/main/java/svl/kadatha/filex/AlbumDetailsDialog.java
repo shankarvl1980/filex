@@ -439,9 +439,7 @@ public class AlbumDetailsDialog extends DialogFragment {
             clear_selection();
             audioListRecyclerViewAdapter.getFilter().filter(null);
         }
-
     }
-
 
     @Override
     public void onResume() {

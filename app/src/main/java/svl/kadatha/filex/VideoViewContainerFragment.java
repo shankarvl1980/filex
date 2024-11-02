@@ -338,7 +338,7 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
         });
         return v;
     }
-    
+
 
     @Override
     public void showControls(boolean autoHide) {
@@ -401,7 +401,7 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
 
         @Override
         public Fragment getItem(int position) {
-            boolean isFirstStart = (position == viewModel.file_selected_idx);
+            //boolean isFirstStart = (position == viewModel.file_selected_idx);
             FilePOJO filePOJO = viewModel.video_list.getKeyAtIndex(position);
             String filePath = filePOJO.getPath();
             int filePosition = viewModel.video_list.get(filePOJO);
@@ -412,8 +412,9 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
                     filePath,
                     filePosition,
                     position,
-                    isFirstStart
+                    viewModel.firstStart
             );
+            viewModel.firstStart=false;
 
             fragment.setVideoPositionListener(new VideoViewFragment.VideoPositionListener() {
                 @Override

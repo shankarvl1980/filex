@@ -40,7 +40,6 @@ public class IndexedLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
         if (al_Index.remove(key)) {
             return super.remove(key);
         }
-
         return null;
     }
 

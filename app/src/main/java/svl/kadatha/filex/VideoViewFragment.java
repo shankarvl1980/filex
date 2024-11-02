@@ -106,14 +106,13 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
         fileObjectType = (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
         fromThirdPartyApp = bundle.getBoolean("fromThirdPartyApp");
         file_path = bundle.getString("file_path");
-        int position = bundle.getInt("position");
-        viewModel.position=Math.max(viewModel.position,position);
+        viewModel.position = bundle.getInt("position");
         viewModel.idx = bundle.getInt("idx");
         if(savedInstanceState==null){
             firstStart = bundle.getBoolean("firstStart");
         }
 
-        Timber.tag("VideoViewFragment").d("Initialized with position: " + viewModel.position);
+        Timber.tag("VideoViewFragment").d("Initialized "+viewModel.idx +" with position: " + viewModel.position);
     }
 
     @Override
@@ -132,7 +131,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 
                     if (bottom_butt_visible) {
                         Timber.tag("Controllistener").d("bottombutt visible");
-                        if (viewModel.playmode) {
+                        if (viewModel.play_mode) {
                             // Video is playing; we can hide the controls
                             Timber.tag("Controllistener").d("hiding contols");
                             controlListener.hideControls();
@@ -140,7 +139,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
                         // If video is paused, do not hide bottom controls on click
                     } else {
 
-                        boolean autoHide = viewModel.playmode;
+                        boolean autoHide = viewModel.play_mode;
                         Timber.tag("Controllistener").d("bottombutton not visible and showcontrol set to "+autoHide);
                         controlListener.showControls(autoHide);
                     }
@@ -154,9 +153,9 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
         play_pause_img_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (viewModel.prepared && !viewModel.playmode) {
+                if (viewModel.prepared && !viewModel.play_mode) {
                     mp_start();
-                } else if (viewModel.prepared && viewModel.playmode) {
+                } else if (viewModel.prepared && viewModel.play_mode) {
                     mp_pause();
                 }
             }
@@ -228,7 +227,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
         runnable = new Runnable() {
             @Override
             public void run() {
-                if (viewModel.playmode) {
+                if (viewModel.play_mode) {
                     hideBottomControls();
                 }
             }
@@ -255,7 +254,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
         }
         return v;
     }
-
 
 
     @Override
@@ -391,7 +389,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
         mp.setScreenOnWhilePlaying(true);
     }
 
-
     @Override
     public void onPause() {
         super.onPause();
@@ -402,22 +399,20 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
                 viewModel.wasPlaying = mp.isPlaying();
             }
 
-            viewModel.position = mp.getCurrentPosition();
-            if (viewModel.prepared && viewModel.playmode) {
+            if (viewModel.prepared && viewModel.play_mode) {
                 mp_pause();
                 play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.video_play_icon));
             }
+            viewModel.position = mp.getCurrentPosition();
+            Bundle bundle=getArguments();
+            bundle.putInt("position", viewModel.position);
+            setArguments(bundle);
             if (videoPositionListener != null) {
                 videoPositionListener.setPosition(viewModel.idx, viewModel.position);
             }
         }
     }
 
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        mp_stop();
-//    }
 
 
     @Override
@@ -438,7 +433,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
         current_progress_tv.setText(current_progress + "/" + total_time);
 
         setSurfaceViewSize();
-        Timber.tag("VideoViewFragment").d("Seeking to position: " + Math.max(viewModel.position, 50));
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mp.seekTo(Math.max(viewModel.position, 50), MediaPlayer.SEEK_CLOSEST_SYNC);
         } else {
@@ -458,7 +453,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
         if (mp != null && viewModel.prepared) {
             if (request_focus()) {
                 mp.start();
-                viewModel.playmode = true;
+                viewModel.play_mode = true;
                 viewModel.completed = false;
                 update_position();
                 play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.video_pause_icon));
@@ -473,7 +468,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
         if (viewModel.prepared) {
             if (mp.isPlaying()) {
                 mp.pause();
-                viewModel.playmode = false;
+                viewModel.play_mode = false;
             }
 
             play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.video_play_icon));
@@ -486,7 +481,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
     @Override
     public void onCompletion(MediaPlayer p1) {
         viewModel.completed = true;
-        viewModel.playmode = false;
+        viewModel.play_mode = false;
         if (controlListener != null) {
             controlListener.showControls(false); // autoHide = false
         }
@@ -540,7 +535,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
     }
 
     public boolean isPlaying() {
-        return viewModel.playmode;
+        return viewModel.play_mode;
     }
 
     private boolean request_focus() {

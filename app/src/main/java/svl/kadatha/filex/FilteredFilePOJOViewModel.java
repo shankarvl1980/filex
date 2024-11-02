@@ -44,7 +44,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
     public int image_selected_idx = 0, previously_selected_image_idx = 0, pdf_current_position;
     public String source_folder;
     public FilePOJO currently_shown_file;
-    public boolean firststart;
+    public boolean firstStart;
     public FileObjectType fileObjectType;
     public boolean fromThirdPartyApp;
     public boolean fromArchive;
@@ -99,7 +99,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
             return;
         }
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
-        firststart = true;
+        firstStart = true;
         source_folder = new File(file_path).getParent();
         ExecutorService executorService = MyExecutorService.getExecutorService();
         String finalSource_folder = source_folder;

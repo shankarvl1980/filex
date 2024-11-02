@@ -533,7 +533,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         }
     }
 
-
     public void clearCache() {
         Global.CLEAR_CACHE();
     }

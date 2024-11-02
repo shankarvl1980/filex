@@ -201,7 +201,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
                     return;
                 }
                 currentAudioListRecyclerViewAdapter.getFilter().filter(s.toString());
-
             }
         });
 
