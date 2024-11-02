@@ -15,6 +15,7 @@ public class VideoViewFragmentViewModel extends AndroidViewModel {
     public int position;
     public int orientation;
     public boolean setDisplay;
+    public boolean prepared, stopped;
 
     public VideoViewFragmentViewModel(@NonNull Application application) {
         super(application);

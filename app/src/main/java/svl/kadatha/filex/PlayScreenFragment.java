@@ -304,7 +304,7 @@ public class PlayScreenFragment extends Fragment {
         next_btn = v.findViewById(R.id.next_image_button);
 
         enable_disable_previous_next_btn();
-        album_art_imageview = v.findViewById(R.id.fragment_current_play_albumart);
+        album_art_imageview = v.findViewById(R.id.fragment_current_play_album_art);
         total_time_tv = v.findViewById(R.id.audio_player_total_time);
         current_progress_tv = v.findViewById(R.id.audio_player_current_progress);
         seekbar = v.findViewById(R.id.audio_player_seekbar);
