@@ -101,7 +101,6 @@ public class FileDuplicationViewModel extends ViewModel {
         while (iterator.hasNext()) {
             String name = CopyToActivity.getFileNameOfUri(context, iterator.next());
             for (String f_name : file_path_list) {
-                Timber.tag("removeNotTobeCopiedUris").d("uri_name: " + name + " not_tobe_removed_file_path: " + f_name);
                 if (name.equals(f_name)) {
                     iterator.remove();
                     break;

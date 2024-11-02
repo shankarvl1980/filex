@@ -70,13 +70,10 @@ public class FsService extends Service implements Runnable {
     public static boolean isRunning() {
         // return true if and only if a server Thread is running
         if (serverThread == null) {
-            Timber.tag(TAG).d("Server is not running (null serverThread)");
             return false;
         }
         if (!serverThread.isAlive()) {
-            Timber.tag(TAG).d("serverThread non-null but !isAlive()");
         } else {
-            Timber.tag(TAG).d("Server is alive");
         }
         return true;
     }
@@ -108,7 +105,6 @@ public class FsService extends Service implements Runnable {
     private static void warnIfNoExternalStorage() {
         String storageState = Environment.getExternalStorageState();
         if (!storageState.equals(Environment.MEDIA_MOUNTED)) {
-            Timber.tag(TAG).v("Warning due to storage state " + storageState);
             Toast toast = Toast.makeText(App.getAppContext(),
                     R.string.storage_warning, Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
@@ -124,7 +120,6 @@ public class FsService extends Service implements Runnable {
     public static InetAddress getLocalInetAddress() {
         InetAddress returnAddress = null;
         if (!isConnectedToLocalNetwork()) {
-            Timber.tag(TAG).e("getLocalInetAddress called and no connection");
             return null;
         }
         try {
@@ -139,7 +134,6 @@ public class FsService extends Service implements Runnable {
                             && !address.isLinkLocalAddress()
                             && address instanceof Inet4Address) {
                         if (returnAddress != null) {
-                            Timber.tag(TAG).d("Found more than one valid address local inet address, why???");
                         }
                         returnAddress = address;
                     }

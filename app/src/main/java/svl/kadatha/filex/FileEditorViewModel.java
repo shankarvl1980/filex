@@ -97,11 +97,8 @@ public class FileEditorViewModel extends AndroidViewModel {
     }
 
     public synchronized void openFile(FileInputStream fileInputStream, long filePointer, int pageNumber) {
-        Timber.tag(TAG).d("Starting openFile: filePointer=%d, pageNumber=%d", filePointer, pageNumber);
-
         // Check if reading is already in progress
         if (isReadingFinished.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
-            Timber.tag(TAG).w("openFile called while reading is already in progress");
             return;
         }
 
@@ -121,7 +118,6 @@ public class FileEditorViewModel extends AndroidViewModel {
                     }
                     skippedBytes += actualSkipped;
                 }
-                Timber.tag(TAG).d("Skipped %d bytes to reach filePointer %d", skippedBytes, filePointer);
 
                 // Now create the BufferedReader to start reading from the correct position
                 BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream, StandardCharsets.UTF_8));
@@ -137,7 +133,6 @@ public class FileEditorViewModel extends AndroidViewModel {
                 while ((line = reader.readLine()) != null && linesRead < MAX_LINES_TO_DISPLAY) {
                     // Check if line length exceeds the max allowed length
                     if (line.length() > MAX_LINE_LENGTH) {
-                        Timber.tag(TAG).w("Line exceeds the maximum allowed length: %d", line.length());
                         fileRead = false;  // Abort reading
                         break;
                     }
@@ -148,7 +143,6 @@ public class FileEditorViewModel extends AndroidViewModel {
                     long bytesRead = line.getBytes(StandardCharsets.UTF_8).length + System.lineSeparator().getBytes(StandardCharsets.UTF_8).length;
                     totalBytesRead += bytesRead;
                     lastValidFilePointer = filePointer + totalBytesRead;  // Update the last valid file pointer
-                    Timber.tag(TAG).d("Processed line %d: %s", currentLineNumber, line);
                     currentLineNumber++;
                 }
 
@@ -161,9 +155,6 @@ public class FileEditorViewModel extends AndroidViewModel {
                     // Successfully read the content
                     stringBuilder = chunk;
                     file_start = (filePointer == 0);
-
-                    Timber.tag(TAG).d("Finished reading: totalBytesRead=%d, linesRead=%d, file_start=%b, file_end=%b, currentPosition=%d",
-                            totalBytesRead, linesRead, file_start, file_end, lastValidFilePointer);
 
                     // Update current page information
                     current_page = pageNumber;
@@ -178,17 +169,13 @@ public class FileEditorViewModel extends AndroidViewModel {
                             iterator.remove();
                         }
                     }
-
-                    Timber.tag(TAG).d("Final page_pointer_hashmap: %s", page_pointer_hashmap);
                 } else {
                     // Reading was aborted due to exceeding line length
-                    Timber.tag(TAG).w("File reading aborted due to exceeding max line length or error");
                     stringBuilder = new StringBuilder();
                 }
 
             } catch (IOException e) {
                 // Handle IO exceptions during reading
-                Timber.tag(TAG).e(e, "Error reading file: %s", e.getMessage());
                 stringBuilder = new StringBuilder();
                 fileRead = false;
             } finally {
@@ -198,12 +185,10 @@ public class FileEditorViewModel extends AndroidViewModel {
                         fileInputStream.close();
                     }
                 } catch (IOException e) {
-                    Timber.tag(TAG).e(e, "Error closing FileInputStream: %s", e.getMessage());
+
                 }
 
                 // Update the task status and log completion
-                Timber.tag(TAG).d("openFile completed: fileRead=%b, current_page=%d, current_page_end_point=%d",
-                        fileRead, current_page, current_page_end_point);
                 isReadingFinished.postValue(AsyncTaskStatus.COMPLETED);
             }
         });

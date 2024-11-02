@@ -60,7 +60,6 @@ public class MakeDrawableTask extends AlternativeAsyncTask<Void, Void, Drawable>
 
                 if (options.inSampleSize >= 1024) {
                     Timber.tag(TAG).d("Failed to optimize RAM to receive Bitmap.");
-
                     break;
                 }
             }
@@ -94,9 +93,7 @@ public class MakeDrawableTask extends AlternativeAsyncTask<Void, Void, Drawable>
                 return orientation;
             } else {
                 Timber.tag(TAG).w("Failed to get MediaStore image orientation.");
-
                 c.close();
-
                 return 0;
             }
         }
@@ -223,5 +220,4 @@ public class MakeDrawableTask extends AlternativeAsyncTask<Void, Void, Drawable>
     protected int getRawHeight() {
         return mRawHeight;
     }
-
 }

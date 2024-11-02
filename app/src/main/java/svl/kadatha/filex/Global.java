@@ -906,12 +906,10 @@ public class Global {
             Iterator<FilePOJO> iterator = repositoryClass.storage_dir.iterator();
             while (iterator.hasNext()) {
                 if (iterator.next().getFileObjectType() == fileObjectType) {
-                    Timber.tag("loop-").d("whether network type and in storage dir " + true);
                     return true;
                 }
             }
         }
-        Timber.tag("loop-").d("whether network type and in storage dir " + true);
         return false;
     }
 

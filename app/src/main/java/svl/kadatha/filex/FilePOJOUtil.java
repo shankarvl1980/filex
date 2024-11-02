@@ -432,32 +432,26 @@ public class FilePOJOUtil {
                 }
             }
         } else if (fileObjectType == FileObjectType.FTP_TYPE) {
-            Timber.tag(TAG).d("Filling FilePOJO for FTP directory: %s", fileclickselected);
             FTPFile[] file_array;
             FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
             FTPClient ftpClient = null;
             try {
                 ftpClient = ftpClientRepository.getFtpClient();
                 file_array = ftpClient.listFiles(fileclickselected);
-                Timber.tag(TAG).d("Retrieved %d files from FTP directory", file_array.length);
                 int size = file_array.length;
                 for (int i = 0; i < size; ++i) {
                     FTPFile f = file_array[i];
                     String name = f.getName();
                     String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
-                    Timber.tag(TAG).d("Processing FTP file: %s", path);
                     FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(f, false, fileObjectType, path, ftpClient);
                     filePOJOS_filtered.add(filePOJO);
                     filePOJOS.add(filePOJO);
                 }
-                Timber.tag(TAG).d("Successfully filled FilePOJO for FTP directory: %s", fileclickselected);
             } catch (Exception e) {
-                Timber.tag(TAG).e("Error filling FilePOJO for FTP directory: %s", e.getMessage());
                 return;
             } finally {
                 if (ftpClientRepository != null && ftpClient != null) {
                     ftpClientRepository.releaseFtpClient(ftpClient);
-                    Timber.tag(TAG).d("FTP client released");
                 }
             }
         } else if (fileObjectType == FileObjectType.SFTP_TYPE) {
@@ -478,11 +472,9 @@ public class FilePOJOUtil {
             } finally {
                 if (sftpChannelRepository != null && channelSftp != null) {
                     sftpChannelRepository.releaseChannel(channelSftp);
-                    Timber.tag(TAG).d("SFTP channel released");
                 }
             }
         } else if (fileObjectType == FileObjectType.WEBDAV_TYPE) {
-            Timber.tag(TAG).d("Filling FilePOJO for WebDAV directory: %s", fileclickselected);
             WebDavClientRepository webDavClientRepository = null;
             Sardine sardine;
             try {
@@ -492,26 +484,21 @@ public class FilePOJOUtil {
                 String fullPath = basePath + (fileclickselected.startsWith("/") ? fileclickselected : "/" + fileclickselected);
                 String url = webDavClientRepository.buildUrl(fullPath);
                 List<DavResource> resources = sardine.list(url);
-                Timber.tag(TAG).d("Retrieved %d resources from WebDAV directory", resources.size());
                 if (!resources.isEmpty()) {
                     resources.remove(0);// Safely remove the first element
                 }
                 for (DavResource resource : resources) {
                     String name = resource.getName();
                     String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
-                    Timber.tag(TAG).d("Processing WebDAV resource: %s", path);
 
                     FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(resource, false, fileObjectType, path, sardine);
                     filePOJOS_filtered.add(filePOJO);
                     filePOJOS.add(filePOJO);
                 }
-                Timber.tag(TAG).d("Successfully filled FilePOJO for WebDAV directory: %s", fileclickselected);
             } catch (IOException e) {
-                Timber.tag(TAG).e("Error filling FilePOJO for WebDAV directory: %s", e.getMessage());
                 return;
             }
         } else if (fileObjectType == FileObjectType.SMB_TYPE) {
-            Timber.tag(TAG).d("Filling FilePOJO for SMB directory: %s", fileclickselected);
             SmbClientRepository smbClientRepository = null;
             Session session = null;
             String shareName;
@@ -525,7 +512,6 @@ public class FilePOJOUtil {
 
                     // List files in the directory
                     List<FileIdBothDirectoryInformation> fileList = share.list(adjustedPath);
-                    Timber.tag(TAG).d("Retrieved %d files from SMB directory", fileList.size());
 
                     for (FileIdBothDirectoryInformation info : fileList) {
                         String name = info.getFileName();
@@ -534,7 +520,6 @@ public class FilePOJOUtil {
                             continue;
                         }
                         String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
-                        Timber.tag(TAG).d("Processing SMB file: %s", path);
 
                         // Create SmbFileInfo
                         MakeFilePOJOUtil.SmbFileInfo smbFileInfo = new MakeFilePOJOUtil.SmbFileInfo(name, path, info.getFileAttributes(), info.getEndOfFile(), info.getCreationTime().toEpochMillis(), info.getLastAccessTime().toEpochMillis(), info.getLastWriteTime().toEpochMillis(), info.getChangeTime().toEpochMillis());
@@ -544,15 +529,12 @@ public class FilePOJOUtil {
                         filePOJOS_filtered.add(filePOJO);
                         filePOJOS.add(filePOJO);
                     }
-                    Timber.tag(TAG).d("Successfully filled FilePOJO for SMB directory: %s", fileclickselected);
                 }
             } catch (Exception e) {
-                Timber.tag(TAG).e("Error filling FilePOJO for SMB directory: %s", e.getMessage());
                 return;
             } finally {
                 if (smbClientRepository != null && session != null) {
                     smbClientRepository.releaseSession(session);
-                    Timber.tag(TAG).d("SMB session released");
                 }
             }
         } else {
@@ -564,7 +546,6 @@ public class FilePOJOUtil {
                 String name = f.getName();
                 String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
                 FileModel childFileModel = FileModelFactory.getFileModel(path, fileObjectType, null, null);
-                Timber.tag(TAG).d("Processing FileModel file: %s", path);
                 FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(childFileModel, false, fileObjectType);
                 filePOJOS_filtered.add(filePOJO);
                 filePOJOS.add(filePOJO);
@@ -651,32 +632,26 @@ public class FilePOJOUtil {
                 }
             }
         } else if (fileObjectType == FileObjectType.FTP_TYPE) {
-            Timber.tag(TAG).d("Filling FilePOJO for FTP directory: %s", fileclickselected);
             FTPFile[] file_array;
             FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
             FTPClient ftpClient = null;
             try {
                 ftpClient = ftpClientRepository.getFtpClient();
                 file_array = ftpClient.listFiles(fileclickselected);
-                Timber.tag(TAG).d("Retrieved %d files from FTP directory", file_array.length);
                 int size = file_array.length;
                 for (int i = 0; i < size; ++i) {
                     FTPFile f = file_array[i];
                     String name = f.getName();
                     String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
-                    Timber.tag(TAG).d("Processing FTP file: %s", path);
                     FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(f, false, fileObjectType, path, ftpClient);
                     filePOJOS_filtered.add(filePOJO);
                     filePOJOS.add(filePOJO);
                 }
-                Timber.tag(TAG).d("Successfully filled FilePOJO for FTP directory: %s", fileclickselected);
             } catch (Exception e) {
-                Timber.tag(TAG).e("Error filling FilePOJO for FTP directory: %s", e.getMessage());
                 return;
             } finally {
                 if (ftpClientRepository != null && ftpClient != null) {
                     ftpClientRepository.releaseFtpClient(ftpClient);
-                    Timber.tag(TAG).d("FTP client released");
                 }
             }
         } else if (fileObjectType == FileObjectType.SFTP_TYPE) {
@@ -697,11 +672,9 @@ public class FilePOJOUtil {
             } finally {
                 if (sftpChannelRepository != null && channelSftp != null) {
                     sftpChannelRepository.releaseChannel(channelSftp);
-                    Timber.tag(TAG).d("SFTP channel released");
                 }
             }
         } else if (fileObjectType == FileObjectType.WEBDAV_TYPE) {
-            Timber.tag(TAG).d("Filling FilePOJO for WebDAV directory: %s", fileclickselected);
             WebDavClientRepository webDavClientRepository = null;
             Sardine sardine;
             try {
@@ -711,26 +684,21 @@ public class FilePOJOUtil {
                 String fullPath = basePath + (fileclickselected.startsWith("/") ? fileclickselected : "/" + fileclickselected);
                 String url = webDavClientRepository.buildUrl(fullPath);
                 List<DavResource> resources = sardine.list(url);
-                Timber.tag(TAG).d("Retrieved %d resources from WebDAV directory", resources.size());
                 if (!resources.isEmpty()) {
                     resources.remove(0);// Safely remove the first element
                 }
                 for (DavResource resource : resources) {
                     String name = resource.getName();
                     String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
-                    Timber.tag(TAG).d("Processing WebDAV resource: %s", path);
 
                     FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(resource, false, fileObjectType, path, sardine);
                     filePOJOS_filtered.add(filePOJO);
                     filePOJOS.add(filePOJO);
                 }
-                Timber.tag(TAG).d("Successfully filled FilePOJO for WebDAV directory: %s", fileclickselected);
             } catch (IOException e) {
-                Timber.tag(TAG).e("Error filling FilePOJO for WebDAV directory: %s", e.getMessage());
                 return;
             }
         } else if (fileObjectType == FileObjectType.SMB_TYPE) {
-            Timber.tag(TAG).d("Filling FilePOJO for SMB directory: %s", fileclickselected);
             SmbClientRepository smbClientRepository = null;
             Session session = null;
             String shareName = null;
@@ -744,7 +712,6 @@ public class FilePOJOUtil {
 
                     // List files in the directory
                     List<FileIdBothDirectoryInformation> fileList = share.list(adjustedPath);
-                    Timber.tag(TAG).d("Retrieved %d files from SMB directory", fileList.size());
 
                     for (FileIdBothDirectoryInformation info : fileList) {
                         String name = info.getFileName();
@@ -753,7 +720,6 @@ public class FilePOJOUtil {
                             continue;
                         }
                         String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
-                        Timber.tag(TAG).d("Processing SMB file: %s", path);
 
                         // Create SmbFileInfo
                         MakeFilePOJOUtil.SmbFileInfo smbFileInfo = new MakeFilePOJOUtil.SmbFileInfo(name, path, info.getFileAttributes(), info.getEndOfFile(), info.getCreationTime().toEpochMillis(), info.getLastAccessTime().toEpochMillis(), info.getLastWriteTime().toEpochMillis(), info.getChangeTime().toEpochMillis());
@@ -764,15 +730,12 @@ public class FilePOJOUtil {
                         filePOJOS_filtered.add(filePOJO);
                         filePOJOS.add(filePOJO);
                     }
-                    Timber.tag(TAG).d("Successfully filled FilePOJO for SMB directory: %s", fileclickselected);
                 }
             } catch (Exception e) {
-                Timber.tag(TAG).e("Error filling FilePOJO for SMB directory: %s", e.getMessage());
                 return;
             } finally {
                 if (smbClientRepository != null && session != null) {
                     smbClientRepository.releaseSession(session);
-                    Timber.tag(TAG).d("SMB session released");
                 }
             }
         }

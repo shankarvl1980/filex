@@ -111,8 +111,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
         if(savedInstanceState==null){
             firstStart = bundle.getBoolean("firstStart");
         }
-
-        Timber.tag("VideoViewFragment").d("Initialized "+viewModel.idx +" with position: " + viewModel.position);
     }
 
     @Override
@@ -128,19 +126,14 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
         v.setOnClickListener(new View.OnClickListener() {
             public void onClick(View vi) {
                 if (controlListener != null) {
-
                     if (bottom_butt_visible) {
-                        Timber.tag("Controllistener").d("bottombutt visible");
                         if (viewModel.play_mode) {
                             // Video is playing; we can hide the controls
-                            Timber.tag("Controllistener").d("hiding contols");
                             controlListener.hideControls();
                         }
                         // If video is paused, do not hide bottom controls on click
                     } else {
-
                         boolean autoHide = viewModel.play_mode;
-                        Timber.tag("Controllistener").d("bottombutton not visible and showcontrol set to "+autoHide);
                         controlListener.showControls(autoHide);
                     }
                 }

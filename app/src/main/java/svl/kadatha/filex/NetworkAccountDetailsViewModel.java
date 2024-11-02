@@ -231,7 +231,6 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         } finally {
             if (ftpClientRepository != null && ftpClient != null) {
                 ftpClientRepository.releaseFtpClient(ftpClient);
-                Timber.tag(TAG).d("FTP client released");
             }
             asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
         }
@@ -267,7 +266,6 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         } finally {
             if (sftpChannelRepository != null && channelSftp != null) {
                 sftpChannelRepository.releaseChannel(channelSftp);
-                Timber.tag(TAG).d("SFTP client released");
             }
             asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
         }

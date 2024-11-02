@@ -1332,7 +1332,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         context.unregisterReceiver(mediaMountReceiver);
         listPopWindow.dismiss(); // to avoid memory leak on orientation change
         h.removeCallbacksAndMessages(null);
-        Timber.tag(Global.TAG).d("main activity destroyed");
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -2419,8 +2418,4 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     }
-
-
-
-
 }

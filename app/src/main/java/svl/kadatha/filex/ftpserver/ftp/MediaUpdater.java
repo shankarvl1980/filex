@@ -22,7 +22,6 @@ public enum MediaUpdater {
     private static final Timer sTimer = new Timer();
 
     public static void notifyFileCreated(String path) {
-        Timber.tag(TAG).d("Notifying others about new file: " + path);
         Context context = App.getAppContext();
         MediaScannerConnection.scanFile(context, new String[]{path}, null,
                 new ScanCompletedListener());

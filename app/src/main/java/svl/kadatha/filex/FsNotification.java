@@ -46,7 +46,6 @@ public class FsNotification {
     public final static CharSequence CHANNEL_NAME = "FTP Server";
 
     public static Notification setupNotification(Context context) {
-        Timber.tag(TAG).d("Setting up the notification");
         // Get NotificationManager reference
         NotificationManager nm = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
 

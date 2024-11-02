@@ -47,7 +47,6 @@ public class InstaCropperActivity extends BaseActivity {
         public void onBitmapReady(final Bitmap bitmap) {
             if (bitmap == null) {
                 setResult(RESULT_CANCELED);
-                Timber.tag(Global.TAG).d("result is set with result_canceled");
                 finish();
                 return;
             }
@@ -62,9 +61,7 @@ public class InstaCropperActivity extends BaseActivity {
             data.putExtra(EXTRA_FILE_NAME, file_name);
             setResult(RESULT_OK, data);
             finish();
-
         }
-
     };
 
     public static Intent getIntent(Context context, Uri src, Uri dst, String file_name, int maxWidth, int outputQuality) {

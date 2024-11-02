@@ -170,7 +170,6 @@ public final class FileUtil {
 
             success = true;
         } catch (Exception e) {
-            Timber.tag(TAG).e("Error during file copy: %s", e.getMessage());
         }
         return success;
     }
@@ -198,7 +197,6 @@ public final class FileUtil {
             }
             success = true;
         } catch (Exception e) {
-            Timber.tag(TAG).e("Error during file copy: %s", e.getMessage());
         }
         return success;
     }
@@ -220,9 +218,7 @@ public final class FileUtil {
 
             return true;
         } catch (Exception e) {
-            Timber.tag(TAG).e("Error during URI to FileModel copy: %s", e.getMessage());
             return false;
-
         }
     }
 
@@ -280,7 +276,6 @@ public final class FileUtil {
 
 
     public static FTPFile getFtpFile(FTPClient ftpClient, String file_path) {
-        Timber.tag(TAG).d("Getting FTP file from other FTP client: %s", file_path);
         File file = new File(file_path);
         String parent_path = file.getParent();
         String name = file.getName();
@@ -290,15 +285,12 @@ public final class FileUtil {
             for (int i = 0; i < size; ++i) {
                 FTPFile ftpFile = ftpFiles_array[i];
                 if (ftpFile.getName().equals(name)) {
-                    Timber.tag(TAG).d("Found FTP file: %s", ftpFile.getName());
                     return ftpFile;
                 }
             }
         } catch (Exception e) {
-            Timber.tag(TAG).e("Error getting FTP file: %s", e.getMessage());
             return null;
         }
-        Timber.tag(TAG).d("FTP file not found: %s", file_path);
         return null;
     }
 
@@ -311,7 +303,6 @@ public final class FileUtil {
                 // Alternatively, decide how to represent the root directory
                 // Since root doesn't have a parent, you might skip it or handle differently
                 // For simplicity, return null or throw an exception
-                Timber.tag(TAG).e("Root directory '/' cannot be represented as a single LsEntry.");
                 return null;
             }
 
@@ -346,11 +337,8 @@ public final class FileUtil {
                     return entry;
                 }
             }
-
-            Timber.tag(TAG).e("Could not find the file or directory for path: %s", path);
             return null;
         } catch (Exception e) {
-            Timber.tag(TAG).e("SFTP Exception for path: %s, Error: %s", path, e.getMessage());
             return null;
         }
     }
@@ -419,7 +407,6 @@ public final class FileUtil {
                 System.err.println("Failed to delete root directory: " + fileModel);
             }
         }
-
         return success;
     }
 
@@ -469,7 +456,6 @@ public final class FileUtil {
                 System.err.println("Failed to delete root folder: " + folder);
             }
         }
-
         return success;
     }
 
@@ -578,7 +564,6 @@ public final class FileUtil {
         try {
             sdCardDirectory = new File(sdCardDirectory).getCanonicalPath();
         } catch (IOException ioe) {
-            Timber.tag(TAG).e("Could not get SD directory - %s", ioe);
         }
         return sdCardDirectory;
     }
@@ -597,7 +582,6 @@ public final class FileUtil {
                     }
                     paths.add(path);
                 } else {
-                    Timber.tag(TAG).w("Unexpected external file dir: %s", file.getAbsolutePath());
                 }
             }
         }
@@ -723,7 +707,6 @@ public final class FileUtil {
             }
             out.flush();
         } catch (IOException e) {
-            Timber.tag(TAG).e("Error during buffered copy: %s", e.getMessage());
             throw e;
         }
     }

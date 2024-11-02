@@ -901,13 +901,10 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
                                     save_button.setAlpha(Global.DISABLE_ALFA);
 
                                     Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, localBroadcastManager, null);
-
-                                    Timber.tag(Global.TAG).d("File saved successfully");
                                     reloadCurrentChunk();
                                 } else {
                                     viewModel.updated = false;
                                     Global.print(context, getString(R.string.file_could_not_be_saved) + ": " + saveResult.errorMessage);
-                                    Timber.tag(Global.TAG).e("File save failed: %s", saveResult.errorMessage);
                                 }
 
                                 if (viewModel.to_be_closed_after_save) {
@@ -941,12 +938,10 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
 
                                     Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, localBroadcastManager, null);
 
-                                    Timber.tag(Global.TAG).d("File saved successfully");
                                     reloadCurrentChunk();
                                 } else {
                                     viewModel.updated = false;
                                     Global.print(context, getString(R.string.file_could_not_be_saved) + ": " + saveResult.errorMessage);
-                                    Timber.tag(Global.TAG).e("File save failed: %s", saveResult.errorMessage);
                                 }
 
                                 if (viewModel.to_be_closed_after_save) {

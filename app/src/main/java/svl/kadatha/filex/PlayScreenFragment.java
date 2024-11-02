@@ -117,7 +117,7 @@ public class PlayScreenFragment extends Fragment {
         if (activity instanceof AudioFragmentListener) {
             audioFragmentListener = (AudioFragmentListener) activity;
         }
-        Timber.tag(TAG).d("attached to the activity");
+
         audioPlayViewModel = new ViewModelProvider(requireActivity()).get(AudioPlayViewModel.class);
         audioPlayViewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
             @Override
@@ -136,7 +136,7 @@ public class PlayScreenFragment extends Fragment {
                             data = ((AudioPlayerActivity) activity).data;
                         }
                     }
-                    Timber.tag(TAG).d("audio service being started");
+
                     Intent service_intent = new Intent(context, AudioPlayerService.class);
                     service_intent.setData(data);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -178,7 +178,6 @@ public class PlayScreenFragment extends Fragment {
     }
 
     public void initiate_audio() {
-        Timber.tag(TAG).d("initiating audio");
         if (activity instanceof AudioPlayerActivity) {
             data = ((AudioPlayerActivity) activity).data;
         }
@@ -328,10 +327,8 @@ public class PlayScreenFragment extends Fragment {
 
         progress_bar = v.findViewById(R.id.audio_play_progressbar);
         progress_bar.setVisibility(View.GONE);
-        Timber.tag(TAG).d("progress bar is now set");
         previous_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Timber.tag(TAG).d("previous clicked");
                 if (progress_bar.getVisibility() == View.VISIBLE) {
                     return;
                 }
@@ -341,7 +338,6 @@ public class PlayScreenFragment extends Fragment {
 
         backward_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Timber.tag(TAG).d("next clicked");
                 if (progress_bar.getVisibility() == View.VISIBLE) {
                     return;
                 }
@@ -403,7 +399,6 @@ public class PlayScreenFragment extends Fragment {
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
                 if (asyncTaskStatus == AsyncTaskStatus.STARTED) {
                     progress_bar.setVisibility(View.VISIBLE);
-                    Timber.tag(TAG).d("progress bar is made visible - deleting");
                 } else if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
                     progress_bar.setVisibility(View.GONE);
                     if (!deleteFileOtherActivityViewModel.deleted_audio_files.isEmpty()) {
@@ -426,7 +421,6 @@ public class PlayScreenFragment extends Fragment {
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 if (requestKey.equals(DELETE_FILE_REQUEST_CODE)) {
                     progress_bar.setVisibility(View.VISIBLE);
-                    Timber.tag(TAG).d("progress bar is made visible - delete file request");
                     Uri tree_uri = result.getParcelable("tree_uri");
                     String tree_uri_path = result.getString("tree_uri_path");
                     String source_folder = result.getString("source_folder");
@@ -510,7 +504,6 @@ public class PlayScreenFragment extends Fragment {
         if (AudioPlayerService.CURRENT_PLAY_NUMBER <= 0) {
             previous_btn.setEnabled(false);
             previous_btn.setAlpha(Global.DISABLE_ALFA);
-            Timber.tag(TAG).d("previous disabled");
         } else {
             previous_btn.setEnabled(true);
             previous_btn.setAlpha(Global.ENABLE_ALFA);
@@ -518,7 +511,6 @@ public class PlayScreenFragment extends Fragment {
         if (AudioPlayerService.CURRENT_PLAY_NUMBER >= AudioPlayerService.AUDIO_QUEUED_ARRAY.size() - 1) {
             next_btn.setEnabled(false);
             next_btn.setAlpha(Global.DISABLE_ALFA);
-            Timber.tag(TAG).d("next disabled");
         } else {
             next_btn.setEnabled(true);
             next_btn.setAlpha(Global.ENABLE_ALFA);
@@ -577,7 +569,6 @@ public class PlayScreenFragment extends Fragment {
                         if (getActivity() instanceof AudioPlayerActivity) {
                             ((AudioPlayerActivity) getActivity()).on_audio_change();
                         }
-                        Timber.tag(Global.TAG).d("previous or next listened");
                         break;
                     case AudioPlayerService.START:
                     case AudioPlayerService.PAUSE:

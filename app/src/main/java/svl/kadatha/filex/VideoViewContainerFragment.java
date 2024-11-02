@@ -420,9 +420,7 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
                 @Override
                 public void setPosition(Integer idx, Integer pos) {
                     if (viewModel.video_list.size() > idx) {
-                        //Global.print(context,"position set-"+pos+"  "+" and files is "+viewModel.video_list.getKeyAtIndex(idx).getName());
                         viewModel.video_list.put(viewModel.video_list.getKeyAtIndex(idx), pos);
-                        Timber.tag("VideoViewContainer").d( "Set position for index " + idx + " to " + pos);
                     }
                 }
             });
