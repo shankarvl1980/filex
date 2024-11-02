@@ -87,30 +87,6 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
     private LocalBroadcastReceiver localBroadcastReceiver;
     private InputMethodManager imm;
 
-    public static void recursivefilepath(ArrayList<String> file_pathstring_array, List<File> file_array) {
-        Stack<File> stack = new Stack<>();
-        for (File f : file_array) {
-            stack.push(f);
-        }
-
-        while (!stack.isEmpty()) {
-            File currentFile = stack.pop();
-            if (currentFile.isDirectory()) {
-                File[] innerFiles = currentFile.listFiles();
-                if (innerFiles == null || innerFiles.length == 0) {
-                    Timber.tag("zip_entries").d("zip entries - %s", currentFile.getAbsolutePath() + File.separator);
-                    file_pathstring_array.add(currentFile.getAbsolutePath() + File.separator);
-                } else {
-                    for (File innerFile : innerFiles) {
-                        stack.push(innerFile);
-                    }
-                }
-            } else {
-                Timber.tag("zip_entries").d("zip entries - %s", currentFile.getAbsolutePath() + File.separator);
-                file_pathstring_array.add(currentFile.getAbsolutePath());
-            }
-        }
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -188,7 +164,6 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
             }
         });
 
-
         file_number_view = findViewById(R.id.archive_detail_fragment_file_number);
         back_button = findViewById(R.id.archive_top_toolbar_back_button);
         back_button.setVisibility(View.GONE);
@@ -203,7 +178,6 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
         current_dir_textview.setOnClickListener(topToolbarClickListener);
         all_select.setOnClickListener(topToolbarClickListener);
         interval_select.setOnClickListener(topToolbarClickListener);
-
 
         floating_button_back = findViewById(R.id.archive_floating_action_button_back);
         floating_button_back.setOnClickListener(new View.OnClickListener() {
@@ -243,6 +217,26 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                         createFragmentTransaction(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath(), FileObjectType.FILE_TYPE);
                         viewModel.zipFileExtracted = false;
                     }
+                }
+            }
+        });
+
+        viewModel.isArchiveEntriesPopulated.observe(this, new Observer<AsyncTaskStatus>() {
+            @Override
+            public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+                if(asyncTaskStatus==AsyncTaskStatus.STARTED){
+                    activity_progress_bar.setVisibility(View.VISIBLE);
+                } else if(asyncTaskStatus==AsyncTaskStatus.COMPLETED){
+                    activity_progress_bar.setVisibility(View.GONE);
+                    ArrayList<String> files_selected_array = new ArrayList<>();
+                    files_selected_array.add(ZIP_FILE.getAbsolutePath());
+                    ArchiveSetUpDialog archiveSetUpDialog = ArchiveSetUpDialog.getInstance(files_selected_array, viewModel.zip_entries_array,viewModel.base_path ,viewModel.fileObjectType, ArchiveSetUpDialog.ARCHIVE_ACTION_UNZIP);
+                    archiveSetUpDialog.show(fm, null);
+                    ArchiveViewFragment archiveViewFragment = (ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);
+                    if(archiveViewFragment!=null){
+                        archiveViewFragment.clearSelectionAndNotifyDataSetChanged();
+                    }
+                    viewModel.isArchiveEntriesPopulated.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                 }
             }
         });
@@ -608,15 +602,6 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                     if (countBackPressed == 1) {
                         Global.print(context, getString(R.string.press_again_to_close_activity));
                     } else {
-                        Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
-                        if (Global.WHETHER_TO_CLEAR_CACHE_TODAY) {
-                            Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(getCacheDir());
-                            if (Global.SIZE_APK_ICON_LIST > 800) {
-                                Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.APK_ICON_DIR);
-                            }
-                            tinyDB.putInt("cache_cleared_month", Global.CURRENT_MONTH);
-                            Global.print(context, "cleared cache");
-                        }
                         finish();
                     }
                 } else {
@@ -983,58 +968,30 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                 if (archiveViewFragment == null) {
                     return;
                 }
-                if (archiveViewFragment.progress_bar.getVisibility() == View.VISIBLE) {
-                    Global.print(context, getString(R.string.please_wait));
-                    return;
-                }
 
                 if (archiveViewFragment.progress_bar.getVisibility() == View.VISIBLE) {
                     Global.print(context, getString(R.string.please_wait));
                     return;
                 }
 
-                if (!Global.ARCHIVE_EXTRACT_DIR.exists() || Global.ARCHIVE_EXTRACT_DIR.list().length == 0) {
+                if (!Global.ARCHIVE_EXTRACT_DIR.exists()) {
                     Global.print(context, getString(R.string.could_not_perform_action));
                     return;
                 }
 
-                ArrayList<String> files_selected_array = new ArrayList<>();
-                ArrayList<String> zip_entry_selected_array = new ArrayList<>();
                 if (ZIP_FILE != null) {
-                    files_selected_array.add(ZIP_FILE.getAbsolutePath());
-                    int size = archiveViewFragment.viewModel.mselecteditems.size();
-                    if (size != 0) {
-                        List<File> file_list = new ArrayList<>();
-                        for (int i = 0; i < size; ++i) {
-                            file_list.add(new File(archiveViewFragment.viewModel.mselecteditems.getValueAtIndex(i)));
-                        }
-                        ArchiveViewActivity.recursivefilepath(zip_entry_selected_array, file_list);
-                    }
-
-                    ArchiveSetUpDialog unziparchiveDialog = ArchiveSetUpDialog.getInstance(files_selected_array, zip_entry_selected_array, archiveViewFragment.fileObjectType, ArchiveSetUpDialog.ARCHIVE_ACTION_UNZIP);
-                    unziparchiveDialog.show(fm, null);
-                    archiveViewFragment.clearSelectionAndNotifyDataSetChanged();
+                    activity_progress_bar.setVisibility(View.VISIBLE);
+                    viewModel.populateArchiveEntries(archiveViewFragment);
                 } else {
                     Global.print(context, getString(R.string.could_not_perform_action));
                     onbackpressed(false);
                 }
-
             } else if (id == R.id.toolbar_btn_4) {
                 if (archiveViewFragment == null) {
                     finish();
                 }
                 if (search_toolbar_visible) {
                     set_visibility_searchbar(false);
-                }
-                Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
-                FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()), FileObjectType.FILE_TYPE);
-                if (Global.WHETHER_TO_CLEAR_CACHE_TODAY) {
-                    Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(getCacheDir());
-                    if (Global.SIZE_APK_ICON_LIST > 800) {
-                        Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.APK_ICON_DIR);
-                    }
-                    tinyDB.putInt("cache_cleared_month", Global.CURRENT_MONTH);
-                    Global.print(context, "cleared cache");
                 }
                 finish();
             }

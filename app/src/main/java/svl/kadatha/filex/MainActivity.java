@@ -1917,7 +1917,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                                 for (int i = 0; i < size; ++i) {
                                     files_selected_array.add(df.viewModel.mselecteditems.getValueAtIndex(i));
                                 }
-                                ArchiveSetUpDialog archiveSetUpDialog = ArchiveSetUpDialog.getInstance(files_selected_array, null, df.fileObjectType, ArchiveSetUpDialog.ARCHIVE_ACTION_ZIP);
+                                ArchiveSetUpDialog archiveSetUpDialog = ArchiveSetUpDialog.getInstance(files_selected_array, null,"", df.fileObjectType, ArchiveSetUpDialog.ARCHIVE_ACTION_ZIP);
                                 archiveSetUpDialog.show(fm, "zip_dialog");
                                 break;
                             case 6:
@@ -1937,7 +1937,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                                     for (int i = 0; i < size; ++i) {
                                         files_selected_array.add(df.viewModel.mselecteditems.getValueAtIndex(i));
                                     }
-                                    ArchiveSetUpDialog unarchiveSetUpDialog = ArchiveSetUpDialog.getInstance(files_selected_array, null, df.fileObjectType, ArchiveSetUpDialog.ARCHIVE_ACTION_UNZIP);
+                                    ArchiveSetUpDialog unarchiveSetUpDialog = ArchiveSetUpDialog.getInstance(files_selected_array, null,"", df.fileObjectType, ArchiveSetUpDialog.ARCHIVE_ACTION_UNZIP);
                                     unarchiveSetUpDialog.show(fm, "zip_dialog");
                                 } else {
                                     Global.print(context, getString(R.string.select_only_a_zip_file));

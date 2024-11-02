@@ -87,7 +87,6 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
     @Override
     public void onDetach() {
         super.onDetach();
-        //archiveViewActivity = null;
         detailFragmentListener = null;
     }
 
@@ -103,7 +102,6 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         if (Global.ARCHIVE_EXTRACT_DIR == null) {
             Global.ARCHIVE_EXTRACT_DIR = new File(context.getFilesDir(), "Archive");
         }
-
     }
 
     @Override
@@ -112,9 +110,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         fileModifyObserver = FileModifyObserver.getInstance(fileclickselected);
         fileModifyObserver.setFileObserverListener(this);
         filepath_recyclerview = v.findViewById(R.id.fragment_archive_filepath_container);
-
         progress_bar = v.findViewById(R.id.fragment_archive_detail_progressbar);
-
         recyclerView = v.findViewById(R.id.fragment_archive_detail_container);
         DividerItemDecoration itemdecor = new DividerItemDecoration(context, DividerItemDecoration.HORIZONTAL);
         itemdecor.setDrawable(ContextCompat.getDrawable(context, R.drawable.right_private_icon));

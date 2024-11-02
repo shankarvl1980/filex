@@ -8,31 +8,50 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.Stack;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import timber.log.Timber;
+
 
 public class ArchiveViewerViewModel extends AndroidViewModel {
 
     public final MutableLiveData<AsyncTaskStatus> isExtractionCompleted = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> isArchiveEntriesPopulated = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public boolean zipFileExtracted;
     private boolean isCancelled;
     private Future<?> future1, future2, future3, future4, future5, future6, future7, future8, future9;
+    ArrayList<String> zip_entries_array;
+    String base_path="";
+    public FileObjectType fileObjectType;
+    private final TinyDB tinyDB;
 
     public ArchiveViewerViewModel(@NonNull Application application) {
         super(application);
+        tinyDB = new TinyDB(application);
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
+        cancel(true);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
         FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()), FileObjectType.FILE_TYPE);
-        cancel(true);
+        if (Global.WHETHER_TO_CLEAR_CACHE_TODAY) {
+            Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(getApplication().getCacheDir());
+            if (Global.SIZE_APK_ICON_LIST > 800) {
+                Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.APK_ICON_DIR);
+            }
+            tinyDB.putInt("cache_cleared_month", Global.CURRENT_MONTH);
+            Global.print(getApplication(), "cleared cache");
+        }
     }
 
     public void cancel(boolean mayInterruptRunning) {
@@ -105,4 +124,52 @@ public class ArchiveViewerViewModel extends AndroidViewModel {
         });
     }
 
+    public synchronized void populateArchiveEntries(ArchiveViewFragment archiveViewFragment) {
+        if (isArchiveEntriesPopulated.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
+        isArchiveEntriesPopulated.setValue(AsyncTaskStatus.STARTED);
+        zip_entries_array=new ArrayList<>();
+        base_path="";
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future2 = executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                fileObjectType=archiveViewFragment.fileObjectType;
+                int size = archiveViewFragment.viewModel.mselecteditems.size();
+                if (size != 0) {
+                    List<File> file_list = new ArrayList<>();
+                    for (int i = 0; i < size; ++i) {
+                        file_list.add(new File(archiveViewFragment.viewModel.mselecteditems.getValueAtIndex(i)));
+                    }
+                    populate_file_paths(zip_entries_array, file_list);
+                    base_path=archiveViewFragment.fileclickselected.substring(Global.ARCHIVE_CACHE_DIR_LENGTH+1);
+                }
+                isArchiveEntriesPopulated.postValue(AsyncTaskStatus.COMPLETED);
+            }
+        });
+    }
+
+    private static void populate_file_paths(List<String> file_path_array, List<File> file_array) {
+        Stack<File> stack = new Stack<>();
+        for (File f : file_array) {
+            stack.push(f);
+        }
+
+        while (!stack.isEmpty()) {
+            File currentFile = stack.pop();
+            if (currentFile.isDirectory()) {
+                File[] innerFiles = currentFile.listFiles();
+                if (innerFiles == null || innerFiles.length == 0) {
+                    file_path_array.add(currentFile.getAbsolutePath() + File.separator);
+                } else {
+                    for (File innerFile : innerFiles) {
+                        stack.push(innerFile);
+                    }
+                }
+            } else {
+                file_path_array.add(currentFile.getAbsolutePath());
+            }
+        }
+    }
 }

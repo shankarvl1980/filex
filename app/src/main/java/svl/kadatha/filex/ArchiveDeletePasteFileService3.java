@@ -25,7 +25,7 @@ public class ArchiveDeletePasteFileService3 extends Service implements TaskProgr
     static boolean SERVICE_COMPLETED = true;
     final List<String> overwritten_file_path_list = new ArrayList<>();
     private final ArrayList<String> files_selected_array = new ArrayList<>();
-    private final ArrayList<String> zip_entry_selected_array = new ArrayList<>();
+    private final ArrayList<String> zip_entries_array = new ArrayList<>();
     public int counter_no_files;
     public long counter_size_files;
     public FileCountSize fileCountSize;
@@ -118,12 +118,13 @@ public class ArchiveDeletePasteFileService3 extends Service implements TaskProgr
                     archive_action = bundle.getString("archive_action");
                     tree_uri_path = bundle.getString("tree_uri_path");
                     tree_uri = bundle.getParcelable("tree_uri");
+                    String base_path=bundle.getString("base_path","");
                     files_selected_array.addAll(bundle.getStringArrayList("files_selected_array"));
-                    if (bundle.getStringArrayList("zip_entry_selected_array") != null) {
-                        zip_entry_selected_array.addAll(bundle.getStringArrayList("zip_entry_selected_array"));
+                    if (bundle.getStringArrayList("zip_entries_array") != null) {
+                        zip_entries_array.addAll(bundle.getStringArrayList("zip_entries_array"));
                     }
 
-                    unarchiveAsyncTask = new UnarchiveAsyncTask(dest_folder, zip_entry_selected_array, sourceFileObjectType, destFileObjectType, zip_folder_name, zip_file_path, tree_uri, tree_uri_path, this);
+                    unarchiveAsyncTask = new UnarchiveAsyncTask(dest_folder, zip_entries_array, sourceFileObjectType, destFileObjectType, zip_folder_name, zip_file_path, tree_uri, tree_uri_path,base_path,this);
                     unarchiveAsyncTask.execute(null);
                     notification_content = getString(R.string.unzipping) + " '" + zip_file_path + " " + getString(R.string.at) + " " + dest_folder;
                 }

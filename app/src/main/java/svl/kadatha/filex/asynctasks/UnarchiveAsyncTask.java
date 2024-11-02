@@ -44,18 +44,19 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
     private final List<String> written_file_path_list;
     private final Set<String> first_part_entry_name_set;
     private final Set<String> first_part_entry_path_set;
-    private final List<String> zip_entry_selected_array;
+    private final List<String> zip_entries_array;
     private final String zip_file_path;
     private final long[] counter_size_files = new long[1];
     private String current_file_name;
     private FilePOJO filePOJO;
     private ZipFile zipfile;
     private int counter_no_files;
+    private final String base_path;
 
 
-    public UnarchiveAsyncTask(String dest_folder, ArrayList<String> zip_entry_selected_array, FileObjectType sourceFileObjectType, FileObjectType destFileObjectType, String zip_folder_name, String zip_file_path, Uri tree_uri, String tree_uri_path, TaskProgressListener listener) {
+    public UnarchiveAsyncTask(String dest_folder, ArrayList<String> zip_entries_array, FileObjectType sourceFileObjectType, FileObjectType destFileObjectType, String zip_folder_name, String zip_file_path, Uri tree_uri, String tree_uri_path, String base_path,TaskProgressListener listener) {
         this.dest_folder = dest_folder;
-        this.zip_entry_selected_array = zip_entry_selected_array;
+        this.zip_entries_array = zip_entries_array;
         this.destFileObjectType = destFileObjectType;
         this.sourceFileObjectType = sourceFileObjectType;
         this.zip_folder_name = zip_folder_name;
@@ -63,6 +64,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
         this.tree_uri = tree_uri;
         this.tree_uri_path = tree_uri_path;
         this.listener = listener;
+        this.base_path=base_path;
 
         written_file_name_list = new ArrayList<>();
         written_file_path_list = new ArrayList<>();
@@ -77,15 +79,50 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
         current_file_name = new File(zip_file_path).getName();
     }
 
-    public static String UNARCHIVE(String zip_dest_path, ZipEntry zipEntry, FileObjectType destFileObjectType, Uri uri, String uri_path, InputStream zipInputStream, long[] bytes_read) throws IOException {
+    public static String UNARCHIVE(
+            ZipEntry zipEntry,
+            String zip_dest_path,
+            FileObjectType destFileObjectType,
+            Uri uri,
+            String uri_path,
+            InputStream zipInputStream,
+            long[] bytes_read,
+            String basePath
+    ) throws IOException {
+
         String zip_entry_name = zipEntry.getName();
-        String dest_file_path = Global.CONCATENATE_PARENT_CHILD_PATH(zip_dest_path, zip_entry_name);
+
+        // Normalize basePath to ensure it ends with '/' only if it's not empty
+        if (basePath != null && !basePath.isEmpty() && !basePath.endsWith("/")) {
+            basePath += "/";
+        }
+
+        // Check if the zipEntry is within the basePath
+        if (basePath != null && !basePath.isEmpty() && !zip_entry_name.startsWith(basePath)) {
+            // Skip extraction for entries outside the basePath
+            return zip_entry_name;
+        }
+
+        // Strip the basePath from the zip_entry_name to get the relative path
+        String relativePath = basePath != null && !basePath.isEmpty()
+                ? zip_entry_name.substring(basePath.length())
+                : zip_entry_name;
+
+        // If relativePath is empty, it means the entry is the basePath directory itself
+        if (relativePath.isEmpty()) {
+            // Optionally, create the base directory in the destination
+            FileModel fileModel = FileModelFactory.getFileModel(zip_dest_path, destFileObjectType, uri, uri_path);
+            fileModel.makeDirsRecursively(""); // Creates the base directory
+            return relativePath;
+        }
+
+        String dest_file_path = Global.CONCATENATE_PARENT_CHILD_PATH(zip_dest_path, relativePath);
         File dest_file = new File(dest_file_path);
 
         FileModel fileModel = FileModelFactory.getFileModel(zip_dest_path, destFileObjectType, uri, uri_path);
 
         if (zipEntry.isDirectory()) {
-            fileModel.makeDirsRecursively(zip_entry_name);
+            fileModel.makeDirsRecursively(relativePath);
         } else {
             String parent_dest_file_path = Global.getParentPath(dest_file_path);
 
@@ -93,8 +130,10 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
             boolean parent_dir_exists = zipEntryFileModel.exists();
 
             if (!parent_dir_exists) {
-                String zip_entry_parent = new File(zip_entry_name).getParent();
-                fileModel.makeDirsRecursively(zip_entry_parent);
+                String zip_entry_parent = new File(relativePath).getParent();
+                if (zip_entry_parent != null) {
+                    fileModel.makeDirsRecursively(zip_entry_parent);
+                }
             }
 
             OutputStream outStream;
@@ -116,7 +155,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
                 }
             }
         }
-        return zip_entry_name;
+        return relativePath;
     }
 
     @Override
@@ -142,12 +181,12 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
         }
 
 
-        if (!zip_entry_selected_array.isEmpty()) {
-            for (String s : zip_entry_selected_array) {
+        if (!zip_entries_array.isEmpty()) {
+            for (String s : zip_entries_array) {
                 if (isCancelled()) {
                     return false;
                 }
-                ZipEntry zipEntry = zipfile.getEntry(s.substring(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath().length() + 1));
+                ZipEntry zipEntry = zipfile.getEntry(s.substring(Global.ARCHIVE_CACHE_DIR_LENGTH + 1));
                 success = read_zip_entry(zipEntry, zip_dest_path, tree_uri, tree_uri_path);
             }
         } else {
@@ -214,7 +253,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
         try {
             inStream = zipfile.getInputStream(zipEntry);
             bufferedInputStream = new BufferedInputStream(inStream);
-            String zip_entry_name = UNARCHIVE(zip_dest_path, zipEntry, destFileObjectType, uri, uri_path, bufferedInputStream, counter_size_files);
+            String zip_entry_name = UNARCHIVE(zipEntry,zip_dest_path,  destFileObjectType, uri, uri_path, bufferedInputStream, counter_size_files,base_path);
             ++counter_no_files;
             publishProgress(null);
             current_file_name = zip_entry_name;
@@ -225,7 +264,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
                 first_part_entry_path_set.add(Global.CONCATENATE_PARENT_CHILD_PATH(zip_dest_path, first_part));
             } else {
                 first_part_entry_name_set.add(zip_entry_name);
-                first_part_entry_path_set.add(Global.CONCATENATE_PARENT_CHILD_PATH(zip_folder_name, zip_entry_name));
+                first_part_entry_path_set.add(Global.CONCATENATE_PARENT_CHILD_PATH(zip_dest_path, zip_entry_name));
             }
             return true;
         } catch (IOException e) {
@@ -265,7 +304,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
         try {
             ZipEntry zipEntry;
             while ((zipEntry = zipInputStream.getNextEntry()) != null && !isCancelled()) {
-                String zip_entry_name = UNARCHIVE(zip_dest_path, zipEntry, destFileObjectType, uri, uri_path, zipInputStream, counter_size_files);
+                String zip_entry_name = UNARCHIVE(zipEntry,zip_dest_path,  destFileObjectType, uri, uri_path, zipInputStream, counter_size_files,base_path);
                 ++counter_no_files;
                 publishProgress(null);
                 current_file_name = zip_entry_name;
@@ -277,7 +316,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
                     first_part_entry_path_set.add((Global.CONCATENATE_PARENT_CHILD_PATH(zip_dest_path, first_part)));
                 } else {
                     first_part_entry_name_set.add(zip_entry_name);
-                    first_part_entry_path_set.add(Global.CONCATENATE_PARENT_CHILD_PATH(zip_folder_name, zip_entry_name));
+                    first_part_entry_path_set.add(Global.CONCATENATE_PARENT_CHILD_PATH(zip_dest_path, zip_entry_name));
                 }
             }
             if (zip_folder_name == null) {

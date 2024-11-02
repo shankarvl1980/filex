@@ -150,7 +150,7 @@ public class Global {
     static File ROOT_CACHE_DIR;
     static File APK_ICON_DIR;
     //static int DRAWER_WIDTH;
-    static int ARCHIVE_CACHE_DIR_LENGTH;
+    public static int ARCHIVE_CACHE_DIR_LENGTH;
     static List<UriPOJO> URI_PERMISSION_LIST = new ArrayList<>();
     static int ORIENTATION;
     static int SCREEN_WIDTH, SCREEN_HEIGHT, DIALOG_WIDTH, DIALOG_HEIGHT, WIDTH;
