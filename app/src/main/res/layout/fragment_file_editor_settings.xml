@@ -112,8 +112,6 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:background="@null"
-
-                    android:contentDescription="@string/edit"
                     android:elevation="6dp"
                     android:padding="@dimen/ten_dp"
                     android:src="@drawable/up_arrow_icon"
@@ -127,7 +125,6 @@
 
 
                     android:background="@null"
-                    android:contentDescription="@string/edit"
                     android:elevation="6dp"
                     android:padding="@dimen/ten_dp"
 

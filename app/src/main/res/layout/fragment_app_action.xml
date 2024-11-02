@@ -19,8 +19,6 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
-            android:layout_gravity="top"
             android:background="?attr/dialog_title"
             android:paddingStart="@dimen/ten_dp"
             android:paddingTop="@dimen/layout_margin"
@@ -33,7 +31,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/layout_margin"
-            android:layout_marginBottom="@dimen/layout_margin">
+            android:layout_marginBottom="@dimen/layout_margin"
+            android:fillViewport="true">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -46,10 +45,10 @@
                     android:layout_width="@dimen/image_preview_dimen"
                     android:layout_height="@dimen/image_preview_dimen"
                     android:layout_margin="10dp"
+                    android:importantForAccessibility="no"
                     app:layout_constraintBottom_toBottomOf="@id/fragment_app_action_app_size"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/fragment_app_action_app_name"
-
                     />
 
                 <TextView
@@ -61,7 +60,8 @@
                     android:textSize="19sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/fragment_app_action_app_image"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                     />
 
                 <TextView
                     android:id="@+id/fragment_app_action_package_name"
@@ -72,7 +72,8 @@
                     android:textSize="15sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@id/fragment_app_action_app_name"
-                    app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_name" />
+                    app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_name"
+                  />
 
                 <TextView
                     android:id="@+id/fragment_app_action_app_version"
@@ -83,7 +84,8 @@
                     android:textSize="15sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@id/fragment_app_action_app_name"
-                    app:layout_constraintTop_toBottomOf="@id/fragment_app_action_package_name" />
+                    app:layout_constraintTop_toBottomOf="@id/fragment_app_action_package_name"
+                     />
 
                 <TextView
                     android:id="@+id/fragment_app_action_app_size"
@@ -94,7 +96,8 @@
                     android:textSize="15sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@id/fragment_app_action_app_name"
-                    app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_version" />
+                    app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_version"
+                    />
 
                 <View
                     android:id="@+id/fragment_app_action_divider"
@@ -103,7 +106,6 @@
                     android:layout_marginTop="@dimen/ten_dp"
                     android:alpha="0.5"
                     android:background="@android:color/black"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_size" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -112,14 +114,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/layout_margin"
                     android:choiceMode="singleChoice"
+                    android:clipToPadding="false"
                     android:padding="@dimen/layout_margin"
                     android:scrollbarThumbVertical="@drawable/scrollbar"
                     android:scrollbars="vertical"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintTop_toBottomOf="@id/fragment_app_action_divider"
-
-                    />
-
+                     />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

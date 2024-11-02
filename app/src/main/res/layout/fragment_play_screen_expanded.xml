@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -10,7 +9,7 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/current_play_toolbar"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="?attr/toolbar_background"
         android:elevation="6dp"
@@ -24,11 +23,11 @@
             android:id="@+id/current_play_audio_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="100dp"
             android:ellipsize="end"
             android:gravity="center_vertical"
-            android:paddingStart="@dimen/ten_dp"
-            android:paddingEnd="@dimen/ten_dp"
-            android:singleLine="true"
+            android:paddingHorizontal="@dimen/ten_dp"
+            android:maxLines="1"
             android:textColor="?attr/toolbar_text_color"
             android:textSize="17sp" />
 
@@ -37,29 +36,26 @@
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:background="?attr/toolbar_background"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:minHeight="48dp"
             android:padding="10dp"
-            android:src="@drawable/exit_icon"
-
-            />
+            android:src="@drawable/exit_icon" />
 
         <ImageButton
             android:id="@+id/current_play_overflow"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:background="?attr/toolbar_background"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:minHeight="48dp"
             android:padding="10dp"
-            android:src="@drawable/overflow_icon"
-
-            />
-
+            android:src="@drawable/overflow_icon" />
 
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/fragment_current_play_expansion_stub"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/ten_dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -73,12 +69,12 @@
             android:layout_gravity="center"
             android:layout_margin="@dimen/layout_margin"
             android:elevation="10dp"
+            android:importantForAccessibility="no"
             android:src="@drawable/collapse_icon"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -89,9 +85,7 @@
         android:layout_margin="@dimen/layout_margin"
         android:background="?attr/toolbar_background"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/current_play_toolbar"
-
-        />
+        app:layout_constraintTop_toBottomOf="@id/current_play_toolbar" />
 
     <ImageButton
         android:id="@+id/current_play_list_image_btn"
@@ -102,21 +96,17 @@
         android:padding="10dp"
         android:src="@drawable/play_list_icon"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/current_play_toolbar"
-
-        />
-
+        app:layout_constraintTop_toBottomOf="@id/current_play_toolbar" />
 
     <ImageView
-        android:id="@+id/fragment_current_play_albumart"
+        android:id="@+id/fragment_current_play_album_art"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:adjustViewBounds="true"
-
         android:paddingTop="@dimen/layout_margin"
         android:scaleType="fitCenter"
-
         android:src="@drawable/woofer_icon"
+        android:importantForAccessibility="no"
         app:layout_constraintBottom_toTopOf="@+id/current_play_artists"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -136,14 +126,13 @@
 
     <LinearLayout
         android:id="@+id/fragment_play_screen_hide_group"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:visibility="gone"
-
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fragment_current_play_expansion_stub" />
-
 
     <TextView
         android:id="@+id/audio_player_current_progress"
@@ -181,10 +170,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/audio_player_seekbar" />
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/current_play_bottom_toolbar_layout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/toolbar_background"
         android:elevation="6dp"
@@ -192,27 +180,24 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <!-- Previous Button -->
         <ImageButton
             android:id="@+id/prev_image_button"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_height="0dp"
             android:padding="10dp"
             android:scaleType="center"
             android:src="@drawable/previous_icon"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/back_10_image_button"
-            app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Back 15 Seconds Button -->
         <ImageButton
             android:id="@+id/back_10_image_button"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_height="0dp"
             android:padding="10dp"
             android:scaleType="center"
             android:src="@drawable/backward_10_icon"
@@ -221,12 +206,11 @@
             app:layout_constraintStart_toEndOf="@id/prev_image_button"
             app:layout_constraintTop_toTopOf="parent" />
 
-
         <ImageButton
             android:id="@+id/play_pause_image_button"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_height="0dp"
             android:padding="10dp"
             android:scaleType="center"
             android:src="@drawable/play_icon"
@@ -235,13 +219,11 @@
             app:layout_constraintStart_toEndOf="@id/back_10_image_button"
             app:layout_constraintTop_toTopOf="parent" />
 
-
-        <!-- Forward 15 Seconds Button -->
         <ImageButton
             android:id="@+id/forward_10_image_button"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_height="0dp"
             android:padding="10dp"
             android:scaleType="center"
             android:src="@drawable/forward_10_icon"
@@ -250,12 +232,11 @@
             app:layout_constraintStart_toEndOf="@id/play_pause_image_button"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Next Button -->
         <ImageButton
             android:id="@+id/next_image_button"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_height="0dp"
             android:padding="10dp"
             android:scaleType="center"
             android:src="@drawable/next_icon"
@@ -266,30 +247,24 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
     <FrameLayout
         android:id="@+id/audio_play_progressbar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:clickable="true"
         android:elevation="7dp"
         android:focusable="true"
         android:foregroundGravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ProgressBar
-
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@null" />
+            android:layout_gravity="center" />
+
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

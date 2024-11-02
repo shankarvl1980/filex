@@ -440,7 +440,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
         setSurfaceViewSize();
         Timber.tag("VideoViewFragment").d("Seeking to position: " + Math.max(viewModel.position, 50));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            mp.seekTo(Math.max(viewModel.position, 50), MediaPlayer.SEEK_NEXT_SYNC);
+            mp.seekTo(Math.max(viewModel.position, 50), MediaPlayer.SEEK_CLOSEST_SYNC);
         } else {
             mp.seekTo(Math.max(viewModel.position, 50));
         }

@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/fragment_current_play_albumart"
+            android:id="@+id/fragment_current_play_album_art"
             android:layout_width="?attr/actionBarSize"
             android:layout_height="?attr/actionBarSize"
             android:src="@drawable/woofer_icon"
@@ -40,7 +40,7 @@
 
 
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/fragment_current_play_albumart"
+            app:layout_constraintStart_toEndOf="@+id/fragment_current_play_album_art"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

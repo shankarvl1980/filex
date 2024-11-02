@@ -1,28 +1,22 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-
-
-    >
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/analyser_image_file"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:scaleType="centerCrop"
-
-        />
+        android:contentDescription="@null"
+        android:importantForAccessibility="no" />
 
     <ImageView
         android:id="@+id/analyser_overlay_image_file"
         android:layout_width="30dp"
         android:layout_height="30dp"
-
         android:background="@null"
         android:src="@drawable/play_overlay_icon"
-        android:visibility="invisible"
-
-        />
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/analyser_item_background"
@@ -30,7 +24,8 @@
         android:layout_height="wrap_content"
         android:background="?attr/storage_analyser_item_background"
         android:paddingStart="@dimen/layout_margin"
-        android:paddingEnd="@dimen/layout_margin" />
+        android:paddingEnd="@dimen/layout_margin"
+        android:importantForAccessibility="no" />
 
     <TextView
         android:id="@+id/analyser_item_foreground"
@@ -38,7 +33,8 @@
         android:layout_height="wrap_content"
         android:background="@drawable/rectangle_file_size_item_clip"
         android:paddingStart="@dimen/layout_margin"
-        android:paddingEnd="@dimen/layout_margin" />
+        android:paddingEnd="@dimen/layout_margin"
+        android:importantForAccessibility="no" />
 
     <TextView
         android:id="@+id/analyser_text_file_name"
@@ -47,6 +43,7 @@
         android:paddingStart="@dimen/layout_margin"
         android:paddingEnd="@dimen/layout_margin"
         android:singleLine="true"
+        android:ellipsize="end"
         android:textColor="?attr/recycler_main_text_color" />
 
     <TextView
@@ -55,21 +52,23 @@
         android:layout_height="wrap_content"
         android:gravity="start"
         android:paddingStart="@dimen/layout_margin"
+        android:paddingEnd="0dp"
         android:textColor="?attr/recycler_text_color" />
-
 
     <TextView
         android:id="@+id/analyser_text_size_percentage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:ellipsize="end" />
 
     <TextView
         android:id="@+id/analyser_text_subfile_count"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="end"
+        android:paddingStart="0dp"
         android:paddingEnd="@dimen/layout_margin"
         android:textColor="?attr/recycler_text_color" />
 
@@ -78,16 +77,14 @@
         android:layout_width="26dp"
         android:layout_height="26dp"
         android:src="@drawable/select_indicator_icon"
-        android:visibility="invisible"
-
-        />
+        android:visibility="invisible" />
 
     <View
         android:id="@+id/analyser_item_separator"
         android:layout_width="match_parent"
         android:layout_height="4dp"
         android:background="?attr/recycler_main_text_color"
-        android:visibility="gone" />
-
+        android:visibility="gone"
+        android:importantForAccessibility="no" />
 
 </merge>

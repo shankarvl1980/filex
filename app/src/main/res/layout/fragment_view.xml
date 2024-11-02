@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -8,9 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:layout_gravity="bottom"
-        android:layout_marginTop="@dimen/layout_margin"
-
-        />
+        android:layout_marginTop="@dimen/layout_margin" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,7 +20,6 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="top"
             android:background="?attr/dialog_title"
             android:paddingStart="@dimen/ten_dp"
             android:paddingTop="@dimen/layout_margin"
@@ -54,12 +52,9 @@
                     android:text="@string/layout"
                     android:textSize="17sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-
-                    />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <RadioGroup
-
                     android:id="@+id/dialog_view_layout_rg"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -76,23 +71,16 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/list"
-                        android:textSize="15sp"
-
-                        />
+                        android:textSize="15sp" />
 
                     <RadioButton
-
                         android:id="@+id/dialog_view_rb_grid"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/grid"
-                        android:textSize="15sp"
-
-                        />
-
+                        android:textSize="15sp" />
                 </RadioGroup>
-
 
                 <View
                     android:id="@+id/seekbar_layout"
@@ -123,7 +111,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:elevation="6dp"
-
                     android:max="2"
                     android:paddingStart="38dp"
                     android:paddingEnd="38dp"
@@ -181,7 +168,6 @@
                     app:layout_constraintStart_toEndOf="@id/font_medium_label"
                     app:layout_constraintTop_toBottomOf="@id/seekbar_fontsize" />
 
-
                 <View
                     android:id="@+id/sort_layout_background"
                     android:layout_width="match_parent"
@@ -197,7 +183,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingStart="@dimen/ten_dp"
-
                     android:paddingTop="@dimen/ten_dp"
                     android:paddingEnd="@dimen/ten_dp"
                     android:paddingBottom="@dimen/layout_margin"
@@ -207,7 +192,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/sort_layout_background" />
 
-
                 <TableLayout
                     android:id="@+id/sort_table_layout"
                     android:layout_width="wrap_content"
@@ -215,9 +199,7 @@
                     android:paddingTop="@dimen/ten_dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/sort_layout_background"
-
-                    >
+                    app:layout_constraintTop_toTopOf="@id/sort_layout_background">
 
                     <TableRow
                         android:layout_width="match_parent"
@@ -243,11 +225,9 @@
                             android:gravity="center"
                             android:text="@string/size"
                             android:textSize="17sp" />
-
                     </TableRow>
 
                     <TableRow
-
                         android:layout_width="match_parent"
                         android:layout_height="0dp">
 
@@ -256,13 +236,9 @@
                             android:layout_width="46dp"
                             android:layout_height="46dp"
                             android:layout_margin="@dimen/layout_margin"
-
                             android:background="@drawable/select_icon_selection"
-
                             android:gravity="center"
-                            android:src="@drawable/sort_alphabetical_az_icon"
-
-                            />
+                            android:src="@drawable/sort_alphabetical_az_icon" />
 
                         <ImageButton
                             android:id="@+id/date_asc"
@@ -281,15 +257,11 @@
                             android:background="@drawable/select_icon_selection"
                             android:gravity="center"
                             android:src="@drawable/sort_size_asc_icon" />
-
                     </TableRow>
 
                     <TableRow
-
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
-
-                        >
+                        android:layout_height="0dp">
 
                         <ImageButton
                             android:id="@+id/name_desc"
@@ -298,9 +270,7 @@
                             android:layout_margin="@dimen/layout_margin"
                             android:background="@drawable/select_icon_selection"
                             android:gravity="center"
-                            android:src="@drawable/sort_alphabetical_za_icon"
-
-                            />
+                            android:src="@drawable/sort_alphabetical_za_icon" />
 
                         <ImageButton
                             android:id="@+id/date_desc"
@@ -309,9 +279,7 @@
                             android:layout_margin="@dimen/layout_margin"
                             android:background="@drawable/select_icon_selection"
                             android:gravity="center"
-                            android:src="@drawable/sort_time_desc_icon"
-
-                            />
+                            android:src="@drawable/sort_time_desc_icon" />
 
                         <ImageButton
                             android:id="@+id/size_desc"
@@ -320,12 +288,8 @@
                             android:layout_margin="@dimen/layout_margin"
                             android:background="@drawable/select_icon_selection"
                             android:gravity="center"
-                            android:src="@drawable/sort_size_desc_icon"
-
-                            />
-
+                            android:src="@drawable/sort_size_desc_icon" />
                     </TableRow>
-
                 </TableLayout>
 
                 <androidx.appcompat.widget.SwitchCompat
@@ -342,10 +306,7 @@
                     android:textColor="@color/light_recycler_text_color"
                     android:textSize="17sp"
                     android:theme="@style/MyLightSwitchCompat"
-                    app:layout_constraintTop_toBottomOf="@id/sort_table_layout"
-
-                    />
-
+                    app:layout_constraintTop_toBottomOf="@id/sort_table_layout" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

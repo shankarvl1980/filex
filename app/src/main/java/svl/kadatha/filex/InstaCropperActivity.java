@@ -8,10 +8,10 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -35,7 +35,7 @@ public class InstaCropperActivity extends BaseActivity {
     public static final String ACTIVITY_NAME = "INSTA_CROPPER_ACTIVITY";
     private static final int DEFAULT_OUTPUT_QUALITY = 50;
     public boolean clear_cache;
-    public FrameLayout progress_bar;
+    public ConstraintLayout progress_bar;
     private InstaCropperView mInstaCropper;
     private int mWidthSpec;
     private int mHeightSpec;

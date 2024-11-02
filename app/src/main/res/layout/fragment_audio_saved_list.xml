@@ -1,14 +1,12 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-
-    >
+    android:layout_height="match_parent">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fragment_audio_saved_list_recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="?attr/dialog_background"
         android:clipToPadding="false"
         android:layoutAnimation="@anim/layout_animation_fall_down"
@@ -27,9 +25,7 @@
         android:layout_margin="@dimen/layout_margin"
         android:background="@drawable/rounded_rectangle_shape"
         android:padding="@dimen/layout_margin"
-        android:textColor="?attr/recycler_text_color"
-
-        />
+        android:textColor="?attr/recycler_text_color" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/audio_saved_list_bottom_toolbar"
@@ -63,4 +59,3 @@
 
 
 </FrameLayout>
-

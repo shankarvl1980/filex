@@ -5,8 +5,9 @@
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/activity_picture_view_viewpager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -16,8 +17,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
@@ -27,37 +26,28 @@
             android:background="?attr/toolbar_background"
             android:elevation="6dp"
             app:contentInsetLeft="0dp"
-            app:contentInsetStart="0dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:contentInsetStart="0dp">
 
             <TextView
                 android:id="@+id/activity_picture_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="50dp"
                 android:ellipsize="end"
+                android:maxLines="1"
                 android:gravity="center_vertical"
-                android:paddingStart="@dimen/ten_dp"
-                android:paddingEnd="@dimen/ten_dp"
-                android:singleLine="true"
+                android:paddingHorizontal="@dimen/ten_dp"
                 android:textColor="?attr/toolbar_text_color"
-                android:textSize="17sp"
-
-                />
+                android:textSize="17sp" />
 
             <ImageButton
                 android:id="@+id/activity_picture_overflow"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="end"
-
                 android:background="?attr/toolbar_background"
                 android:padding="10dp"
-                android:src="@drawable/overflow_icon"
-
-
-                />
+                android:src="@drawable/overflow_icon" />
         </androidx.appcompat.widget.Toolbar>
 
         <TextView
@@ -72,7 +62,6 @@
 
     </LinearLayout>
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/activity_picture_view_recyclerview"
         android:layout_width="wrap_content"
@@ -81,15 +70,12 @@
         android:clipToPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-
-        />
-
+        app:layout_constraintStart_toStartOf="parent" />
 
     <FrameLayout
         android:id="@+id/activity_picture_progressbar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:clickable="true"
         android:elevation="6dp"
         android:focusable="true"
@@ -97,16 +83,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-
-        >
+        app:layout_constraintTop_toTopOf="parent">
 
         <ProgressBar
-
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@null" />
+            android:layout_gravity="center" />
     </FrameLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -120,9 +102,7 @@
         android:src="@drawable/back_icon"
         app:backgroundTint="?attr/toolbar_background"
         app:elevation="6dp"
-        app:layout_anchorGravity="end"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,9 +13,7 @@
         android:clipToPadding="false"
         android:fillViewport="true"
         android:scrollbarThumbVertical="@drawable/scrollbar"
-        android:scrollbars="vertical"
-
-        >
+        android:scrollbars="vertical">
 
         <svl.kadatha.filex.LineNumberedEditText
             android:id="@+id/textfile_edittext"
@@ -26,12 +24,9 @@
             android:background="?attr/activity_background"
             android:fontFamily="monospace"
             android:gravity="start"
-            android:inputType="text|textMultiLine"
-            android:paddingTop="@dimen/layout_margin"
-            android:paddingBottom="@dimen/layout_margin"
-            android:textColor="?attr/edit_text_color"
-
-            />
+            android:inputType="textMultiLine|textNoSuggestions"
+            android:paddingVertical="@dimen/layout_margin"
+            android:textColor="?attr/edit_text_color" />
 
     </svl.kadatha.filex.ObservableScrollView>
 
@@ -48,7 +43,6 @@
         android:textColor="?attr/recycler_text_color" />
 
     <androidx.appcompat.widget.Toolbar
-
         android:id="@+id/file_editor_top_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -65,9 +59,8 @@
             android:layout_marginEnd="50dp"
             android:ellipsize="end"
             android:gravity="center_vertical"
-            android:paddingStart="@dimen/ten_dp"
-            android:paddingEnd="@dimen/ten_dp"
-            android:singleLine="true"
+            android:paddingHorizontal="@dimen/ten_dp"
+            android:maxLines="1"
             android:textColor="?attr/toolbar_text_color"
             android:textSize="17sp" />
 
@@ -76,7 +69,7 @@
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
-            android:background="?attr/toolbar_background"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="10dp"
             android:src="@drawable/overflow_icon" />
     </androidx.appcompat.widget.Toolbar>
@@ -93,10 +86,8 @@
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@null" />
+            android:layout_gravity="center" />
     </FrameLayout>
-
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/file_editor_floating_action_button_back"
@@ -105,12 +96,9 @@
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/floating_button_margin_end"
         android:layout_marginBottom="@dimen/floating_button_margin_bottom"
-        android:clickable="true"
-        android:focusable="true"
         android:src="@drawable/back_icon"
         app:backgroundTint="?attr/toolbar_background"
-        app:elevation="7dp"
-        app:layout_anchorGravity="end" />
+        app:elevation="7dp" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/file_editor_bottom_toolbar"
@@ -123,5 +111,3 @@
         app:contentInsetStart="0dp" />
 
 </merge>
-
-	

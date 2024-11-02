@@ -3,9 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/app_manager_list_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-
-    >
+    android:layout_height="match_parent">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fragment_app_list_recyclerview"
@@ -16,15 +14,15 @@
         android:paddingBottom="?attr/actionBarSize"
         android:scrollbarThumbVertical="@drawable/scrollbar"
         android:scrollbars="vertical"
-
-        />
+         />
 
     <svl.kadatha.filex.FastScrollerView
         android:id="@+id/fastScroller_app_manager"
         android:layout_width="20dp"
         android:layout_height="match_parent"
         android:layout_gravity="end"
-        android:paddingBottom="?attr/actionBarSize" />
+        android:paddingBottom="?attr/actionBarSize"
+         />
 
     <TextView
         android:id="@+id/fragment_app_list_number"
@@ -35,20 +33,17 @@
         android:background="@drawable/rounded_rectangle_shape"
         android:padding="@dimen/layout_margin"
         android:textColor="?attr/recycler_text_color"
-
-        />
-
+         />
 
     <TextView
         android:id="@+id/fragment_app_list_empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
-        android:background="@null"
         android:gravity="center"
         android:paddingBottom="?attr/actionBarSize"
         android:text="@string/no_app_found"
-        android:visibility="gone" />
+        android:visibility="gone"
+         />
 
     <FrameLayout
         android:id="@+id/fragment_app_list_progressbar"
@@ -57,15 +52,15 @@
         android:clickable="true"
         android:elevation="6dp"
         android:focusable="true"
-        android:foregroundGravity="center">
+        android:foregroundGravity="center"
+        >
 
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@null" />
+            android:indeterminate="true" />
     </FrameLayout>
-
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/fragment_app_list_bottom_toolbar"
@@ -74,10 +69,8 @@
         android:layout_gravity="bottom"
         android:background="?attr/toolbar_background"
         android:elevation="6dp"
+        android:minHeight="?attr/actionBarSize"
         app:contentInsetLeft="0dp"
         app:contentInsetStart="0dp" />
 
-
 </FrameLayout>
-
-

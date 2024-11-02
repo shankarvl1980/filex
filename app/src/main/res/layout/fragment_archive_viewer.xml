@@ -1,30 +1,30 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fragment_archive_filepath_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top"
         android:background="?attr/filepath_recyclerview_background"
         android:elevation="6dp"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp" />
-
+        android:paddingHorizontal="10dp"
+       />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fragment_archive_detail_container"
         style="@style/my_scrollbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@null"
         android:clipToPadding="false"
         android:layoutAnimation="@anim/layout_animation_fall_down"
         android:paddingTop="36sp"
         android:paddingBottom="100dp"
-        android:scrollbars="vertical" />
+        android:scrollbarThumbVertical="@drawable/scrollbar"
+        android:scrollbars="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+         />
 
     <svl.kadatha.filex.FastScrollerView
         android:id="@+id/fastScroller_archive_detail_fragment"
@@ -32,17 +32,17 @@
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:paddingTop="36sp"
-        android:paddingBottom="100dp" />
+        android:paddingBottom="100dp"
+        />
 
     <TextView
         android:id="@+id/fragment_archive_empty_folder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@null"
         android:gravity="center"
         android:text="@string/no_file_found"
-        android:visibility="gone" />
-
+        android:visibility="gone"
+         />
 
     <FrameLayout
         android:id="@+id/fragment_archive_detail_progressbar"
@@ -51,15 +51,14 @@
         android:clickable="true"
         android:elevation="6dp"
         android:focusable="true"
-        android:foregroundGravity="center">
+        android:foregroundGravity="center"
+        >
 
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@null" />
+            android:indeterminate="true" />
     </FrameLayout>
 
-
 </FrameLayout>
-

@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <TextView
         android:id="@+id/select_app_label"
         android:layout_width="match_parent"
@@ -13,10 +12,7 @@
         android:padding="@dimen/layout_margin"
         android:text="@string/select_app"
         android:textSize="19sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/dialog_select_app_recyclerview"
@@ -26,18 +22,18 @@
         android:background="?attr/dialog_background"
         android:choiceMode="singleChoice"
         android:padding="@dimen/layout_margin"
+        android:scrollbarThumbVertical="@drawable/scrollbar"
+        android:scrollbars="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@id/select_app_remember_choice_checkbox"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/select_app_label" />
+        app:layout_constraintTop_toBottomOf="@id/select_app_label"
+        />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="?attr/dialog_background"
         app:layout_constraintBottom_toBottomOf="@id/select_app_remember_choice_checkbox"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/select_app_remember_choice_checkbox" />
 
     <CheckBox
@@ -46,7 +42,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/ten_dp"
         android:layout_marginEnd="@dimen/ten_dp"
-        android:background="?attr/dialog_background"
         android:minHeight="36dp"
         android:padding="@dimen/ten_dp"
         android:text="@string/remember_the_choice"
@@ -59,12 +54,12 @@
         android:id="@+id/select_app_remember_choice_info_image"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:importantForAccessibility="no"
         android:padding="10dp"
         android:src="@drawable/dialog_properties_icon"
         app:layout_constraintBottom_toBottomOf="@id/select_app_remember_choice_checkbox"
         app:layout_constraintStart_toEndOf="@id/select_app_remember_choice_checkbox"
         app:layout_constraintTop_toTopOf="@id/select_app_remember_choice_checkbox" />
-
 
     <FrameLayout
         android:id="@+id/fragment_app_selector_progressbar"
@@ -74,21 +69,14 @@
         android:elevation="6dp"
         android:focusable="true"
         android:foregroundGravity="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-
         >
 
         <ProgressBar
-
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@null" />
+            android:indeterminate="true" />
     </FrameLayout>
-
 
     <FrameLayout
         android:id="@+id/fragment_app_selector_button_layout"
@@ -104,4 +92,3 @@
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

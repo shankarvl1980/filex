@@ -97,7 +97,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     private InputMethodManager imm;
     private RepositoryClass repositoryClass;
     private NetworkStateReceiver networkStateReceiver;
-    private ImageButton parent_dir_btn,directory_select_btn;
+    private ImageButton parent_dir_btn;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -197,7 +197,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         });
 
-        directory_select_btn=findViewById(R.id.file_selector_directory_btn);
+        ImageButton directory_select_btn = findViewById(R.id.file_selector_directory_btn);
         directory_select_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

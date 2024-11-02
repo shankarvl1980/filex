@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/fragment_video_view_layout"
@@ -8,19 +9,10 @@
         android:id="@+id/surface_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
-
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/video_play_refresh_play_pause_group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="video_play_refresh_btn,video_play_pause_img_btn" />
-
 
     <ImageButton
         android:id="@+id/video_play_pause_img_btn"
@@ -47,10 +39,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/video_play_refresh_play_pause_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="video_play_refresh_btn,video_play_pause_img_btn" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/video_view_bottom_butt"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:padding="@dimen/layout_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -60,17 +59,15 @@
             android:id="@+id/video_player_current_progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:layout_marginBottom="@dimen/layout_margin"
             android:background="@drawable/rounded_rectangle_shape"
             android:padding="@dimen/layout_margin"
-
             android:textColor="?attr/recycler_text_color"
+            android:textDirection="locale"
             app:layout_constraintBottom_toTopOf="@id/video_play_toolbar_background"
             app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-
             android:id="@+id/video_play_toolbar_background"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -88,33 +85,35 @@
                 android:src="@drawable/backward_10_icon"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/video_player_seekbar"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <SeekBar
                 android:id="@+id/video_player_seekbar"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:layout_width="0dp"
                 android:layout_height="?android:attr/actionBarSize"
                 android:maxHeight="?attr/actionBarSize"
                 android:minHeight="?attr/actionBarSize"
                 android:progressDrawable="@drawable/seek_bar_progress"
+                android:splitTrack="false"
                 android:thumb="@drawable/seek_thumb"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/video_player_forward"
                 app:layout_constraintStart_toEndOf="@id/video_player_backward"
-
-                />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
                 android:id="@+id/video_player_forward"
                 android:layout_width="?android:attr/actionBarSize"
                 android:layout_height="?android:attr/actionBarSize"
-
                 android:adjustViewBounds="true"
                 android:background="@null"
                 android:src="@drawable/forward_10_icon"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/video_player_orientation_change"
-                app:layout_constraintStart_toEndOf="@id/video_player_seekbar" />
+                app:layout_constraintStart_toEndOf="@id/video_player_seekbar"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
                 android:id="@+id/video_player_orientation_change"
@@ -125,7 +124,9 @@
                 android:src="@drawable/full_screen_icon"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/video_player_forward" />
+                app:layout_constraintStart_toEndOf="@id/video_player_forward"
+                app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

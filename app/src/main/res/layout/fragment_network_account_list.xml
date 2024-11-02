@@ -5,21 +5,18 @@
 
     <TextView
         android:id="@+id/fragment_network_list_heading"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="?android:attr/actionBarSize"
         android:background="?attr/dialog_title"
         android:gravity="center_vertical"
-        android:paddingStart="@dimen/ten_dp"
-        android:paddingTop="@dimen/layout_margin"
-        android:paddingEnd="@dimen/ten_dp"
-        android:paddingBottom="@dimen/layout_margin"
+        android:paddingHorizontal="@dimen/ten_dp"
+        android:paddingVertical="@dimen/layout_margin"
         android:textSize="19sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-
         android:id="@+id/fragment_network_scan_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,10 +26,9 @@
         app:layout_constraintTop_toBottomOf="@id/fragment_network_list_heading" />
 
     <androidx.recyclerview.widget.RecyclerView
-
         android:id="@+id/fragment_network_account_recyclerview"
         style="@style/my_scrollbar"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="?attr/dialog_recyclerview_background"
         android:clipToPadding="false"
@@ -40,13 +36,12 @@
         android:paddingBottom="100dp"
         android:scrollbarThumbVertical="@drawable/scrollbar"
         android:scrollbars="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:scrollingCache="false"
+        android:fadeScrollbars="true"
+        app:layout_constraintBottom_toTopOf="@id/fragment_network_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_network_scan_btn"
-
-        />
-
+        app:layout_constraintTop_toBottomOf="@id/fragment_network_scan_btn" />
 
     <TextView
         android:id="@+id/network_details_network_number"
@@ -58,32 +53,30 @@
         android:padding="@dimen/layout_margin"
         android:textColor="?attr/recycler_text_color"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_network_scan_btn"
-
-        />
+        app:layout_constraintTop_toBottomOf="@id/fragment_network_scan_btn" />
 
     <TextView
         android:id="@+id/network_details_empty"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="?attr/dialog_recyclerview_background"
         android:gravity="center"
         android:paddingBottom="?attr/actionBarSize"
         android:text="@string/nothing_found_here"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/fragment_network_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fragment_network_scan_btn" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/fragment_network_toolbar"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
         android:background="?attr/toolbar_background"
         android:elevation="6dp"
         app:contentInsetLeft="0dp"
+        android:stateListAnimator="@null"
         app:contentInsetStart="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -91,8 +84,8 @@
 
     <FrameLayout
         android:id="@+id/fragment_network_list_progressbar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:clickable="true"
         android:elevation="6dp"
         android:focusable="true"
@@ -103,11 +96,9 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ProgressBar
-
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@null" />
+            android:layout_gravity="center" />
     </FrameLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -121,11 +112,7 @@
         android:src="@drawable/back_icon"
         app:backgroundTint="?attr/toolbar_background"
         app:elevation="6dp"
-        app:layout_anchorGravity="end"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-

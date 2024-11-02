@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/storage_analyser_root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -10,8 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         android:background="?attr/toolbar_background"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
@@ -19,15 +18,10 @@
         android:layout_width="50dp"
         android:layout_height="?android:attr/actionBarSize"
         android:background="?attr/toolbar_background"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
+        android:paddingHorizontal="10dp"
         android:src="@drawable/back_icon"
-        app:layout_constraintEnd_toStartOf="@id/storage_analyser_current_dir_tv"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-
-
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/storage_analyser_current_dir_tv"
@@ -35,74 +29,56 @@
         android:layout_width="0dp"
         android:layout_height="?android:attr/actionBarSize"
         android:gravity="center"
-        android:paddingStart="@dimen/layout_margin"
-        android:paddingEnd="@dimen/layout_margin"
+        android:paddingHorizontal="@dimen/layout_margin"
         android:singleLine="true"
         android:textColor="?attr/toolbar_text_color"
         android:textSize="17sp"
         app:layout_constraintEnd_toStartOf="@id/storage_analyser_overflow"
         app:layout_constraintStart_toEndOf="@id/storage_analyser_back_btn"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Current Directory" />
 
     <ImageButton
         android:id="@+id/storage_analyser_overflow"
         android:layout_width="50dp"
         android:layout_height="?android:attr/actionBarSize"
         android:background="?attr/toolbar_background"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
+        android:paddingHorizontal="10dp"
         android:src="@drawable/overflow_icon"
         app:layout_constraintEnd_toStartOf="@id/storage_analyser_interval_select"
-        app:layout_constraintStart_toEndOf="@id/storage_analyser_current_dir_tv"
         app:layout_constraintTop_toTopOf="parent" />
-
 
     <ImageButton
         android:id="@+id/storage_analyser_interval_select"
         android:layout_width="50dp"
         android:layout_height="?android:attr/actionBarSize"
         android:background="?attr/toolbar_background"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
+        android:paddingHorizontal="10dp"
         android:src="@drawable/select_interval_icon"
         android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@id/storage_analyser_all_select"
-        app:layout_constraintStart_toEndOf="@id/storage_analyser_overflow"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 
     <ImageButton
         android:id="@+id/storage_analyser_all_select"
         android:layout_width="50dp"
         android:layout_height="?android:attr/actionBarSize"
         android:background="?attr/toolbar_background"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
+        android:paddingHorizontal="10dp"
         android:src="@drawable/select_icon"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/storage_analyser_interval_select"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/storage_analyser_search_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:visibility="invisible"
-        app:constraint_referenced_ids="storage_analyser_search_view_edit_text,storage_analyser_search_view_cancel_button,search_bar_space"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <EditText
-
         android:id="@+id/storage_analyser_search_view_edit_text"
         android:layout_width="0dp"
         android:layout_height="?android:attr/actionBarSize"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="@dimen/ten_dp"
-        android:layout_marginEnd="@dimen/ten_dp"
+        android:layout_marginHorizontal="@dimen/ten_dp"
         android:background="@drawable/search_edittext_background"
         android:elevation="6dp"
-        android:singleLine="true"
+        android:inputType="text"
+        android:maxLines="1"
         android:textColor="?attr/toolbar_text_color"
         android:textSize="17sp"
         app:layout_constraintEnd_toStartOf="@id/storage_analyser_search_view_cancel_button"
@@ -110,40 +86,36 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
-
         android:id="@+id/storage_analyser_search_view_cancel_button"
         android:layout_width="wrap_content"
         android:layout_height="?android:attr/actionBarSize"
-        android:layout_gravity="center_vertical"
         android:adjustViewBounds="true"
         android:background="?attr/toolbar_background"
-        android:paddingTop="@dimen/layout_margin"
-        android:paddingBottom="@dimen/layout_margin"
+        android:paddingVertical="@dimen/layout_margin"
         android:src="@drawable/cancel_icon"
         app:layout_constraintEnd_toStartOf="@id/storage_analyser_search_bar_space"
-        app:layout_constraintStart_toEndOf="@id/storage_analyser_search_view_edit_text"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Space
         android:id="@+id/storage_analyser_search_bar_space"
         android:layout_width="50dp"
         android:layout_height="?android:attr/actionBarSize"
-        android:background="@null"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/storage_analyser_search_view_cancel_button"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/storage_analyser_search_toolbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:constraint_referenced_ids="storage_analyser_search_view_edit_text,storage_analyser_search_view_cancel_button,storage_analyser_search_bar_space" />
+
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/storage_analyser_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/storage_analyser_current_dir_tv"
-
-        />
+        app:layout_constraintTop_toBottomOf="@id/storage_analyser_top_toolbar_background" />
 
     <TextView
         android:id="@+id/storage_analyser_file_number"
@@ -155,29 +127,23 @@
         android:padding="@dimen/layout_margin"
         android:textColor="?attr/recycler_text_color"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/storage_analyser_current_dir_tv"
-
-        />
+        app:layout_constraintTop_toBottomOf="@id/storage_analyser_top_toolbar_background"
+        tools:text="123 files" />
 
     <LinearLayout
         android:id="@+id/storage_analyser_size_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="10dp"
-        android:paddingTop="@dimen/layout_margin"
-        android:paddingEnd="10dp"
-        android:paddingBottom="@dimen/layout_margin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/storage_analyser_current_dir_tv">
+        android:orientation="horizontal"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="@dimen/layout_margin"
+        app:layout_constraintTop_toBottomOf="@id/storage_analyser_top_toolbar_background">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/layout_margin"
-            android:layout_weight="0"
-            android:gravity="start"
-            android:paddingStart="@dimen/layout_margin"
-            android:paddingEnd="@dimen/layout_margin"
+            android:paddingHorizontal="@dimen/layout_margin"
             android:text="@string/size" />
 
         <TextView
@@ -190,29 +156,21 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:gravity="end"
-            android:paddingStart="@dimen/layout_margin"
-            android:paddingEnd="@dimen/layout_margin"
+            android:paddingHorizontal="@dimen/layout_margin"
             android:text="@string/files_" />
+
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/storage_analyser_floating_action_button_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/floating_button_margin_end"
         android:layout_marginBottom="@dimen/floating_button_margin_bottom"
-        android:clickable="true"
-        android:focusable="true"
         android:src="@drawable/back_icon"
         app:backgroundTint="?attr/toolbar_background"
-        app:elevation="6dp"
-        app:layout_anchorGravity="end"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/storage_analyser_bottom_toolbar"
@@ -222,10 +180,7 @@
         android:elevation="6dp"
         app:contentInsetLeft="0dp"
         app:contentInsetStart="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/storage_analyser_action_mode_toolbar"
@@ -239,6 +194,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

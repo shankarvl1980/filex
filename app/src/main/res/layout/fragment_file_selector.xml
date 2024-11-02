@@ -1,6 +1,5 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -8,46 +7,35 @@
         android:id="@+id/file_selector_current_folder_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/ten_dp"
+        android:paddingHorizontal="@dimen/ten_dp"
         android:paddingTop="@dimen/layout_margin"
-        android:paddingEnd="@dimen/ten_dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-
-        />
-
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-
         android:id="@+id/file_selector_folder_selected"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/ten_dp"
-        android:layout_marginEnd="@dimen/ten_dp"
+        android:layout_marginHorizontal="@dimen/ten_dp"
         android:cursorVisible="false"
         android:focusable="false"
+        android:clickable="false"
+        android:inputType="text"
         android:textColor="?attr/edit_text_color"
         android:textSize="17sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/file_selector_current_folder_label"
-
-        />
-
+        app:layout_constraintTop_toBottomOf="@id/file_selector_current_folder_label" />
 
     <androidx.recyclerview.widget.RecyclerView
-
         android:id="@+id/file_selectorRecyclerView"
         style="@style/my_scrollbar"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@null"
         android:clipToPadding="false"
         android:layoutAnimation="@anim/layout_animation_fall_down"
         android:paddingBottom="100dp"
         android:scrollbarThumbVertical="@drawable/scrollbar"
         android:scrollbars="vertical"
+        android:scrollingCache="false"
+        android:fadeScrollbars="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -57,7 +45,6 @@
         android:id="@+id/fastScroller_file_selector"
         android:layout_width="20dp"
         android:layout_height="0dp"
-        android:layout_gravity="end"
         android:paddingBottom="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -65,9 +52,8 @@
 
     <TextView
         android:id="@+id/file_selector_folder_empty"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@null"
         android:gravity="center"
         android:paddingBottom="?attr/actionBarSize"
         android:text="@string/no_file_found"
@@ -79,8 +65,8 @@
 
     <FrameLayout
         android:id="@+id/file_selector_progressbar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:clickable="true"
         android:elevation="6dp"
         android:focusable="true"
@@ -93,10 +79,8 @@
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@null" />
+            android:layout_gravity="center" />
+
     </FrameLayout>
 
-
 </androidx.constraintlayout.widget.ConstraintLayout>
-

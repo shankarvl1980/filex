@@ -1,9 +1,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-
     android:layout_height="match_parent">
-
 
     <TextView
         android:id="@+id/album_details_panel_title_TextView"
@@ -13,14 +11,12 @@
         android:gravity="center_vertical"
         android:paddingStart="@dimen/ten_dp"
         android:paddingEnd="@dimen/ten_dp"
-        android:singleLine="true"
+        android:maxLines="1"
         android:textColor="?attr/toolbar_text_color"
         android:textSize="19sp"
         app:layout_constraintEnd_toStartOf="@id/album_details_search_img_btn"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/album_details_search_img_btn"
@@ -29,7 +25,6 @@
         android:background="?attr/toolbar_background"
         android:paddingStart="@dimen/layout_margin"
         android:paddingEnd="@dimen/layout_margin"
-
         android:src="@drawable/search_icon"
         app:layout_constraintEnd_toStartOf="@id/album_details_all_select"
         app:layout_constraintStart_toEndOf="@id/album_details_panel_title_TextView"
@@ -40,7 +35,6 @@
         android:layout_width="50dp"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/toolbar_background"
-
         android:paddingStart="@dimen/layout_margin"
         android:paddingEnd="@dimen/layout_margin"
         android:src="@drawable/select_icon"
@@ -54,22 +48,21 @@
         android:layout_height="?android:attr/actionBarSize"
         android:background="?attr/toolbar_background"
         android:elevation="6dp"
-        android:orientation="horizontal"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <EditText
-
             android:id="@+id/album_details_search_view"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/ten_dp"
             android:layout_marginEnd="@dimen/ten_dp"
             android:background="@drawable/search_edittext_background"
-            android:singleLine="true"
+            android:maxLines="1"
+            android:hint="@string/search"
+            android:inputType="text"
             android:textColor="?attr/toolbar_text_color"
             android:textSize="17sp"
             app:layout_constraintEnd_toStartOf="@id/album_details_search_view_cancel_button"
@@ -77,12 +70,9 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
-
             android:id="@+id/album_details_search_view_cancel_button"
             android:layout_width="50dp"
             android:layout_height="match_parent"
-
-            android:layout_gravity="center_vertical"
             android:background="@null"
             android:paddingTop="@dimen/layout_margin"
             android:paddingBottom="@dimen/layout_margin"
@@ -93,7 +83,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
     <View
         android:id="@+id/album_details_background"
         android:layout_width="match_parent"
@@ -101,11 +90,7 @@
         android:layout_marginTop="@dimen/layout_margin"
         android:background="?attr/dialog_background"
         app:layout_constraintBottom_toBottomOf="@id/album_details_bottom_toolbar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/album_details_panel_title_TextView"
-
-        />
+        app:layout_constraintTop_toBottomOf="@id/album_details_panel_title_TextView" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/album_details_recyclerview"
@@ -119,25 +104,19 @@
         android:paddingBottom="?attr/actionBarSize"
         android:scrollbarThumbVertical="@drawable/scrollbar"
         android:scrollbars="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="@id/album_details_background"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/album_details_background"
-
-        />
+        app:layout_constraintTop_toTopOf="@id/album_details_background" />
 
     <svl.kadatha.filex.FastScrollerView
         android:id="@+id/fastScroller_album_detail"
         android:layout_width="20dp"
         android:layout_height="0dp"
-        android:layout_gravity="end"
         android:layout_margin="@dimen/layout_margin"
         android:paddingBottom="?attr/actionBarSize"
         app:layout_constraintBottom_toBottomOf="@id/album_details_background"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/album_details_background"
-
-        />
+        app:layout_constraintTop_toTopOf="@id/album_details_background" />
 
     <TextView
         android:id="@+id/album_details_file_number"
@@ -149,9 +128,7 @@
         android:padding="@dimen/layout_margin"
         android:textColor="?attr/recycler_text_color"
         app:layout_constraintEnd_toEndOf="@id/album_details_background"
-        app:layout_constraintTop_toTopOf="@id/album_details_background"
-
-        />
+        app:layout_constraintTop_toTopOf="@id/album_details_background"/>
 
     <TextView
         android:id="@+id/album_details_empty_list_tv"
@@ -164,12 +141,7 @@
         android:text="@string/no_file_found"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/album_details_background"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/album_details_background"
-
-        />
-
+        app:layout_constraintTop_toTopOf="@id/album_details_background" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/album_details_bottom_toolbar"
@@ -179,11 +151,7 @@
         android:elevation="6dp"
         app:contentInsetLeft="0dp"
         app:contentInsetStart="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-
-        />
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <FrameLayout
         android:id="@+id/album_details_progressbar"
@@ -194,14 +162,9 @@
         android:focusable="true"
         android:foregroundGravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-
-        >
+        app:layout_constraintTop_toTopOf="parent">
 
         <ProgressBar
-
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -212,190 +175,14 @@
         android:id="@+id/album_details_floating_action_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/floating_button_margin_end"
         android:layout_marginBottom="@dimen/floating_button_margin_bottom"
         android:clickable="true"
         android:focusable="true"
         android:src="@drawable/back_icon"
-
-
         app:backgroundTint="?attr/toolbar_background"
         app:elevation="6dp"
-        app:layout_anchorGravity="end"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    <!--FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-
-    >
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/audio_saved_list_panel_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/toolbar_background"
-            android:elevation="6dp"
-            app:contentInsetLeft="0dp"
-            app:contentInsetStart="0dp"
-            android:layout_gravity="top"
-        >
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-
-            >
-                <TextView
-                    android:id="@+id/audio_saved_list_panel_title_TextView"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:singleLine="true"
-                    android:background="@null"
-                    android:gravity="center_vertical"
-                    android:textSize="19sp"
-                    android:paddingStart="@dimen/layout_margin"
-                    android:paddingEnd="@dimen/layout_margin"
-                    android:textColor="@color/recycler_text_color"
-
-                />
-                <ImageButton
-                    android:id="@+id/album_details_search_img_btn"
-                    android:layout_width="38dp"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/search_icon"
-                    android:paddingStart="@dimen/layout_margin"
-                    android:paddingEnd="@dimen/layout_margin"
-
-                    android:background="@null"
-                    />
-
-                <Button
-                    android:id="@+id/num_audio_selected"
-                    android:layout_width="60dp"
-                    android:layout_height="match_parent"
-                    android:background="@color/toolbar_background"
-                    android:elevation="10dp"
-                    android:paddingStart="@dimen/layout_margin"
-                    android:paddingEnd="@dimen/layout_margin"
-                    android:textColor="@color/recycler_text_color"
-                />
-            </LinearLayout>
-        </androidx.appcompat.widget.Toolbar>
-
-            <LinearLayout
-                android:id="@+id/audio_saved_list_search_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?android:attr/actionBarSize"
-                android:background="#F2292929"
-                android:orientation="horizontal"
-                android:elevation="6dp"
-                android:visibility="gone">
-                <EditText
-
-                    android:id="@+id/audio_saved_list_search_view"
-                    android:layout_width="0dp"
-                    android:layout_height="36dp"
-                    android:layout_weight="1"
-                    android:singleLine="true"
-                    android:textSize="17sp"
-                    android:background="@null"
-                    android:textColor="@color/edit_text_color"
-                    android:layout_gravity="center_vertical"
-                    android:padding="@dimen/layout_margin"
-
-                    />
-
-                <ImageButton
-
-                    android:id="@+id/audio_saved_list_search_view_cancel_button"
-                    android:layout_width="50dp"
-                    android:layout_height="36dp"
-
-                    android:background="@null"
-                    android:src="@drawable/no_icon"
-                    android:paddingTop="@dimen/layout_margin"
-                    android:paddingBottom="@dimen/layout_margin"
-                    android:layout_gravity="center_vertical"
-
-                    />
-
-            </LinearLayout>
-
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/dialog_background"
-            android:layout_marginTop="60dp"
-
-            >
-
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/fragment_audio_saved_list_recyclerview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layoutAnimation="@anim/layout_animation_fall_down"
-            android:scrollbars="vertical"
-            android:scrollbarThumbVertical="@drawable/scrollbar"
-            android:paddingBottom="?attr/actionBarSize"
-            android:clipToPadding="false"
-            android:choiceMode="singleChoice"
-            android:layout_margin="@dimen/layout_margin"
-            android:background="@color/dialog_recyclerview_background"
-
-
-        />
-
-        <TextView
-            android:id="@+id/fragment_empty_audio_saved_list_tv"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-
-            android:background="@null"
-            android:gravity="center"
-            android:visibility="gone"
-            android:text="@string/no_file_found"
-        />
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fragment_audio_saved_list_floating_action_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_marginBottom="@dimen/floating_button_margin_bottom"
-        android:layout_marginEnd="@dimen/floating_button_margin_end"
-                android:clickable="true"
-                android:src="@drawable/back_icon"
-                app:backgroundTint="@color/toolbar_background"
-                app:elevation="6dp"
-                app:layout_anchorGravity="end"
-                android:focusable="true" />
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/fragment_audio_saved_list_bottom_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height=""wrap_content
-        android:background="@color/toolbar_background"
-        android:layout_gravity="bottom"
-        android:elevation="6dp"
-        app:contentInsetLeft="0dp"
-        app:contentInsetStart="0dp"
-
-
-
-        />
-            </FrameLayout>
-
-
-    </FrameLayout-->

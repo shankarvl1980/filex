@@ -233,7 +233,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         nestedScrollView = findViewById(R.id.drawerScrollView);
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        search_toolbar = findViewById(R.id.search_toolbar);
+        search_toolbar = findViewById(R.id.search_bar);
 
         ImageButton search_detailed_button = search_toolbar.findViewById(R.id.search_bar_detailed_search_button);
         search_detailed_button.setOnClickListener(new View.OnClickListener() {
@@ -1715,7 +1715,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 } else {
                     drawerLayout.openDrawer(drawer);
                 }
-            } else if (id == R.id.top_toolbar_parent_dir_imagebutton) {
+            } else if (id == R.id.top_toolbar_parent_dir_image_button) {
                 String parent_file_path = Global.getParentPath(df.fileclickselected);
                 if (df.fileObjectType == FileObjectType.FILE_TYPE) {
                     File parent_file = new File(parent_file_path);
