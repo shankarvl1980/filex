@@ -200,7 +200,7 @@ public class ArchiveDeletePasteFileService3 extends Service implements TaskProgr
         dest_other_file_permission = Global.GET_OTHER_FILE_PERMISSION(dest_folder);
         source_other_file_permission = Global.GET_OTHER_FILE_PERMISSION(source_folder);
 
-        startForeground(notification_id, nm.buildADPPActivity1(intent_action, notification_content, notification_id));
+        startForeground(notification_id, nm.buildADPPActivity3(intent_action, notification_content, notification_id));
         return START_NOT_STICKY;
     }
 
