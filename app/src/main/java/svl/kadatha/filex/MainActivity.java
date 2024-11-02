@@ -75,7 +75,6 @@ import java.util.concurrent.ExecutorService;
 import me.jahnen.libaums.core.UsbMassStorageDevice;
 import me.jahnen.libaums.core.fs.FileSystem;
 import me.jahnen.libaums.core.fs.UsbFile;
-import timber.log.Timber;
 
 
 public class MainActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener,

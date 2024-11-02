@@ -16,8 +16,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import timber.log.Timber;
-
 /**
  * Created by Yashar on 3/11/2017.
  */

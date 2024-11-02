@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import timber.log.Timber;
-
 public class NetworkAccountDetailsViewModel extends AndroidViewModel {
 
     private static final String TAG = "NetworkAccountViewModel";

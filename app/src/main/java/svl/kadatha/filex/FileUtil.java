@@ -34,7 +34,6 @@ import me.jahnen.libaums.core.fs.UsbFile;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FtpFileModel;
 import svl.kadatha.filex.filemodel.UsbFileModel;
-import timber.log.Timber;
 
 /**
  * Utility class for helping parsing file systems.

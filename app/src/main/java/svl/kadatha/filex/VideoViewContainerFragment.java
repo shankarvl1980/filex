@@ -39,8 +39,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import timber.log.Timber;
-
 
 public class VideoViewContainerFragment extends Fragment implements VideoViewActivity.VideoControlListener {
     public static final String REFRESH_VIDEO_CODE = "video_play_refresh_code";

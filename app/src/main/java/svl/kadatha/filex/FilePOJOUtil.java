@@ -28,7 +28,6 @@ import java.util.Vector;
 import me.jahnen.libaums.core.fs.UsbFile;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FileModelFactory;
-import timber.log.Timber;
 
 public class FilePOJOUtil {
     private static final String TAG = "Ftp-FilePOJOUtil";

@@ -20,7 +20,6 @@ along with SwiFTP.  If not, see <http://www.gnu.org/licenses/>.
 package svl.kadatha.filex;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
-import static svl.kadatha.filex.Global.TAG;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -36,7 +35,6 @@ import java.net.InetAddress;
 
 import svl.kadatha.filex.ftpserver.ftp.FsService;
 import svl.kadatha.filex.ftpserver.ftp.FsSettings;
-import timber.log.Timber;
 
 
 public class FsNotification {

@@ -58,7 +58,6 @@ import java.util.List;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
-import timber.log.Timber;
 
 public class AudioPlayFragment extends Fragment {
     private static final String DELETE_FILE_REQUEST_CODE = "audio_play_file_delete_request_code";

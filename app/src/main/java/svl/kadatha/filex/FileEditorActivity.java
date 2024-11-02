@@ -49,8 +49,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import timber.log.Timber;
-
 
 public class FileEditorActivity extends BaseActivity implements FileEditorSettingsDialog.EOL_ChangeListener {
     public static final int EOL_N = 0;

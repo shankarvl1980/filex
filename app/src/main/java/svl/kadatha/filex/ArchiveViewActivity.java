@@ -54,10 +54,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Stack;
 import java.util.zip.ZipFile;
-
-import timber.log.Timber;
 
 public class ArchiveViewActivity extends BaseActivity implements DetailFragmentListener {
 

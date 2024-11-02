@@ -59,7 +59,6 @@ import java.util.List;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 import me.jahnen.libaums.core.fs.UsbFileStreamFactory;
-import timber.log.Timber;
 
 public class PlayScreenFragment extends Fragment {
 

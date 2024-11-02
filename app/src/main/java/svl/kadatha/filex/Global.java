@@ -61,7 +61,6 @@ import java.util.concurrent.ExecutorService;
 
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FileModelFactory;
-import timber.log.Timber;
 
 public class Global {
     static public final SimpleDateFormat SDF = new SimpleDateFormat("dd.MM.yyyy");

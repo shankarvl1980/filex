@@ -18,7 +18,6 @@ import java.util.Stack;
 import svl.kadatha.filex.FtpClientRepository;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.NetworkAccountDetailsViewModel;
-import timber.log.Timber;
 
 public class FtpFileModel implements FileModel {
 

@@ -18,8 +18,6 @@ import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import timber.log.Timber;
-
 
 public class ArchiveViewerViewModel extends AndroidViewModel {
 

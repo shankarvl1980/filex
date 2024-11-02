@@ -31,8 +31,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import java.io.IOException;
 
-import timber.log.Timber;
-
 public class VideoViewFragment extends Fragment implements SurfaceHolder.Callback, MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener, MediaPlayer.OnSeekCompleteListener,
         MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnPreparedListener, AudioManager.OnAudioFocusChangeListener {
 
