@@ -401,10 +401,10 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
 
         @Override
         public Fragment getItem(int position) {
-            //boolean isFirstStart = (position == viewModel.file_selected_idx);
+            boolean isFirstStart = (position == viewModel.file_selected_idx);
             FilePOJO filePOJO = viewModel.video_list.getKeyAtIndex(position);
             String filePath = filePOJO.getPath();
-            int filePosition = viewModel.video_list.get(filePOJO);
+            Integer filePosition = viewModel.video_list.get(filePOJO);
 
             VideoViewFragment fragment = VideoViewFragment.getNewInstance(
                     viewModel.fileObjectType,
@@ -412,9 +412,8 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
                     filePath,
                     filePosition,
                     position,
-                    viewModel.firstStart
+                    isFirstStart
             );
-            viewModel.firstStart=false;
 
             fragment.setVideoPositionListener(new VideoViewFragment.VideoPositionListener() {
                 @Override

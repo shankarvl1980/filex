@@ -155,7 +155,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                                     if (filePOJO.getName().equals(currently_shown_file.getName())) {
                                         file_selected_idx = count;
                                     }
-                                    count++;
+                                    ++count;
                                 } else if (filePOJO.getName().equals(currently_shown_file.getName())) {
                                     if (whetherVideo) {
                                         video_list.put(currently_shown_file, 0);
