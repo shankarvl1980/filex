@@ -166,7 +166,7 @@ public class ArchiveSetUpDialog extends DialogFragment {
         RadioGroup rg = zipdialogview.findViewById(R.id.dialog_archive_rg);
         rb_current_dir = zipdialogview.findViewById(R.id.dialog_archive_rb_current_dir);
         rb_custom_dir = zipdialogview.findViewById(R.id.dialog_archive_rb_custom_dir);
-        customdir_edittext = zipdialogview.findViewById(R.id.dialog_archive_edittext_customdir);
+        customdir_edittext = zipdialogview.findViewById(R.id.dialog_archive_edittext_custom_dir);
         browsebutton = zipdialogview.findViewById(R.id.dialog_archive_browse_button);
         progress_bar = zipdialogview.findViewById(R.id.fragment_archive_setup_progressbar);
         progress_bar.setVisibility(View.GONE);
