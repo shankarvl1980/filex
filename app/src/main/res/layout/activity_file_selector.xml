@@ -32,8 +32,11 @@
                 android:id="@+id/file_selector_heading"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
+                android:background="?attr/selectableItemBackground"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                android:focusable="true"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:paddingHorizontal="@dimen/ten_dp"
@@ -55,18 +58,18 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="10dp"
                 android:src="@drawable/sort_icon" />
+
         </LinearLayout>
 
     </androidx.appcompat.widget.Toolbar>
+
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/file_selector_search_toolbar"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:visibility="invisible"
-        app:constraint_referenced_ids="file_selector_search_view_edit_text,file_selector_search_view_cancel_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:constraint_referenced_ids="file_selector_search_view_edit_text,file_selector_search_view_cancel_button" />
 
     <EditText
         android:id="@+id/file_selector_search_view_edit_text"

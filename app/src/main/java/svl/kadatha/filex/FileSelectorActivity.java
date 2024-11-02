@@ -42,6 +42,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -156,7 +157,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         FM = fm;
 
         setContentView(R.layout.activity_file_selector);
-        Toolbar toolbar = findViewById(R.id.activity_file_selector_toolbar);
         file_number = findViewById(R.id.file_selector_file_number); //initiate here before adding fragment
 
         ImageButton sort_btn = findViewById(R.id.file_selector_sort_btn);
@@ -197,14 +197,19 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         });
 
-        ImageButton directory_select_btn = findViewById(R.id.file_selector_directory_btn);
-        directory_select_btn.setOnClickListener(new View.OnClickListener() {
+        TextView heading = findViewById(R.id.file_selector_heading);
+        ImageButton directoryBtn = findViewById(R.id.file_selector_directory_btn);
+
+        View.OnClickListener dialogListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FileSelectorRecentDialog fileSelectorRecentDialog = new FileSelectorRecentDialog();
                 fileSelectorRecentDialog.show(fm, "file_selector_recent_file_dialog");
             }
-        });
+        };
+
+        heading.setOnClickListener(dialogListener);
+        directoryBtn.setOnClickListener(dialogListener);
 
         View containerLayout = findViewById(R.id.file_selector_container_layout);
         keyBoardUtil = new KeyBoardUtil(containerLayout);
@@ -249,7 +254,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
         Intent intent = getIntent();
         on_intent(intent, savedInstanceState);
-        TextView heading = findViewById(R.id.file_selector_heading);
+
         if ((action_sought_request_code == FOLDER_SELECT_REQUEST_CODE) || action_sought_request_code == MOVE_COPY_REQUEST_CODE) {
             heading.setText(getString(R.string.choose_folder));
         } else {
