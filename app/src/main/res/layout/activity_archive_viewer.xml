@@ -31,7 +31,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
-        android:id="@+id/archive_top_toolbar_parent_dir_imagebutton"
+        android:id="@+id/archive_top_toolbar_parent_dir_image_button"
         android:layout_width="70dp"
         android:layout_height="?android:attr/actionBarSize"
         android:background="?attr/selectableItemBackgroundBorderless"
@@ -50,7 +50,7 @@
         android:textColor="?attr/toolbar_text_color"
         android:textSize="17sp"
         app:layout_constraintEnd_toStartOf="@+id/archive_detail_fragment_interval_select"
-        app:layout_constraintStart_toEndOf="@+id/archive_top_toolbar_parent_dir_imagebutton"
+        app:layout_constraintStart_toEndOf="@+id/archive_top_toolbar_parent_dir_image_button"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton

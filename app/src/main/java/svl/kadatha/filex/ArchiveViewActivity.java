@@ -164,7 +164,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
         file_number_view = findViewById(R.id.archive_detail_fragment_file_number);
         back_button = findViewById(R.id.archive_top_toolbar_back_button);
         back_button.setVisibility(View.GONE);
-        parent_dir_image_button = findViewById(R.id.archive_top_toolbar_parent_dir_imagebutton);
+        parent_dir_image_button = findViewById(R.id.archive_top_toolbar_parent_dir_image_button);
         current_dir_textview = findViewById(R.id.archive_top_toolbar_current_dir_label);
         all_select = findViewById(R.id.archive_detail_fragment_all_select);
         interval_select = findViewById(R.id.archive_detail_fragment_interval_select);
@@ -891,7 +891,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
             int id = v.getId();
             if (id == R.id.archive_top_toolbar_back_button) {
 
-            } else if (id == R.id.archive_top_toolbar_parent_dir_imagebutton) {
+            } else if (id == R.id.archive_top_toolbar_parent_dir_image_button) {
                 if (Global.IS_CHILD_FILE(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath(), archiveViewFragment.fileclickselected)) {
                     return;
                 }

@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/dialog_background"
-
-    >
+    android:animateLayoutChanges="true">
 
     <TextView
         android:id="@+id/settings_heading"
@@ -20,21 +19,23 @@
         android:paddingBottom="@dimen/layout_margin"
         android:text="@string/settings"
         android:textSize="19sp"
-
-        />
+        android:ellipsize="end"
+        android:maxLines="1" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?android:attr/actionBarSize"
-        android:paddingBottom="60dp">
+        android:paddingBottom="60dp"
+        android:fillViewport="true"
+        android:scrollbars="vertical"
+        android:fadeScrollbars="false"
+        android:overScrollMode="ifContentScrolls">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/dialog_inner_padding">
-
 
             <TextView
                 android:id="@+id/theme_label"
@@ -45,8 +46,6 @@
                 android:layout_marginEnd="@dimen/ten_dp"
                 android:text="@string/theme"
                 android:textSize="17sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <RadioGroup
@@ -56,36 +55,29 @@
                 android:orientation="vertical"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/theme_label"
-
-                >
+                android:clipToPadding="false"
+                app:layout_constraintTop_toBottomOf="@id/theme_label">
 
                 <RadioButton
                     android:id="@+id/preferences_rb_light"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="36dp"
-                    android:text="@string/light"
-                    android:textSize="15sp" />
+                    android:minHeight="48dp"
+                    android:text="@string/light" />
 
                 <RadioButton
                     android:id="@+id/preferences_rb_dark"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="36dp"
-                    android:text="@string/dark"
-                    android:textSize="15sp" />
+                    android:minHeight="48dp"
+                    android:text="@string/dark" />
 
                 <RadioButton
                     android:id="@+id/preferences_rb_system"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="36dp"
-                    android:text="@string/system_default"
-                    android:textSize="15sp" />
-
+                    android:minHeight="48dp"
+                    android:text="@string/system_default" />
             </RadioGroup>
 
             <View
@@ -117,6 +109,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/ten_dp"
                 android:text="@string/remove_defaults"
+                android:minHeight="48dp"
                 app:layout_constraintEnd_toStartOf="@id/preferences_remove_select_defaults_btn"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/default_apps_label" />
@@ -128,6 +121,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/ten_dp"
                 android:text="@string/remove_selected"
+                android:minHeight="48dp"
                 app:layout_constraintStart_toEndOf="@+id/preferences_remove_all_defaults_btn"
                 app:layout_constraintTop_toBottomOf="@id/default_apps_label" />
 
@@ -173,7 +167,6 @@
                 android:textSize="17sp"
                 android:theme="@style/MyLightSwitchCompat"
                 android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/fragment_preferences_divider3" />
 
             <View
@@ -184,17 +177,15 @@
                 android:layout_marginBottom="@dimen/layout_margin"
                 android:background="?attr/recycler_text_color"
                 android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/preferences_switch_show_usb" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
     </ScrollView>
 
     <FrameLayout
         android:id="@+id/preferences_button_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
-        android:layout_gravity="bottom" />
+        android:layout_gravity="bottom"
+        android:elevation="8dp" />
 </FrameLayout>

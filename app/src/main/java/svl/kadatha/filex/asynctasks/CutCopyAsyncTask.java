@@ -29,7 +29,6 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     private final List<String> copied_source_file_path_list;
     private final List<String> overwritten_file_path_list;
     private final long[] counter_size_files = new long[1];
-    //private final List<String> files_selected_array;
     private final FileObjectType sourceFileObjectType;
     private final Uri tree_uri;
     private final String tree_uri_path;
@@ -156,7 +155,6 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     }
 
     private boolean CopyFileModel(FileModel sourceFileModel, FileModel destFileModel, String destFileName, boolean cut) {
-        Timber.tag("CopyFileModel").d("Starting copy operation. Source: " + sourceFileModel.getPath() + ", Destination: " + destFileModel.getPath());
 
         // Inner class to hold the copy pair and top-level flag
         class CopyPair {
@@ -178,7 +176,6 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
 
         while (!stack.isEmpty()) {
             if (isCancelled()) {
-                Timber.tag("CopyFileModel").d("Operation cancelled");
                 return false;
             }
 
@@ -187,16 +184,12 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             FileModel dest = pair.dest;
             boolean isTopLevel = pair.isTopLevel;
 
-            Timber.tag("CopyFileModel").d("Processing: " + source.getPath());
-
             if (source.isDirectory()) {
                 // Determine the destination path based on whether it's top-level
                 String currentDestName = isTopLevel ? destFileName : source.getName();
                 String destPath = Global.CONCATENATE_PARENT_CHILD_PATH(dest.getPath(), currentDestName);
-                Timber.tag("CopyFileModel").d("Creating directory: " + destPath);
 
                 if (!dest.makeDirIfNotExists(currentDestName)) {
-                    Timber.tag("CopyFileModel").e("Failed to create directory: " + destPath);
                     allCopiesSuccessful = false;
                     break;
                 }
@@ -205,12 +198,9 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 FileModel[] sourceChildFileModels = source.list();
 
                 if (sourceChildFileModels != null) {
-                    Timber.tag("CopyFileModel").d("Adding " + sourceChildFileModels.length + " child items to stack");
                     for (FileModel childSource : sourceChildFileModels) {
                         stack.push(new CopyPair(childSource, childDestFileModel, false)); // Subsequent levels are not top-level
                     }
-                } else {
-                    Timber.tag("CopyFileModel").w("No child items found in directory: " + source.getPath());
                 }
 
                 ++counter_no_files;
@@ -218,7 +208,6 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             } else {
                 // Handle file copying
                 String currentDestName = isTopLevel ? destFileName : source.getName();
-                Timber.tag("CopyFileModel").d("Copying file: " + source.getPath() + " to " + currentDestName);
                 boolean success = FileUtil.copy_FileModel_FileModel(source, dest, currentDestName, cut, counter_size_files);
                 if (success) {
                     ++counter_no_files;
@@ -227,7 +216,6 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 }
 
                 if (!success) {
-                    Timber.tag("CopyFileModel").e("Failed to copy file: " + source.getPath());
                     allCopiesSuccessful = false;
                     break;
                 }
@@ -235,30 +223,22 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
         }
 
         if (cut && allCopiesSuccessful) {
-            Timber.tag("CopyFileModel").d("Deleting source after successful cut operation: " + sourceFileModel.getPath());
             FileUtil.deleteFileModel(sourceFileModel);
-        } else if (cut) {
-            Timber.tag("CopyFileModel").d("Not deleting source due to unsuccessful copy during cut operation");
         }
 
-        Timber.tag("CopyFileModel").d("Copy operation completed. All copies successful: " + allCopiesSuccessful);
         return allCopiesSuccessful;
     }
 
 
     private boolean CopyFileModelForNetWorkDestFolders(FileModel sourceFileModel, FileModel destFileModel, String destFileName, boolean cut) {
-        Timber.tag("CopyFileModel").d("Starting copy operation. Source: %s, Destination: %s", sourceFileModel.getPath(), destFileModel.getPath());
         List<FileModel> filesToCopy = new ArrayList<>();
         collectFilesToCopy(sourceFileModel, filesToCopy);
-
-        Timber.tag("CopyFileModel").d("Collected %d files/directories to copy.", filesToCopy.size());
 
         boolean allCopiesSuccessful = true;
         String sourceRootPath = sourceFileModel.getPath();
 
         for (FileModel source : filesToCopy) {
             if (isCancelled()) {
-                Timber.tag("CopyFileModel").d("Operation cancelled by user.");
                 return false;
             }
 
@@ -276,15 +256,12 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                     FileModel destParentModel = createDirectory(destFileModel, parent_path_segment, destFileObjectType);
                     boolean success = FileUtil.copy_FileModel_FileModel(source, destParentModel, destFile.getName(), false, counter_size_files);
                     if (success) {
-                        Timber.tag("CopyFileModel").d("Successfully copied file: %s", source.getPath());
                         ++counter_no_files;
                         copied_file_name = source.getName();
-                        Timber.tag("published").d("this is published: %s", source.getName());
                         publishProgress(null);
                     }
                 }
             } catch (CopyFailedException e) {
-                Timber.tag("CopyFileModel").e("Operation failed: %s", e.getMessage());
                 allCopiesSuccessful = false;
                 break;
             }
@@ -294,12 +271,10 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             try {
                 sourceFileModel.delete();
             } catch (Exception e) {
-                Timber.tag("CopyFileModel").e("Delete failed: %s", e.getMessage());
                 allCopiesSuccessful = false;
             }
         }
 
-        Timber.tag("CopyFileModel").d("Copy operation completed. All copies successful: %s", allCopiesSuccessful);
         return allCopiesSuccessful;
     }
 
@@ -318,7 +293,6 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
 
     // createDirectory and copyFile methods remain the same as in the previous version
     private FileModel createDirectory(FileModel baseModel, String path, FileObjectType fileObjectType) throws CopyFailedException {
-        Timber.tag("CopyFileModel").d("Attempting to create directory path: %s", path);
         if (!baseModel.makeDirsRecursively(path)) {
             throw new CopyFailedException("Failed to create directory: " + path);
         }
@@ -329,7 +303,6 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                 tree_uri,
                 tree_uri_path
         );
-        Timber.tag("CopyFileModel").d("Successfully created/verified directory path: %s", path);
         return createdDirModel;
     }
 

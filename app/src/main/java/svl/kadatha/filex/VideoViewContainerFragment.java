@@ -14,6 +14,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -46,8 +47,8 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
     public FrameLayout progress_bar;
     public FilteredFilePOJOViewModel viewModel;
     private Context context;
-    private Toolbar toolbar;
-    private TextView title;
+    private LinearLayout toolbar_container;
+    private TextView title,video_number_tv;
     private PopupWindow listPopWindow;
     private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
     private List<FilePOJO> files_selected_for_delete;
@@ -100,7 +101,7 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
         toolbar_visible = true;
         handler = new Handler();
         viewpager = v.findViewById(R.id.activity_video_view_viewpager);
-        toolbar = v.findViewById(R.id.activity_video_toolbar);
+        toolbar_container=v.findViewById(R.id.activity_video_toolbar_container);
         title = v.findViewById(R.id.activity_video_name);
         ImageView overflow = v.findViewById(R.id.activity_video_overflow);
         overflow.setOnClickListener(new View.OnClickListener() {
@@ -110,6 +111,7 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
             }
         });
 
+        video_number_tv=v.findViewById(R.id.video_view_current_view_number);
 
         listPopWindow = new PopupWindow(context);
         ListView listView = new ListView(context);
@@ -242,6 +244,7 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
                         if (activity instanceof VideoViewActivity) {
                             ((VideoViewActivity) activity).current_page_idx = 0;
                         }
+                        video_number_tv.setText("1/"+viewModel.video_list.size());
                     }
                 }
             }
@@ -283,6 +286,7 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
                 if (activity instanceof VideoViewActivity) {
                     ((VideoViewActivity) activity).current_page_idx = p;
                 }
+                video_number_tv.setText(p+1+"/"+viewModel.video_list.size());
             }
 
             public void onPageScrollStateChanged(int p) {
@@ -340,7 +344,7 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
 
     @Override
     public void showControls(boolean autoHide) {
-        toolbar.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+        toolbar_container.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
         floating_back_button.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
         toolbar_visible = true;
         handler.removeCallbacks(runnable);
@@ -357,7 +361,7 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
 
     @Override
     public void hideControls() {
-        toolbar.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
+        toolbar_container.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
         floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
         toolbar_visible = false;
         handler.removeCallbacks(runnable);

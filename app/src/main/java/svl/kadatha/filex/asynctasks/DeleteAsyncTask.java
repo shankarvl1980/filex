@@ -102,34 +102,26 @@ public class DeleteAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
     }
 
     public boolean deleteFileModel(final FileModel fileModel) {
-        Timber.tag("DeleteFileModel").d("Starting deletion of: " + fileModel.getPath());
         Stack<FileModel> stack = new Stack<>();
         stack.push(fileModel);
-
         boolean success = true;
 
         while (!stack.isEmpty()) {
             if (isCancelled()) {
-                Timber.tag("DeleteFileModel").d("Operation cancelled");
                 return false;
             }
 
             FileModel currentFile = stack.peek();  // Peek instead of pop
-            Timber.tag("DeleteFileModel").d("Processing: " + currentFile.getPath());
 
             if (currentFile.isDirectory()) {
-                Timber.tag("DeleteFileModel").d("This is found to be directory: " + currentFile.getPath());
                 FileModel[] list = currentFile.list();
                 if (list == null || list.length == 0) {
                     // Directory is empty or can't be read, try to delete it
                     stack.pop();
-                    Timber.tag("DeleteFileModel").d("Attempting to delete empty directory: " + currentFile.getPath());
                     boolean deleteResult = deleteFile(currentFile);
                     success &= deleteResult;
-                    Timber.tag("DeleteFileModel").d("Delete result for " + currentFile.getPath() + ": " + deleteResult);
                 } else {
                     // Add children to the stack
-                    Timber.tag("DeleteFileModel").d("Adding " + list.length + " children to stack for: " + currentFile.getPath());
                     for (FileModel child : list) {
                         stack.push(child);
                     }
@@ -137,14 +129,10 @@ public class DeleteAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
             } else {
                 // It's a file, pop and delete it
                 stack.pop();
-                Timber.tag("DeleteFileModel").d("Attempting to delete file: " + currentFile.getPath());
                 boolean deleteResult = deleteFile(currentFile);
                 success &= deleteResult;
-                Timber.tag("DeleteFileModel").d("Delete result for " + currentFile.getPath() + ": " + deleteResult);
             }
         }
-
-        Timber.tag("DeleteFileModel").d("Deletion process completed. Overall success: " + success);
         return success;
     }
 

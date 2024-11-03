@@ -231,7 +231,7 @@ public class PdfViewFragment extends Fragment {
             }
         });
         progress_bar = v.findViewById(R.id.activity_picture_progressbar);
-        current_page_tv = v.findViewById(R.id.image_view_current_view);
+        current_page_tv = v.findViewById(R.id.image_view_current_view_number);
         toolbar_group = v.findViewById(R.id.image_view_toolbar_group);
         recyclerview = v.findViewById(R.id.activity_picture_view_recyclerview);
         new LinearSnapHelper().attachToRecyclerView(recyclerview);

@@ -134,7 +134,6 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
     @Override
     protected void onPostExecute(Boolean result) {
         super.onPostExecute(result);
-        Timber.tag("copy_to_result").d("copy_to_result in post execute - %s", result);
         if (listener != null) {
             listener.onTaskCompleted(TASK_TYPE, result, filePOJO);
         }

@@ -1,91 +1,115 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- ViewPager -->
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/activity_video_view_viewpager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:overScrollMode="never"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-
-        />
-
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/activity_video_toolbar"
+    <!-- Container for Toolbar and related views -->
+    <LinearLayout
+        android:id="@+id/activity_video_toolbar_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:background="?attr/toolbar_background"
-        android:elevation="6dp"
-        app:contentInsetLeft="0dp"
-        app:contentInsetStart="0dp">
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/activity_video_name"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="50dp"
-            android:ellipsize="end"
-            android:gravity="center_vertical"
-            android:paddingStart="@dimen/ten_dp"
-            android:paddingEnd="@dimen/ten_dp"
-            android:singleLine="true"
-            android:textColor="?attr/toolbar_text_color"
-            android:textSize="17sp"
-
-            />
-
-        <ImageButton
-            android:id="@+id/activity_video_overflow"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-
+        <!-- Toolbar -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/activity_video_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
             android:background="?attr/toolbar_background"
-            android:padding="10dp"
-            android:src="@drawable/overflow_icon"
+            android:elevation="6dp"
+            app:contentInsetLeft="0dp"
+            app:contentInsetStart="0dp">
+            <TextView
+                android:id="@+id/activity_video_name"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="50dp"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingEnd="@dimen/ten_dp"
+                android:singleLine="true"
+                android:textColor="?attr/toolbar_text_color"
+                android:textSize="17sp"
 
-            />
-    </androidx.appcompat.widget.Toolbar>
+                />
 
-    <FrameLayout
-        android:id="@+id/activity_video_progressbar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clickable="true"
-        android:elevation="6dp"
-        android:focusable="true"
-        android:foregroundGravity="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+            <ImageButton
+                android:id="@+id/activity_video_overflow"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
 
-        >
+                android:background="?attr/toolbar_background"
+                android:padding="10dp"
+                android:src="@drawable/overflow_icon"
 
-        <ProgressBar
+                />
+        </androidx.appcompat.widget.Toolbar>
 
+        <!-- Space or Margin View -->
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/layout_margin" />
+
+        <!-- TextView aligned to the end -->
+        <TextView
+            android:id="@+id/video_view_current_view_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@null" />
+            android:layout_marginEnd="@dimen/layout_margin"
+            android:layout_gravity="end"
+            android:background="@drawable/rounded_rectangle_shape"
+            android:padding="@dimen/layout_margin"
+            android:elevation="6dp"
+            android:textColor="?attr/recycler_text_color" />
+    </LinearLayout>
+
+    <!-- Progress Bar Overlay -->
+    <FrameLayout
+        android:id="@+id/activity_video_progressbar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="@android:color/transparent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
     </FrameLayout>
 
+    <!-- Floating Action Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floating_button_video_fragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/floating_button_margin_end"
         android:layout_marginBottom="@dimen/floating_button_margin_bottom"
-        android:clickable="true"
-        android:focusable="true"
         android:src="@drawable/back_icon"
         app:backgroundTint="?attr/toolbar_background"
         app:elevation="6dp"
-        app:layout_anchorGravity="end" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

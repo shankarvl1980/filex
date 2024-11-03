@@ -81,7 +81,7 @@ public class AppInstalledRecyclerViewLayoutList extends AppInstalledRecyclerView
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int iconheight;
+        int icon_height;
         int maxHeight = 0;
         int usedWidth;
 
@@ -89,7 +89,7 @@ public class AppInstalledRecyclerViewLayoutList extends AppInstalledRecyclerView
         measureChildWithMargins(appimageview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
 
         usedWidth += imageview_dimension;
-        iconheight = imageview_dimension;
+        icon_height = imageview_dimension;
 
         measureChildWithMargins(appnametextview, widthMeasureSpec, usedWidth + Global.FOUR_DP + (Global.TEN_DP * 2), heightMeasureSpec, 0);
         maxHeight += appnametextview.getMeasuredHeight();
@@ -106,7 +106,7 @@ public class AppInstalledRecyclerViewLayoutList extends AppInstalledRecyclerView
 
         measureChildWithMargins(appdatetextview, widthMeasureSpec, usedWidth + Global.FOUR_DP + (Global.TEN_DP * 2), heightMeasureSpec, 0);
 
-        maxHeight = Math.max(iconheight, maxHeight);
+        maxHeight = Math.max(icon_height, maxHeight);
 
         maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2; //providing top and bottom margin of six dp
         itemHeight = maxHeight;

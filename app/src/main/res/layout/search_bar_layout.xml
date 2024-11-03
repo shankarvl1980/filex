@@ -1,68 +1,50 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/search_toolbar"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/actionBarSize"
-
     android:elevation="6dp"
-    android:visibility="gone">
-
+    android:visibility="gone"
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
 
     <ImageButton
         android:id="@+id/search_bar_detailed_search_button"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_gravity="center_vertical"
         android:layout_margin="@dimen/layout_margin"
-        android:adjustViewBounds="true"
         android:background="?attr/toolbar_background"
-        android:elevation="15dp"
         android:src="@drawable/search_icon"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/search_bar_view"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-
-        />
+        android:scaleType="centerInside"
+        android:contentDescription="@string/search"
+        android:minHeight="48dp" />
 
     <EditText
-
         android:id="@+id/search_bar_view"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
         android:background="@drawable/search_edittext_background"
         android:singleLine="true"
+        android:maxLines="1"
         android:textColor="?attr/toolbar_text_color"
         android:textSize="17sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/search_bar_cancel_button"
-        app:layout_constraintStart_toEndOf="@id/search_bar_detailed_search_button"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:inputType="text"
+        android:imeOptions="actionSearch"
+        android:importantForAutofill="no" />
 
     <ImageButton
-
         android:id="@+id/search_bar_cancel_button"
         android:layout_width="50dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
-        android:adjustViewBounds="true"
+        android:layout_height="50dp"
         android:background="?attr/toolbar_background"
         android:src="@drawable/cancel_icon"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/search_bar_space"
-        app:layout_constraintStart_toEndOf="@id/search_bar_view"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:scaleType="centerInside"
+        android:contentDescription="@string/cancel"
+        android:minHeight="48dp" />
 
     <Space
         android:id="@+id/search_bar_space"
         android:layout_width="50dp"
-        android:layout_height="match_parent"
-        android:background="@null"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/search_bar_cancel_button"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent" />
 
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

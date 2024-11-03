@@ -77,7 +77,7 @@ public class SearchDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_search_parameters, container, false);
         search_file_name_edit_text = v.findViewById(R.id.dialog_fragment_search_file_edittext);
-        wholeword_checkbox = v.findViewById(R.id.dialog_fragment_search_wholeword_checkbox);
+        wholeword_checkbox = v.findViewById(R.id.dialog_fragment_search_whole_word_checkbox);
         wholeword_checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -87,7 +87,7 @@ public class SearchDialog extends DialogFragment {
             }
         });
 
-        casesensitive_checkbox = v.findViewById(R.id.dialog_fragment_search_casesensitive_checkbox);
+        casesensitive_checkbox = v.findViewById(R.id.dialog_fragment_search_case_sensitive_checkbox);
         casesensitive_checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {

@@ -272,7 +272,7 @@ ImageViewFragment extends Fragment {
         });
 
         toolbar_group = v.findViewById(R.id.image_view_toolbar_group);
-        current_image_tv = v.findViewById(R.id.image_view_current_view);
+        current_image_tv = v.findViewById(R.id.image_view_current_view_number);
         progress_bar = v.findViewById(R.id.activity_picture_progressbar);
 
         recyclerview = v.findViewById(R.id.activity_picture_view_recyclerview);

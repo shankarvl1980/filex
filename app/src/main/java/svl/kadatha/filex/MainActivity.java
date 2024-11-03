@@ -30,6 +30,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -113,7 +114,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     DrawerLayout drawerLayout;
     TextView file_number_view;
     Toolbar bottom_toolbar, paste_toolbar, actionmode_toolbar;
-    ConstraintLayout search_toolbar;
+    LinearLayout search_toolbar;
     ViewGroup drawer;
     TextView current_dir_textview;
     Context context = this;
@@ -1202,7 +1203,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
 
         }
-        if (size == df.file_list_size) {
+        if (size == df.file_list_size && size!=0) {
             all_select.setImageResource(R.drawable.deselect_icon);
         }
 

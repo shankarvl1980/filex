@@ -67,7 +67,6 @@ public class AppInstalledRecyclerViewLayoutGrid extends AppInstalledRecyclerView
 
         appsizetextview.setGravity(Gravity.CENTER);
 
-
         setBackground(ContextCompat.getDrawable(context, R.drawable.select_detail_recyclerview));
 
         appimageview.getLayoutParams().width = imageview_dimension;

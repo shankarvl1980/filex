@@ -1,15 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/dialog_fragment_search_parameters_layout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true">
 
     <FrameLayout
         android:id="@+id/fragment_search_parameters_button_layout"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:layout_gravity="bottom"
-        android:layout_marginTop="@dimen/layout_margin" />
+        android:layout_marginTop="@dimen/layout_margin"
+        android:elevation="4dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,7 +35,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/layout_margin"
-            android:layout_marginBottom="@dimen/layout_margin">
+            android:layout_marginBottom="@dimen/layout_margin"
+            android:fadeScrollbars="false"
+            android:fillViewport="true"
+            android:overScrollMode="ifContentScrolls"
+            android:scrollbars="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -40,6 +47,7 @@
                 android:background="?attr/dialog_background"
                 android:padding="@dimen/dialog_inner_padding">
 
+                <!-- File Name Section -->
                 <TextView
                     android:id="@+id/dialog_fragment_search_file_label"
                     android:layout_width="match_parent"
@@ -66,8 +74,9 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/dialog_fragment_search_file_label" />
 
+                <!-- Search Options Section -->
                 <CheckBox
-                    android:id="@+id/dialog_fragment_search_wholeword_checkbox"
+                    android:id="@+id/dialog_fragment_search_whole_word_checkbox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/ten_dp"
@@ -76,12 +85,12 @@
                     android:minHeight="36dp"
                     android:text="@string/whole_word"
                     android:textSize="15sp"
-                    app:layout_constraintEnd_toStartOf="@id/dialog_fragment_search_casesensitive_checkbox"
+                    app:layout_constraintEnd_toStartOf="@id/dialog_fragment_search_case_sensitive_checkbox"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_file_edittext" />
 
                 <CheckBox
-                    android:id="@+id/dialog_fragment_search_casesensitive_checkbox"
+                    android:id="@+id/dialog_fragment_search_case_sensitive_checkbox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/ten_dp"
@@ -89,9 +98,8 @@
                     android:layout_marginEnd="@dimen/ten_dp"
                     android:minHeight="36dp"
                     android:text="@string/case_sensitive"
-                    android:textSize="15sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/dialog_fragment_search_wholeword_checkbox"
+                    app:layout_constraintStart_toEndOf="@id/dialog_fragment_search_whole_word_checkbox"
                     app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_file_edittext" />
 
                 <CheckBox
@@ -105,10 +113,10 @@
                     android:text="@string/regex"
                     android:textSize="15sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_wholeword_checkbox" />
+                    app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_whole_word_checkbox" />
 
+                <!-- File Type Section -->
                 <TextView
-
                     android:id="@+id/dialog_fragment_search_filetype_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -128,7 +136,6 @@
                     />
 
                 <RadioGroup
-
                     android:id="@+id/dialog_fragment_search_rg"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -154,7 +161,6 @@
                         />
 
                     <RadioButton
-
                         android:id="@+id/dialog_search_rb_foldertype"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -172,6 +178,7 @@
                         />
                 </RadioGroup>
 
+                <!-- Size Group -->
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/dialog_fragment_search_size_label_group"
                     android:layout_width="wrap_content"
@@ -181,9 +188,8 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_rg" />
 
-
+                <!-- Size Radio Group -->
                 <RadioGroup
-
                     android:id="@+id/dialog_fragment_search_size_rg"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -220,7 +226,6 @@
                         android:textSize="15sp" />
 
                     <RadioButton
-
                         android:id="@+id/dialog_search_rb_size_mb"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -229,7 +234,6 @@
                         android:textSize="15sp" />
 
                     <RadioButton
-
                         android:id="@+id/dialog_search_rb_size_gb"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -239,6 +243,7 @@
 
                 </RadioGroup>
 
+                <!-- Size Input Table -->
                 <TableLayout
                     android:id="@+id/dialog_fragment_search_greater_less_than_table"
                     android:layout_width="match_parent"
@@ -246,10 +251,11 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/dialog_fragment_search_size_rg">
 
+                    <!-- Greater Than Row -->
                     <TableRow>
 
                         <TextView
-                            android:id="@+id/dialog_fragment_search_filesize_lower_label"
+                            android:id="@+id/dialog_fragment_search_file_size_lower_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="?attr/dialog_background"
@@ -284,11 +290,11 @@
                             android:textSize="15sp" />
                     </TableRow>
 
+                    <!-- Less Than Row -->
                     <TableRow>
 
                         <TextView
-
-                            android:id="@+id/dialog_fragment_search_filesize_upper_label"
+                            android:id="@+id/dialog_fragment_search_file_size_upper_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="?attr/dialog_background"
@@ -324,7 +330,7 @@
                     </TableRow>
                 </TableLayout>
 
-
+                <!-- Search Location Section -->
                 <TextView
                     android:id="@+id/search_in_label"
                     android:layout_width="match_parent"
@@ -353,9 +359,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/search_in_label" />
 
-
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
-
     </LinearLayout>
 </FrameLayout>

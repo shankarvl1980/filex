@@ -3,20 +3,22 @@
     android:id="@+id/dialog_fragment_cut_copy_delete_archive_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:animateLayoutChanges="true">
 
     <FrameLayout
         android:id="@+id/fragment_cut_copy_delete_progress_button_layout"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:layout_gravity="bottom"
-        android:layout_marginTop="@dimen/layout_margin" />
+        android:layout_marginTop="@dimen/layout_margin"
+        android:elevation="4dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="?attr/actionBarSize"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:baselineAligned="false">
 
         <TextView
             android:id="@+id/dialog_fragment_cut_copy_title"
@@ -28,16 +30,17 @@
             android:paddingEnd="@dimen/ten_dp"
             android:paddingBottom="@dimen/layout_margin"
             android:textSize="19sp"
-
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:ellipsize="end"
+            android:maxLines="1" />
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/layout_margin"
-            android:layout_marginBottom="@dimen/layout_margin">
+            android:layout_marginBottom="@dimen/layout_margin"
+            android:fillViewport="true"
+            android:scrollbars="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -50,6 +53,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/ten_dp"
+                    android:shrinkColumns="2"
+                    android:stretchColumns="2"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
@@ -57,7 +62,8 @@
                     <TableRow
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/ten_dp">
+                        android:layout_marginBottom="@dimen/ten_dp"
+                        android:baselineAligned="true">
 
                         <TextView
                             android:id="@+id/dialog_fragment_cut_copy_delete_from_label"
@@ -78,11 +84,11 @@
                             android:textSize="17sp" />
                     </TableRow>
 
-
                     <TableRow
                         android:id="@+id/fragment_cut_copy_delete_archive_totablerow"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:baselineAligned="true">
 
                         <TextView
                             android:id="@+id/dialog_fragment_cut_copy_delete_to_label"
@@ -104,14 +110,12 @@
 
 
                     </TableRow>
-
                 </TableLayout>
 
                 <TextView
                     android:id="@+id/dialog_fragment_cut_copy_current_file_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-
                     android:paddingStart="@dimen/ten_dp"
                     android:text="@string/current_file"
                     android:textSize="17sp"
@@ -122,7 +126,6 @@
                     android:id="@+id/dialog_fragment_cut_copy_current_file_label_hyphen"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-
                     android:text=" - "
                     android:textSize="17sp"
                     app:layout_constraintStart_toEndOf="@id/dialog_fragment_cut_copy_current_file_label"
@@ -135,11 +138,12 @@
                     android:layout_marginEnd="@dimen/ten_dp"
                     android:background="@null"
                     android:ellipsize="end"
-                    android:enabled="false"
+                    android:inputType="none"
                     android:focusable="false"
                     android:singleLine="true"
                     android:textColor="?attr/edit_text_color"
                     android:textSize="17sp"
+                    android:importantForAutofill="no"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/dialog_fragment_cut_copy_current_file_label_hyphen"
                     app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_tablelayout" />
@@ -152,12 +156,12 @@
                     android:layout_marginTop="-3dp"
                     android:layout_marginEnd="@dimen/ten_dp"
                     android:ellipsize="end"
-                    android:enabled="false"
+                    android:inputType="none"
                     android:focusable="false"
                     android:singleLine="true"
                     android:textColor="?attr/edit_text_color"
                     android:textSize="17sp"
-
+                    android:importantForAutofill="no"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/dialog_fragment_cut_copy_current_file_label" />
@@ -169,12 +173,11 @@
                     android:layout_height="wrap_content"
                     android:max="100"
                     android:maxHeight="20dip"
-
                     android:minHeight="20dip"
                     android:paddingStart="@dimen/ten_dp"
                     android:paddingEnd="@dimen/ten_dp"
-
-
+                    android:progress="0"
+                    android:secondaryProgress="0"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/dialog_fragment_copied_file" />
@@ -184,40 +187,46 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="start"
-                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingStart="10dp"
+                    app:layout_constrainedWidth="true"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_archive_progressBar" />
+                    app:layout_constraintEnd_toStartOf="@id/fragment_cut_copy_delete_archive_total_no_files"
+                    app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_archive_progressBar"
+                    app:layout_constraintHorizontal_chainStyle="spread_inside" />
 
-
+                <!-- Second TextView -->
                 <TextView
                     android:id="@+id/fragment_cut_copy_delete_archive_total_no_files"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="start"
-                    android:paddingEnd="@dimen/ten_dp"
+                    android:paddingEnd="5dp"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintStart_toEndOf="@id/fragment_cut_copy_delete_archive_no_files"
                     app:layout_constraintEnd_toStartOf="@id/fragment_cut_copy_delete_archive_size_files"
-                    app:layout_constraintStart_toEndOf="@+id/fragment_cut_copy_delete_archive_no_files"
                     app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_archive_progressBar" />
 
-
+                <!-- Third TextView -->
                 <TextView
                     android:id="@+id/fragment_cut_copy_delete_archive_size_files"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="end"
-                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingStart="5dp"
+                    app:layout_constraintHorizontal_weight="1"
+                    app:layout_constraintStart_toEndOf="@id/fragment_cut_copy_delete_archive_total_no_files"
                     app:layout_constraintEnd_toStartOf="@id/fragment_cut_copy_delete_archive_total_size_files"
-                    app:layout_constraintStart_toEndOf="@+id/fragment_cut_copy_delete_archive_total_no_files"
                     app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_archive_progressBar" />
 
+                <!-- Fourth TextView -->
                 <TextView
                     android:id="@+id/fragment_cut_copy_delete_archive_total_size_files"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="end"
-                    android:paddingEnd="@dimen/ten_dp"
+                    android:paddingEnd="10dp"
+                    app:layout_constraintStart_toEndOf="@id/fragment_cut_copy_delete_archive_size_files"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/fragment_cut_copy_delete_archive_size_files"
                     app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_archive_progressBar" />
 
 
@@ -238,5 +247,3 @@
         </ScrollView>
     </LinearLayout>
 </FrameLayout>
-
-

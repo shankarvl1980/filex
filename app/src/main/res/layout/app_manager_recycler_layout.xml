@@ -34,7 +34,6 @@
         android:layout_height="wrap_content"
         android:ellipsize="marquee"
         android:gravity="start"
-        android:singleLine="true"
         android:textColor="?attr/recycler_text_color"
 
         />
