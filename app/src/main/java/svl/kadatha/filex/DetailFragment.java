@@ -426,7 +426,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
             totalFilePOJO_list = viewModel.filePOJOS_filtered;
         }
         totalFilePOJO_list_Size = totalFilePOJO_list.size();
-        file_list_size = totalFilePOJO_list_Size;
+        file_list_size = filePOJO_list.size();
         if (fileclickselected.equals("Large Files")) {
             Collections.sort(filePOJO_list, viewModel.library_size_desc ? FileComparator.FilePOJOComparate("d_size_desc", false) : FileComparator.FilePOJOComparate(Global.SORT, false));
         } else if (fileclickselected.equals("Duplicate Files")) {
@@ -610,7 +610,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
             modification_observed = false;
             local_activity_delete = false;
             totalFilePOJO_list_Size = totalFilePOJO_list.size();
-            file_list_size = totalFilePOJO_list_Size;
+            file_list_size = filePOJO_list.size();
             if (detailFragmentListener != null) {
                 detailFragmentListener.setFileNumberView(viewModel.mselecteditems.size() + "/" + file_list_size);
             }

@@ -629,7 +629,9 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
             all_select.setImageResource(R.drawable.select_icon);
             interval_select.setVisibility(View.GONE);
         }
-    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    }
+
+    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -748,19 +750,19 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                         }
                     }
 
-                    int t = archiveViewFragment.filePOJO_list.size();
+                    archiveViewFragment.file_list_size=archiveViewFragment.filePOJO_list.size();
                     if (!archiveViewFragment.viewModel.mselecteditems.isEmpty()) {
                         archiveViewFragment.adapter.deselectAll();
                     } else {
                         notifyDataSetChanged();
                     }
-                    if (t > 0) {
+                    if (archiveViewFragment.file_list_size > 0) {
                         archiveViewFragment.recyclerView.setVisibility(View.VISIBLE);
                         archiveViewFragment.folder_empty.setVisibility(View.GONE);
                     }
 
                     if (archiveViewFragment.detailFragmentListener != null) {
-                        archiveViewFragment.detailFragmentListener.setFileNumberView("" + t);
+                        archiveViewFragment.detailFragmentListener.setFileNumberView(archiveViewFragment.viewModel.mselecteditems.size()+"/" + archiveViewFragment.file_list_size);
                     }
                 }
             };
@@ -780,8 +782,9 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
             }
 
             int s = archiveViewFragment.viewModel.mselecteditems.size();
-            archiveViewFragment.detailFragmentListener.setFileNumberView(s + "/" + size);
+            archiveViewFragment.detailFragmentListener.setFileNumberView(s + "/" + archiveViewFragment.file_list_size);
             archiveViewFragment.detailFragmentListener.onLongClickItem(size);
+            archiveViewFragment.detailFragmentListener.onScrollRecyclerView(true);
             notifyDataSetChanged();
         }
 
@@ -804,8 +807,9 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                 archiveViewFragment.viewModel.mselecteditems.put(i, archiveViewFragment.filePOJO_list.get(i).getPath());
             }
             int s = archiveViewFragment.viewModel.mselecteditems.size();
-            archiveViewFragment.detailFragmentListener.setFileNumberView(s + "/" + size);
+            archiveViewFragment.detailFragmentListener.setFileNumberView(s + "/" + archiveViewFragment.file_list_size);
             archiveViewFragment.detailFragmentListener.onLongClickItem(s);
+            archiveViewFragment.detailFragmentListener.onScrollRecyclerView(true);
             notifyDataSetChanged();
         }
 
@@ -958,6 +962,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                     Global.print(context, getString(R.string.please_wait));
                     return;
                 }
+                DeselectAllAndAdjustToolbars(archiveViewFragment,archiveViewFragment.fileclickselected);
                 fm.beginTransaction().detach(archiveViewFragment).commit();
                 fm.beginTransaction().attach(archiveViewFragment).commit();
                 Global.WORKOUT_AVAILABLE_SPACE();

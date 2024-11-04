@@ -321,7 +321,13 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
             return;
         }
 
-        port = Integer.parseInt(port_tv.getText().toString().trim());
+        try{
+            port = Integer.parseInt(port_tv.getText().toString().trim());
+        } catch (Exception e){
+            Global.print(context, getString(R.string.enter_a_proper_port_number));
+            return;
+        }
+
         mode = mode_active_radio_btn.isChecked() ? "active" : "passive";
         password = password_tv.getText().toString().trim();
         anonymous = anonymous_check_box.isChecked();

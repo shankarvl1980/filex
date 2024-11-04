@@ -223,12 +223,13 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
         if (MainActivity.SHOW_HIDDEN_FILE) {
             filePOJO_list = viewModel.filePOJOS;
             totalFilePOJO_list = viewModel.filePOJOS;
+
         } else {
             filePOJO_list = viewModel.filePOJOS_filtered;
             totalFilePOJO_list = viewModel.filePOJOS_filtered;
         }
         totalFilePOJO_list_Size = totalFilePOJO_list.size();
-        file_list_size = totalFilePOJO_list_Size;
+        file_list_size = filePOJO_list.size();
         Collections.sort(filePOJO_list, viewModel.library_time_desc ? FileComparator.FilePOJOComparate("d_date_desc", false) : FileComparator.FilePOJOComparate(Global.SORT, false));
         adapter = new ArchiveViewActivity.ArchiveDetailRecyclerViewAdapter(context, this);
         set_adapter();
@@ -370,7 +371,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
             modification_observed = false;
             local_activity_delete = false;
             totalFilePOJO_list_Size = totalFilePOJO_list.size();
-            file_list_size = totalFilePOJO_list_Size;
+            file_list_size = filePOJO_list.size();
             detailFragmentListener.setFileNumberView(viewModel.mselecteditems.size() + "/" + file_list_size);
             Collections.sort(filePOJO_list, viewModel.library_time_desc ? FileComparator.FilePOJOComparate("d_date_desc", false) : FileComparator.FilePOJOComparate(Global.SORT, false));
             adapter.notifyDataSetChanged();

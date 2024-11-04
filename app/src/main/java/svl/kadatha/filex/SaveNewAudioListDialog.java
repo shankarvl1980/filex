@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView.LayoutParams;
 import android.widget.Button;
@@ -109,6 +110,11 @@ public class SaveNewAudioListDialog extends DialogFragment {
                 dismissAllowingStateLoss();
             }
         });
+
+        new_file_name_edittext.requestFocus();
+        if(imm!=null){
+            imm.showSoftInput(new_file_name_edittext, InputMethodManager.SHOW_IMPLICIT);
+        }
         return v;
     }
 
@@ -118,10 +124,7 @@ public class SaveNewAudioListDialog extends DialogFragment {
         Window window = getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH, LayoutParams.WRAP_CONTENT);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        new_file_name_edittext.requestFocus();
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     }
 
 

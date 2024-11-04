@@ -55,7 +55,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/ten_dp"
                     android:textColor="?attr/edit_text_color"
-                    android:inputType="text"
                     app:layout_constraintTop_toBottomOf="@id/activity_copy_to_filename_label" />
 
                 <TextView

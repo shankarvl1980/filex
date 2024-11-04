@@ -919,7 +919,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                         }
                     }
 
-                    int t = storageAnalyserFragment.filePOJO_list.size();
+                    storageAnalyserFragment.file_list_size = storageAnalyserFragment.filePOJO_list.size();
 
                     if (!storageAnalyserFragment.viewModel.mselecteditems.isEmpty()) {
                         storageAnalyserFragment.adapter.deselectAll();
@@ -927,13 +927,13 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                         notifyDataSetChanged();
                     }
 
-                    if (t > 0) {
+                    if (storageAnalyserFragment.file_list_size > 0) {
                         storageAnalyserFragment.recycler_view.setVisibility(View.VISIBLE);
                         storageAnalyserFragment.folder_empty_textview.setVisibility(View.GONE);
                     }
 
                     if (storageAnalyserFragment.detailFragmentListener != null) {
-                        storageAnalyserFragment.detailFragmentListener.setFileNumberView("" + t);
+                        storageAnalyserFragment.detailFragmentListener.setFileNumberView(storageAnalyserFragment.viewModel.mselecteditems.size()+"/" + storageAnalyserFragment.file_list_size);
                     }
                 }
             };
@@ -950,7 +950,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
             int s = storageAnalyserFragment.viewModel.mselecteditems.size();
 
             if (storageAnalyserFragment.detailFragmentListener != null) {
-                storageAnalyserFragment.detailFragmentListener.setFileNumberView(s + "/" + size);
+                storageAnalyserFragment.detailFragmentListener.setFileNumberView(s + "/" + storageAnalyserFragment.file_list_size);
                 storageAnalyserFragment.detailFragmentListener.onLongClickItem(size);
             }
             notifyDataSetChanged();
@@ -977,7 +977,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
             int s = storageAnalyserFragment.viewModel.mselecteditems.size();
 
             if (storageAnalyserFragment.detailFragmentListener != null) {
-                storageAnalyserFragment.detailFragmentListener.setFileNumberView(s + "/" + size);
+                storageAnalyserFragment.detailFragmentListener.setFileNumberView(s + "/" + storageAnalyserFragment.file_list_size);
                 storageAnalyserFragment.detailFragmentListener.onLongClickItem(s);
             }
             notifyDataSetChanged();

@@ -98,19 +98,18 @@ public abstract class DetailRecyclerViewAdapter extends RecyclerView.Adapter<Det
                     }
                 }
 
-
-                int t = df.filePOJO_list.size();
+                df.file_list_size=df.filePOJO_list.size();
                 if (!df.viewModel.mselecteditems.isEmpty()) {
                     deselectAll();
                 } else {
                     notifyDataSetChanged();
                 }
-                if (t > 0) {
+                if (df.file_list_size > 0) {
                     df.recyclerView.setVisibility(View.VISIBLE);
                     df.folder_empty.setVisibility(View.GONE);
                 }
                 if (df.detailFragmentListener != null) {
-                    df.detailFragmentListener.setFileNumberView(df.viewModel.mselecteditems.size() + "/" + t);
+                    df.detailFragmentListener.setFileNumberView(df.viewModel.mselecteditems.size() + "/" + df.file_list_size);
                 }
             }
         };
@@ -149,7 +148,7 @@ public abstract class DetailRecyclerViewAdapter extends RecyclerView.Adapter<Det
         int s = df.viewModel.mselecteditems.size();
 
         if (df.detailFragmentListener != null) {
-            df.detailFragmentListener.setFileNumberView(s + "/" + size);
+            df.detailFragmentListener.setFileNumberView(s + "/" + df.file_list_size);
             df.detailFragmentListener.onLongClickItem(s);
         }
         notifyDataSetChanged();
@@ -176,7 +175,7 @@ public abstract class DetailRecyclerViewAdapter extends RecyclerView.Adapter<Det
         int s = df.viewModel.mselecteditems.size();
 
         if (df.detailFragmentListener != null) {
-            df.detailFragmentListener.setFileNumberView(s + "/" + size);
+            df.detailFragmentListener.setFileNumberView(s + "/" + df.file_list_size);
             df.detailFragmentListener.onLongClickItem(s);
         }
         notifyDataSetChanged();

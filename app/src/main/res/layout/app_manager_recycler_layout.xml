@@ -16,7 +16,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:includeFontPadding="false"
-        android:maxLines="1"
         android:textColor="?attr/recycler_main_text_color" />
 
     <ImageView
@@ -32,11 +31,9 @@
         android:id="@+id/app_manager_app_package"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="marquee"
         android:gravity="start"
-        android:textColor="?attr/recycler_text_color"
-
-        />
+        android:maxLines="1"
+        android:textColor="?attr/recycler_text_color" />
 
     <TextView
         android:id="@+id/app_manager_app_version"
@@ -44,9 +41,7 @@
         android:layout_height="wrap_content"
         android:gravity="start"
         android:maxLines="1"
-        android:textColor="?attr/recycler_text_color"
-
-        />
+        android:textColor="?attr/recycler_text_color" />
 
 
     <TextView

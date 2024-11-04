@@ -91,8 +91,10 @@
                         android:id="@+id/fragment_network_details_input_port"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:digits="0123456789"
                         android:layout_marginEnd="10dp"
                         android:layout_weight="1"
+                        android:maxLength="5"
                         android:inputType="number" />
                 </LinearLayout>
 

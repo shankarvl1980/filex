@@ -46,6 +46,7 @@
         android:layout_width="0dp"
         android:layout_height="?android:attr/actionBarSize"
         android:gravity="center"
+        android:ellipsize="end"
         android:maxLines="1"
         android:textColor="?attr/toolbar_text_color"
         android:textSize="17sp"

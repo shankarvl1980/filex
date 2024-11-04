@@ -509,5 +509,6 @@
     <string name="enter_share_name">Enter Share name</string>
     <string name="replace">Replace</string>
     <string name="skip">Skip</string>
+    <string name="enter_a_proper_port_number">Enter a proper port number</string>
 
 </resources>

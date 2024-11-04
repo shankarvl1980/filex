@@ -46,7 +46,6 @@
         android:id="@+id/album_details_search_toolbar"
         android:layout_width="0dp"
         android:layout_height="?android:attr/actionBarSize"
-        android:background="?attr/toolbar_background"
         android:elevation="6dp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
@@ -73,12 +72,20 @@
             android:id="@+id/album_details_search_view_cancel_button"
             android:layout_width="50dp"
             android:layout_height="match_parent"
-            android:background="@null"
+            android:background="?attr/toolbar_background"
             android:paddingTop="@dimen/layout_margin"
             android:paddingBottom="@dimen/layout_margin"
             android:src="@drawable/cancel_icon"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/album_details_search_bar_space"
             app:layout_constraintStart_toEndOf="@id/album_details_search_view"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Space
+            android:id="@+id/album_details_search_bar_space"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:background="@null"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
