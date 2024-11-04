@@ -12,7 +12,6 @@ import svl.kadatha.filex.FilePOJO;
 import svl.kadatha.filex.FilePOJOUtil;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FileModelFactory;
-import timber.log.Timber;
 
 public class DeleteAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
     public static final String TASK_TYPE = "delete";

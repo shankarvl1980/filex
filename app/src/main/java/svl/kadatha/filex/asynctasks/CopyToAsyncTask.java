@@ -23,7 +23,6 @@ import svl.kadatha.filex.Global;
 import svl.kadatha.filex.ParcelableUriStringLinkedMap;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FileModelFactory;
-import timber.log.Timber;
 
 public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
 

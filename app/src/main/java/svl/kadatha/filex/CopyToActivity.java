@@ -311,16 +311,46 @@ public class CopyToActivity extends BaseActivity {
             dest_folder = intent.getStringExtra("dest_folder");
             String action = intent.getAction();
             String file_name = intent.getStringExtra("file_name");
-            if (action.equals(Intent.ACTION_SEND_MULTIPLE)) {
-                data_list = (ArrayList<Uri>) bundle.get(Intent.EXTRA_STREAM);
-                file_name_edit_text.setEnabled(false);
-                file_name_edit_text.setAlpha(Global.DISABLE_ALFA);
-            } else if (action.equals(Intent.ACTION_SEND)) {
-                data_list.add((Uri) bundle.get(Intent.EXTRA_STREAM));
+
+            Object extraStream = bundle.get(Intent.EXTRA_STREAM);
+            data_list = new ArrayList<>();
+
+            if (Intent.ACTION_SEND_MULTIPLE.equals(action)) {
+                if (extraStream instanceof ArrayList) {
+                    ArrayList<?> tempList = (ArrayList<?>) extraStream;
+                    boolean allElementsAreUri = true;
+
+                    for (Object element : tempList) {
+                        if (element instanceof Uri) {
+                            data_list.add((Uri) element);
+                        } else {
+                            allElementsAreUri = false;
+                            break;
+                        }
+                    }
+
+                    if (!allElementsAreUri) {
+                        // Handle the error
+                        throw new IllegalArgumentException("One or more items in the EXTRA_STREAM are not Uri instances.");
+                    }
+
+                    file_name_edit_text.setEnabled(false);
+                    file_name_edit_text.setAlpha(Global.DISABLE_ALFA);
+                } else {
+                    // Handle the case where EXTRA_STREAM is not an ArrayList
+                    throw new IllegalArgumentException("Expected an ArrayList<Uri> for ACTION_SEND_MULTIPLE.");
+                }
+            } else if (Intent.ACTION_SEND.equals(action)) {
+                if (extraStream instanceof Uri) {
+                    data_list.add((Uri) extraStream);
+                } else {
+                    // Handle the error
+                    throw new IllegalArgumentException("Expected a Uri for ACTION_SEND.");
+                }
             }
 
             if (savedInstanceState == null) {
-                if (data_list != null && !data_list.isEmpty()) {
+                if (!data_list.isEmpty()) {
                     if (data_list.size() == 1) {
                         if (file_name == null) {
                             file_name = getFileNameOfUri(context, data_list.get(0));
@@ -340,6 +370,7 @@ public class CopyToActivity extends BaseActivity {
             }
         }
     }
+
 
     @Override
     protected void onResume() {

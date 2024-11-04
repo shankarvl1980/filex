@@ -32,16 +32,10 @@ public class IndexedLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
 
     @Override
     public V remove(Object key) {
-        return removeKey((K) key);
+        al_Index.remove(key);
+        return super.remove(key);
     }
 
-
-    public V removeKey(K key) {
-        if (al_Index.remove(key)) {
-            return super.remove(key);
-        }
-        return null;
-    }
 
     public boolean removeIndex(K key) {
         return al_Index.remove(key);

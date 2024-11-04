@@ -19,7 +19,6 @@ import svl.kadatha.filex.Global;
 import svl.kadatha.filex.ParcelableStringStringLinkedMap;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FileModelFactory;
-import timber.log.Timber;
 
 public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
     public static final String TASK_TYPE_CUT = "paste-cut";
