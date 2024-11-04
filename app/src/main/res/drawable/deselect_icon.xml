@@ -1,11 +1,5 @@
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
-    android:viewportWidth="24"
-    android:viewportHeight="24">
-    <path
-        android:fillColor="?attr/toolbar_icon_color"
-        android:pathData="m10.2881,16.4537 l-3.9639,-3.821 1.2288,-1.2695 2.7131,2.5983L16.4506,7.6068 17.7032,8.8534ZM5.8476,3.1834C4.3907,3.1834 3.205,4.3742 3.205,5.8374l0,12.3857c0,1.4633 1.1856,2.6541 2.6426,2.6541l12.3321,0c1.457,0 2.6426,-1.1908 2.6426,-2.6541L20.8224,5.8374C20.8224,4.3742 19.6367,3.1834 18.1798,3.1834ZM22.5841,5.8374l0,12.3857c0,2.4426 -1.9714,4.4235 -4.4043,4.4235L5.8476,22.6466C3.4147,22.6466 1.4433,20.6658 1.4433,18.2231L1.4433,5.8374C1.4433,3.3948 3.4147,1.414 5.8476,1.414l12.3321,0c2.433,0 4.4043,1.9808 4.4043,4.4235z"
-        android:strokeWidth="0.79"
-        android:strokeColor="?attr/toolbar_icon_color" />
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:height="30dp" android:viewportHeight="24" android:viewportWidth="24" android:width="30dp">
+      
+    <path android:fillColor="?attr/toolbar_icon_color" android:pathData="M10.574,15.638 L7.323,12.505 8.331,11.464 10.556,13.595 15.629,8.384 16.657,9.406ZM6.932,4.757c-1.195,0 -2.168,0.976 -2.168,2.176V17.089c0,1.2 0.973,2.176 2.168,2.176H17.048c1.195,0 2.168,-0.976 2.168,-2.176V6.933c0,-1.2 -0.973,-2.176 -2.168,-2.176zM20.661,6.933V17.089c0,2.003 -1.617,3.627 -3.613,3.627H6.932c-1.996,0 -3.613,-1.624 -3.613,-3.627V6.933c0,-2.003 1.617,-3.627 3.613,-3.627H17.048c1.996,0 3.613,1.624 3.613,3.627z" android:strokeColor="?attr/toolbar_icon_color" android:strokeWidth="0.565629"/>
+    
 </vector>

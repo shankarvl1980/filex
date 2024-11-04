@@ -1,22 +1,11 @@
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
-    android:viewportWidth="24"
-    android:viewportHeight="24">
-    <path
-        android:fillColor="?attr/toolbar_icon_color"
-        android:pathData="m5.8477,1.4141c-2.433,0 -4.4043,1.9812 -4.4043,4.4238L1.4434,18.2227c0,2.4426 1.9713,4.4238 4.4043,4.4238L18.1797,22.6465c2.433,0 4.4043,-1.9812 4.4043,-4.4238L22.584,5.8379c0,-2.4426 -1.9713,-4.4238 -4.4043,-4.4238zM5.8477,3.1836L18.1797,3.1836c1.457,0 2.6426,1.191 2.6426,2.6543L20.8223,18.2227c0,1.4633 -1.1856,2.6543 -2.6426,2.6543L5.8477,20.877c-1.457,0 -2.6426,-1.191 -2.6426,-2.6543L3.2051,5.8379c0,-1.4633 1.1856,-2.6543 2.6426,-2.6543z"
-        android:strokeWidth="0.79"
-        android:strokeColor="?attr/toolbar_icon_color" />
-    <path
-        android:pathData="M8.5,12L15.5,12"
-        android:strokeWidth="2.2"
-        android:strokeColor="?attr/toolbar_icon_color"
-        android:strokeLineCap="square" />
-    <path
-        android:fillColor="?attr/toolbar_icon_color"
-        android:pathData="M8.5,7L5,12L8.5,17z" />
-    <path
-        android:fillColor="?attr/toolbar_icon_color"
-        android:pathData="M15.5,7L19,12L15.5,17z" />
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:height="30dp" android:viewportHeight="24" android:viewportWidth="24" android:width="30dp">
+      
+    <path android:fillColor="?attr/toolbar_icon_color" android:pathData="m6.949,3.296c-2.002,0 -3.624,1.624 -3.624,3.626L3.325,17.074c0,2.002 1.622,3.626 3.624,3.626L17.095,20.7c2.002,0 3.624,-1.624 3.624,-3.626L20.718,6.922c0,-2.002 -1.622,-3.626 -3.624,-3.626zM6.949,4.747L17.095,4.747c1.199,0 2.174,0.976 2.174,2.176L19.269,17.074c0,1.199 -0.975,2.176 -2.174,2.176L6.949,19.249c-1.199,0 -2.174,-0.976 -2.174,-2.176L4.775,6.922c0,-1.199 0.975,-2.176 2.174,-2.176z" android:strokeColor="?attr/toolbar_icon_color" android:strokeWidth="0.565629"/>
+      
+    <path android:fillColor="?attr/toolbar_icon_color" android:pathData="M8.5,12L15.5,12" android:strokeColor="?attr/toolbar_icon_color" android:strokeLineCap="square" android:strokeWidth="2.2"/>
+      
+    <path android:fillColor="?attr/toolbar_icon_color" android:pathData="m8.955,7 l-2.85,5 2.85,5z" android:strokeWidth="0.881652"/>
+      
+    <path android:fillColor="?attr/toolbar_icon_color" android:pathData="m15.078,7 l2.721,5 -2.721,5z" android:strokeWidth="0.881652"/>
+    
 </vector>
