@@ -9,9 +9,9 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/toolbar_background"
         android:gravity="center_vertical"
+        android:maxLines="1"
         android:paddingStart="@dimen/ten_dp"
         android:paddingEnd="@dimen/ten_dp"
-        android:maxLines="1"
         android:textColor="?attr/toolbar_text_color"
         android:textSize="19sp"
         app:layout_constraintEnd_toStartOf="@id/album_details_search_img_btn"
@@ -59,9 +59,9 @@
             android:layout_marginStart="@dimen/ten_dp"
             android:layout_marginEnd="@dimen/ten_dp"
             android:background="@drawable/search_edittext_background"
-            android:maxLines="1"
             android:hint="@string/search"
             android:inputType="text"
+            android:maxLines="1"
             android:textColor="?attr/toolbar_text_color"
             android:textSize="17sp"
             app:layout_constraintEnd_toStartOf="@id/album_details_search_view_cancel_button"
@@ -135,7 +135,7 @@
         android:padding="@dimen/layout_margin"
         android:textColor="?attr/recycler_text_color"
         app:layout_constraintEnd_toEndOf="@id/album_details_background"
-        app:layout_constraintTop_toTopOf="@id/album_details_background"/>
+        app:layout_constraintTop_toTopOf="@id/album_details_background" />
 
     <TextView
         android:id="@+id/album_details_empty_list_tv"

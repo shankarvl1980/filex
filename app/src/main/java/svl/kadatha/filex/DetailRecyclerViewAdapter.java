@@ -98,7 +98,7 @@ public abstract class DetailRecyclerViewAdapter extends RecyclerView.Adapter<Det
                     }
                 }
 
-                df.file_list_size=df.filePOJO_list.size();
+                df.file_list_size = df.filePOJO_list.size();
                 if (!df.viewModel.mselecteditems.isEmpty()) {
                     deselectAll();
                 } else {

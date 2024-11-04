@@ -3,9 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="?android:attr/actionBarSize"
     android:elevation="6dp"
-    android:visibility="gone"
+    android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:gravity="center_vertical">
+    android:visibility="gone">
 
     <ImageButton
         android:id="@+id/search_bar_detailed_search_button"
@@ -13,10 +13,10 @@
         android:layout_height="50dp"
         android:layout_margin="@dimen/layout_margin"
         android:background="?attr/toolbar_background"
-        android:src="@drawable/search_icon"
-        android:scaleType="centerInside"
         android:contentDescription="@string/search"
-        android:minHeight="48dp" />
+        android:minHeight="48dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/search_icon" />
 
     <EditText
         android:id="@+id/search_bar_view"
@@ -24,23 +24,23 @@
         android:layout_height="50dp"
         android:layout_weight="1"
         android:background="@drawable/search_edittext_background"
-        android:singleLine="true"
-        android:maxLines="1"
-        android:textColor="?attr/toolbar_text_color"
-        android:textSize="17sp"
-        android:inputType="text"
         android:imeOptions="actionSearch"
-        android:importantForAutofill="no" />
+        android:importantForAutofill="no"
+        android:inputType="text"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColor="?attr/toolbar_text_color"
+        android:textSize="17sp" />
 
     <ImageButton
         android:id="@+id/search_bar_cancel_button"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:background="?attr/toolbar_background"
-        android:src="@drawable/cancel_icon"
-        android:scaleType="centerInside"
         android:contentDescription="@string/cancel"
-        android:minHeight="48dp" />
+        android:minHeight="48dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/cancel_icon" />
 
     <Space
         android:id="@+id/search_bar_space"

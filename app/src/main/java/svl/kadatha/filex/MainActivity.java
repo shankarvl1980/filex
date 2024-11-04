@@ -1202,7 +1202,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
 
         }
-        if (size == df.file_list_size && size!=0) {
+        if (size == df.file_list_size && size != 0) {
             all_select.setImageResource(R.drawable.deselect_icon);
         }
 
@@ -1331,6 +1331,32 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         context.unregisterReceiver(mediaMountReceiver);
         listPopWindow.dismiss(); // to avoid memory leak on orientation change
         h.removeCallbacksAndMessages(null);
+    }
+
+    public void DeselectAllAndAdjustToolbars(DetailFragment df) {
+        listPopWindow.dismiss();
+        if (DetailFragment.CUT_SELECTED || DetailFragment.COPY_SELECTED) {
+            paste_toolbar.setVisibility(View.VISIBLE);
+            paste_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+            bottom_toolbar.setVisibility(View.GONE);
+            viewModel.toolbar_shown = "paste";
+            parent_dir_image_button.setEnabled(true);
+            parent_dir_image_button.setAlpha(Global.ENABLE_ALFA);
+        } else {
+            parent_dir_image_button.setEnabled(true);
+            parent_dir_image_button.setAlpha(Global.ENABLE_ALFA);
+            bottom_toolbar.setVisibility(View.VISIBLE);
+            bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+            viewModel.toolbar_shown = "bottom";
+            paste_toolbar.setVisibility(View.GONE);
+        }
+        actionmode_toolbar.setVisibility(View.GONE);
+        if (df != null) {
+            df.clearSelectionAndNotifyDataSetChanged();
+            df.is_toolbar_visible = true;
+            all_select.setImageResource(R.drawable.select_icon);
+            interval_select.setVisibility(View.GONE);
+        }
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -1370,32 +1396,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     });
-
-    public void DeselectAllAndAdjustToolbars(DetailFragment df) {
-        listPopWindow.dismiss();
-        if (DetailFragment.CUT_SELECTED || DetailFragment.COPY_SELECTED) {
-            paste_toolbar.setVisibility(View.VISIBLE);
-            paste_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-            bottom_toolbar.setVisibility(View.GONE);
-            viewModel.toolbar_shown = "paste";
-            parent_dir_image_button.setEnabled(true);
-            parent_dir_image_button.setAlpha(Global.ENABLE_ALFA);
-        } else {
-            parent_dir_image_button.setEnabled(true);
-            parent_dir_image_button.setAlpha(Global.ENABLE_ALFA);
-            bottom_toolbar.setVisibility(View.VISIBLE);
-            bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-            viewModel.toolbar_shown = "bottom";
-            paste_toolbar.setVisibility(View.GONE);
-        }
-        actionmode_toolbar.setVisibility(View.GONE);
-        if (df != null) {
-            df.clearSelectionAndNotifyDataSetChanged();
-            df.is_toolbar_visible = true;
-            all_select.setImageResource(R.drawable.select_icon);
-            interval_select.setVisibility(View.GONE);
-        }
-    }
 
     public void action_mode_finish(DetailFragment df) {
         if (df.adapter != null) {
@@ -1916,7 +1916,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                                 for (int i = 0; i < size; ++i) {
                                     files_selected_array.add(df.viewModel.mselecteditems.getValueAtIndex(i));
                                 }
-                                ArchiveSetUpDialog archiveSetUpDialog = ArchiveSetUpDialog.getInstance(files_selected_array, null,"", df.fileObjectType, ArchiveSetUpDialog.ARCHIVE_ACTION_ZIP);
+                                ArchiveSetUpDialog archiveSetUpDialog = ArchiveSetUpDialog.getInstance(files_selected_array, null, "", df.fileObjectType, ArchiveSetUpDialog.ARCHIVE_ACTION_ZIP);
                                 archiveSetUpDialog.show(fm, "zip_dialog");
                                 break;
                             case 6:
@@ -1936,7 +1936,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                                     for (int i = 0; i < size; ++i) {
                                         files_selected_array.add(df.viewModel.mselecteditems.getValueAtIndex(i));
                                     }
-                                    ArchiveSetUpDialog unarchiveSetUpDialog = ArchiveSetUpDialog.getInstance(files_selected_array, null,"", df.fileObjectType, ArchiveSetUpDialog.ARCHIVE_ACTION_UNZIP);
+                                    ArchiveSetUpDialog unarchiveSetUpDialog = ArchiveSetUpDialog.getInstance(files_selected_array, null, "", df.fileObjectType, ArchiveSetUpDialog.ARCHIVE_ACTION_UNZIP);
                                     unarchiveSetUpDialog.show(fm, "zip_dialog");
                                 } else {
                                     Global.print(context, getString(R.string.select_only_a_zip_file));
@@ -2417,4 +2417,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     }
+
+
 }

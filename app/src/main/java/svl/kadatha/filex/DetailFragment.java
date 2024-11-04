@@ -542,7 +542,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
     }
 
     public void set_adapter() {
-        if (fileObjectType==FileObjectType.SEARCH_LIBRARY_TYPE && (file_click_selected_name.equals("Download") || file_click_selected_name.equals("Document") || file_click_selected_name.equals("Image")
+        if (fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE && (file_click_selected_name.equals("Download") || file_click_selected_name.equals("Document") || file_click_selected_name.equals("Image")
                 || file_click_selected_name.equals("Audio") || file_click_selected_name.equals("Video")
                 || file_click_selected_name.equals("Large Files"))
         ) {

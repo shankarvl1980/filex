@@ -85,6 +85,7 @@
                     app:layout_constraintTop_toBottomOf="@id/fragment_apk_install_apk_package_tv">
 
                     <TableRow android:layout_marginTop="@dimen/layout_margin">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -105,6 +106,7 @@
                     </TableRow>
 
                     <TableRow android:layout_marginTop="@dimen/layout_margin">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

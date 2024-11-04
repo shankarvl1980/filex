@@ -788,45 +788,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             ImageView imageView;
             TextView textView;
         }
-    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_files_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                if (Environment.isExternalStorageManager()) {
-                    repositoryClass.storage_dir.clear();
-                    repositoryClass.hashmap_file_pojo.clear();
-                    repositoryClass.hashmap_file_pojo_filtered.clear();
-                    Intent in = getIntent();
-                    finish();
-                    startActivity(in);
-                } else {
-                    showDialogOK(getString(R.string.read_and_write_permissions_are_must_for_the_app_to_work_please_grant_permissions), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case DialogInterface.BUTTON_POSITIVE:
-                                    try {
-                                        Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-                                        intent.addCategory("android.intent.category.DEFAULT");
-                                        intent.setData(Uri.parse(String.format("package:%s", getApplicationContext().getPackageName())));
-                                        activityResultLauncher_all_files_access_permission.launch(intent);
-                                    } catch (Exception e) {
-                                        Intent intent = new Intent();
-                                        intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-                                        activityResultLauncher_all_files_access_permission.launch(intent);
-                                    }
-                                    break;
-                                case DialogInterface.BUTTON_NEGATIVE:
-                                    Global.print(context, getString(R.string.permission_not_granted));
-                                    finish();
-                                    break;
-                            }
-                        }
-                    });
-                }
-            }
-        }
-    });
+    }
 
     public abstract static class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapter.ViewHolder> implements Filterable {
         final Context context;
@@ -966,7 +928,45 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 });
             }
         }
-    }
+    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_files_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (Environment.isExternalStorageManager()) {
+                    repositoryClass.storage_dir.clear();
+                    repositoryClass.hashmap_file_pojo.clear();
+                    repositoryClass.hashmap_file_pojo_filtered.clear();
+                    Intent in = getIntent();
+                    finish();
+                    startActivity(in);
+                } else {
+                    showDialogOK(getString(R.string.read_and_write_permissions_are_must_for_the_app_to_work_please_grant_permissions), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    try {
+                                        Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                                        intent.addCategory("android.intent.category.DEFAULT");
+                                        intent.setData(Uri.parse(String.format("package:%s", getApplicationContext().getPackageName())));
+                                        activityResultLauncher_all_files_access_permission.launch(intent);
+                                    } catch (Exception e) {
+                                        Intent intent = new Intent();
+                                        intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                                        activityResultLauncher_all_files_access_permission.launch(intent);
+                                    }
+                                    break;
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    Global.print(context, getString(R.string.permission_not_granted));
+                                    finish();
+                                    break;
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    });
 
     public static class FileSelectorAdapterGrid extends FileSelectorAdapter {
 
@@ -1066,4 +1066,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         }
     }
+
+
 }

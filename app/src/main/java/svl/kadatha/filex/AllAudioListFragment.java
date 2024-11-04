@@ -255,7 +255,7 @@ public class AllAudioListFragment extends Fragment {
                     if (!deleteAudioViewModel.deleted_audio_files.isEmpty()) {
                         audio_list.removeAll(deleteAudioViewModel.deleted_audio_files);
                         total_audio_list.removeAll(deleteAudioViewModel.deleted_audio_files);
-                        total_audio_list_size=total_audio_list.size();
+                        total_audio_list_size = total_audio_list.size();
                         audio_list_size = audio_list.size();
                         if (audioFragmentListener != null) {
                             audioFragmentListener.onDeleteAudio(deleteAudioViewModel.deleted_audio_files);

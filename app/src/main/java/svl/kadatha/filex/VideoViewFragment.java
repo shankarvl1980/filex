@@ -106,7 +106,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
         file_path = bundle.getString("file_path");
         viewModel.position = bundle.getInt("position");
         viewModel.idx = bundle.getInt("idx");
-        if(savedInstanceState==null){
+        if (savedInstanceState == null) {
             firstStart = bundle.getBoolean("firstStart");
         }
     }
@@ -395,7 +395,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
                 play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.video_play_icon));
             }
             viewModel.position = mp.getCurrentPosition();
-            Bundle bundle=getArguments();
+            Bundle bundle = getArguments();
             bundle.putInt("position", viewModel.position);
             setArguments(bundle);
             if (videoPositionListener != null) {
@@ -403,7 +403,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
             }
         }
     }
-
 
 
     @Override

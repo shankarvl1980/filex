@@ -94,6 +94,10 @@ public class CreateFileDialog extends DialogFragment {
         df = (DetailFragment) getParentFragmentManager().findFragmentById(R.id.detail_fragment);
         fileSelectorFragment = (FileSelectorFragment) getParentFragmentManager().findFragmentById(R.id.file_selector_container);
 
+        int paddingLeft = file_label_textview.getPaddingLeft();
+        int paddingTop = file_label_textview.getPaddingTop();
+        int paddingRight = file_label_textview.getPaddingRight();
+        file_label_textview.setPadding(paddingLeft, paddingTop, paddingRight, 0);
         if (file_type == 0) {
             dialog_heading_textview.setText(R.string.enter_file_name);
             file_label_textview.setText(R.string.file_name);

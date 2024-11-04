@@ -6,9 +6,9 @@
         android:id="@+id/analyser_image_file"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:scaleType="centerCrop"
         android:contentDescription="@null"
-        android:importantForAccessibility="no" />
+        android:importantForAccessibility="no"
+        android:scaleType="centerCrop" />
 
     <ImageView
         android:id="@+id/analyser_overlay_image_file"
@@ -23,27 +23,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/storage_analyser_item_background"
+        android:importantForAccessibility="no"
         android:paddingStart="@dimen/layout_margin"
-        android:paddingEnd="@dimen/layout_margin"
-        android:importantForAccessibility="no" />
+        android:paddingEnd="@dimen/layout_margin" />
 
     <TextView
         android:id="@+id/analyser_item_foreground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/rectangle_file_size_item_clip"
+        android:importantForAccessibility="no"
         android:paddingStart="@dimen/layout_margin"
-        android:paddingEnd="@dimen/layout_margin"
-        android:importantForAccessibility="no" />
+        android:paddingEnd="@dimen/layout_margin" />
 
     <TextView
         android:id="@+id/analyser_text_file_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:ellipsize="end"
         android:paddingStart="@dimen/layout_margin"
         android:paddingEnd="@dimen/layout_margin"
         android:singleLine="true"
-        android:ellipsize="end"
         android:textColor="?attr/recycler_main_text_color" />
 
     <TextView
@@ -59,9 +59,9 @@
         android:id="@+id/analyser_text_size_percentage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:ellipsize="end"
         android:gravity="center"
-        android:singleLine="true"
-        android:ellipsize="end" />
+        android:singleLine="true" />
 
     <TextView
         android:id="@+id/analyser_text_subfile_count"
@@ -84,7 +84,7 @@
         android:layout_width="match_parent"
         android:layout_height="4dp"
         android:background="?attr/recycler_main_text_color"
-        android:visibility="gone"
-        android:importantForAccessibility="no" />
+        android:importantForAccessibility="no"
+        android:visibility="gone" />
 
 </merge>

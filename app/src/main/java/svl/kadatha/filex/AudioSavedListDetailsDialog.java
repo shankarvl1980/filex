@@ -61,7 +61,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
     private int number_button = 3;
     private boolean toolbar_visible;
     private int scroll_distance;
-    private int audio_list_size,total_audio_list_size;
+    private int audio_list_size, total_audio_list_size;
     private ConstraintLayout search_toolbar;
     private EditText search_edittext;
     private boolean search_toolbar_visible;
@@ -318,7 +318,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
                     total_audio_list = audioListViewModel.audio_list;
                     currentAudioListRecyclerViewAdapter = new CurrentListRecyclerViewAdapter();
                     currentAudioListRecyclerview.setAdapter(currentAudioListRecyclerViewAdapter);
-                    total_audio_list_size=total_audio_list.size();
+                    total_audio_list_size = total_audio_list.size();
                     audio_list_size = clicked_audio_list.size();
                     if (audio_list_size == 0) {
                         currentAudioListRecyclerview.setVisibility(View.GONE);
@@ -359,7 +359,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
 
         clicked_audio_list.removeAll(audio_list_to_be_removed);
         total_audio_list.removeAll(audio_list_to_be_removed);
-        total_audio_list_size=total_audio_list.size();
+        total_audio_list_size = total_audio_list.size();
         audio_list_size = clicked_audio_list.size();
         if (audio_list_size == 0) {
             currentAudioListRecyclerview.setVisibility(View.GONE);

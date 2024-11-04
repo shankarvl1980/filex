@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/dialog_background"
-    android:animateLayoutChanges="true">
+    android:animateLayoutChanges="true"
+    android:background="?attr/dialog_background">
 
     <TextView
         android:id="@+id/settings_heading"
@@ -12,25 +12,25 @@
         android:layout_height="?android:attr/actionBarSize"
         android:layout_gravity="top"
         android:background="?attr/dialog_title"
+        android:ellipsize="end"
         android:gravity="center_vertical"
+        android:maxLines="1"
         android:paddingStart="@dimen/ten_dp"
         android:paddingTop="@dimen/layout_margin"
         android:paddingEnd="@dimen/ten_dp"
         android:paddingBottom="@dimen/layout_margin"
         android:text="@string/settings"
-        android:textSize="19sp"
-        android:ellipsize="end"
-        android:maxLines="1" />
+        android:textSize="19sp" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?android:attr/actionBarSize"
-        android:paddingBottom="60dp"
-        android:fillViewport="true"
-        android:scrollbars="vertical"
         android:fadeScrollbars="false"
-        android:overScrollMode="ifContentScrolls">
+        android:fillViewport="true"
+        android:overScrollMode="ifContentScrolls"
+        android:paddingBottom="60dp"
+        android:scrollbars="vertical">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -52,10 +52,10 @@
                 android:id="@+id/preferences_theme_rg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:clipToPadding="false"
                 android:orientation="vertical"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
-                android:clipToPadding="false"
                 app:layout_constraintTop_toBottomOf="@id/theme_label">
 
                 <RadioButton
@@ -108,8 +108,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/ten_dp"
-                android:text="@string/remove_defaults"
                 android:minHeight="48dp"
+                android:text="@string/remove_defaults"
                 app:layout_constraintEnd_toStartOf="@id/preferences_remove_select_defaults_btn"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/default_apps_label" />
@@ -120,8 +120,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/ten_dp"
-                android:text="@string/remove_selected"
                 android:minHeight="48dp"
+                android:text="@string/remove_selected"
                 app:layout_constraintStart_toEndOf="@+id/preferences_remove_all_defaults_btn"
                 app:layout_constraintTop_toBottomOf="@id/default_apps_label" />
 

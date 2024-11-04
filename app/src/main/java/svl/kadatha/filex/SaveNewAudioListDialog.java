@@ -67,6 +67,10 @@ public class SaveNewAudioListDialog extends DialogFragment {
         cancelbutton.setText(R.string.cancel);
         dialog_heading_textview.setText(R.string.enter_name);
         file_label_textview.setText(R.string.list_name_colon);
+        int paddingLeft = file_label_textview.getPaddingLeft();
+        int paddingTop = file_label_textview.getPaddingTop();
+        int paddingRight = file_label_textview.getPaddingRight();
+        file_label_textview.setPadding(paddingLeft, paddingTop, paddingRight, 0);
 
         okbutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -112,7 +116,7 @@ public class SaveNewAudioListDialog extends DialogFragment {
         });
 
         new_file_name_edittext.requestFocus();
-        if(imm!=null){
+        if (imm != null) {
             imm.showSoftInput(new_file_name_edittext, InputMethodManager.SHOW_IMPLICIT);
         }
         return v;

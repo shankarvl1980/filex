@@ -61,7 +61,7 @@ public class ArchiveSetUpDialog extends DialogFragment {
     private FileObjectType sourceFileObjectType;
     private FileObjectType current_dir_fileObjectType, destFileObjectType;
     private InputMethodManager imm;
-    private String first_file_name, parent_file_name, parent_file_path,base_path;
+    private String first_file_name, parent_file_name, parent_file_path, base_path;
     private Class emptyService;
     private ArchiveSetUpViewModel viewModel;
     private FrameLayout progress_bar;
@@ -79,12 +79,12 @@ public class ArchiveSetUpDialog extends DialogFragment {
         }
     });
 
-    public static ArchiveSetUpDialog getInstance(ArrayList<String> files_selected_array, ArrayList<String> zip_entries_array,String base_path ,FileObjectType sourceFileObjectType, String archive_action) {
+    public static ArchiveSetUpDialog getInstance(ArrayList<String> files_selected_array, ArrayList<String> zip_entries_array, String base_path, FileObjectType sourceFileObjectType, String archive_action) {
         ArchiveSetUpDialog archiveSetUpDialog = new ArchiveSetUpDialog();
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("files_selected_array", files_selected_array);
         bundle.putStringArrayList("zip_entries_array", zip_entries_array);
-        bundle.putString("base_path",base_path);
+        bundle.putString("base_path", base_path);
         bundle.putSerializable("sourceFileObjectType", sourceFileObjectType);
         bundle.putString("archive_action", archive_action);
         archiveSetUpDialog.setArguments(bundle);
@@ -132,7 +132,7 @@ public class ArchiveSetUpDialog extends DialogFragment {
             }
             sourceFileObjectType = (FileObjectType) bundle.getSerializable("sourceFileObjectType");
             archive_action = bundle.getString("archive_action");
-            base_path=bundle.getString("base_path","");
+            base_path = bundle.getString("base_path", "");
             String first_file_path = files_selected_array.get(0);
             first_file_name = new File(first_file_path).getName();
             if (sourceFileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
@@ -437,7 +437,7 @@ public class ArchiveSetUpDialog extends DialogFragment {
                         bundle.putBoolean("archive_view", false);
                         bundle.putString("source_folder", parent_file_path);
                         bundle.putSerializable("sourceFileObjectType", sourceFileObjectType);
-                        bundle.putString("base_path",base_path);
+                        bundle.putString("base_path", base_path);
                         String zip_folder_path;
                         String unarchivedestfolder = rb_current_dir.isChecked() ? rb_current_dir.getText().toString() : customdir_edittext.getText().toString();
 

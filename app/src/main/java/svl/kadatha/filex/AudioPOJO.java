@@ -25,7 +25,7 @@ public class AudioPOJO implements Parcelable {
     private String artist;
     private String duration;
     private FileObjectType fileObjectType;
-    private int position=-1;//default value
+    private int position = -1;//default value
 
     public AudioPOJO(long id, String data, String title, String album_id, String album, String artist, String duration, FileObjectType fileObjectType) {  // Changed parameter type to long
         this.id = id;

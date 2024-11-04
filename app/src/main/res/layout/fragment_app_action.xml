@@ -48,8 +48,7 @@
                     android:importantForAccessibility="no"
                     app:layout_constraintBottom_toBottomOf="@id/fragment_app_action_app_size"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/fragment_app_action_app_name"
-                    />
+                    app:layout_constraintTop_toTopOf="@id/fragment_app_action_app_name" />
 
                 <TextView
                     android:id="@+id/fragment_app_action_app_name"
@@ -59,8 +58,7 @@
                     android:textSize="19sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/fragment_app_action_app_image"
-                    app:layout_constraintTop_toTopOf="parent"
-                     />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/fragment_app_action_package_name"
@@ -70,8 +68,7 @@
                     android:textSize="15sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@id/fragment_app_action_app_name"
-                    app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_name"
-                  />
+                    app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_name" />
 
                 <TextView
                     android:id="@+id/fragment_app_action_app_version"
@@ -82,8 +79,7 @@
                     android:textSize="15sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@id/fragment_app_action_app_name"
-                    app:layout_constraintTop_toBottomOf="@id/fragment_app_action_package_name"
-                     />
+                    app:layout_constraintTop_toBottomOf="@id/fragment_app_action_package_name" />
 
                 <TextView
                     android:id="@+id/fragment_app_action_app_size"
@@ -95,8 +91,7 @@
                     android:textSize="15sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@id/fragment_app_action_app_name"
-                    app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_version"
-                    />
+                    app:layout_constraintTop_toBottomOf="@id/fragment_app_action_app_version" />
 
                 <View
                     android:id="@+id/fragment_app_action_divider"
@@ -118,8 +113,7 @@
                     android:scrollbarThumbVertical="@drawable/scrollbar"
                     android:scrollbars="vertical"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintTop_toBottomOf="@id/fragment_app_action_divider"
-                     />
+                    app:layout_constraintTop_toBottomOf="@id/fragment_app_action_divider" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

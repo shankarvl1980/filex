@@ -35,149 +35,149 @@
             android:layout_marginTop="@dimen/layout_margin"
             android:layout_marginBottom="@dimen/layout_margin">
 
-                <TableLayout
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/dialog_background"
+                android:padding="@dimen/dialog_inner_padding">
+
+                <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?attr/dialog_background"
-                    android:padding="@dimen/dialog_inner_padding">
+                    android:paddingStart="@dimen/ten_dp"
+                    android:paddingTop="@dimen/ten_dp"
+                    android:paddingEnd="@dimen/ten_dp">
 
-                    <TableRow
-                        android:layout_width="match_parent"
+                    <TextView
                         android:layout_height="wrap_content"
-                        android:paddingStart="@dimen/ten_dp"
-                        android:paddingTop="@dimen/ten_dp"
-                        android:paddingEnd="@dimen/ten_dp">
+                        android:text="" />
 
-                        <TextView
-                            android:layout_height="wrap_content"
-                            android:text="" />
-
-                        <TextView
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginEnd="10dp"
-                            android:text="@string/read"
-                            android:textSize="17sp"
-
-                            />
-
-                        <TextView
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginEnd="10dp"
-                            android:text="@string/write"
-                            android:textSize="17sp"
-
-                            />
-
-                        <TextView
-                            android:layout_height="wrap_content"
-                            android:text="@string/execute"
-                            android:textSize="17sp"
-
-                            />
-
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
+                    <TextView
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/ten_dp">
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:text="@string/read"
+                        android:textSize="17sp"
 
-                        <TextView
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:text="@string/owner"
-                            android:textSize="17sp" />
+                        />
 
-                        <CheckBox
-                            android:id="@+id/fragment_permissions_owner_read_chkbox"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-
-                            />
-
-                        <CheckBox
-                            android:id="@+id/fragment_permissions_owner_write_chkbox"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-
-                            />
-
-                        <CheckBox
-                            android:id="@+id/fragment_permissions_owner_execute_chkbox"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-
-                            />
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
+                    <TextView
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/ten_dp">
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:text="@string/write"
+                        android:textSize="17sp"
 
-                        <TextView
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:text="@string/group"
-                            android:textSize="17sp" />
+                        />
 
-                        <CheckBox
-                            android:id="@+id/fragment_permissions_group_read_chkbox"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-
-                            />
-
-                        <CheckBox
-                            android:id="@+id/fragment_permissions_group_write_chkbox"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-
-                            />
-
-                        <CheckBox
-                            android:id="@+id/fragment_permissions_group_execute_chkbox"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-
-                            />
-                    </TableRow>
-
-                    <TableRow
-                        android:layout_width="match_parent"
+                    <TextView
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/ten_dp">
+                        android:text="@string/execute"
+                        android:textSize="17sp"
 
-                        <TextView
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:text="@string/other"
-                            android:textSize="17sp" />
+                        />
 
-                        <CheckBox
-                            android:id="@+id/fragment_permissions_other_read_chkbox"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
+                </TableRow>
 
-                            />
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/ten_dp">
 
-                        <CheckBox
-                            android:id="@+id/fragment_permissions_other_write_chkbox"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/owner"
+                        android:textSize="17sp" />
 
-                            />
+                    <CheckBox
+                        android:id="@+id/fragment_permissions_owner_read_chkbox"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
 
-                        <CheckBox
-                            android:id="@+id/fragment_permissions_other_execute_chkbox"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
+                        />
 
-                            />
-                    </TableRow>
-                </TableLayout>
+                    <CheckBox
+                        android:id="@+id/fragment_permissions_owner_write_chkbox"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+
+                        />
+
+                    <CheckBox
+                        android:id="@+id/fragment_permissions_owner_execute_chkbox"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+
+                        />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/ten_dp">
+
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/group"
+                        android:textSize="17sp" />
+
+                    <CheckBox
+                        android:id="@+id/fragment_permissions_group_read_chkbox"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+
+                        />
+
+                    <CheckBox
+                        android:id="@+id/fragment_permissions_group_write_chkbox"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+
+                        />
+
+                    <CheckBox
+                        android:id="@+id/fragment_permissions_group_execute_chkbox"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+
+                        />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/ten_dp">
+
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/other"
+                        android:textSize="17sp" />
+
+                    <CheckBox
+                        android:id="@+id/fragment_permissions_other_read_chkbox"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+
+                        />
+
+                    <CheckBox
+                        android:id="@+id/fragment_permissions_other_write_chkbox"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+
+                        />
+
+                    <CheckBox
+                        android:id="@+id/fragment_permissions_other_execute_chkbox"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+
+                        />
+                </TableRow>
+            </TableLayout>
         </ScrollView>
     </LinearLayout>
 </FrameLayout>

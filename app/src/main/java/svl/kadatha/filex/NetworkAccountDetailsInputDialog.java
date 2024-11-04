@@ -321,9 +321,9 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
             return;
         }
 
-        try{
+        try {
             port = Integer.parseInt(port_tv.getText().toString().trim());
-        } catch (Exception e){
+        } catch (Exception e) {
             Global.print(context, getString(R.string.enter_a_proper_port_number));
             return;
         }

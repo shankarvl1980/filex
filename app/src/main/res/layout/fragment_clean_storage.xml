@@ -52,8 +52,8 @@
                     android:paddingStart="@dimen/layout_margin"
                     android:text="@string/large_files"
                     android:textSize="17sp"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/clean_storage_large_files_rescan_button"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <Button
@@ -65,8 +65,8 @@
                     android:gravity="center"
                     android:text="@string/rescan"
                     android:textSize="17sp"
-                    app:layout_constraintStart_toEndOf="@id/clean_storage_large_files_button"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/clean_storage_large_files_button"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <Button
@@ -81,8 +81,8 @@
                     android:paddingStart="@dimen/layout_margin"
                     android:text="@string/duplicates"
                     android:textSize="17sp"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/clean_storage_duplicate_files_rescan_button"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/clean_storage_large_files_button" />
 
                 <Button
@@ -94,8 +94,8 @@
                     android:gravity="center"
                     android:text="@string/rescan"
                     android:textSize="17sp"
-                    app:layout_constraintStart_toEndOf="@id/clean_storage_duplicate_files_button"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/clean_storage_duplicate_files_button"
                     app:layout_constraintTop_toBottomOf="@id/clean_storage_large_files_button" />
 
                 <View

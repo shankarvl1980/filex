@@ -9,8 +9,7 @@
         android:layout_height="wrap_content"
         android:background="?attr/filepath_recyclerview_background"
         android:elevation="6dp"
-        android:paddingHorizontal="10dp"
-       />
+        android:paddingHorizontal="10dp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fragment_archive_detail_container"
@@ -23,8 +22,7 @@
         android:paddingBottom="100dp"
         android:scrollbarThumbVertical="@drawable/scrollbar"
         android:scrollbars="vertical"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-         />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     <svl.kadatha.filex.FastScrollerView
         android:id="@+id/fastScroller_archive_detail_fragment"
@@ -32,8 +30,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:paddingTop="36sp"
-        android:paddingBottom="100dp"
-        />
+        android:paddingBottom="100dp" />
 
     <TextView
         android:id="@+id/fragment_archive_empty_folder"
@@ -41,8 +38,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="@string/no_file_found"
-        android:visibility="gone"
-         />
+        android:visibility="gone" />
 
     <FrameLayout
         android:id="@+id/fragment_archive_detail_progressbar"
@@ -51,8 +47,7 @@
         android:clickable="true"
         android:elevation="6dp"
         android:focusable="true"
-        android:foregroundGravity="center"
-        >
+        android:foregroundGravity="center">
 
         <ProgressBar
             android:layout_width="wrap_content"

@@ -34,8 +34,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="50dp"
                 android:ellipsize="end"
-                android:maxLines="1"
                 android:gravity="center_vertical"
+                android:maxLines="1"
                 android:paddingHorizontal="@dimen/ten_dp"
                 android:textColor="?attr/toolbar_text_color"
                 android:textSize="17sp" />

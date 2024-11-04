@@ -62,7 +62,7 @@ public class AlbumDetailsDialog extends DialogFragment {
     private int scroll_distance;
     private PopupWindow listPopWindow;
     private String albumID, album_name;
-    private int audio_list_size,total_audio_list_size;
+    private int audio_list_size, total_audio_list_size;
     private ConstraintLayout search_toolbar;
     private EditText search_edittext;
     private boolean search_toolbar_visible;
@@ -288,7 +288,7 @@ public class AlbumDetailsDialog extends DialogFragment {
                     total_audio_list = audioListViewModel.audio_list;
                     audioListRecyclerViewAdapter = new AudioListRecyclerViewAdapter();
                     selected_album_recyclerview.setAdapter(audioListRecyclerViewAdapter);
-                    total_audio_list_size=(total_audio_list == null) ? 0 : total_audio_list.size();
+                    total_audio_list_size = (total_audio_list == null) ? 0 : total_audio_list.size();
                     audio_list_size = (audio_list == null) ? 0 : audio_list.size();
                     if (audio_list_size == 0) {
                         selected_album_recyclerview.setVisibility(View.GONE);
@@ -345,7 +345,7 @@ public class AlbumDetailsDialog extends DialogFragment {
                     if (!deleteAudioViewModel.deleted_audio_files.isEmpty()) {
                         audio_list.removeAll(deleteAudioViewModel.deleted_audio_files);
                         total_audio_list.removeAll(deleteAudioViewModel.deleted_audio_files);
-                        total_audio_list_size=total_audio_list.size();
+                        total_audio_list_size = total_audio_list.size();
                         audio_list_size = audio_list.size();
                         if (audio_list_size == 0) {
                             selected_album_recyclerview.setVisibility(View.GONE);

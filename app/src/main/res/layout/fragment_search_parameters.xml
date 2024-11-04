@@ -55,7 +55,6 @@
                     android:paddingStart="@dimen/ten_dp"
                     android:paddingTop="@dimen/ten_dp"
                     android:paddingEnd="@dimen/ten_dp"
-                    android:paddingBottom="@dimen/layout_margin"
                     android:text="@string/name"
                     android:textSize="17sp"
                     app:layout_constraintEnd_toEndOf="parent"

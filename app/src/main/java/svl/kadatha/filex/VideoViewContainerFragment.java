@@ -47,7 +47,7 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
     public FilteredFilePOJOViewModel viewModel;
     private Context context;
     private LinearLayout toolbar_container;
-    private TextView title,video_number_tv;
+    private TextView title, video_number_tv;
     private PopupWindow listPopWindow;
     private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
     private List<FilePOJO> files_selected_for_delete;
@@ -100,7 +100,7 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
         toolbar_visible = true;
         handler = new Handler();
         viewpager = v.findViewById(R.id.activity_video_view_viewpager);
-        toolbar_container=v.findViewById(R.id.activity_video_toolbar_container);
+        toolbar_container = v.findViewById(R.id.activity_video_toolbar_container);
         title = v.findViewById(R.id.activity_video_name);
         ImageView overflow = v.findViewById(R.id.activity_video_overflow);
         overflow.setOnClickListener(new View.OnClickListener() {
@@ -110,7 +110,7 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
             }
         });
 
-        video_number_tv=v.findViewById(R.id.video_view_current_view_number);
+        video_number_tv = v.findViewById(R.id.video_view_current_view_number);
 
         listPopWindow = new PopupWindow(context);
         ListView listView = new ListView(context);
@@ -243,7 +243,7 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
                         if (activity instanceof VideoViewActivity) {
                             ((VideoViewActivity) activity).current_page_idx = 0;
                         }
-                        video_number_tv.setText("1/"+viewModel.video_list.size());
+                        video_number_tv.setText("1/" + viewModel.video_list.size());
                     }
                 }
             }
@@ -285,7 +285,7 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
                 if (activity instanceof VideoViewActivity) {
                     ((VideoViewActivity) activity).current_page_idx = p;
                 }
-                video_number_tv.setText(p+1+"/"+viewModel.video_list.size());
+                video_number_tv.setText(p + 1 + "/" + viewModel.video_list.size());
             }
 
             public void onPageScrollStateChanged(int p) {

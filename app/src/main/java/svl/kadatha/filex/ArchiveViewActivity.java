@@ -221,16 +221,16 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
         viewModel.isArchiveEntriesPopulated.observe(this, new Observer<AsyncTaskStatus>() {
             @Override
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
-                if(asyncTaskStatus==AsyncTaskStatus.STARTED){
+                if (asyncTaskStatus == AsyncTaskStatus.STARTED) {
                     activity_progress_bar.setVisibility(View.VISIBLE);
-                } else if(asyncTaskStatus==AsyncTaskStatus.COMPLETED){
+                } else if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
                     activity_progress_bar.setVisibility(View.GONE);
                     ArrayList<String> files_selected_array = new ArrayList<>();
                     files_selected_array.add(ZIP_FILE.getAbsolutePath());
-                    ArchiveSetUpDialog archiveSetUpDialog = ArchiveSetUpDialog.getInstance(files_selected_array, viewModel.zip_entries_array,viewModel.base_path ,viewModel.fileObjectType, ArchiveSetUpDialog.ARCHIVE_ACTION_UNZIP);
+                    ArchiveSetUpDialog archiveSetUpDialog = ArchiveSetUpDialog.getInstance(files_selected_array, viewModel.zip_entries_array, viewModel.base_path, viewModel.fileObjectType, ArchiveSetUpDialog.ARCHIVE_ACTION_UNZIP);
                     archiveSetUpDialog.show(fm, null);
                     ArchiveViewFragment archiveViewFragment = (ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);
-                    if(archiveViewFragment!=null){
+                    if (archiveViewFragment != null) {
                         archiveViewFragment.clearSelectionAndNotifyDataSetChanged();
                     }
                     viewModel.isArchiveEntriesPopulated.setValue(AsyncTaskStatus.NOT_YET_STARTED);
@@ -631,7 +631,17 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
         }
     }
 
-    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    public void action_mode_finish(ArchiveViewFragment archiveViewFragment, String archive_view_fragment_tag) {
+        if (archiveViewFragment.adapter != null) {
+            archiveViewFragment.adapter.getFilter().filter(null);
+        }
+        DeselectAllAndAdjustToolbars(archiveViewFragment, archive_view_fragment_tag);
+        imm.hideSoftInputFromWindow(search_edittext.getWindowToken(), 0);
+        search_edittext.setText("");
+        search_edittext.clearFocus();
+        search_toolbar.setVisibility(View.GONE); //no need to call adapter.filter with null to refill filepjos as calling datasetchanged replenished archiveViewFragment.adapter.filepojo listUri
+        search_toolbar_visible = false;
+    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -671,18 +681,6 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
             }
         }
     });
-
-    public void action_mode_finish(ArchiveViewFragment archiveViewFragment, String archive_view_fragment_tag) {
-        if (archiveViewFragment.adapter != null) {
-            archiveViewFragment.adapter.getFilter().filter(null);
-        }
-        DeselectAllAndAdjustToolbars(archiveViewFragment, archive_view_fragment_tag);
-        imm.hideSoftInputFromWindow(search_edittext.getWindowToken(), 0);
-        search_edittext.setText("");
-        search_edittext.clearFocus();
-        search_toolbar.setVisibility(View.GONE); //no need to call adapter.filter with null to refill filepjos as calling datasetchanged replenished archiveViewFragment.adapter.filepojo listUri
-        search_toolbar_visible = false;
-    }
 
     public static class ArchiveDetailRecyclerViewAdapter extends RecyclerView.Adapter<ArchiveDetailRecyclerViewAdapter.ViewHolder> implements Filterable {
         private final Context context;
@@ -750,7 +748,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                         }
                     }
 
-                    archiveViewFragment.file_list_size=archiveViewFragment.filePOJO_list.size();
+                    archiveViewFragment.file_list_size = archiveViewFragment.filePOJO_list.size();
                     if (!archiveViewFragment.viewModel.mselecteditems.isEmpty()) {
                         archiveViewFragment.adapter.deselectAll();
                     } else {
@@ -762,7 +760,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                     }
 
                     if (archiveViewFragment.detailFragmentListener != null) {
-                        archiveViewFragment.detailFragmentListener.setFileNumberView(archiveViewFragment.viewModel.mselecteditems.size()+"/" + archiveViewFragment.file_list_size);
+                        archiveViewFragment.detailFragmentListener.setFileNumberView(archiveViewFragment.viewModel.mselecteditems.size() + "/" + archiveViewFragment.file_list_size);
                     }
                 }
             };
@@ -962,7 +960,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                     Global.print(context, getString(R.string.please_wait));
                     return;
                 }
-                DeselectAllAndAdjustToolbars(archiveViewFragment,archiveViewFragment.fileclickselected);
+                DeselectAllAndAdjustToolbars(archiveViewFragment, archiveViewFragment.fileclickselected);
                 fm.beginTransaction().detach(archiveViewFragment).commit();
                 fm.beginTransaction().attach(archiveViewFragment).commit();
                 Global.WORKOUT_AVAILABLE_SPACE();

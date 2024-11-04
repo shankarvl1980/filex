@@ -933,7 +933,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                     }
 
                     if (storageAnalyserFragment.detailFragmentListener != null) {
-                        storageAnalyserFragment.detailFragmentListener.setFileNumberView(storageAnalyserFragment.viewModel.mselecteditems.size()+"/" + storageAnalyserFragment.file_list_size);
+                        storageAnalyserFragment.detailFragmentListener.setFileNumberView(storageAnalyserFragment.viewModel.mselecteditems.size() + "/" + storageAnalyserFragment.file_list_size);
                     }
                 }
             };

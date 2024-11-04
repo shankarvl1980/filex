@@ -138,6 +138,8 @@ public class Global {
     static public int ACTION_BAR_HEIGHT_IN_DP;
     static public boolean DETAILED_SEARCH_LIBRARY;
     public static FileObjectType USB_CACHED_FILE_OBJECT;
+    //static int DRAWER_WIDTH;
+    public static int ARCHIVE_CACHE_DIR_LENGTH;
     static String INTERNAL_PRIMARY_STORAGE_PATH = "";
     static String USB_STORAGE_PATH;
     static File USB_CACHE_DIR;
@@ -148,8 +150,6 @@ public class Global {
     static File SMB_CACHE_DIR;
     static File ROOT_CACHE_DIR;
     static File APK_ICON_DIR;
-    //static int DRAWER_WIDTH;
-    public static int ARCHIVE_CACHE_DIR_LENGTH;
     static List<UriPOJO> URI_PERMISSION_LIST = new ArrayList<>();
     static int ORIENTATION;
     static int SCREEN_WIDTH, SCREEN_HEIGHT, DIALOG_WIDTH, DIALOG_HEIGHT, WIDTH;

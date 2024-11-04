@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:background="?attr/dialog_background"
-            android:padding="@dimen/ten_dp"
+            android:paddingHorizontal="@dimen/ten_dp"
 
             android:textSize="17sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -59,6 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/ten_dp"
+            android:layout_marginTop="@dimen/ten_dp"
             android:layout_marginEnd="@dimen/ten_dp"
             android:background="?attr/dialog_background"
             android:text="@string/apply_to_all_similarly_named_files"
