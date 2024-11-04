@@ -50,9 +50,7 @@ public class DeleteFtpAlertDialog extends DialogFragment {
             request_code = bundle.getString("request_code");
             ftp_display = bundle.getString("ftp_display");
             ftp_selected_size = bundle.getInt("ftp_selected_size");
-
         }
-
     }
 
     @Override
@@ -86,7 +84,6 @@ public class DeleteFtpAlertDialog extends DialogFragment {
                 getParentFragmentManager().setFragmentResult(request_code, null);
                 dismissAllowingStateLoss();
             }
-
         });
 
         cancelbutton.setOnClickListener(new View.OnClickListener() {
@@ -94,8 +91,6 @@ public class DeleteFtpAlertDialog extends DialogFragment {
                 dismissAllowingStateLoss();
             }
         });
-
-
         return v;
     }
 

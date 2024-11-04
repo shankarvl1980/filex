@@ -52,7 +52,6 @@ public class SaveFileConfirmationDialog extends DialogFragment {
         TextView dialog_heading_textview = v.findViewById(R.id.dialog_fragment_rename_delete_title);
         TextView dialog_message_textview = v.findViewById(R.id.dialog_fragment_rename_delete_message);
 
-
         EditText new_file_name_edittext = v.findViewById(R.id.dialog_fragment_rename_delete_newfilename);
         TextView no_files_textview = v.findViewById(R.id.dialog_fragment_rename_delete_no_of_files);
         TextView size_files_textview = v.findViewById(R.id.dialog_fragment_rename_delete_total_size);

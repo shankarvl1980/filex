@@ -105,7 +105,6 @@ public class DeleteFileAlertDialog extends DialogFragment {
 
         ViewModelFileCount.ViewModelFileCountFactory factory = new ViewModelFileCount.ViewModelFileCountFactory(context, files_selected_array, sourceFileObjectType);
         ViewModelFileCount viewModel = new ViewModelProvider(this, factory).get(ViewModelFileCount.class);
-        //viewModel.countFile(source_folder,sourceFileObjectType,files_selected_array,size,true);
 
         viewModel.total_no_of_files.observe(this, new Observer<Integer>() {
             @Override
