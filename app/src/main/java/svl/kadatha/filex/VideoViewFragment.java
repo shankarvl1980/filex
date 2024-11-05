@@ -311,15 +311,23 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
     }
 
     public void showBottomControls() {
-        bottom_butt.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
-        bottom_butt_visible = true;
-        refresh_play_pause_group.setVisibility(View.VISIBLE);
+        if (bottom_butt != null && isAdded()) {
+            bottom_butt.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
+            bottom_butt_visible = true;
+            if (refresh_play_pause_group != null) {
+                refresh_play_pause_group.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     public void hideBottomControls() {
-        bottom_butt.animate().translationY(toolbar_height).setInterpolator(new DecelerateInterpolator(1));
-        bottom_butt_visible = false;
-        refresh_play_pause_group.setVisibility(View.INVISIBLE);
+        if (bottom_butt != null && isAdded()) {
+            bottom_butt.animate().translationY(toolbar_height).setInterpolator(new DecelerateInterpolator(1));
+            bottom_butt_visible = false;
+            if (refresh_play_pause_group != null) {
+                refresh_play_pause_group.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 
     private void update_position() {
@@ -392,7 +400,9 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
 
             if (viewModel.prepared && viewModel.play_mode) {
                 mp_pause();
-                play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.video_play_icon));
+                if (play_pause_img_button != null && isAdded()) {
+                    play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.video_play_icon));
+                }
             }
             viewModel.position = mp.getCurrentPosition();
             Bundle bundle = getArguments();

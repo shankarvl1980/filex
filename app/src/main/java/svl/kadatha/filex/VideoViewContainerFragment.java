@@ -150,7 +150,7 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
                         FileIntentDispatch.sendUri(context, uri_list);
                         break;
                     case 2:
-                        Uri copy_uri = null;
+                        Uri copy_uri;
                         if (viewModel.fromThirdPartyApp) {
                             copy_uri = data;
                         } else {
@@ -271,6 +271,9 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
                         }
 
                         adapter.notifyDataSetChanged();
+                        if (activity instanceof VideoViewActivity) {
+                            video_number_tv.setText(((VideoViewActivity) activity).current_page_idx + 1 + "/" + viewModel.video_list.size());
+                        }
                         if (viewModel.video_list.isEmpty()) {
                             getActivity().finish();
                         }
@@ -372,9 +375,11 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
     }
 
     private VideoViewFragment getCurrentVideoViewFragment() {
-        if (viewpager != null && adapter != null) {
-            int currentItem = viewpager.getCurrentItem();
-            return (VideoViewFragment) adapter.instantiateItem(viewpager, currentItem);
+        if (adapter != null) {
+            VideoViewFragment fragment = adapter.getCurrentFragment();
+            if (fragment != null && fragment.isAdded() && fragment.getView() != null) {
+                return fragment;
+            }
         }
         return null;
     }
@@ -389,7 +394,7 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
 
     private class VideoViewPagerAdapter extends FragmentStatePagerAdapter {
         final IndexedLinkedHashMap<FilePOJO, Integer> list;
-
+        private VideoViewFragment currentFragment;
         VideoViewPagerAdapter(FragmentManager fm, IndexedLinkedHashMap<FilePOJO, Integer> l) {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
             this.list = l;
@@ -427,6 +432,17 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
             return fragment;
         }
 
+        @Override
+        public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+            if (getCurrentFragment() != object) {
+                currentFragment = (VideoViewFragment) object;
+            }
+            super.setPrimaryItem(container, position, object);
+        }
+
+        public VideoViewFragment getCurrentFragment() {
+            return currentFragment;
+        }
 
         @Override
         public int getCount() {
