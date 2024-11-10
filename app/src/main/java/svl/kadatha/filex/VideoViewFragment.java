@@ -99,7 +99,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(this).get(VideoViewFragmentViewModel.class);
-
         Bundle bundle = getArguments();
         fileObjectType = (FileObjectType) bundle.getSerializable(FileIntentDispatch.EXTRA_FILE_OBJECT_TYPE);
         fromThirdPartyApp = bundle.getBoolean("fromThirdPartyApp");
