@@ -160,6 +160,7 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
             }
         });
 
+
         ImageButton backward_img_button = v.findViewById(R.id.video_player_backward);
         backward_img_button.setOnTouchListener(new RepeatListener(400, 101, new View.OnClickListener() {
             @Override

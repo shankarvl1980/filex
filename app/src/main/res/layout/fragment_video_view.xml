@@ -37,14 +37,15 @@
         android:src="@drawable/video_refresh_icon"
         app:layout_constraintBottom_toTopOf="@id/video_view_bottom_butt"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone"/>
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/video_play_refresh_play_pause_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="visible"
-        app:constraint_referenced_ids="video_play_refresh_btn,video_play_pause_img_btn" />
+        app:constraint_referenced_ids="video_play_pause_img_btn" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/video_view_bottom_butt"
