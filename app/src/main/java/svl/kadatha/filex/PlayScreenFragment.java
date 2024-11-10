@@ -303,6 +303,19 @@ public class PlayScreenFragment extends Fragment {
 
         enable_disable_previous_next_btn();
         album_art_imageview = v.findViewById(R.id.fragment_current_play_album_art);
+        album_art_imageview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (audioPlayViewModel.play_screen_expanded_view) {
+                    audioPlayViewModel.play_screen_expanded_view = false;
+                } else {
+                    audioPlayViewModel.play_screen_expanded_view = true;
+                }
+                if (activity instanceof AudioPlayerActivity) {
+                    ((AudioPlayerActivity) activity).instantiatePlayScreenFragment(audioPlayViewModel.play_screen_expanded_view);
+                }
+            }
+        });
         total_time_tv = v.findViewById(R.id.audio_player_total_time);
         current_progress_tv = v.findViewById(R.id.audio_player_current_progress);
         seekbar = v.findViewById(R.id.audio_player_seekbar);

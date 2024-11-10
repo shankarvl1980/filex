@@ -427,7 +427,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
             }
         }
 
-        if (size == storageAnalyserFragment.file_list_size) {
+        if (size == storageAnalyserFragment.file_list_size && size != 0) {
             all_select.setImageResource(R.drawable.deselect_icon);
         }
     }
