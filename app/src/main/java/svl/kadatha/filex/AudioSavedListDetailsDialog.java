@@ -234,7 +234,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
                         toolbar_visible = true;
                         scroll_distance = 0;
                     }
-
                 }
 
                 if ((toolbar_visible && dy > 0) || (!toolbar_visible && dy < 0)) {
@@ -303,7 +302,6 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
         listPopWindow.setFocusable(true);
         listPopWindow.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.list_popup_background));
         listView.setOnItemClickListener(new ListPopupWindowClickListener());
-
 
         audioListViewModel = new ViewModelProvider(this).get(AudioListViewModel.class);
         audioListViewModel.fetch_saved_audio_list(audio_list_clicked_name, whether_saved_play_list);
@@ -393,6 +391,11 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
             window.setLayout(Global.DIALOG_WIDTH, Global.DIALOG_HEIGHT);
         }
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        int size = audioListViewModel.audio_pojo_selected_items.size();
+        if (size == audio_list_size && size != 0) {
+            all_select_btn.setImageResource(R.drawable.deselect_icon);
+        }
     }
 
     @Override
@@ -681,10 +684,14 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
                         scroll_distance = 0;
                     }
 
-                    if (size == 0) {
-                        bottom_toolbar.animate().translationY(bottom_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
-                        toolbar_visible = false;
-                        scroll_distance = 0;
+                    if (size == audio_list_size) {
+                        all_select_btn.setImageResource(R.drawable.deselect_icon);
+                    } else {
+                        if (size == 0) {
+                            bottom_toolbar.animate().translationY(bottom_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
+                            toolbar_visible = false;
+                            scroll_distance = 0;
+                        }
                         all_select_btn.setImageResource(R.drawable.select_icon);
                     }
                 } else {

@@ -344,6 +344,11 @@ public class AllAudioListFragment extends Fragment {
         if (activity instanceof AudioPlayerActivity) {
             ((AudioPlayerActivity) activity).addSearchFilterListener(searchFilterListener);
         }
+
+        int size = audioListViewModel.audio_pojo_selected_items.size();
+        if (size == audio_list_size && size != 0) {
+            all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.deselect_icon, 0, 0);
+        }
     }
 
     @Override
@@ -685,7 +690,6 @@ public class AllAudioListFragment extends Fragment {
                     if (size == audio_list_size) {
                         all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.deselect_icon, 0, 0);
                     }
-
                 }
                 file_number_view.setText(size + "/" + audio_list_size);
             }

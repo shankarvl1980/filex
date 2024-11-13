@@ -242,6 +242,11 @@ public class AlbumListFragment extends Fragment {
         if (activity instanceof AudioPlayerActivity) {
             ((AudioPlayerActivity) activity).addSearchFilterListener(searchFilterListener);
         }
+
+        int size = audioListViewModel.album_pojo_selected_items.size();
+        if (size == album_list_size && size != 0) {
+            all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.deselect_icon, 0, 0);
+        }
     }
 
     @Override
@@ -643,11 +648,15 @@ public class AlbumListFragment extends Fragment {
                         enable_disable_buttons(true);
                     }
 
-
-                    if (size == 0) {
-                        enable_disable_buttons(false);
+                    if (size == album_list_size) {
+                        all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.deselect_icon, 0, 0);
+                    } else {
+                        if (size == 0) {
+                            enable_disable_buttons(false);
+                        }
                         all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.select_icon, 0, 0);
                     }
+
                 } else {
                     audioListViewModel.album_pojo_selected_items.put(pos, album_list.get(pos));
                     v.setSelected(true);
@@ -662,7 +671,6 @@ public class AlbumListFragment extends Fragment {
                     if (size == album_list_size) {
                         all_select_btn.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.deselect_icon, 0, 0);
                     }
-
                 }
                 file_number_view.setText(size + "/" + album_list_size);
             }

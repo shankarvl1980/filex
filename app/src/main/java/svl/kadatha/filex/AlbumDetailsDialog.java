@@ -448,6 +448,10 @@ public class AlbumDetailsDialog extends DialogFragment {
         }
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
+        int size = audioListViewModel.audio_pojo_selected_items.size();
+        if (size == audio_list_size && size != 0) {
+            all_select_btn.setImageResource(R.drawable.deselect_icon);
+        }
     }
 
     @Override
@@ -619,10 +623,14 @@ public class AlbumDetailsDialog extends DialogFragment {
                         scroll_distance = 0;
                     }
 
-                    if (size == 0) {
-                        bottom_toolbar.animate().translationY(bottom_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
-                        toolbar_visible = false;
-                        scroll_distance = 0;
+                    if (size == audio_list_size) {
+                        all_select_btn.setImageResource(R.drawable.deselect_icon);
+                    } else {
+                        if (size == 0) {
+                            bottom_toolbar.animate().translationY(bottom_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
+                            toolbar_visible = false;
+                            scroll_distance = 0;
+                        }
                         all_select_btn.setImageResource(R.drawable.select_icon);
                     }
                 } else {
