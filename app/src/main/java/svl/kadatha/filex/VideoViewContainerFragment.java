@@ -58,7 +58,6 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
     private VideoViewPagerAdapter adapter;
     private int floating_button_height;
     private FloatingActionButton floating_back_button;
-    private boolean toolbar_visible;
     private AppCompatActivity activity;
     private ViewPager viewpager;
 
@@ -97,7 +96,6 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         View v;
         v = inflater.inflate(R.layout.fragment_video_view_container, container, false);
-        toolbar_visible = true;
         handler = new Handler();
         viewpager = v.findViewById(R.id.activity_video_view_viewpager);
         toolbar_container = v.findViewById(R.id.activity_video_toolbar_container);
@@ -198,7 +196,6 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
                 handler.removeCallbacks(runnable);
                 handler.postDelayed(runnable, Global.LIST_POPUP_WINDOW_DISAPPEARANCE_DELAY);
             }
-
         });
         progress_bar = v.findViewById(R.id.activity_video_progressbar);
         floating_back_button = v.findViewById(R.id.floating_button_video_fragment);
@@ -348,8 +345,6 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
     public void showControls(boolean autoHide) {
         toolbar_container.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
         floating_back_button.animate().translationY(0).setInterpolator(new AccelerateInterpolator(1));
-        toolbar_visible = true;
-        handler.removeCallbacks(runnable);
 
         VideoViewFragment currentFragment = getCurrentVideoViewFragment();
         if (currentFragment != null) {
@@ -365,7 +360,6 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
     public void hideControls() {
         toolbar_container.animate().translationY(-Global.ACTION_BAR_HEIGHT).setInterpolator(new DecelerateInterpolator(1));
         floating_back_button.animate().translationY(floating_button_height).setInterpolator(new DecelerateInterpolator(1));
-        toolbar_visible = false;
         handler.removeCallbacks(runnable);
 
         VideoViewFragment currentFragment = getCurrentVideoViewFragment();
