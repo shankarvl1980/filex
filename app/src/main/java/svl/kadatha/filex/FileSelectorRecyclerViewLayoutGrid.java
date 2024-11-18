@@ -239,5 +239,4 @@ public class FileSelectorRecyclerViewLayoutGrid extends RecyclerViewLayout {
     void setWhetherExternal(FilePOJO filePOJO) {
 
     }
-
 }

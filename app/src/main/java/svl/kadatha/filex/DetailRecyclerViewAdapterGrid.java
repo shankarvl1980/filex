@@ -12,7 +12,6 @@ public class DetailRecyclerViewAdapterGrid extends DetailRecyclerViewAdapter {
         super(context, df);
         this.context = context;
         this.show_file_path = show_file_path;
-
     }
 
     @Override

@@ -138,14 +138,12 @@ public class RecyclerViewLayoutGrid extends RecyclerViewLayout {
         int grid_width = (itemWidth - (Global.RECYCLERVIEW_ITEM_SPACING * 2)) / Global.GRID_COUNT; // Deducting padding
         x += (grid_width - imageview_dimension) / 2;
 
-        // Lay out the file_select_indicator
         View v = file_select_indicator;
         int measuredHeight = v.getMeasuredHeight();
         int measuredWidth = v.getMeasuredWidth();
         int a = grid_width - ((grid_width - imageview_dimension) / 2) - Global.SELECTOR_ICON_DIMENSION;
         v.layout(a, y, a + measuredWidth, y + measuredHeight);
 
-        // Lay out the fileimageview first
         v = fileimageview;
         int fileMeasuredHeight = v.getMeasuredHeight();
         int fileMeasuredWidth = v.getMeasuredWidth();
@@ -162,7 +160,7 @@ public class RecyclerViewLayoutGrid extends RecyclerViewLayout {
 
         y += fileMeasuredHeight;
 
-        // Lay out the filenametextview
+
         x = Global.FOUR_DP;
         v = filenametextview;
         measuredHeight = v.getMeasuredHeight();
@@ -170,7 +168,7 @@ public class RecyclerViewLayoutGrid extends RecyclerViewLayout {
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
         y += measuredHeight;
 
-        // Lay out the filesubfilecounttextview
+
         v = filesubfilecounttextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
@@ -246,5 +244,4 @@ public class RecyclerViewLayoutGrid extends RecyclerViewLayout {
     void setWhetherExternal(FilePOJO filePOJO) {
 
     }
-
 }

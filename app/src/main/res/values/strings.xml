@@ -510,5 +510,6 @@
     <string name="replace">Replace</string>
     <string name="skip">Skip</string>
     <string name="enter_a_proper_port_number">Enter a proper port number</string>
+    <string name="select_a_file">Select a file</string>
 
 </resources>

@@ -135,9 +135,8 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
 
     @Override
     protected void onLayout(boolean p1, int l, int t, int r, int b) {
-        int x = 0, y = Global.RECYCLERVIEW_ITEM_SPACING;
-
-        x = Global.FOURTEEN_DP;
+        int x = Global.FOURTEEN_DP;
+        int y = Global.RECYCLERVIEW_ITEM_SPACING;
         int margin_offset_icon, max_height_second_line;
 
         int d = (itemHeight - imageview_dimension) / 2;
@@ -185,7 +184,7 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
         v = filemoddatetextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
-        x = itemWidth - measuredWidth - Global.TEN_DP - Global.FOUR_DP;//Math.max(x,itemWidth/2);
+        x = itemWidth - measuredWidth - Global.TEN_DP - Global.FOUR_DP;
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
         max_height_second_line = Math.max(max_height_second_line, measuredHeight);
 
@@ -243,7 +242,7 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
         filenametextview.setText(filePOJO.getName());
         filesubfilecounttextview.setText(filePOJO.getSize());
         filemoddatetextview.setText(filePOJO.getDate());
-        filepathtextview.setText(context.getString(R.string.path) + " " + filePOJO.getPath());
+        filepathtextview.setText(filePOJO.getPath());
     }
 
     public void set_selected(boolean item_selected) {
@@ -259,5 +258,4 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
     void setWhetherExternal(FilePOJO filePOJO) {
 
     }
-
 }

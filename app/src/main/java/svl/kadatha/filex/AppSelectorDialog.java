@@ -213,7 +213,6 @@ public class AppSelectorDialog extends DialogFragment {
             AvailableAppPOJO appPOJO = appPOJOList.get(p2);
             GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath() + File.separator + appPOJO.app_package_name + ".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(p1.app_icon_image_view);
             p1.app_name_text_view.setText(appPOJO.app_name);
-
         }
 
         @Override

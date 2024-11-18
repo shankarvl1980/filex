@@ -131,6 +131,7 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout {
         usedWidth += filesubfilecounttextview.getMeasuredWidth() + Global.TEN_DP;
 
         measureChildWithMargins(filemoddatetextview, widthMeasureSpec, usedWidth + Global.TEN_DP, heightMeasureSpec, 0);
+
         maxHeight += filemoddatetextview.getMeasuredHeight();
 
         measureChildWithMargins(item_separator, widthMeasureSpec, 0, heightMeasureSpec, 0);

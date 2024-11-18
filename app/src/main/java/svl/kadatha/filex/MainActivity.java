@@ -2018,7 +2018,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     Global.print(context, getString(R.string.please_wait));
                     return;
                 }
-                if (df.fileObjectType != FileObjectType.SEARCH_LIBRARY_TYPE) //refresh/remove only file objec type is not search/library type
+                if (df.fileObjectType != FileObjectType.SEARCH_LIBRARY_TYPE) //refresh/remove only file object type is not search/library type
                 {
                     repositoryClass.hashmap_file_pojo.remove(df.fileObjectType + df.fileclickselected);
                     repositoryClass.hashmap_file_pojo_filtered.remove(df.fileObjectType + df.fileclickselected);

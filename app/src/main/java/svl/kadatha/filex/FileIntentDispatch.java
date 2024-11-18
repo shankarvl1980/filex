@@ -7,6 +7,7 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
@@ -52,9 +53,7 @@ class FileIntentDispatch {
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uri_list);
         intent.putExtra(Intent.EXTRA_SUBJECT, file_list.get(0).getName());
         intent.setType("*/*");
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         Intent chooser = Intent.createChooser(intent, "Select app");
         if (intent.resolveActivity(context.getPackageManager()) != null) {
             context.startActivity(chooser);
@@ -67,9 +66,7 @@ class FileIntentDispatch {
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uri_list);
         intent.putExtra(Intent.EXTRA_SUBJECT, extra);
         intent.setType("*/*");
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         Intent chooser = Intent.createChooser(intent, "Select app");
         if (intent.resolveActivity(context.getPackageManager()) != null) {
             context.startActivity(chooser);
@@ -149,8 +146,8 @@ class FileIntentDispatch {
         appSelectorDialog.show(((AppCompatActivity) context).getSupportFragmentManager(), "");
     }
 
-    public static String SET_INTENT_FOR_VIEW(Intent intent, String mime_type, String file_path, String file_extn, FileObjectType fileObjectType,
-                                             boolean fromArchive, Uri uri) {
+    public static String SET_INTENT_FOR_VIEW(Intent intent, String mime_type, String file_path,@NonNull String file_extn, FileObjectType fileObjectType,
+                                             boolean fromArchive, @NonNull Uri uri) {
         if (mime_type == null || mime_type.isEmpty()) {
             for (MimePOJO mimePOJO : Global.MIME_POJOS) {
                 if (file_extn.matches(mimePOJO.getRegex())) {
@@ -164,8 +161,7 @@ class FileIntentDispatch {
         intent.putExtra(EXTRA_FILE_OBJECT_TYPE, fileObjectType != null ? fileObjectType.toString() : null);
         intent.putExtra(EXTRA_FILE_PATH, file_path);
         intent.putExtra(EXTRA_FROM_ARCHIVE, fromArchive);
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         return mime_type;
     }
 }

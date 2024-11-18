@@ -50,11 +50,13 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
     private FileModifyObserver fileModifyObserver;
     private Uri tree_uri;
     private String tree_uri_path = "";
+    private int action_sought_request_code;
 
-    public static FileSelectorFragment getInstance(FileObjectType fileObjectType) {
+    public static FileSelectorFragment getInstance(FileObjectType fileObjectType,int action_sought_request_code) {
         FileSelectorFragment fileSelectorFragment = new FileSelectorFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable("fileObjectType", fileObjectType);
+        bundle.putInt("action_sought_request_code", action_sought_request_code);
         fileSelectorFragment.setArguments(bundle);
         return fileSelectorFragment;
     }
@@ -73,7 +75,6 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
     public void onDetach() {
         super.onDetach();
         detailFragmentListener = null;
-
     }
 
     @Override
@@ -86,6 +87,7 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
         Bundle bundle = getArguments();
         if (bundle != null) {
             fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
+            action_sought_request_code=bundle.getInt("action_sought_request_code",0);
         }
 
         if (fileObjectType == FileObjectType.ROOT_TYPE) {
@@ -212,20 +214,19 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
         totalFilePOJO_list_Size = totalFilePOJO_list.size();
         file_list_size = filePOJO_list.size();
         if (detailFragmentListener != null) {
-            detailFragmentListener.setFileNumberView("" + file_list_size);
+            detailFragmentListener.setFileNumberView(viewModel.mselecteditems.size() + "/" + file_list_size);
         }
 
 
         Collections.sort(filePOJO_list, FileComparator.FilePOJOComparate(FileSelectorActivity.SORT, false));
         if (FileSelectorActivity.FILE_GRID_LAYOUT) {
-            adapter = new FileSelectorActivity.FileSelectorAdapterGrid(context, this);
+            adapter = new FileSelectorActivity.FileSelectorAdapterGrid(context, this,action_sought_request_code);
         } else {
-            adapter = new FileSelectorActivity.FileSelectorAdapterList(context, this);
+            adapter = new FileSelectorActivity.FileSelectorAdapterList(context, this,action_sought_request_code);
         }
 
         set_adapter();
         progress_bar.setVisibility(View.GONE);
-
     }
 
 
@@ -261,6 +262,7 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
     }
 
     public void clearSelectionAndNotifyDataSetChanged() {
+        viewModel.mselecteditems = new IndexedLinkedHashMap<>();
         if (adapter != null) {
             modification_observed = false;
             local_activity_delete = false;
@@ -268,7 +270,7 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
             file_list_size = filePOJO_list.size();
 
             if (detailFragmentListener != null) {
-                detailFragmentListener.setFileNumberView("" + file_list_size);
+                detailFragmentListener.setFileNumberView(viewModel.mselecteditems.size() + "/" + file_list_size);
             }
 
             Collections.sort(filePOJO_list, FileComparator.FilePOJOComparate(FileSelectorActivity.SORT, false));

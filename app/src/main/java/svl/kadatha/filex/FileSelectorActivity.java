@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -44,10 +45,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -98,6 +100,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     private RepositoryClass repositoryClass;
     private NetworkStateReceiver networkStateReceiver;
     private ImageButton parent_dir_btn;
+    private FileSelectorActivityViewModel fileSelectorActivityViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -298,9 +301,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
         if (action_sought_request_code == PICK_FILE_REQUEST_CODE) {
             add_folder_btn.setVisibility(View.GONE);
-            ok_btn.setVisibility(View.GONE);
         }
-
 
         search_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -355,7 +356,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         ok_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
-                if (fileSelectorFragment.progress_bar.getVisibility() == View.VISIBLE) {
+                if (fileSelectorFragment == null || fileSelectorFragment.progress_bar.getVisibility() == View.VISIBLE) {
                     Global.print(context, getString(R.string.please_wait));
                     return;
                 }
@@ -370,6 +371,8 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                             intent.putExtra("destFileObjectType", fileSelectorFragment.fileObjectType);
                             setResult(Activity.RESULT_OK, intent);
                         }
+                        setSearchBarVisibility(false);
+                        finish();
                         break;
                     case MOVE_COPY_REQUEST_CODE:
                         if (fileSelectorFragment.fileclickselected == null) {
@@ -381,19 +384,56 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                             intent.putExtra("bundle", bundle);
                             setResult(Activity.RESULT_OK, intent);
                         }
+                        setSearchBarVisibility(false);
+                        finish();
+                        break;
+                    case PICK_FILE_REQUEST_CODE:
+                    case FILE_PATH_REQUEST_CODE:
+                        if (fileSelectorFragment.viewModel.mselecteditems.isEmpty()) {
+                            Global.print(context, getString(R.string.select_a_file));
+                            return;
+                        }
+
+                        AppCompatActivity activity = (AppCompatActivity) context;
+                        if (!(activity instanceof FileSelectorActivity)) {
+                            return;
+                        }
+
+                        if (fileSelectorFragment.fileObjectType != FileObjectType.FILE_TYPE) {
+                            Global.print(context, context.getString(R.string.not_supported));
+                            return;
+                        }
+
+                        if (((FileSelectorActivity) activity).action_sought_request_code == FileSelectorActivity.PICK_FILE_REQUEST_CODE) {
+                            if (Global.whether_file_cached(fileSelectorFragment.fileObjectType)) {
+                                Global.print(context, context.getString(R.string.not_supported));
+                            } else {
+                                fileSelectorActivityViewModel.populateUriAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+                                fileSelectorFragment.progress_bar.setVisibility(View.VISIBLE);
+                                fileSelectorActivityViewModel.populateUri(context, fileSelectorFragment);
+                            }
+                        } else if (((FileSelectorActivity) activity).action_sought_request_code == FileSelectorActivity.FILE_PATH_REQUEST_CODE) {
+                            Intent intent = new Intent();
+                            intent.putExtra("filepathclickselected", fileSelectorFragment.viewModel.mselecteditems.getValueAtIndex(0));
+                            intent.putExtra("destFileObjectType", fileSelectorFragment.fileObjectType);
+                            setResult(Activity.RESULT_OK, intent);
+                            setSearchBarVisibility(false);
+                            finish();
+                        }
                         break;
                     default:
                         setResult(Activity.RESULT_CANCELED);
+                        setSearchBarVisibility(false);
+                        finish();
                         break;
                 }
-                setSearchBarVisibility(false);
-                finish();
             }
         });
 
 
         cancel_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                setResult(Activity.RESULT_CANCELED);
                 finish();
             }
         });
@@ -402,6 +442,47 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             @Override
             public void handleOnBackPressed() {
                 onbackpressed(true);
+            }
+        });
+
+        fileSelectorActivityViewModel = new ViewModelProvider(this).get(FileSelectorActivityViewModel.class);
+        fileSelectorActivityViewModel.populateUriAsyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
+            @Override
+            public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+                FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
+                if (asyncTaskStatus == AsyncTaskStatus.STARTED && fileSelectorFragment != null) {
+                    fileSelectorFragment.progress_bar.setVisibility(View.VISIBLE);
+                } else if (asyncTaskStatus == AsyncTaskStatus.COMPLETED && fileSelectorFragment != null) {
+                    fileSelectorFragment.progress_bar.setVisibility(View.GONE);
+                    if (action_sought_request_code == FileSelectorActivity.PICK_FILE_REQUEST_CODE) {
+                        String action = intent.getAction();
+                        Intent resultIntent;
+                        if (action != null && action.equals(Intent.ACTION_GET_CONTENT)) {
+                            resultIntent = new Intent();
+                            resultIntent.setClipData(fileSelectorActivityViewModel.clipData);
+                        } else if (action != null && action.equals(Intent.ACTION_SEND_MULTIPLE)) {
+                            resultIntent = new Intent();
+                            resultIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
+                            resultIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, fileSelectorActivityViewModel.uri_list);
+                            resultIntent.setType("*/*");
+                        } else if (action != null && action.equals(Intent.ACTION_SEND)) {
+                            Uri uri = fileSelectorActivityViewModel.uri_list.get(0);
+                            resultIntent = new Intent();
+                            resultIntent.setAction(Intent.ACTION_SEND);
+                            resultIntent.setType("*/*");
+                            resultIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                        } else {
+                            Uri uri = fileSelectorActivityViewModel.uri_list.get(0);
+                            resultIntent = new Intent();
+                            resultIntent.setAction(Intent.ACTION_SEND);
+                            resultIntent.setDataAndType(uri, "*/*");
+                        }
+                        resultIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        setResult(Activity.RESULT_OK, resultIntent);
+                        setSearchBarVisibility(false);
+                        finish();
+                    }
+                }
             }
         });
     }
@@ -676,11 +757,10 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
 
         if (!(fileObjectType + file_path).equals(existingFilePOJOkey)) {
-            FileSelectorFragment ff = FileSelectorFragment.getInstance(fileObjectType);
+            FileSelectorFragment ff = FileSelectorFragment.getInstance(fileObjectType, action_sought_request_code);
             fm.beginTransaction().replace(R.id.file_selector_container, ff, file_path).addToBackStack(file_path)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
         }
-
     }
 
     @Override
@@ -793,10 +873,12 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     public abstract static class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapter.ViewHolder> implements Filterable {
         final Context context;
         final FileSelectorFragment fileSelectorFragment;
+        boolean multipleSelect;
 
-        FileSelectorAdapter(Context context, FileSelectorFragment fileSelectorFragment) {
+        FileSelectorAdapter(Context context, FileSelectorFragment fileSelectorFragment, boolean multipleSelect) {
             this.context = context;
             this.fileSelectorFragment = fileSelectorFragment;
+            this.multipleSelect = multipleSelect;
             if (fileSelectorFragment != null) {
                 if (fileSelectorFragment.fileObjectType == FileObjectType.FILE_TYPE) {
                     File f = new File(fileSelectorFragment.fileclickselected);
@@ -823,7 +905,9 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         @Override
         public void onBindViewHolder(final FileSelectorAdapter.ViewHolder p1, int p2) {
             FilePOJO file = fileSelectorFragment.filePOJO_list.get(p2);
-            p1.v.setData(file, false);
+            boolean selected = fileSelectorFragment.viewModel.mselecteditems.containsKey(p2);
+            p1.v.setData(file, selected);
+            p1.v.setSelected(selected);
         }
 
         @Override
@@ -854,81 +938,88 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                         }
                     }
 
-                    int t = fileSelectorFragment.filePOJO_list.size();
+                    fileSelectorFragment.file_list_size = fileSelectorFragment.filePOJO_list.size();
                     notifyDataSetChanged();
-                    if (t > 0) {
+                    if (fileSelectorFragment.file_list_size > 0) {
                         fileSelectorFragment.recycler_view.setVisibility(View.VISIBLE);
                         fileSelectorFragment.folder_empty_textview.setVisibility(View.GONE);
                     }
 
                     if (fileSelectorFragment.detailFragmentListener != null) {
-                        fileSelectorFragment.detailFragmentListener.setFileNumberView("" + t);
+                        fileSelectorFragment.detailFragmentListener.setFileNumberView(fileSelectorFragment.viewModel.mselecteditems.size() + "/" + fileSelectorFragment.file_list_size);
                     }
                 }
             };
         }
 
-        class ViewHolder extends RecyclerView.ViewHolder {
+        class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, AdapterView.OnLongClickListener {
             final RecyclerViewLayout v;
             FileObjectType fileObjectType;
+            int pos;
 
             ViewHolder(RecyclerViewLayout v) {
                 super(v);
                 this.v = v;
-                v.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        int pos = getBindingAdapterPosition();
-                        FilePOJO filePOJO = fileSelectorFragment.filePOJO_list.get(pos);
-                        fileObjectType = filePOJO.getFileObjectType();
-                        if (filePOJO.getIsDirectory()) {
-                            if (fileSelectorFragment.detailFragmentListener != null) {
-                                fileSelectorFragment.detailFragmentListener.createFragmentTransaction(filePOJO.getPath(), fileObjectType);
-                            }
-                            FileSelectorRecentDialog.ADD_FILE_POJO_TO_RECENT(filePOJO, FileSelectorRecentDialog.FILE_SELECTOR);
-                        } else {
-                            AppCompatActivity activity = (AppCompatActivity) context;
-                            if (!(activity instanceof FileSelectorActivity)) {
-                                return;
-                            }
-                            if (((FileSelectorActivity) activity).action_sought_request_code == FileSelectorActivity.PICK_FILE_REQUEST_CODE) {
-                                Uri uri = null;
-                                if (Global.whether_file_cached(fileObjectType)) {
-                                    Global.print(context, context.getString(R.string.not_supported));
-                                } else if (fileObjectType == FileObjectType.FILE_TYPE) {
-                                    File file = new File(filePOJO.getPath());
-                                    uri = FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", file);
-                                }
+                this.v.setOnClickListener(this);
+                this.v.setOnLongClickListener(this);
+            }
 
-                                if (uri != null) {
-                                    String file_extn = "";
-                                    String file_path = filePOJO.getPath();
-                                    int file_extn_idx = file_path.lastIndexOf(".");
-                                    if (file_extn_idx != -1) {
-                                        file_extn = file_path.substring(file_extn_idx + 1);
-                                    }
-                                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                                    FileIntentDispatch.SET_INTENT_FOR_VIEW(intent, null, filePOJO.getPath(), file_extn, filePOJO.getFileObjectType(), false, uri);
-                                    fileSelectorFragment.getActivity().setResult(Activity.RESULT_OK, intent);
-                                } else {
-                                    fileSelectorFragment.getActivity().setResult(Activity.RESULT_CANCELED);
-                                }
-                                fileSelectorFragment.getActivity().finish();
-                            } else if (((FileSelectorActivity) activity).action_sought_request_code == FileSelectorActivity.FILE_PATH_REQUEST_CODE) {
-                                if (fileObjectType != FileObjectType.FILE_TYPE) {
-                                    fileSelectorFragment.getActivity().setResult(Activity.RESULT_CANCELED);
-                                }
-                                Intent intent = new Intent();
-                                intent.putExtra("filepathclickselected", filePOJO.getPath());
-                                intent.putExtra("destFileObjectType", fileObjectType);
-                                fileSelectorFragment.getActivity().setResult(Activity.RESULT_OK, intent);
-                                fileSelectorFragment.getActivity().finish();
-                            }
+            @Override
+            public void onClick(View v) {
+                int pos = getBindingAdapterPosition();
+                FilePOJO filePOJO = fileSelectorFragment.filePOJO_list.get(pos);
+                if (multipleSelect && !filePOJO.getIsDirectory()) {
+                    int size = fileSelectorFragment.viewModel.mselecteditems.size();
+                    longClickMethod(v, size);
+                } else {
+                    fileObjectType = filePOJO.getFileObjectType();
+                    if (filePOJO.getIsDirectory()) {
+                        if (fileSelectorFragment.detailFragmentListener != null) {
+                            fileSelectorFragment.detailFragmentListener.createFragmentTransaction(filePOJO.getPath(), fileObjectType);
                         }
+                        FileSelectorRecentDialog.ADD_FILE_POJO_TO_RECENT(filePOJO, FileSelectorRecentDialog.FILE_SELECTOR);
                     }
-                });
+                }
+            }
+
+            @Override
+            public boolean onLongClick(View v) {
+                int pos = getBindingAdapterPosition();
+                FilePOJO filePOJO = fileSelectorFragment.filePOJO_list.get(pos);
+                if (multipleSelect && !filePOJO.getIsDirectory()) {
+                    longClickMethod(v, fileSelectorFragment.viewModel.mselecteditems.size());
+                } else {
+                    if (filePOJO.getIsDirectory()) {
+                        if (fileSelectorFragment.detailFragmentListener != null) {
+                            fileSelectorFragment.detailFragmentListener.createFragmentTransaction(filePOJO.getPath(), filePOJO.getFileObjectType());
+                        }
+                        FileSelectorRecentDialog.ADD_FILE_POJO_TO_RECENT(filePOJO, FileSelectorRecentDialog.FILE_SELECTOR);
+                    }
+                }
+                return true;
+            }
+
+            private void longClickMethod(View v, int size) {
+                pos = getBindingAdapterPosition();
+                if (fileSelectorFragment.viewModel.mselecteditems.containsKey(pos)) {
+                    fileSelectorFragment.viewModel.mselecteditems.remove(pos);
+                    v.setSelected(false);
+                    ((RecyclerViewLayout) v).set_selected(false);
+                    --size;
+                } else {
+                    fileSelectorFragment.viewModel.mselecteditems.put(pos, fileSelectorFragment.filePOJO_list.get(pos).getPath());
+                    v.setSelected(true);
+                    ((RecyclerViewLayout) v).set_selected(true);
+                    ++size;
+                }
+                if (fileSelectorFragment.detailFragmentListener != null) {
+                    fileSelectorFragment.detailFragmentListener.setFileNumberView(size + "/" + fileSelectorFragment.file_list_size);
+                }
             }
         }
-    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_files_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    }
+
+    private final ActivityResultLauncher<Intent> activityResultLauncher_all_files_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -970,8 +1061,8 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
     public static class FileSelectorAdapterGrid extends FileSelectorAdapter {
 
-        FileSelectorAdapterGrid(Context context, FileSelectorFragment fileSelectorFragment) {
-            super(context, fileSelectorFragment);
+        FileSelectorAdapterGrid(Context context, FileSelectorFragment fileSelectorFragment, int action_sought_request_code) {
+            super(context, fileSelectorFragment, action_sought_request_code == PICK_FILE_REQUEST_CODE || action_sought_request_code == FILE_PATH_REQUEST_CODE);
         }
 
         @Override
@@ -982,8 +1073,8 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
     public static class FileSelectorAdapterList extends FileSelectorAdapter {
 
-        FileSelectorAdapterList(Context context, FileSelectorFragment fileSelectorFragment) {
-            super(context, fileSelectorFragment);
+        FileSelectorAdapterList(Context context, FileSelectorFragment fileSelectorFragment, int action_sought_request_code) {
+            super(context, fileSelectorFragment, action_sought_request_code == PICK_FILE_REQUEST_CODE || action_sought_request_code == FILE_PATH_REQUEST_CODE);
         }
 
         @Override
@@ -1066,6 +1157,4 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         }
     }
-
-
 }
