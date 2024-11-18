@@ -89,7 +89,7 @@ public class DeleteAudioViewModel extends AndroidViewModel {
                         }
                     }
 
-                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(application), null);
+                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_OTHER_ACTIVITY_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(application), null);
                     Global.print_background_thread(application, application.getString(R.string.deleted_selected_audios));
                 } else {
                     Global.print_background_thread(application, application.getString(R.string.selected_audios_could_not_be_deleted));

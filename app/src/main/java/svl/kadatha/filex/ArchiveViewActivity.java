@@ -118,7 +118,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
 
         localBroadcastReceiver = new LocalBroadcastReceiver();
         IntentFilter localBroadcastIntentFilter = new IntentFilter();
-        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_OTHER_ACTIVITY_DELETE_FILE_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
         localBroadcastManager.registerReceiver(localBroadcastReceiver, localBroadcastIntentFilter);
 
@@ -1007,7 +1007,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
             FileObjectType fileObjectType = (FileObjectType) intent.getSerializableExtra("fileObjectType");
             switch (intent.getAction()) {
 
-                case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
+                case Global.LOCAL_BROADCAST_OTHER_ACTIVITY_DELETE_FILE_ACTION:
                     if (archiveViewFragment != null) {
                         archiveViewFragment.local_activity_delete = true;
                     }

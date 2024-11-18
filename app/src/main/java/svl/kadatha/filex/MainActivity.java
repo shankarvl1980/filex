@@ -210,7 +210,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
         localBroadcastReceiver = new LocalBroadcastReceiver();
         IntentFilter localBroadcastIntentFilter = new IntentFilter();
-        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_OTHER_ACTIVITY_DELETE_FILE_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT);
@@ -2396,7 +2396,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
 
             switch (intent.getAction()) {
-                case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
+                case Global.LOCAL_BROADCAST_OTHER_ACTIVITY_DELETE_FILE_ACTION:
                     if (df != null) {
                         df.local_activity_delete = true;
                     }

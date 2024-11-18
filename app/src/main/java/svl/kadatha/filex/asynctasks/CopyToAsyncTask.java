@@ -114,7 +114,7 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
 
         if (counter_no_files > 0) {
             filePOJO = FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder, copied_files_name, destFileObjectType, overwritten_file_path_list);
-            Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(context), null);
+            Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_OTHER_ACTIVITY_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(context), null);
         }
 
         copied_files_name.clear();

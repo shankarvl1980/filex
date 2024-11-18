@@ -139,7 +139,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         localBroadcastManager = LocalBroadcastManager.getInstance(context);
         localBroadcastReceiver = new LocalBroadcastReceiver();
         IntentFilter localBroadcastIntentFilter = new IntentFilter();
-        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_OTHER_ACTIVITY_DELETE_FILE_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT);
@@ -1093,7 +1093,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
             }
             switch (intent.getAction()) {
-                case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
+                case Global.LOCAL_BROADCAST_OTHER_ACTIVITY_DELETE_FILE_ACTION:
                     if (fileSelectorFragment != null) {
                         fileSelectorFragment.local_activity_delete = true;
                     }

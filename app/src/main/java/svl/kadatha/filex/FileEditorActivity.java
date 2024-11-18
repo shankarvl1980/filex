@@ -898,7 +898,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
                                     save_button.setEnabled(false);
                                     save_button.setAlpha(Global.DISABLE_ALFA);
 
-                                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, localBroadcastManager, null);
+                                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_OTHER_ACTIVITY_DELETE_FILE_ACTION, localBroadcastManager, null);
                                     reloadCurrentChunk();
                                 } else {
                                     viewModel.updated = false;
@@ -934,7 +934,7 @@ public class FileEditorActivity extends BaseActivity implements FileEditorSettin
                                     save_button.setEnabled(false);
                                     save_button.setAlpha(Global.DISABLE_ALFA);
 
-                                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, localBroadcastManager, null);
+                                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_OTHER_ACTIVITY_DELETE_FILE_ACTION, localBroadcastManager, null);
 
                                     reloadCurrentChunk();
                                 } else {

@@ -102,7 +102,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
         localBroadcastManager = LocalBroadcastManager.getInstance(context);
         localBroadcastReceiver = new LocalBroadcastReceiver();
         IntentFilter localBroadcastIntentFilter = new IntentFilter();
-        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_OTHER_ACTIVITY_DELETE_FILE_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
         localBroadcastManager.registerReceiver(localBroadcastReceiver, localBroadcastIntentFilter);
 
@@ -1059,7 +1059,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
             String file_path = intent.getStringExtra("file_path");
             FileObjectType fileObjectType = (FileObjectType) intent.getSerializableExtra("fileObjectType");
             switch (intent.getAction()) {
-                case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
+                case Global.LOCAL_BROADCAST_OTHER_ACTIVITY_DELETE_FILE_ACTION:
                     if (storageAnalyserFragment != null) {
                         storageAnalyserFragment.local_activity_delete = true;
                     }

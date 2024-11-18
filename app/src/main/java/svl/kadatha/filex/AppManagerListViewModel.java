@@ -173,7 +173,7 @@ public class AppManagerListViewModel extends AndroidViewModel {
                     }
 
                     FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder, copied_files_name, destFileObjectType, overwritten_copied_file_path_list);
-                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(application), null);
+                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_OTHER_ACTIVITY_DELETE_FILE_ACTION, LocalBroadcastManager.getInstance(application), null);
                     copied_files_name.clear();
                 }
                 FILE_OBJECT_TYPE = null;
