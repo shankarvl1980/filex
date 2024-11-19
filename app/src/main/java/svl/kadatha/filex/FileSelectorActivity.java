@@ -875,7 +875,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     public abstract static class FileSelectorAdapter extends RecyclerView.Adapter<FileSelectorAdapter.ViewHolder> implements Filterable {
         final Context context;
         final FileSelectorFragment fileSelectorFragment;
-        boolean multipleSelect;
+        final boolean multipleSelect;
 
         FileSelectorAdapter(Context context, FileSelectorFragment fileSelectorFragment, boolean multipleSelect) {
             this.context = context;
@@ -1021,7 +1021,17 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         }
     }
 
-    private final ActivityResultLauncher<Intent> activityResultLauncher_all_files_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    public static class FileSelectorAdapterGrid extends FileSelectorAdapter {
+
+        FileSelectorAdapterGrid(Context context, FileSelectorFragment fileSelectorFragment, int action_sought_request_code) {
+            super(context, fileSelectorFragment, action_sought_request_code == PICK_FILE_REQUEST_CODE || action_sought_request_code == FILE_PATH_REQUEST_CODE);
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
+            return new FileSelectorAdapter.ViewHolder(new FileSelectorRecyclerViewLayoutGrid(context, false));
+        }
+    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_files_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -1060,18 +1070,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         }
     });
-
-    public static class FileSelectorAdapterGrid extends FileSelectorAdapter {
-
-        FileSelectorAdapterGrid(Context context, FileSelectorFragment fileSelectorFragment, int action_sought_request_code) {
-            super(context, fileSelectorFragment, action_sought_request_code == PICK_FILE_REQUEST_CODE || action_sought_request_code == FILE_PATH_REQUEST_CODE);
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
-            return new FileSelectorAdapter.ViewHolder(new FileSelectorRecyclerViewLayoutGrid(context, false));
-        }
-    }
 
     public static class FileSelectorAdapterList extends FileSelectorAdapter {
 
@@ -1252,4 +1250,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         }
     }
+
+
 }

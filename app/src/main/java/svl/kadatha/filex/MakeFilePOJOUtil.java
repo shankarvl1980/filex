@@ -811,7 +811,7 @@ public class MakeFilePOJOUtil {
     }
 
     static String EXTRACT_ICON(String file_path, String file_ext) {
-        PackageManager packageManager=App.getAppContext().getPackageManager();
+        PackageManager packageManager = App.getAppContext().getPackageManager();
         if (packageManager == null) {
             return null;
         }

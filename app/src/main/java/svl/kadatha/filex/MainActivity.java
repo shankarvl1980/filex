@@ -85,9 +85,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     public static FileSystem usbCurrentFs;
     public static boolean USB_ATTACHED;
     public static String SU = "";
-    private List<String> library_categories = new ArrayList<>();
     static boolean SHOW_HIDDEN_FILE;
-    private FilePOJO drawer_storage_file_pojo_selected;
     static LinkedList<FilePOJO> RECENT = new LinkedList<>();
     final ArrayList<ListPopupWindowPOJO> list_popupwindowpojos = new ArrayList<>();
     public Button rename, working_dir_add_btn, working_dir_remove_btn;
@@ -116,6 +114,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     Context context = this;
     ViewPager viewPager;
     ActionModeListener actionModeListener;
+    private List<String> library_categories = new ArrayList<>();
+    private FilePOJO drawer_storage_file_pojo_selected;
     private ImageView working_dir_expand_indicator, library_expand_indicator, network_expand_indicator;
     private RecyclerView workingDirListRecyclerView;
     private RecyclerView networkRecyclerView;
@@ -1351,7 +1351,18 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         }
     }
 
-    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    public void action_mode_finish(DetailFragment df) {
+        if (df.adapter != null) {
+            df.adapter.getFilter().filter(null);
+        }
+        DeselectAllAndAdjustToolbars(df);
+        imm.hideSoftInputFromWindow(search_view.getWindowToken(), 0);
+        search_view.setText("");
+        search_view.clearFocus();
+        search_toolbar.setVisibility(View.GONE); //no need to call adapter.filter with null to refill filepjos as calling datasetchanged replenished df.adapter.filepojo listUri
+        search_toolbar_visible = false;
+
+    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -1390,19 +1401,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     });
-
-    public void action_mode_finish(DetailFragment df) {
-        if (df.adapter != null) {
-            df.adapter.getFilter().filter(null);
-        }
-        DeselectAllAndAdjustToolbars(df);
-        imm.hideSoftInputFromWindow(search_view.getWindowToken(), 0);
-        search_view.setText("");
-        search_view.clearFocus();
-        search_toolbar.setVisibility(View.GONE); //no need to call adapter.filter with null to refill filepjos as calling datasetchanged replenished df.adapter.filepojo listUri
-        search_toolbar_visible = false;
-
-    }
 
     public void workingDirAdd() {
         DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
@@ -2532,4 +2530,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     }
+
+
 }

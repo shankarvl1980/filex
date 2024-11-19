@@ -389,6 +389,7 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
     private class VideoViewPagerAdapter extends FragmentStatePagerAdapter {
         final IndexedLinkedHashMap<FilePOJO, Integer> list;
         private VideoViewFragment currentFragment;
+
         VideoViewPagerAdapter(FragmentManager fm, IndexedLinkedHashMap<FilePOJO, Integer> l) {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
             this.list = l;

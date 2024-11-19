@@ -4,6 +4,17 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class FilePOJO implements Parcelable {
+    public static final Creator<FilePOJO> CREATOR = new Creator<FilePOJO>() {
+        @Override
+        public FilePOJO createFromParcel(Parcel in) {
+            return new FilePOJO(in);
+        }
+
+        @Override
+        public FilePOJO[] newArray(int size) {
+            return new FilePOJO[size];
+        }
+    };
     private final String lower_name;
     private final String package_name;
     private FileObjectType fileObjectType;
@@ -78,18 +89,6 @@ public class FilePOJO implements Parcelable {
         checksum = in.readString();
         whetherExternal = in.readByte() != 0;
     }
-
-    public static final Creator<FilePOJO> CREATOR = new Creator<FilePOJO>() {
-        @Override
-        public FilePOJO createFromParcel(Parcel in) {
-            return new FilePOJO(in);
-        }
-
-        @Override
-        public FilePOJO[] newArray(int size) {
-            return new FilePOJO[size];
-        }
-    };
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {

@@ -35,10 +35,10 @@
         android:background="@drawable/oval_shape"
         android:padding="10dp"
         android:src="@drawable/video_refresh_icon"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/video_view_bottom_butt"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:visibility="gone"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/video_play_refresh_play_pause_group"

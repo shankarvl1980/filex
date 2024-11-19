@@ -146,7 +146,7 @@ class FileIntentDispatch {
         appSelectorDialog.show(((AppCompatActivity) context).getSupportFragmentManager(), "");
     }
 
-    public static String SET_INTENT_FOR_VIEW(Intent intent, String mime_type, String file_path,@NonNull String file_extn, FileObjectType fileObjectType,
+    public static String SET_INTENT_FOR_VIEW(Intent intent, String mime_type, String file_path, @NonNull String file_extn, FileObjectType fileObjectType,
                                              boolean fromArchive, @NonNull Uri uri) {
         if (mime_type == null || mime_type.isEmpty()) {
             for (MimePOJO mimePOJO : Global.MIME_POJOS) {

@@ -52,7 +52,7 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
     private String tree_uri_path = "";
     private int action_sought_request_code;
 
-    public static FileSelectorFragment getInstance(FileObjectType fileObjectType,int action_sought_request_code) {
+    public static FileSelectorFragment getInstance(FileObjectType fileObjectType, int action_sought_request_code) {
         FileSelectorFragment fileSelectorFragment = new FileSelectorFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable("fileObjectType", fileObjectType);
@@ -87,7 +87,7 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
         Bundle bundle = getArguments();
         if (bundle != null) {
             fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
-            action_sought_request_code=bundle.getInt("action_sought_request_code",0);
+            action_sought_request_code = bundle.getInt("action_sought_request_code", 0);
         }
 
         if (fileObjectType == FileObjectType.ROOT_TYPE) {
@@ -220,9 +220,9 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 
         Collections.sort(filePOJO_list, FileComparator.FilePOJOComparate(FileSelectorActivity.SORT, false));
         if (FileSelectorActivity.FILE_GRID_LAYOUT) {
-            adapter = new FileSelectorActivity.FileSelectorAdapterGrid(context, this,action_sought_request_code);
+            adapter = new FileSelectorActivity.FileSelectorAdapterGrid(context, this, action_sought_request_code);
         } else {
-            adapter = new FileSelectorActivity.FileSelectorAdapterList(context, this,action_sought_request_code);
+            adapter = new FileSelectorActivity.FileSelectorAdapterList(context, this, action_sought_request_code);
         }
 
         set_adapter();

@@ -18,15 +18,13 @@ import java.util.concurrent.Future;
 
 public class FileSelectorActivityViewModel extends AndroidViewModel {
     public final MutableLiveData<AsyncTaskStatus> populateUriAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    private Application application;
-    private boolean isCancelled;
     ArrayList<Uri> uri_list;
     ClipData clipData;
+    private boolean isCancelled;
     private Future<?> future1, future2;
 
     public FileSelectorActivityViewModel(@NonNull Application application) {
         super(application);
-        this.application=application;
     }
 
     @Override
@@ -59,10 +57,10 @@ public class FileSelectorActivityViewModel extends AndroidViewModel {
         future1 = executorService.submit(new Runnable() {
             @Override
             public void run() {
-                uri_list=new ArrayList<>();
-                int size=fileSelectorFragment.viewModel.mselecteditems.size();
+                uri_list = new ArrayList<>();
+                int size = fileSelectorFragment.viewModel.mselecteditems.size();
                 for (int i = 0; i < size; ++i) {
-                    String file_path=fileSelectorFragment.viewModel.mselecteditems.getValueAtIndex(i);
+                    String file_path = fileSelectorFragment.viewModel.mselecteditems.getValueAtIndex(i);
                     File file = new File(file_path);
                     uri_list.add(FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", file));
                 }
