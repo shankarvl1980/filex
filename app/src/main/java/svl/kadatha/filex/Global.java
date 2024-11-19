@@ -71,6 +71,11 @@ public class Global {
     static public final String LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION = FILEX_PACKAGE + ".MODIFICATION_OBSERVED";
     static public final String LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION = FILEX_PACKAGE + ".STORAGE_DIR_REFRESH";
     static public final String LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT = FILEX_PACKAGE + ".POP_UP_NETWORK_FILE_TYPE_FRAGMENT";
+    static public final String LOCAL_BROADCAST_DELETE_FILE_ACTION = FILEX_PACKAGE + ".FILE_DELETE";
+    static public final String LOCAL_BROADCAST_CLEAR_CACHE_REFRESH_ACTION = FILEX_PACKAGE + ".CLEAR_CACHE_REFRESH";
+    static public final String LOCAL_BROADCAST_CUT_COPY_FILE_ACTION = FILEX_PACKAGE + ".FILE_CUT_COPY";
+    static public final String LOCAL_BROADCAST_ARCHIVE_UNARCHIVE_FILE_ACTION = FILEX_PACKAGE + ".FILE_ARCHIVE_UNARCHIVE";
+    static public final String LOCAL_BROADCAST_COPY_TO_FILE_ACTION = FILEX_PACKAGE + ".FILE_COPY_TO";
     static public final String TAG = "shankar";
     public static final List<FileObjectType> NETWORK_FILE_OBJECT_TYPES = Arrays.asList(FileObjectType.FTP_TYPE, FileObjectType.SFTP_TYPE, FileObjectType.WEBDAV_TYPE, FileObjectType.SMB_TYPE);
     static final List<String> APK_ICON_PACKAGE_NAME_LIST = new ArrayList<>();
@@ -138,7 +143,6 @@ public class Global {
     static public int ACTION_BAR_HEIGHT_IN_DP;
     static public boolean DETAILED_SEARCH_LIBRARY;
     public static FileObjectType USB_CACHED_FILE_OBJECT;
-    //static int DRAWER_WIDTH;
     public static int ARCHIVE_CACHE_DIR_LENGTH;
     static String INTERNAL_PRIMARY_STORAGE_PATH = "";
     static String USB_STORAGE_PATH;

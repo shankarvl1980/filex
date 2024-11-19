@@ -72,7 +72,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     public static final int FILE_PATH_REQUEST_CODE = 56;
     public static final String ACTION_SOUGHT = "action_sought";
     public static final String ACTIVITY_NAME = "FILE_SELECTOR_ACTIVITY";
-    public static FragmentManager FM;
     public static boolean FILE_GRID_LAYOUT, SHOW_HIDDEN_FILE;
     public static int RECYCLER_VIEW_FONT_SIZE_FACTOR, GRID_COUNT;
     public static String SORT;
@@ -143,6 +142,12 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT);
+
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_CLEAR_CACHE_REFRESH_ACTION);
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_CUT_COPY_FILE_ACTION);
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_ARCHIVE_UNARCHIVE_FILE_ACTION);
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_COPY_TO_FILE_ACTION);
         localBroadcastManager.registerReceiver(localBroadcastReceiver, localBroadcastIntentFilter);
 
         usbReceiver = new USBReceiver();
@@ -156,7 +161,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
         TinyDB tinyDB = new TinyDB(context);
         fm = getSupportFragmentManager();
-        FM = fm;
 
         setContentView(R.layout.activity_file_selector);
         file_number = findViewById(R.id.file_selector_file_number); //initiate here before adding fragment
@@ -290,7 +294,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         int[] bottom_drawables = {R.drawable.search_icon, R.drawable.document_add_icon, R.drawable.refresh_icon, R.drawable.yes_icon, R.drawable.cancel_icon};
         String[] titles = {getString(R.string.search), getString(R.string.new_), getString(R.string.refresh), getString(R.string.ok), getString(R.string.cancel)};
         tb_layout.setResourceImageDrawables(bottom_drawables, titles);
-
 
         bottom_toolbar.addView(tb_layout);
         Button search_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_1);
@@ -560,7 +563,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 .create()
                 .show();
     }
-
 
     @Override
     protected void onStart() {
@@ -1087,11 +1089,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         @Override
         public void onReceive(Context context, Intent intent) {
             FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
-            FileObjectType fileObjectType = null;
             Bundle bundle = intent.getExtras();
-            if (bundle != null) {
-                fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
-            }
             switch (intent.getAction()) {
                 case Global.LOCAL_BROADCAST_OTHER_ACTIVITY_DELETE_FILE_ACTION:
                     if (fileSelectorFragment != null) {
@@ -1106,8 +1104,105 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 case Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION:
                     break;
                 case Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT:
-                    if (fileSelectorFragment != null && fileObjectType != null && fileObjectType == fileSelectorFragment.fileObjectType) {
-                        onbackpressed(false);
+                    FileObjectType fileObjectType;
+                    if (bundle != null) {
+                        fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
+                        if (fileSelectorFragment != null && fileObjectType != null && fileObjectType == fileSelectorFragment.fileObjectType) {
+                            onbackpressed(false);
+                        }
+                    }
+                    break;
+                case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
+                    if (bundle != null) {
+                        String source_folder = bundle.getString("source_folder");
+                        FileObjectType sourceFileObjectType = (FileObjectType) bundle.getSerializable("sourceFileObjectType");
+                        String parent_source_folder = new File(source_folder).getParent();
+                        if (parent_source_folder == null) {
+                            parent_source_folder = source_folder;
+                        }
+
+                        if (fileSelectorFragment != null && fileSelectorFragment.fileObjectType == sourceFileObjectType) {
+                            String tag = fileSelectorFragment.getTag();
+                            if (Global.IS_CHILD_FILE(tag, parent_source_folder)) {
+                                fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
+                            }
+                        }
+                    }
+                    break;
+                case Global.LOCAL_BROADCAST_CLEAR_CACHE_REFRESH_ACTION:
+                    if (bundle != null) {
+                        String file_path = bundle.getString("file_path");
+                        FileObjectType sourceFileObjectType = (FileObjectType) bundle.getSerializable("sourceFileObjectType");
+                        if (fileSelectorFragment != null) {
+                            fileSelectorFragment.clear_cache_and_refresh(file_path, sourceFileObjectType);
+                        }
+                    }
+                    break;
+                case Global.LOCAL_BROADCAST_CUT_COPY_FILE_ACTION:
+                    if (bundle != null) {
+                        String dest_folder = bundle.getString("dest_folder");
+                        String source_folder = bundle.getString("source_folder");
+                        FileObjectType destFileObjectType = (FileObjectType) bundle.getSerializable("destFileObjectType");
+                        FileObjectType sourceFileObjectType = (FileObjectType) bundle.getSerializable("sourceFileObjectType");
+                        FilePOJO filePOJO = bundle.getParcelable("filePOJO");
+                        String parent_dest_folder = new File(dest_folder).getParent();
+                        if (parent_dest_folder == null) {
+                            parent_dest_folder = dest_folder;
+                        }
+
+                        String parent_source_folder = new File(source_folder).getParent();
+                        if (parent_source_folder == null) {
+                            parent_source_folder = source_folder;
+                        }
+
+                        if (fileSelectorFragment != null) {
+                            String tag = fileSelectorFragment.getTag();
+
+                            if (Global.IS_CHILD_FILE(tag, parent_dest_folder) && fileSelectorFragment.fileObjectType == destFileObjectType) {
+                                fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
+                            }
+
+                            // in case of cut, to take care of instances of dest_folder is also parent of source folder, it is put in separate if block
+                            if (Global.IS_CHILD_FILE(tag, parent_source_folder) && fileSelectorFragment.fileObjectType == sourceFileObjectType) {
+                                fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
+                            }
+                        }
+                    }
+                    break;
+                case Global.LOCAL_BROADCAST_ARCHIVE_UNARCHIVE_FILE_ACTION:
+                    if (bundle != null) {
+                        String dest_folder = bundle.getString("dest_folder");
+                        FileObjectType destFileObjectType = (FileObjectType) bundle.getSerializable("destFileObjectType");
+                        FilePOJO filePOJO = bundle.getParcelable("filePOJO");
+                        String parent_dest_folder = new File(dest_folder).getParent();
+                        if (parent_dest_folder == null) {
+                            parent_dest_folder = dest_folder;
+                        }
+                        if (fileSelectorFragment != null && fileSelectorFragment.fileObjectType == destFileObjectType) {
+                            String tag = fileSelectorFragment.getTag();
+
+                            if (Global.IS_CHILD_FILE(tag, parent_dest_folder)) {
+                                fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
+                            }
+                        }
+                    }
+                    break;
+                case Global.LOCAL_BROADCAST_COPY_TO_FILE_ACTION:
+                    if (bundle != null) {
+                        String dest_folder = bundle.getString("dest_folder");
+                        FileObjectType destFileObjectType = (FileObjectType) bundle.getSerializable("destFileObjectType");
+                        FilePOJO filePOJO = bundle.getParcelable("filePOJO");
+                        String parent_dest_folder = new File(dest_folder).getParent();
+                        if (parent_dest_folder == null) {
+                            parent_dest_folder = dest_folder;
+                        }
+
+                        if (fileSelectorFragment != null) {
+                            String tag = fileSelectorFragment.getTag();
+                            if (Global.IS_CHILD_FILE(tag, parent_dest_folder) && fileSelectorFragment.fileObjectType == destFileObjectType) {
+                                fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
+                            }
+                        }
                     }
                     break;
             }

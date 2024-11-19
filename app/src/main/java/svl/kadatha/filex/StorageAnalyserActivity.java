@@ -53,7 +53,6 @@ import java.util.concurrent.ExecutorService;
 
 public class StorageAnalyserActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener, DetailFragmentListener, DeleteFileAlertDialog.OKButtonClickListener {
     public static final String ACTIVITY_NAME = "STORAGE_ANALYSER_ACTIVITY";
-    public static FragmentManager FM;
     static LinkedList<FilePOJO> RECENT = new LinkedList<>();
     final ArrayList<ListPopupWindowPOJO> list_popupwindowpojos = new ArrayList<>();
     public FragmentManager fm;
@@ -104,10 +103,15 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
         IntentFilter localBroadcastIntentFilter = new IntentFilter();
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_OTHER_ACTIVITY_DELETE_FILE_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
+
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_CLEAR_CACHE_REFRESH_ACTION);
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_CUT_COPY_FILE_ACTION);
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_ARCHIVE_UNARCHIVE_FILE_ACTION);
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_COPY_TO_FILE_ACTION);
         localBroadcastManager.registerReceiver(localBroadcastReceiver, localBroadcastIntentFilter);
 
         fm = getSupportFragmentManager();
-        FM = fm;
         pm = getPackageManager();
         setContentView(R.layout.activity_storage_analyser);
         ConstraintLayout root_layout = findViewById(R.id.storage_analyser_root_layout);
@@ -161,7 +165,6 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                 }
                 listPopWindow.dismiss();
             }
-
         });
 
 
@@ -270,7 +273,6 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
         bottom_toolbar = findViewById(R.id.storage_analyser_bottom_toolbar);
         bottom_toolbar.addView(tb_layout);
 
-
         Button search_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_1);
         search_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -349,7 +351,6 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                 DeleteFileAlertDialog deleteFileAlertDialog = DeleteFileAlertDialog.getInstance(files_selected_array, storageAnalyserFragment.fileObjectType, storageAnalyserFragment.fileclickselected, true);
                 deleteFileAlertDialog.show(fm, "delete_dialog");
                 setSearchBarVisibility(false);
-
             }
         });
 
@@ -475,7 +476,6 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
 
     @Override
     public void onScrollRecyclerView(boolean showToolBar) {
-
         if (showToolBar) {
             switch (toolbar_shown) {
                 case "bottom":
@@ -619,10 +619,9 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                         iterator.remove();
                         break;
                     }
-
                 }
-                //get methods kept below instead of in if block above to avoid likely concurrent modification exception
 
+                //get methods kept below instead of in if block above to avoid likely concurrent modification exception
                 viewModel.getLargeFileList(false);
                 StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
                 if (storageAnalyserFragment == null) {
@@ -631,9 +630,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                 if (storageAnalyserFragment.fileclickselected.equals("Large Files")) {
                     fm.beginTransaction().detach(storageAnalyserFragment).commit();
                     fm.beginTransaction().attach(storageAnalyserFragment).commit();
-
                 }
-
             }
         });
     }
@@ -652,10 +649,9 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                         iterator.remove();
                         break;
                     }
-
                 }
-                //get methods kept below instead of in if block above to avoid likely concurrent modification exception
 
+                //get methods kept below instead of in if block above to avoid likely concurrent modification exception
                 viewModel.getDuplicateFileList(false);
                 StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
                 if (storageAnalyserFragment == null) {
@@ -664,14 +660,10 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                 if (storageAnalyserFragment.fileclickselected.equals("Duplicate Files")) {
                     fm.beginTransaction().detach(storageAnalyserFragment).commit();
                     fm.beginTransaction().attach(storageAnalyserFragment).commit();
-
                 }
-
             }
         });
-
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -992,7 +984,6 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
         class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
             final StorageAnalyserRecyclerViewLayout v;
             FileObjectType fileObjectType;
-
             int pos;
 
             ViewHolder(StorageAnalyserRecyclerViewLayout v) {
@@ -1048,16 +1039,13 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                 }
             }
         }
-
     }
 
     private class LocalBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
-            String activity_name = intent.getStringExtra("activity_name");
-            String file_path = intent.getStringExtra("file_path");
-            FileObjectType fileObjectType = (FileObjectType) intent.getSerializableExtra("fileObjectType");
+            Bundle bundle = intent.getExtras();
             switch (intent.getAction()) {
                 case Global.LOCAL_BROADCAST_OTHER_ACTIVITY_DELETE_FILE_ACTION:
                     if (storageAnalyserFragment != null) {
@@ -1069,8 +1057,99 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
                         storageAnalyserFragment.modification_observed = true;
                     }
                     break;
+                case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
+                    if (bundle != null) {
+                        String source_folder = bundle.getString("source_folder");
+                        FileObjectType sourceFileObjectType = (FileObjectType) bundle.getSerializable("sourceFileObjectType");
+                        String parent_source_folder = new File(source_folder).getParent();
+                        if (parent_source_folder == null) {
+                            parent_source_folder = source_folder;
+                        }
+
+                        if (storageAnalyserFragment != null && storageAnalyserFragment.fileObjectType == sourceFileObjectType) {
+                            String tag = storageAnalyserFragment.getTag();
+                            if (Global.IS_CHILD_FILE(tag, parent_source_folder)) {
+                                storageAnalyserFragment.clearSelectionAndNotifyDataSetChanged();
+                            }
+                        }
+                    }
+                    break;
+                case Global.LOCAL_BROADCAST_CLEAR_CACHE_REFRESH_ACTION:
+                    if (bundle != null) {
+                        String file_path = bundle.getString("file_path");
+                        FileObjectType sourceFileObjectType = (FileObjectType) bundle.getSerializable("sourceFileObjectType");
+                        if (storageAnalyserFragment != null) {
+                            storageAnalyserFragment.clear_cache_and_refresh(file_path, sourceFileObjectType);
+                        }
+                    }
+                    break;
+                case Global.LOCAL_BROADCAST_CUT_COPY_FILE_ACTION:
+                    if (bundle != null) {
+                        String dest_folder = bundle.getString("dest_folder");
+                        String source_folder = bundle.getString("source_folder");
+                        FileObjectType destFileObjectType = (FileObjectType) bundle.getSerializable("destFileObjectType");
+                        FileObjectType sourceFileObjectType = (FileObjectType) bundle.getSerializable("sourceFileObjectType");
+                        FilePOJO filePOJO = bundle.getParcelable("filePOJO");
+                        String parent_dest_folder = new File(dest_folder).getParent();
+                        if (parent_dest_folder == null) {
+                            parent_dest_folder = dest_folder;
+                        }
+
+                        String parent_source_folder = new File(source_folder).getParent();
+                        if (parent_source_folder == null) {
+                            parent_source_folder = source_folder;
+                        }
+
+                        if (storageAnalyserFragment != null) {
+                            String tag = storageAnalyserFragment.getTag();
+
+                            if (Global.IS_CHILD_FILE(tag, parent_dest_folder) && storageAnalyserFragment.fileObjectType == destFileObjectType) {
+                                storageAnalyserFragment.clearSelectionAndNotifyDataSetChanged();
+                            }
+
+                            // in case of cut, to take care of instances of dest_folder is also parent of source folder, it is put in separate if block
+                            if (Global.IS_CHILD_FILE(tag, parent_source_folder) && storageAnalyserFragment.fileObjectType == sourceFileObjectType) {
+                                storageAnalyserFragment.clearSelectionAndNotifyDataSetChanged();
+                            }
+                        }
+                    }
+                    break;
+                case Global.LOCAL_BROADCAST_ARCHIVE_UNARCHIVE_FILE_ACTION:
+                    if (bundle != null) {
+                        String dest_folder = bundle.getString("dest_folder");
+                        FileObjectType destFileObjectType = (FileObjectType) bundle.getSerializable("destFileObjectType");
+                        FilePOJO filePOJO = bundle.getParcelable("filePOJO");
+                        String parent_dest_folder = new File(dest_folder).getParent();
+                        if (parent_dest_folder == null) {
+                            parent_dest_folder = dest_folder;
+                        }
+                        if (storageAnalyserFragment != null && storageAnalyserFragment.fileObjectType == destFileObjectType) {
+                            String tag = storageAnalyserFragment.getTag();
+                            if (Global.IS_CHILD_FILE(tag, parent_dest_folder)) {
+                                storageAnalyserFragment.clearSelectionAndNotifyDataSetChanged();
+                            }
+                        }
+                    }
+                    break;
+                case Global.LOCAL_BROADCAST_COPY_TO_FILE_ACTION:
+                    if (bundle != null) {
+                        String dest_folder = bundle.getString("dest_folder");
+                        FileObjectType destFileObjectType = (FileObjectType) bundle.getSerializable("destFileObjectType");
+                        FilePOJO filePOJO = bundle.getParcelable("filePOJO");
+                        String parent_dest_folder = new File(dest_folder).getParent();
+                        if (parent_dest_folder == null) {
+                            parent_dest_folder = dest_folder;
+                        }
+
+                        if (storageAnalyserFragment != null) {
+                            String tag = storageAnalyserFragment.getTag();
+                            if (Global.IS_CHILD_FILE(tag, parent_dest_folder) && storageAnalyserFragment.fileObjectType == destFileObjectType) {
+                                storageAnalyserFragment.clearSelectionAndNotifyDataSetChanged();
+                            }
+                        }
+                    }
+                    break;
             }
         }
     }
-
 }

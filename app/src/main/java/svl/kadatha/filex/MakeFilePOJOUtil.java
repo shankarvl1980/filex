@@ -71,7 +71,7 @@ public class MakeFilePOJOUtil {
                 if (type == -2) {
                     overlay_visible = View.VISIBLE;
                 } else if (extract_icon && type == 0) {
-                    package_name = EXTRACT_ICON(MainActivity.PM, path, file_ext);
+                    package_name = EXTRACT_ICON(path, file_ext);
                 }
             }
 
@@ -123,7 +123,7 @@ public class MakeFilePOJOUtil {
                 if (type == -2) {
                     overlay_visible = View.VISIBLE;
                 } else if (extract_icon && type == 0) {
-                    package_name = EXTRACT_ICON(MainActivity.PM, path, file_ext);
+                    package_name = EXTRACT_ICON(path, file_ext);
                 }
             }
 
@@ -167,7 +167,7 @@ public class MakeFilePOJOUtil {
                 if (type == -2) {
                     overlay_visible = View.VISIBLE;
                 } else if (extract_icon && type == 0) {
-                    package_name = EXTRACT_ICON(MainActivity.PM, path, file_ext);
+                    package_name = EXTRACT_ICON(path, file_ext);
                 }
             }
             try (ZipFile zipFile = new ZipFile(ArchiveViewActivity.ZIP_FILE)) {
@@ -235,7 +235,7 @@ public class MakeFilePOJOUtil {
                 if (type == -2) {
                     overlay_visible = View.VISIBLE;
                 } else if (extract_icon && type == 0) {
-                    package_name = EXTRACT_ICON(MainActivity.PM, path, file_ext);
+                    package_name = EXTRACT_ICON(path, file_ext);
                 }
             }
             si = FileUtil.humanReadableByteCount(sizeLong);
@@ -299,7 +299,7 @@ public class MakeFilePOJOUtil {
                 if (type == -2) {
                     overlay_visible = View.VISIBLE;
                 } else if (extract_icon && type == 0) {
-                    package_name = EXTRACT_ICON(MainActivity.PM, path, file_ext);
+                    package_name = EXTRACT_ICON(path, file_ext);
                 }
             }
             try (ZipFile zipFile = new ZipFile(ArchiveViewActivity.ZIP_FILE)) {
@@ -360,7 +360,7 @@ public class MakeFilePOJOUtil {
                 if (type == -2) {
                     overlay_visible = View.VISIBLE;
                 } else if (extract_icon && type == 0) {
-                    package_name = EXTRACT_ICON(MainActivity.PM, path, file_ext);
+                    package_name = EXTRACT_ICON(path, file_ext);
                 }
             }
             sizeLong = f.getLength();
@@ -418,7 +418,7 @@ public class MakeFilePOJOUtil {
                 if (type == -2) {
                     overlay_visible = View.VISIBLE;
                 } else if (extract_icon && type == 0) {
-                    package_name = EXTRACT_ICON(MainActivity.PM, path, file_ext);
+                    package_name = EXTRACT_ICON(path, file_ext);
                 }
             }
             sizeLong = f.getSize();
@@ -493,7 +493,7 @@ public class MakeFilePOJOUtil {
                 if (type == -2) {
                     overlay_visible = View.VISIBLE;
                 } else if (extract_icon && type == 0) {
-                    package_name = EXTRACT_ICON(MainActivity.PM, path, file_ext);
+                    package_name = EXTRACT_ICON(path, file_ext);
                 }
             }
             si = FileUtil.humanReadableByteCount(sizeLong);
@@ -546,7 +546,7 @@ public class MakeFilePOJOUtil {
                 if (type == -2) {
                     overlay_visible = View.VISIBLE;
                 } else if (extract_icon && type == 0) {
-                    package_name = EXTRACT_ICON(MainActivity.PM, path, file_ext);
+                    package_name = EXTRACT_ICON(path, file_ext);
                 }
             }
             sizeLong = attrs.getSize();
@@ -600,7 +600,7 @@ public class MakeFilePOJOUtil {
                 if (type == -2) {
                     overlay_visible = View.VISIBLE;
                 } else if (extract_icon && type == 0) {
-                    package_name = EXTRACT_ICON(MainActivity.PM, path, file_ext);
+                    package_name = EXTRACT_ICON(path, file_ext);
                 }
             }
             sizeLong = resource.getContentLength();
@@ -647,7 +647,7 @@ public class MakeFilePOJOUtil {
                 if (type == -2) {
                     overlay_visible = View.VISIBLE;
                 } else if (extract_icon && type == 0) {
-                    package_name = EXTRACT_ICON(MainActivity.PM, path, file_ext);
+                    package_name = EXTRACT_ICON(path, file_ext);
                 }
             }
             sizeLong = smbFileInfo.getFileSize();
@@ -810,7 +810,8 @@ public class MakeFilePOJOUtil {
         return filePOJO;
     }
 
-    static String EXTRACT_ICON(PackageManager packageManager, String file_path, String file_ext) {
+    static String EXTRACT_ICON(String file_path, String file_ext) {
+        PackageManager packageManager=App.getAppContext().getPackageManager();
         if (packageManager == null) {
             return null;
         }

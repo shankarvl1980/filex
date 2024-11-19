@@ -81,16 +81,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         DeleteFileAlertDialog.OKButtonClickListener, DetailFragmentListener {
     public static final String ACTIVITY_NAME = "MAIN_ACTIVITY";
     private static final boolean[] alreadyNotificationWarned = new boolean[1];
-    public static PackageManager PM;
-    public static FragmentManager FM;
     public static UsbFile usbFileRoot;
     public static FileSystem usbCurrentFs;
     public static boolean USB_ATTACHED;
     public static String SU = "";
-    static List<String> LIBRARY_CATEGORIES = new ArrayList<>();
-    static List<String> NETWORK_TYPES = new ArrayList<>();
+    private List<String> library_categories = new ArrayList<>();
     static boolean SHOW_HIDDEN_FILE;
-    static FilePOJO DRAWER_STORAGE_FILEPOJO_SELECTED;
+    private FilePOJO drawer_storage_file_pojo_selected;
     static LinkedList<FilePOJO> RECENT = new LinkedList<>();
     final ArrayList<ListPopupWindowPOJO> list_popupwindowpojos = new ArrayList<>();
     public Button rename, working_dir_add_btn, working_dir_remove_btn;
@@ -188,11 +185,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         setContentView(R.layout.main);
         viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
         fm = getSupportFragmentManager();
-        FM = fm;
         pm = getPackageManager();
-        PM = pm;
         localBroadcastManager = LocalBroadcastManager.getInstance(context);
-
         h = new Handler();
 
         mediaMountReceiver = new MediaMountReceiver();
@@ -214,6 +208,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT);
+
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_DELETE_FILE_ACTION);
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_CLEAR_CACHE_REFRESH_ACTION);
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_CUT_COPY_FILE_ACTION);
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_ARCHIVE_UNARCHIVE_FILE_ACTION);
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_COPY_TO_FILE_ACTION);
         localBroadcastManager.registerReceiver(localBroadcastReceiver, localBroadcastIntentFilter);
 
         usbReceiver = new USBReceiver();
@@ -316,7 +316,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         view.setOnClickListener(bottomToolbarClickListener);
         finish.setOnClickListener(bottomToolbarClickListener);
 
-
         tb_layout = new EquallyDistributedButtonsWithTextLayout(this, 5, Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
         int[] paste_drawables = {R.drawable.document_add_icon, R.drawable.refresh_icon, R.drawable.paste_icon, R.drawable.delete_icon, R.drawable.cancel_icon};
         titles = new String[]{getString(R.string.new_), getString(R.string.refresh), getString(R.string.paste), getString(R.string.delete), getString(R.string.cancel)};
@@ -335,7 +334,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         paste.setOnClickListener(pasteToolbarClickListener);
         paste_cancel.setOnClickListener(pasteToolbarClickListener);
         paste_toolbar_delete.setOnClickListener(pasteToolbarClickListener);
-
 
         tb_layout = new EquallyDistributedButtonsWithTextLayout(this, 5, Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
         int[] action_mode_drawables = {R.drawable.cut_icon, R.drawable.copy_icon, R.drawable.rename_icon, R.drawable.delete_icon, R.drawable.overflow_icon};
@@ -474,11 +472,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 if (!f.exists()) {
                     Global.print(context, getString(R.string.directory_does_not_exist));
                 } else {
-                    DRAWER_STORAGE_FILEPOJO_SELECTED = new FilePOJO(FileObjectType.FILE_TYPE, f.getName(), null, f.getAbsolutePath(), true, 0L, null, 0L, null, R.drawable.folder_icon, null, 0, 0, 0, 0L, null, 0, null, null);
+                    drawer_storage_file_pojo_selected = new FilePOJO(FileObjectType.FILE_TYPE, f.getName(), null, f.getAbsolutePath(), true, 0L, null, 0L, null, R.drawable.folder_icon, null, 0, 0, 0, 0L, null, 0, null, null);
                 }
-
             }
-
         });
         workingDirListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         workingDirListRecyclerView.setAdapter(workingDirRecyclerAdapter);
@@ -523,12 +519,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         });
 
         library_expand_indicator = findViewById(R.id.library_expand_indicator);
-        LIBRARY_CATEGORIES = Arrays.asList(getResources().getStringArray(R.array.library_categories));
+        library_categories = Arrays.asList(getResources().getStringArray(R.array.library_categories));
         RecyclerView libraryRecyclerView = findViewById(R.id.library_recyclerview);
         libraryRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         libraryRecyclerView.addItemDecoration(Global.DIVIDERITEMDECORATION);
         int[] icon_image_array = {R.drawable.lib_download_icon, R.drawable.lib_doc_icon, R.drawable.lib_image_icon, R.drawable.lib_audio_icon, R.drawable.lib_video_icon, R.drawable.compress_icon, R.drawable.android_os_outlined_icon};
-        libraryRecyclerView.setAdapter(new LibraryRecyclerAdapter(LIBRARY_CATEGORIES, icon_image_array));
+        libraryRecyclerView.setAdapter(new LibraryRecyclerAdapter(library_categories, icon_image_array));
 
 
         View library_scan_heading_layout = findViewById(R.id.library_scan_label_background);
@@ -555,11 +551,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                         } else {
                             rescanLibrary();
                         }
-
                         pbf.dismissAllowingStateLoss();
                     }
                 }, 500);
-
             }
         });
 
@@ -735,12 +729,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         });
 
         network_expand_indicator = findViewById(R.id.network_expand_indicator);
-        NETWORK_TYPES = Arrays.asList(getResources().getStringArray(R.array.network_types));
+        List<String> network_types = Arrays.asList(getResources().getStringArray(R.array.network_types));
         networkRecyclerView = findViewById(R.id.network_recyclerview);
         networkRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         networkRecyclerView.addItemDecoration(Global.DIVIDERITEMDECORATION);
         int[] network_icon_image_array = {R.drawable.ftp_file_icon, R.drawable.ftp_file_icon, R.drawable.ftp_file_icon, R.drawable.ftp_file_icon};
-        networkRecyclerView.setAdapter(new NetworkRecyclerAdapter(NETWORK_TYPES, network_icon_image_array));
+        networkRecyclerView.setAdapter(new NetworkRecyclerAdapter(network_types, network_icon_image_array));
 
 
         int drawer_width = (int) getResources().getDimension(R.dimen.drawer_width_with_padding);
@@ -761,14 +755,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             public void onDrawerOpened(View v) {
-                DRAWER_STORAGE_FILEPOJO_SELECTED = null;
+                drawer_storage_file_pojo_selected = null;
             }
 
             public void onDrawerClosed(View v) {
-                if (DRAWER_STORAGE_FILEPOJO_SELECTED != null) {
-                    FileObjectType fileObjectType = DRAWER_STORAGE_FILEPOJO_SELECTED.getFileObjectType();
-                    createFragmentTransaction(DRAWER_STORAGE_FILEPOJO_SELECTED.getPath(), fileObjectType);
-                    DRAWER_STORAGE_FILEPOJO_SELECTED = null;
+                if (drawer_storage_file_pojo_selected != null) {
+                    FileObjectType fileObjectType = drawer_storage_file_pojo_selected.getFileObjectType();
+                    createFragmentTransaction(drawer_storage_file_pojo_selected.getPath(), fileObjectType);
+                    drawer_storage_file_pojo_selected = null;
                 }
             }
 
@@ -932,7 +926,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                         iterator.remove();
                         break;
                     }
-
                 }
 
                 //get methods kept below instead of in if block above to avoid likely concurrent modification exception
@@ -1223,7 +1216,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         if (viewModel.network_shown) {
             network_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.right_arrow_drawer_icon));
             network_layout_group.setVisibility(View.VISIBLE);
-
         }
         clear_cache = savedInstanceState.getBoolean("clear_cache");
     }
@@ -1287,7 +1279,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 int frag = 2;
                 df = (DetailFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count - frag).getName());
                 String df_tag = df.getTag();
-                while (!(df.fileObjectType == FileObjectType.FILE_TYPE && new File(df_tag).exists()) && !LIBRARY_CATEGORIES.contains(df_tag) && !df_tag.equals("Large Files")
+                while (!(df.fileObjectType == FileObjectType.FILE_TYPE && new File(df_tag).exists()) && !library_categories.contains(df_tag) && !df_tag.equals("Large Files")
                         && !df_tag.equals("Duplicate Files") && df.currentUsbFile == null
                         && !Global.WHETHER_FILE_OBJECT_TYPE_NETWORK_TYPE_AND_CONTAINED_IN_STORAGE_DIR(df.fileObjectType)) {
                     fm.popBackStack();
@@ -1357,7 +1349,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             all_select.setImageResource(R.drawable.select_icon);
             interval_select.setVisibility(View.GONE);
         }
-    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    }
+
+    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -1829,7 +1823,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 return;
             }
             final ArrayList<String> files_selected_array = new ArrayList<>();
-            //final ArrayList<Integer> files_selected_index_array=new ArrayList<>();
             int size;
             int id = v.getId();
             if (id == R.id.toolbar_btn_1) {
@@ -1865,9 +1858,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             } else if (id == R.id.toolbar_btn_4) {
                 size = df.viewModel.mselecteditems.size();
                 for (int i = 0; i < size; ++i) {
-                    //int key = df.viewModel.mselecteditemsFilePath.keyAt(i);
                     files_selected_array.add(df.viewModel.mselecteditems.getValueAtIndex(i));
-                    //files_selected_index_array.add(key);
                 }
 
                 DeleteFileAlertDialog deleteFileAlertDialog = DeleteFileAlertDialog.getInstance(files_selected_array, df.fileObjectType, df.fileclickselected, false);
@@ -1875,7 +1866,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 action_mode_finish(df);
             } else if (id == R.id.toolbar_btn_5) {
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
                     public void onItemClick(AdapterView<?> p1, View p2, int p3, long p4) {
                         int size;
                         Object idd = listView.getItemAtPosition(p3);
@@ -2173,7 +2163,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
                 v.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View p) {
-                        DRAWER_STORAGE_FILEPOJO_SELECTED = storage_dir_arraylist.get(getBindingAdapterPosition());
+                        drawer_storage_file_pojo_selected = storage_dir_arraylist.get(getBindingAdapterPosition());
                         drawerLayout.closeDrawer(drawer);
                     }
                 });
@@ -2248,7 +2238,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                                 name = "APK";
                                 break;
                         }
-                        DRAWER_STORAGE_FILEPOJO_SELECTED = new FilePOJO(FileObjectType.SEARCH_LIBRARY_TYPE, name, null, name, false, 0L, null, 0L, null, R.drawable.folder_icon, null, 0, 0, 0, 0L, null, 0, null, null);
+                        drawer_storage_file_pojo_selected = new FilePOJO(FileObjectType.SEARCH_LIBRARY_TYPE, name, null, name, false, 0L, null, 0L, null, R.drawable.folder_icon, null, 0, 0, 0, 0L, null, 0, null, null);
                         drawerLayout.closeDrawer(drawer);
                     }
                 });
@@ -2331,7 +2321,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     }
 
     private class USBReceiver extends BroadcastReceiver {
-
         @Override
         public void onReceive(Context p1, Intent intent) {
             String action = intent.getAction();
@@ -2389,12 +2378,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         @Override
         public void onReceive(Context context, Intent intent) {
             DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-            FileObjectType fileObjectType = null;
             Bundle bundle = intent.getExtras();
-            if (bundle != null) {
-                fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
-            }
-
             switch (intent.getAction()) {
                 case Global.LOCAL_BROADCAST_OTHER_ACTIVITY_DELETE_FILE_ACTION:
                     if (df != null) {
@@ -2410,13 +2394,142 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     storageRecyclerAdapter.notifyDataSetChanged();
                     break;
                 case Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT:
-                    if (df != null && fileObjectType != null && fileObjectType == df.fileObjectType) {
-                        onbackpressed(false);
+                    if (bundle != null) {
+                        FileObjectType fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
+                        if (df != null && fileObjectType != null && fileObjectType == df.fileObjectType) {
+                            onbackpressed(false);
+                        }
+                    }
+                    break;
+                case Global.LOCAL_BROADCAST_DELETE_FILE_ACTION:
+                    if (bundle != null) {
+                        String source_folder = bundle.getString("source_folder");
+                        FileObjectType sourceFileObjectType = (FileObjectType) bundle.getSerializable("sourceFileObjectType");
+                        String parent_source_folder = new File(source_folder).getParent();
+                        if (parent_source_folder == null) {
+                            parent_source_folder = source_folder;
+                        }
+
+                        if (df != null && df.fileObjectType == sourceFileObjectType) {
+                            String tag = df.getTag();
+                            if (Global.IS_CHILD_FILE(tag, parent_source_folder)) {
+                                df.clearSelectionAndNotifyDataSetChanged();
+                            }
+                        }
+                    }
+                    break;
+                case Global.LOCAL_BROADCAST_CLEAR_CACHE_REFRESH_ACTION:
+                    if (bundle != null) {
+                        String file_path = bundle.getString("file_path");
+                        FileObjectType sourceFileObjectType = (FileObjectType) bundle.getSerializable("sourceFileObjectType");
+                        if (df != null) {
+                            df.adapter.clear_cache_and_refresh(file_path, sourceFileObjectType);
+                        }
+                    }
+                    break;
+                case Global.LOCAL_BROADCAST_CUT_COPY_FILE_ACTION:
+                    if (bundle != null) {
+                        String dest_folder = bundle.getString("dest_folder");
+                        String source_folder = bundle.getString("source_folder");
+                        FileObjectType destFileObjectType = (FileObjectType) bundle.getSerializable("destFileObjectType");
+                        FileObjectType sourceFileObjectType = (FileObjectType) bundle.getSerializable("sourceFileObjectType");
+                        FilePOJO filePOJO = bundle.getParcelable("filePOJO");
+                        String parent_dest_folder = new File(dest_folder).getParent();
+                        if (parent_dest_folder == null) {
+                            parent_dest_folder = dest_folder;
+                        }
+
+                        String parent_source_folder = new File(source_folder).getParent();
+                        if (parent_source_folder == null) {
+                            parent_source_folder = source_folder;
+                        }
+
+                        if (df != null) {
+                            String tag = df.getTag();
+                            if (tag.equals(dest_folder) && df.fileObjectType == destFileObjectType) {
+                                df.clearSelectionAndNotifyDataSetChanged();
+                                int idx = df.filePOJO_list.indexOf(filePOJO);
+                                if (df.llm != null) {
+                                    df.llm.scrollToPositionWithOffset(idx, 0);
+                                } else if (df.glm != null) {
+                                    df.glm.scrollToPositionWithOffset(idx, 0);
+                                }
+
+                            } else if (Global.IS_CHILD_FILE(tag, parent_dest_folder) && df.fileObjectType == destFileObjectType) {
+                                df.clearSelectionAndNotifyDataSetChanged();
+                            }
+
+                            // in case of cut, to take care of instances of dest_folder is also parent of source folder, it is put in separate if block
+                            if (Global.IS_CHILD_FILE(tag, parent_source_folder) && df.fileObjectType == sourceFileObjectType) {
+                                df.clearSelectionAndNotifyDataSetChanged();
+                            }
+                        }
+                    }
+                    break;
+                case Global.LOCAL_BROADCAST_ARCHIVE_UNARCHIVE_FILE_ACTION:
+                    if (bundle != null) {
+                        String dest_folder = bundle.getString("dest_folder");
+                        FileObjectType destFileObjectType = (FileObjectType) bundle.getSerializable("destFileObjectType");
+                        FilePOJO filePOJO = bundle.getParcelable("filePOJO");
+                        String parent_dest_folder = new File(dest_folder).getParent();
+                        if (parent_dest_folder == null) {
+                            parent_dest_folder = dest_folder;
+                        }
+                        if (df != null) {
+                            if (Global.AFTER_ARCHIVE_GOTO_DEST_FOLDER) {
+                                DetailFragment.TO_BE_MOVED_TO_FILE_POJO = filePOJO;
+                                if (df.detailFragmentListener != null) {
+                                    if (destFileObjectType == FileObjectType.FILE_TYPE) {
+                                        df.detailFragmentListener.createFragmentTransaction(dest_folder, FileObjectType.FILE_TYPE);
+                                    } else if (destFileObjectType == FileObjectType.USB_TYPE && MainActivity.usbFileRoot != null) {
+                                        df.detailFragmentListener.createFragmentTransaction(dest_folder, FileObjectType.USB_TYPE);
+                                    } else {
+                                        df.detailFragmentListener.createFragmentTransaction(dest_folder, destFileObjectType);
+                                    }
+                                }
+                            } else {
+                                String tag = df.getTag();
+                                if (Global.IS_CHILD_FILE(tag, parent_dest_folder) && df.fileObjectType == destFileObjectType) {
+                                    df.clearSelectionAndNotifyDataSetChanged();
+                                    int idx = df.filePOJO_list.indexOf(filePOJO);
+                                    if (df.llm != null) {
+                                        df.llm.scrollToPositionWithOffset(idx, 0);
+                                    } else if (df.glm != null) {
+                                        df.glm.scrollToPositionWithOffset(idx, 0);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case Global.LOCAL_BROADCAST_COPY_TO_FILE_ACTION:
+                    if (bundle != null) {
+                        String dest_folder = bundle.getString("dest_folder");
+                        FileObjectType destFileObjectType = (FileObjectType) bundle.getSerializable("destFileObjectType");
+                        FilePOJO filePOJO = bundle.getParcelable("filePOJO");
+                        String parent_dest_folder = new File(dest_folder).getParent();
+                        if (parent_dest_folder == null) {
+                            parent_dest_folder = dest_folder;
+                        }
+
+                        if (df != null) {
+                            String tag = df.getTag();
+                            if (tag.equals(dest_folder) && df.fileObjectType == destFileObjectType) {
+                                df.clearSelectionAndNotifyDataSetChanged();
+                                int idx = df.filePOJO_list.indexOf(filePOJO);
+                                if (df.llm != null) {
+                                    df.llm.scrollToPositionWithOffset(idx, 0);
+                                } else if (df.glm != null) {
+                                    df.glm.scrollToPositionWithOffset(idx, 0);
+                                }
+
+                            } else if (Global.IS_CHILD_FILE(tag, parent_dest_folder) && df.fileObjectType == destFileObjectType) {
+                                df.clearSelectionAndNotifyDataSetChanged();
+                            }
+                        }
                     }
                     break;
             }
         }
     }
-
-
 }

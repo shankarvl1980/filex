@@ -1,6 +1,9 @@
 package svl.kadatha.filex;
 
-public class FilePOJO {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class FilePOJO implements Parcelable {
     private final String lower_name;
     private final String package_name;
     private FileObjectType fileObjectType;
@@ -47,6 +50,78 @@ public class FilePOJO {
         this.checksum = checksum;
     }
 
+    protected FilePOJO(Parcel in) {
+        lower_name = in.readString();
+        package_name = in.readString();
+        int fileObjectTypeOrdinal = in.readInt();
+        if (fileObjectTypeOrdinal == -1) {
+            fileObjectType = null;
+        } else {
+            fileObjectType = FileObjectType.values()[fileObjectTypeOrdinal];
+        }
+        name = in.readString();
+        path = in.readString();
+        isDirectory = in.readByte() != 0;
+        dateLong = in.readLong();
+        date = in.readString();
+        sizeLong = in.readLong();
+        size = in.readString();
+        type = in.readInt();
+        ext = in.readString();
+        alfa = in.readFloat();
+        overlay_visible = in.readInt();
+        totalFiles = in.readInt();
+        totalSizeLong = in.readLong();
+        totalSize = in.readString();
+        totalSizePercentageDouble = in.readDouble();
+        totalSizePercentage = in.readString();
+        checksum = in.readString();
+        whetherExternal = in.readByte() != 0;
+    }
+
+    public static final Creator<FilePOJO> CREATOR = new Creator<FilePOJO>() {
+        @Override
+        public FilePOJO createFromParcel(Parcel in) {
+            return new FilePOJO(in);
+        }
+
+        @Override
+        public FilePOJO[] newArray(int size) {
+            return new FilePOJO[size];
+        }
+    };
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(lower_name);
+        dest.writeString(package_name);
+        dest.writeInt(fileObjectType == null ? -1 : fileObjectType.ordinal());
+        dest.writeString(name);
+        dest.writeString(path);
+        dest.writeByte((byte) (isDirectory ? 1 : 0));
+        dest.writeLong(dateLong);
+        dest.writeString(date);
+        dest.writeLong(sizeLong);
+        dest.writeString(size);
+        dest.writeInt(type);
+        dest.writeString(ext);
+        dest.writeFloat(alfa);
+        dest.writeInt(overlay_visible);
+        dest.writeInt(totalFiles);
+        dest.writeLong(totalSizeLong);
+        dest.writeString(totalSize);
+        dest.writeDouble(totalSizePercentageDouble);
+        dest.writeString(totalSizePercentage);
+        dest.writeString(checksum);
+        dest.writeByte((byte) (whetherExternal ? 1 : 0));
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    // Getters and setters
     public FileObjectType getFileObjectType() {
         return this.fileObjectType;
     }
@@ -206,5 +281,4 @@ public class FilePOJO {
     public void setWhetherExternal(boolean whetherExternal) {
         this.whetherExternal = whetherExternal;
     }
-
 }
