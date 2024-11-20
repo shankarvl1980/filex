@@ -75,6 +75,10 @@ import java.util.concurrent.ExecutorService;
 import me.jahnen.libaums.core.UsbMassStorageDevice;
 import me.jahnen.libaums.core.fs.FileSystem;
 import me.jahnen.libaums.core.fs.UsbFile;
+import svl.kadatha.filex.appmanager.AppManagerActivity;
+import svl.kadatha.filex.audio.AudioPlayerActivity;
+import svl.kadatha.filex.ftpserver.FtpServerActivity;
+import svl.kadatha.filex.network.NetworkAccountsDetailsDialog;
 
 
 public class MainActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener,
@@ -85,8 +89,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     public static FileSystem usbCurrentFs;
     public static boolean USB_ATTACHED;
     public static String SU = "";
-    static boolean SHOW_HIDDEN_FILE;
-    static LinkedList<FilePOJO> RECENT = new LinkedList<>();
+    public static boolean SHOW_HIDDEN_FILE;
+    public static LinkedList<FilePOJO> RECENT = new LinkedList<>();
     final ArrayList<ListPopupWindowPOJO> list_popupwindowpojos = new ArrayList<>();
     public Button rename, working_dir_add_btn, working_dir_remove_btn;
     public ImageButton parent_dir_image_button, all_select, interval_select;
@@ -1667,7 +1671,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         }
     }
 
-    interface RecentDialogListener {
+    public interface RecentDialogListener {
         void onMediaAttachedAndRemoved();
     }
 

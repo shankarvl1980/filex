@@ -19,7 +19,7 @@ public class NotifManager {
     private final NotificationManager nm;
     private final Context context;
 
-    NotifManager(Context context) {
+    public NotifManager(Context context) {
 
         this.context = context;
         nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

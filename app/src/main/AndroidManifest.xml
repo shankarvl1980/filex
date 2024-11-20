@@ -102,7 +102,7 @@
             android:theme="@style/MyLightDialog" />
 
         <activity
-            android:name=".FileEditorActivity"
+            android:name=".texteditor.TextEditorActivity"
             android:exported="true"
             android:label="@string/text_editor">
             <intent-filter>
@@ -116,7 +116,7 @@
         </activity>
 
         <activity
-            android:name=".PdfViewActivity"
+            android:name=".imagepdfvideo.PdfViewActivity"
             android:exported="true"
             android:label="@string/pdf_viewer">
             <intent-filter>
@@ -130,7 +130,7 @@
         </activity>
 
         <activity
-            android:name=".AudioPlayerActivity"
+            android:name=".audio.AudioPlayerActivity"
             android:exported="true"
             android:label="@string/audio_player"
             android:launchMode="singleTop">
@@ -145,7 +145,7 @@
         </activity>
 
         <activity
-            android:name=".ImageViewActivity"
+            android:name=".imagepdfvideo.ImageViewActivity"
             android:exported="true"
             android:label="@string/image_viewer"
             android:theme="@style/MyLightFullScreen">
@@ -160,7 +160,7 @@
         </activity>
 
         <activity
-            android:name=".VideoViewActivity"
+            android:name=".imagepdfvideo.VideoViewActivity"
             android:configChanges="uiMode"
             android:exported="true"
             android:label="@string/video_player"
@@ -176,7 +176,7 @@
         </activity>
 
         <activity
-            android:name=".InstaCropperActivity"
+            android:name=".instacrop.InstaCropperActivity"
             android:exported="false" />
 
         <activity
@@ -203,7 +203,7 @@
         </activity>
 
         <activity
-            android:name=".AppManagerActivity"
+            android:name=".appmanager.AppManagerActivity"
             android:exported="false"
             android:label="@string/app_manager">
             <intent-filter>
@@ -233,12 +233,12 @@
         </activity>
 
         <activity
-            android:name=".FtpServerActivity"
+            android:name=".ftpserver.FtpServerActivity"
             android:exported="true"
             android:label="@string/ftp_server" />
 
         <service
-            android:name=".AudioPlayerService"
+            android:name=".audio.AudioPlayerService"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
         <service
@@ -254,15 +254,15 @@
             android:exported="false"
             android:foregroundServiceType="dataSync" />
         <service
-            android:name=".FileSaveService1"
+            android:name=".texteditor.TextSaveService1"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
         <service
-            android:name=".FileSaveService2"
+            android:name=".texteditor.TextSaveService2"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
         <service
-            android:name=".FileSaveService3"
+            android:name=".texteditor.TextSaveService3"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
         <service

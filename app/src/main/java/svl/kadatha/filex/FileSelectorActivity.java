@@ -75,7 +75,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     public static boolean FILE_GRID_LAYOUT, SHOW_HIDDEN_FILE;
     public static int RECYCLER_VIEW_FONT_SIZE_FACTOR, GRID_COUNT;
     public static String SORT;
-    static LinkedList<FilePOJO> RECENT = new LinkedList<>();
+    public static LinkedList<FilePOJO> RECENT = new LinkedList<>();
     public FragmentManager fm;
     public boolean clear_cache;
     public List<FilePOJO> storage_filePOJO_list;
@@ -798,7 +798,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         }
     }
 
-    interface RecentDialogListener {
+    public interface RecentDialogListener {
         void onMediaAttachedAndRemoved();
     }
 

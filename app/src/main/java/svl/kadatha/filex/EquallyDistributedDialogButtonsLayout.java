@@ -20,7 +20,7 @@ public class EquallyDistributedDialogButtonsLayout extends ViewGroup {
     private int margin;
     private LinearLayout.LayoutParams params;
 
-    EquallyDistributedDialogButtonsLayout(Context context, int number_of_buttons, int screen_width, int screen_height) {
+    public EquallyDistributedDialogButtonsLayout(Context context, int number_of_buttons, int screen_width, int screen_height) {
 
         super(context);
         this.context = context;

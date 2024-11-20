@@ -4,14 +4,12 @@
 
     >
 
-    <svl.kadatha.filex.TouchImageView
+    <svl.kadatha.filex.imagepdfvideo.TouchImageView
         android:id="@+id/picture_viewpager_layout_imageview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
         android:scaleType="centerInside"
-
-
         />
 
 </FrameLayout>

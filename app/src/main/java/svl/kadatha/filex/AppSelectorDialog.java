@@ -35,6 +35,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.io.File;
 import java.util.List;
 
+import svl.kadatha.filex.instacrop.InstaCropperActivity;
+
 public class AppSelectorDialog extends DialogFragment {
     public AppSelectorViewModel viewModel;
     private Context context;

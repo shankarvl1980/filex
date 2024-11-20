@@ -19,7 +19,7 @@ public class EquallyDistributedButtonsWithTextLayout extends ViewGroup {
     private final int screen_height;
     private int child_count, toppadding;
 
-    EquallyDistributedButtonsWithTextLayout(Context context, int child_count, int screen_width, int screen_height) {
+    public EquallyDistributedButtonsWithTextLayout(Context context, int child_count, int screen_width, int screen_height) {
         super(context);
         this.context = context;
         this.child_count = child_count;

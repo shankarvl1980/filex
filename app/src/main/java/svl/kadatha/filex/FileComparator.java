@@ -2,6 +2,8 @@ package svl.kadatha.filex;
 
 import java.util.Comparator;
 
+import svl.kadatha.filex.appmanager.AppManagerListFragment;
+
 public class FileComparator {
 
     // Singleton instance of NaturalSortComparator

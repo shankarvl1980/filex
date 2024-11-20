@@ -23,7 +23,7 @@ public class PermissionsUtil {
     private final List<String> permissions_not_granted_list = new ArrayList<>();
 
 
-    PermissionsUtil(Context context, AppCompatActivity activity) {
+    public PermissionsUtil(Context context, AppCompatActivity activity) {
         this.context = context;
         this.activity = activity;
 

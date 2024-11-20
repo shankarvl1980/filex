@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import svl.kadatha.filex.imagepdfvideo.TouchImageView;
+
 public class RotatableImageView extends FrameLayout {
     private TouchImageView touchImageView;
     private float currentRotation = 0f;

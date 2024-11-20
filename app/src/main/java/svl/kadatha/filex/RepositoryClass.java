@@ -28,6 +28,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+import svl.kadatha.filex.appmanager.AppManagerListFragment;
+import svl.kadatha.filex.audio.AlbumPOJO;
+import svl.kadatha.filex.audio.AudioPOJO;
+import svl.kadatha.filex.audio.AudioPlayerActivity;
+
 public class RepositoryClass {
 
     final MutableLiveData<Integer> download_mutable_count = new MutableLiveData<>();
@@ -39,11 +44,11 @@ public class RepositoryClass {
     final MutableLiveData<Integer> apk_mutable_count = new MutableLiveData<>();
     final MutableLiveData<Integer> large_mutable_count = new MutableLiveData<>();
     final MutableLiveData<Integer> duplicate_mutable_count = new MutableLiveData<>();
-    final HashMap<String, List<FilePOJO>> hashmap_file_pojo_filtered = new HashMap<>();
-    final HashMap<String, List<FilePOJO>> hashmap_file_pojo = new HashMap<>();
-    final HashMap<String, List<AppManagerListFragment.AppPOJO>> app_pojo_hashmap = new HashMap<>();
-    final HashMap<String, List<AudioPOJO>> audio_pojo_hashmap = new HashMap<>();
-    final HashMap<String, List<AlbumPOJO>> album_pojo_hashmap = new HashMap<>();
+    public final HashMap<String, List<FilePOJO>> hashmap_file_pojo_filtered = new HashMap<>();
+    public final HashMap<String, List<FilePOJO>> hashmap_file_pojo = new HashMap<>();
+    public final HashMap<String, List<AppManagerListFragment.AppPOJO>> app_pojo_hashmap = new HashMap<>();
+    public final HashMap<String, List<AudioPOJO>> audio_pojo_hashmap = new HashMap<>();
+    public final HashMap<String, List<AlbumPOJO>> album_pojo_hashmap = new HashMap<>();
     final List<String> internal_storage_path_list = new ArrayList<>();
     final List<String> external_storage_path_list = new ArrayList<>();
     private final Object download_lock = new Object();
@@ -59,7 +64,7 @@ public class RepositoryClass {
     private final Object large_file_lock = new Object();
     private final Object duplicate_file_lock = new Object();
     int download_count, document_count, image_count, audio_count, video_count, archive_count, apk_count, large_count, duplicate_count;
-    ArrayList<FilePOJO> storage_dir = new ArrayList<>();
+    public ArrayList<FilePOJO> storage_dir = new ArrayList<>();
     ConcurrentHashMap<String, FilePOJOViewModel.FileStoragePOJO> hashmap_internal_directory_size = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, FilePOJOViewModel.FileStoragePOJO> hashmap_external_directory_size = new ConcurrentHashMap<>();
 

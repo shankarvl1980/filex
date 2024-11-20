@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Stack;
 
 import svl.kadatha.filex.Global;
-import svl.kadatha.filex.NetworkAccountDetailsViewModel;
-import svl.kadatha.filex.SmbClientRepository;
+import svl.kadatha.filex.network.NetworkAccountDetailsViewModel;
+import svl.kadatha.filex.network.SmbClientRepository;
 import timber.log.Timber;
 
 public class SmbFileModel implements FileModel {

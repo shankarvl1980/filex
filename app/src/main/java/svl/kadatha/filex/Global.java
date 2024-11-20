@@ -38,10 +38,8 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -59,6 +57,8 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.ExecutorService;
 
+import svl.kadatha.filex.appmanager.AppManagerActivity;
+import svl.kadatha.filex.audio.AudioPlayerService;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FileModelFactory;
 
@@ -78,13 +78,13 @@ public class Global {
     static public final String LOCAL_BROADCAST_COPY_TO_FILE_ACTION = FILEX_PACKAGE + ".FILE_COPY_TO";
     static public final String TAG = "shankar";
     public static final List<FileObjectType> NETWORK_FILE_OBJECT_TYPES = Arrays.asList(FileObjectType.FTP_TYPE, FileObjectType.SFTP_TYPE, FileObjectType.WEBDAV_TYPE, FileObjectType.SMB_TYPE);
-    static final List<String> APK_ICON_PACKAGE_NAME_LIST = new ArrayList<>();
+    public static final List<String> APK_ICON_PACKAGE_NAME_LIST = new ArrayList<>();
     static final HashMap<String, List<LibraryAlbumSelectDialog.LibraryDirPOJO>> LIBRARY_FILTER_HASHMAP = new HashMap<>();
     static final String TEXT_REGEX = "(?i)txt|json|java|xml|cpp|c|h|log|html|htm";
     static final String RTF_REGEX = "(?i)rtf";
-    static final String IMAGE_REGEX = "(?i)png|jpg|jpeg|svg|gif|tif|webp|avif";
-    static final String AUDIO_REGEX = "(?i)mp3|ogg|wav|aac|wma|opus|m4r|m4a|awb";
-    static final String VIDEO_REGEX = "(?i)3gp|mp4|avi|mov|flv|wmv|webm";
+    public static final String IMAGE_REGEX = "(?i)png|jpg|jpeg|svg|gif|tif|webp|avif";
+    public static final String AUDIO_REGEX = "(?i)mp3|ogg|wav|aac|wma|opus|m4r|m4a|awb";
+    public static final String VIDEO_REGEX = "(?i)3gp|mp4|avi|mov|flv|wmv|webm";
     static final String ZIP_REGEX = "(?i)zip|rar|jar|7z";
     static final String UNIX_ARCHIVE_REGEX = "(?i)tar|gzip|gz";
     static final String GZIP_REGEX = "(?i)gzip|gz";
@@ -94,17 +94,17 @@ public class Global {
     static final String XLS_REGEX = "(?i)xls|xlsx";
     static final String PPT_REGEX = "(?i)ppt|pptx";
     static final String DB_REGEX = "(?i)db";
-    static final float DISABLE_ALFA = (float) 0.4;
-    static final float ENABLE_ALFA = (float) 1.0;
-    static final int FONT_SIZE_SMALL_FIRST_LINE = 15;
-    static final int FONT_SIZE_SMALL_DETAILS_LINE = 12;
-    static final int FONT_SIZE_MEDIUM_FIRST_LINE = 17;
-    static final int FONT_SIZE_MEDIUM_DETAILS_LINE = 13;
-    static final int FONT_SIZE_LARGE_FIRST_LINE = 19;
-    static final int FONT_SIZE_LARGE_DETAILS_LINE = 15;
-    static final int IMAGE_VIEW_DIMENSION_MULTIPLIER_SMALL = 8;
-    static final int IMAGE_VIEW_DIMENSION_MULTIPLIER_MEDIUM = 9;
-    static final int IMAGE_VIEW_DIMENSION_MULTIPLIER_LARGE = 10;
+    public static final float DISABLE_ALFA = (float) 0.4;
+    public static final float ENABLE_ALFA = (float) 1.0;
+    public static final int FONT_SIZE_SMALL_FIRST_LINE = 15;
+    public static final int FONT_SIZE_SMALL_DETAILS_LINE = 12;
+    public static final int FONT_SIZE_MEDIUM_FIRST_LINE = 17;
+    public static final int FONT_SIZE_MEDIUM_DETAILS_LINE = 13;
+    public static final int FONT_SIZE_LARGE_FIRST_LINE = 19;
+    public static final int FONT_SIZE_LARGE_DETAILS_LINE = 15;
+    public static final int IMAGE_VIEW_DIMENSION_MULTIPLIER_SMALL = 8;
+    public static final int IMAGE_VIEW_DIMENSION_MULTIPLIER_MEDIUM = 9;
+    public static final int IMAGE_VIEW_DIMENSION_MULTIPLIER_LARGE = 10;
     static final Set<String> SORT_CODE_SET = new HashSet<>(Arrays.asList("d_name_asc", "d_name_desc", "d_date_asc", "d_date_desc", "d_size_asc", "d_size_desc",
             "f_name_asc", "f_name_desc", "f_date_asc", "f_date_desc", "f_size_asc", "f_size_desc"));
     static final Set<String> THEME_CODE_SET = new HashSet<>(Arrays.asList("system", "light", "dark"));
@@ -144,53 +144,53 @@ public class Global {
     static public boolean DETAILED_SEARCH_LIBRARY;
     public static FileObjectType USB_CACHED_FILE_OBJECT;
     public static int ARCHIVE_CACHE_DIR_LENGTH;
-    static String INTERNAL_PRIMARY_STORAGE_PATH = "";
+    public static String INTERNAL_PRIMARY_STORAGE_PATH = "";
     static String USB_STORAGE_PATH;
     static File USB_CACHE_DIR;
-    static File TEMP_ROTATE_CACHE_DIR;
-    static File FTP_CACHE_DIR;
-    static File SFTP_CACHE_DIR;
-    static File WEBDAV_CACHE_DIR;
-    static File SMB_CACHE_DIR;
-    static File ROOT_CACHE_DIR;
-    static File APK_ICON_DIR;
+    public static File TEMP_ROTATE_CACHE_DIR;
+    public static File FTP_CACHE_DIR;
+    public static File SFTP_CACHE_DIR;
+    public static File WEBDAV_CACHE_DIR;
+    public static File SMB_CACHE_DIR;
+    public static File ROOT_CACHE_DIR;
+    public static File APK_ICON_DIR;
     static List<UriPOJO> URI_PERMISSION_LIST = new ArrayList<>();
-    static int ORIENTATION;
-    static int SCREEN_WIDTH, SCREEN_HEIGHT, DIALOG_WIDTH, DIALOG_HEIGHT, WIDTH;
+    public static int ORIENTATION;
+    public static int SCREEN_WIDTH, SCREEN_HEIGHT, DIALOG_WIDTH, DIALOG_HEIGHT, WIDTH;
     static float SCREEN_RATIO;
-    static String SORT;
+    public static String SORT;
     static String STORAGE_ANALYSER_SORT;
-    static String APP_MANAGER_SORT;
+    public static String APP_MANAGER_SORT;
     static String THEME;
-    static int RECYCLER_VIEW_FONT_SIZE_FACTOR;
-    static int IMAGEVIEW_DIMENSION_SMALL_LIST;
-    static int IMAGEVIEW_DIMENSION_MEDIUM_LIST;
-    static int IMAGEVIEW_DIMENSION_LARGE_LIST;
-    static int IMAGEVIEW_DIMENSION_SMALL_GRID;
-    static int IMAGEVIEW_DIMENSION_MEDIUM_GRID;
-    static int IMAGEVIEW_DIMENSION_LARGE_GRID;
-    static int GRID_COUNT_SMALL, GRID_COUNT_MEDIUM, GRID_COUNT_LARGE, GRID_COUNT;
+    public static int RECYCLER_VIEW_FONT_SIZE_FACTOR;
+    public static int IMAGEVIEW_DIMENSION_SMALL_LIST;
+    public static int IMAGEVIEW_DIMENSION_MEDIUM_LIST;
+    public static int IMAGEVIEW_DIMENSION_LARGE_LIST;
+    public static int IMAGEVIEW_DIMENSION_SMALL_GRID;
+    public static int IMAGEVIEW_DIMENSION_MEDIUM_GRID;
+    public static int IMAGEVIEW_DIMENSION_LARGE_GRID;
+    public static int GRID_COUNT_SMALL, GRID_COUNT_MEDIUM, GRID_COUNT_LARGE, GRID_COUNT;
     static int BUTTON_HEIGHT;
     static float ONE_DP;
     static int TWO_DP;
     static int THIRTY_SIX_DP;
     static int SELECTOR_ICON_DIMENSION;
-    static int FOUR_DP;
-    static int FIVE_DP;
-    static int SIX_DP;
-    static int EIGHT_DP;
-    static int TEN_DP;
-    static int TWELVE_DP;
-    static int FOURTEEN_DP;
-    static int RECYCLERVIEW_ITEM_SPACING;
-    static int LIST_POPUP_WINDOW_DROP_DOWN_OFFSET;
+    public static int FOUR_DP;
+    public static int FIVE_DP;
+    public static int SIX_DP;
+    public static int EIGHT_DP;
+    public static int TEN_DP;
+    public static int TWELVE_DP;
+    public static int FOURTEEN_DP;
+    public static int RECYCLERVIEW_ITEM_SPACING;
+    public static int LIST_POPUP_WINDOW_DROP_DOWN_OFFSET;
     static boolean BYTE_COUNT_BLOCK_1000;
     static boolean FILE_GRID_LAYOUT;
     static boolean IMAGE_VIDEO_GRID_LAYOUT;
     static boolean SHOW_FILE_PATH;
-    static boolean IS_TABLET;
+    public static boolean IS_TABLET;
     static boolean RECOGNISE_USB;
-    static DividerItemDecoration DIVIDERITEMDECORATION;
+    public static DividerItemDecoration DIVIDERITEMDECORATION;
     static boolean WHETHER_TO_CLEAR_CACHE_TODAY;
     static int SIZE_APK_ICON_LIST, CURRENT_MONTH;
 
@@ -392,7 +392,7 @@ public class Global {
         ARCHIVE_CACHE_DIR_LENGTH = ARCHIVE_EXTRACT_DIR.getAbsolutePath().length();
     }
 
-    static void GET_PREFERENCES(TinyDB tinyDB) {
+    public static void GET_PREFERENCES(TinyDB tinyDB) {
 //
         if (SORT == null) {
             SORT = tinyDB.getString("sort");
@@ -552,7 +552,7 @@ public class Global {
         }
     }
 
-    static void SHOW_LIST_POPUP_WINDOW_BOTTOM(View bottom_toolbar, PopupWindow listPopWindow, int desiredDistanceFromToolbar) {
+    public static void SHOW_LIST_POPUP_WINDOW_BOTTOM(View bottom_toolbar, PopupWindow listPopWindow, int desiredDistanceFromToolbar) {
         View rootView = bottom_toolbar.getRootView();
         int[] location = new int[2];
         bottom_toolbar.getLocationInWindow(location);
@@ -586,7 +586,7 @@ public class Global {
     }
 
 
-    static void WORKOUT_AVAILABLE_SPACE() {
+    public static void WORKOUT_AVAILABLE_SPACE() {
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
         for (FilePOJO filePOJO : repositoryClass.storage_dir) {
             if (filePOJO == null) {
@@ -723,88 +723,88 @@ public class Global {
         return normalizedPath.toString();
     }
 
-    private static boolean isSameFileSystem(NetworkAccountsDetailsDialog.NetworkAccountPOJO source,
-                                            FileObjectType sourceFileObjectType,
-                                            NetworkAccountsDetailsDialog.NetworkAccountPOJO dest,
-                                            FileObjectType destFileObjectType) {
-        if (source == null || dest == null) {
-            // Cannot proceed without both accounts; but to avoid unnecessary copying, assume same filesystem
-            return true;
-        }
-
-        // Extract hostnames
-        String host1 = extractHost(source.host);
-        String host2 = extractHost(dest.host);
-
-        if (host1 != null && host2 != null) {
-            // Resolve hostnames to IP addresses
-            try {
-                InetAddress[] addresses1 = InetAddress.getAllByName(host1);
-                InetAddress[] addresses2 = InetAddress.getAllByName(host2);
-                boolean sameHost = false;
-                for (InetAddress addr1 : addresses1) {
-                    for (InetAddress addr2 : addresses2) {
-                        if (addr1.equals(addr2)) {
-                            sameHost = true;
-                            break;
-                        }
-                    }
-                    if (sameHost) {
-                        break;
-                    }
-                }
-                if (!sameHost) {
-                    // Hosts are different; file systems are different
-                    return false; // Only return false when certain
-                }
-            } catch (UnknownHostException e) {
-                // Cannot resolve hostnames; assume they might be the same to avoid unnecessary copying
-                // Do not return false here
-            }
-        } else {
-            // Host information is incomplete; assume hosts might be the same
-            // Do not return false here
-        }
-
-        // At this point, hosts are the same or unresolved
-
-        // Optionally compare usernames
-        if (source.user_name != null && dest.user_name != null && !source.user_name.equals(dest.user_name)) {
-            // Different usernames may point to different areas; but to avoid unnecessary copying, proceed
-        }
-
-        // Proceed with cautious protocol-specific comparisons
-
-        // SMB-specific comparisons
-        if (sourceFileObjectType == FileObjectType.SMB_TYPE && destFileObjectType == FileObjectType.SMB_TYPE) {
-            if (source.shareName != null && dest.shareName != null && !source.shareName.equals(dest.shareName)) {
-                // Different share names might still access the same file system
-                // Proceed cautiously and do not return false
-            }
-            // Additional SMB-specific checks can be added here if necessary
-        }
-
-        // WebDAV-specific comparisons
-        if (sourceFileObjectType == FileObjectType.WEBDAV_TYPE && destFileObjectType == FileObjectType.WEBDAV_TYPE) {
-            if (source.basePath != null && dest.basePath != null) {
-                String normalizedSourceBasePath = normalizePath(source.basePath);
-                String normalizedDestBasePath = normalizePath(dest.basePath);
-                // Instead of returning false, check if one base path is a subpath of the other
-                // or proceed cautiously without returning false
-            }
-            if (source.useHTTPS != dest.useHTTPS) {
-                // Different protocols may still access the same file system
-                // Do not return false solely based on protocol differences
-            }
-            // Additional WebDAV-specific checks can be added here if necessary
-        }
-
-        // Other protocol-specific comparisons can be added here if applicable
-
-        // Since we have not found definitive evidence that the file systems are different,
-        // we return true to avoid unnecessary copying
-        return true;
-    }
+//    private static boolean isSameFileSystem(NetworkAccountsDetailsDialog.NetworkAccountPOJO source,
+//                                            FileObjectType sourceFileObjectType,
+//                                            NetworkAccountsDetailsDialog.NetworkAccountPOJO dest,
+//                                            FileObjectType destFileObjectType) {
+//        if (source == null || dest == null) {
+//            // Cannot proceed without both accounts; but to avoid unnecessary copying, assume same filesystem
+//            return true;
+//        }
+//
+//        // Extract hostnames
+//        String host1 = extractHost(source.host);
+//        String host2 = extractHost(dest.host);
+//
+//        if (host1 != null && host2 != null) {
+//            // Resolve hostnames to IP addresses
+//            try {
+//                InetAddress[] addresses1 = InetAddress.getAllByName(host1);
+//                InetAddress[] addresses2 = InetAddress.getAllByName(host2);
+//                boolean sameHost = false;
+//                for (InetAddress addr1 : addresses1) {
+//                    for (InetAddress addr2 : addresses2) {
+//                        if (addr1.equals(addr2)) {
+//                            sameHost = true;
+//                            break;
+//                        }
+//                    }
+//                    if (sameHost) {
+//                        break;
+//                    }
+//                }
+//                if (!sameHost) {
+//                    // Hosts are different; file systems are different
+//                    return false; // Only return false when certain
+//                }
+//            } catch (UnknownHostException e) {
+//                // Cannot resolve hostnames; assume they might be the same to avoid unnecessary copying
+//                // Do not return false here
+//            }
+//        } else {
+//            // Host information is incomplete; assume hosts might be the same
+//            // Do not return false here
+//        }
+//
+//        // At this point, hosts are the same or unresolved
+//
+//        // Optionally compare usernames
+//        if (source.user_name != null && dest.user_name != null && !source.user_name.equals(dest.user_name)) {
+//            // Different usernames may point to different areas; but to avoid unnecessary copying, proceed
+//        }
+//
+//        // Proceed with cautious protocol-specific comparisons
+//
+//        // SMB-specific comparisons
+//        if (sourceFileObjectType == FileObjectType.SMB_TYPE && destFileObjectType == FileObjectType.SMB_TYPE) {
+//            if (source.shareName != null && dest.shareName != null && !source.shareName.equals(dest.shareName)) {
+//                // Different share names might still access the same file system
+//                // Proceed cautiously and do not return false
+//            }
+//            // Additional SMB-specific checks can be added here if necessary
+//        }
+//
+//        // WebDAV-specific comparisons
+//        if (sourceFileObjectType == FileObjectType.WEBDAV_TYPE && destFileObjectType == FileObjectType.WEBDAV_TYPE) {
+//            if (source.basePath != null && dest.basePath != null) {
+//                String normalizedSourceBasePath = normalizePath(source.basePath);
+//                String normalizedDestBasePath = normalizePath(dest.basePath);
+//                // Instead of returning false, check if one base path is a subpath of the other
+//                // or proceed cautiously without returning false
+//            }
+//            if (source.useHTTPS != dest.useHTTPS) {
+//                // Different protocols may still access the same file system
+//                // Do not return false solely based on protocol differences
+//            }
+//            // Additional WebDAV-specific checks can be added here if necessary
+//        }
+//
+//        // Other protocol-specific comparisons can be added here if applicable
+//
+//        // Since we have not found definitive evidence that the file systems are different,
+//        // we return true to avoid unnecessary copying
+//        return true;
+//    }
 
 
     private static String extractHost(String host) {

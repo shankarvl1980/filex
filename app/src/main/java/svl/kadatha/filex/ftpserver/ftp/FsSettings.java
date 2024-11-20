@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 import svl.kadatha.filex.App;
-import svl.kadatha.filex.FtpServerViewModel;
+import svl.kadatha.filex.ftpserver.FtpServerViewModel;
 import svl.kadatha.filex.R;
 import svl.kadatha.filex.ftpserver.server.FtpUser;
 import timber.log.Timber;

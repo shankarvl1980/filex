@@ -24,6 +24,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
+import svl.kadatha.filex.appmanager.AppManagerActivity;
+import svl.kadatha.filex.audio.AudioPlayerActivity;
+import svl.kadatha.filex.imagepdfvideo.ImageViewActivity;
+import svl.kadatha.filex.imagepdfvideo.PdfViewActivity;
+import svl.kadatha.filex.imagepdfvideo.VideoViewActivity;
+import svl.kadatha.filex.instacrop.InstaCropperActivity;
+import svl.kadatha.filex.texteditor.TextEditorActivity;
+
 public class SAFPermissionHelperDialog extends DialogFragment {
     public static final String SAF_PERMISSION_CANCEL_REQUEST_CODE = "saf_permission_cancel_request_code";
     //private boolean forUSB;
@@ -143,8 +151,8 @@ public class SAFPermissionHelperDialog extends DialogFragment {
             ((VideoViewActivity) appCompatActivity).clear_cache = false;
         } else if (appCompatActivity instanceof AudioPlayerActivity) {
             ((AudioPlayerActivity) appCompatActivity).clear_cache = false;
-        } else if (appCompatActivity instanceof FileEditorActivity) {
-            ((FileEditorActivity) appCompatActivity).clear_cache = false;
+        } else if (appCompatActivity instanceof TextEditorActivity) {
+            ((TextEditorActivity) appCompatActivity).clear_cache = false;
         } else if (appCompatActivity instanceof ImageViewActivity) {
             ((ImageViewActivity) appCompatActivity).clear_cache = false;
         } else if (appCompatActivity instanceof PdfViewActivity) {

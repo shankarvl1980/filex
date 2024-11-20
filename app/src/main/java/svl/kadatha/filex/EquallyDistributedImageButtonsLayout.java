@@ -20,7 +20,7 @@ public class EquallyDistributedImageButtonsLayout extends ViewGroup {
     private int child_count, top_padding;
     private LinearLayout.LayoutParams params;
 
-    EquallyDistributedImageButtonsLayout(Context context, int screen_width, int screen_height) {
+    public EquallyDistributedImageButtonsLayout(Context context, int screen_width, int screen_height) {
         super(context);
         this.context = context;
         this.child_count = 5;

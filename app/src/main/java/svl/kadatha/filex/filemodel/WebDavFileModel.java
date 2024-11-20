@@ -16,8 +16,8 @@ import java.util.Date;
 import java.util.List;
 
 import svl.kadatha.filex.Global;
-import svl.kadatha.filex.NetworkAccountDetailsViewModel;
-import svl.kadatha.filex.WebDavClientRepository;
+import svl.kadatha.filex.network.NetworkAccountDetailsViewModel;
+import svl.kadatha.filex.network.WebDavClientRepository;
 import timber.log.Timber;
 
 public class WebDavFileModel implements FileModel {

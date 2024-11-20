@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Vector;
 
 import svl.kadatha.filex.Global;
-import svl.kadatha.filex.NetworkAccountDetailsViewModel;
-import svl.kadatha.filex.SftpChannelRepository;
+import svl.kadatha.filex.network.NetworkAccountDetailsViewModel;
+import svl.kadatha.filex.network.SftpChannelRepository;
 import timber.log.Timber;
 
 public class SftpFileModel implements FileModel {

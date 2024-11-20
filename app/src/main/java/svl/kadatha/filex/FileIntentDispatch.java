@@ -15,10 +15,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-class FileIntentDispatch {
-    static final String EXTRA_FILE_OBJECT_TYPE = "fileObjectType";
-    static final String EXTRA_FILE_PATH = "file_path";
-    static final String EXTRA_FROM_ARCHIVE = "fromArchive";
+import svl.kadatha.filex.appmanager.AppManagerActivity;
+import svl.kadatha.filex.instacrop.InstaCropperActivity;
+
+public class FileIntentDispatch {
+    public static final String EXTRA_FILE_OBJECT_TYPE = "fileObjectType";
+    public static final String EXTRA_FILE_PATH = "file_path";
+    public static final String EXTRA_FROM_ARCHIVE = "fromArchive";
 
     public static void openFile(Context context, String file_path, String mime_type, FileObjectType fileObjectType, boolean select_app, long file_size, boolean fromArchive) {
         String file_extn = "";

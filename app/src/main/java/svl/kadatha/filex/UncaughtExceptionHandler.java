@@ -9,6 +9,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import svl.kadatha.filex.appmanager.AppManagerActivity;
+import svl.kadatha.filex.instacrop.InstaCropperActivity;
+
 public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
 
     final Context context;

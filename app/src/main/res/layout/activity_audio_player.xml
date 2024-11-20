@@ -83,7 +83,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/bottom_fragment_container"
-        android:name="svl.kadatha.filex.PlayScreenFragment"
+        android:name="svl.kadatha.filex.audio.PlayScreenFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

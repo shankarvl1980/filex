@@ -39,15 +39,21 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import svl.kadatha.filex.appmanager.AppManagerListFragment;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.WebDavFileModel;
+import svl.kadatha.filex.network.FtpClientRepository;
+import svl.kadatha.filex.network.NetworkAccountDetailsViewModel;
+import svl.kadatha.filex.network.SftpChannelRepository;
+import svl.kadatha.filex.network.SmbClientRepository;
+import svl.kadatha.filex.network.WebDavClientRepository;
 import timber.log.Timber;
 
 public class MakeFilePOJOUtil {
     static final SimpleDateFormat SDF_FTP = new SimpleDateFormat("yyyyMMddHHmmss");
     private static final String TAG = "Ftp-MakeFilePOJOUtil";
 
-    static FilePOJO MAKE_FilePOJO(FileModel f, boolean extract_icon, FileObjectType fileObjectType) {
+    public static FilePOJO MAKE_FilePOJO(FileModel f, boolean extract_icon, FileObjectType fileObjectType) {
         String name = f.getName();
         String path = f.getPath();
         boolean isDirectory = f.isDirectory();
@@ -100,7 +106,7 @@ public class MakeFilePOJOUtil {
         return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, overlay_visible, 0, 0L, null, 0, null, null);
     }
 
-    static FilePOJO MAKE_FilePOJO(File f, boolean extract_icon, FileObjectType fileObjectType) {
+    public static FilePOJO MAKE_FilePOJO(File f, boolean extract_icon, FileObjectType fileObjectType) {
         String name = f.getName();
         String path = f.getAbsolutePath();
         boolean isDirectory = f.isDirectory();
@@ -686,7 +692,7 @@ public class MakeFilePOJOUtil {
     }
 
 
-    static FilePOJO MAKE_FilePOJO(FileObjectType fileObjectType, String file_path) {
+    public static FilePOJO MAKE_FilePOJO(FileObjectType fileObjectType, String file_path) {
         FilePOJO filePOJO = null;
         if (fileObjectType == FileObjectType.FILE_TYPE) {
             File f = new File(file_path);

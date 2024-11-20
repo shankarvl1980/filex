@@ -19,7 +19,7 @@ public class ListPopupWindowPOJO {
     final String menu_name;
     final int id;
 
-    ListPopupWindowPOJO(int resource_id, String menu_name, int id) {
+    public ListPopupWindowPOJO(int resource_id, String menu_name, int id) {
         this.resource_id = resource_id;
         this.menu_name = menu_name;
         this.id = id;
@@ -29,7 +29,7 @@ public class ListPopupWindowPOJO {
         final Context context;
         final List<ListPopupWindowPOJO> list;
 
-        PopupWindowAdapter(Context context, List<ListPopupWindowPOJO> list) {
+        public PopupWindowAdapter(Context context, List<ListPopupWindowPOJO> list) {
             super(context, R.layout.list_popupwindow_layout, list);
             this.context = context;
             this.list = list;

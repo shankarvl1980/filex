@@ -119,7 +119,6 @@ public class AppInstallAlertDialog extends DialogFragment {
                 RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
                 repositoryClass.app_pojo_hashmap.clear();
                 dismissAllowingStateLoss();
-
             }
         });
 
@@ -153,10 +152,8 @@ public class AppInstallAlertDialog extends DialogFragment {
                         message_tv.setText(R.string.do_you_want_update_the_app);
                     }
                 }
-
             }
         });
-
         return v;
     }
 
@@ -167,5 +164,4 @@ public class AppInstallAlertDialog extends DialogFragment {
         window.setLayout(Global.DIALOG_WIDTH, WindowManager.LayoutParams.WRAP_CONTENT);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
-
 }

@@ -7,7 +7,7 @@ import android.view.ViewTreeObserver;
 public class KeyBoardUtil {
     private boolean keyboardShown;
 
-    KeyBoardUtil(final View view) {
+    public KeyBoardUtil(final View view) {
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {

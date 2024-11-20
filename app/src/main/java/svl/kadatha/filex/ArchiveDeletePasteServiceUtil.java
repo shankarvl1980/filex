@@ -10,8 +10,10 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 
+import svl.kadatha.filex.appmanager.AppManagerListViewModel;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FileModelFactory;
+import svl.kadatha.filex.instacrop.InstaCropperActivity;
 
 public class ArchiveDeletePasteServiceUtil {
 
