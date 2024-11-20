@@ -151,7 +151,6 @@ public class AppManagerActivity extends BaseActivity {
                 }
             }
         });
-
     }
 
     private void on_intent(Intent intent, Bundle savedInstanceState) {
@@ -302,6 +301,4 @@ public class AppManagerActivity extends BaseActivity {
             return context.getString(R.string.user_installed_apps);
         }
     }
-
-
 }
