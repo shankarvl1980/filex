@@ -96,12 +96,6 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(this).get(VideoViewFragmentViewModel.class);
@@ -410,6 +404,10 @@ public class VideoViewFragment extends Fragment implements SurfaceHolder.Callbac
                     play_pause_img_button.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.video_play_icon));
                 }
             }
+
+            boolean autoHide = viewModel.play_mode;
+            controlListener.showControls(autoHide);
+
             viewModel.position = mp.getCurrentPosition();
             Bundle bundle = getArguments();
             bundle.putInt("position", viewModel.position);

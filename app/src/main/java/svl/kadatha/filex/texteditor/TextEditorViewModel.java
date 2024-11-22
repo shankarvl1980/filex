@@ -104,14 +104,11 @@ public class TextEditorViewModel extends AndroidViewModel {
     }
 
     public synchronized void openFile(FileInputStream fileInputStream, long filePointer, int pageNumber) {
-        // Check if reading is already in progress
         if (isReadingFinished.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
             return;
         }
 
-        // Set reading status to started
         isReadingFinished.setValue(AsyncTaskStatus.STARTED);
-
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future1 = executorService.submit(() -> {
             try {
@@ -133,10 +130,10 @@ public class TextEditorViewModel extends AndroidViewModel {
                 long totalBytesRead = 0;
                 fileRead = true;
                 file_end = false;
-                int currentLineNumber = 1;
                 long lastValidFilePointer = filePointer;  // Track the last valid file position
 
                 String line;
+                String eolString = getEOLString(eol); // Get the actual EOL string
                 while ((line = reader.readLine()) != null && linesRead < MAX_LINES_TO_DISPLAY) {
                     // Check if line length exceeds the max allowed length
                     if (line.length() > MAX_LINE_LENGTH) {
@@ -147,10 +144,9 @@ public class TextEditorViewModel extends AndroidViewModel {
                     // Append the line to the chunk
                     chunk.append(line).append(System.lineSeparator());
                     linesRead++;
-                    long bytesRead = line.getBytes(StandardCharsets.UTF_8).length + System.lineSeparator().getBytes(StandardCharsets.UTF_8).length;
+                    long bytesRead = line.getBytes(StandardCharsets.UTF_8).length + eolString.getBytes(StandardCharsets.UTF_8).length;
                     totalBytesRead += bytesRead;
                     lastValidFilePointer = filePointer + totalBytesRead;  // Update the last valid file pointer
-                    currentLineNumber++;
                 }
 
                 // Check if we have more content to read
@@ -192,7 +188,7 @@ public class TextEditorViewModel extends AndroidViewModel {
                         fileInputStream.close();
                     }
                 } catch (IOException e) {
-
+                    // Handle exception
                 }
 
                 // Update the task status and log completion
@@ -200,6 +196,7 @@ public class TextEditorViewModel extends AndroidViewModel {
             }
         });
     }
+
 
 
     public synchronized void setUpInitialization(FileObjectType fileObjectType, String file_path) {
@@ -252,6 +249,19 @@ public class TextEditorViewModel extends AndroidViewModel {
             }
         });
     }
+
+    private String getEOLString(int eol) {
+        switch (eol) {
+            case TextEditorActivity.EOL_RN:
+                return "\r\n";
+            case TextEditorActivity.EOL_R:
+                return "\r";
+            case TextEditorActivity.EOL_N:
+            default:
+                return "\n";
+        }
+    }
+
 
     private void determineEOL(Uri data) {
         eol = TextEditorActivity.EOL_N; // Default to \n

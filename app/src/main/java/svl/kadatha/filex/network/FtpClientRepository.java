@@ -42,10 +42,10 @@ public class FtpClientRepository {
     private final ConcurrentLinkedQueue<FTPClient> inUseClients;
     private final Map<FTPClient, Long> lastUsedTimes;
     private final ScheduledExecutorService keepAliveScheduler = Executors.newScheduledThreadPool(1);
-    private NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO;
+    private NetworkAccountPOJO networkAccountPOJO;
     private int initialClients;
 
-    private FtpClientRepository(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) {
+    private FtpClientRepository(NetworkAccountPOJO networkAccountPOJO) {
         this.ftpClients = new ConcurrentLinkedQueue<>();
         this.inUseClients = new ConcurrentLinkedQueue<>();
         this.lastUsedTimes = new ConcurrentHashMap<>();
@@ -53,7 +53,7 @@ public class FtpClientRepository {
         initializeClients();
     }
 
-    public static synchronized FtpClientRepository getInstance(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) {
+    public static synchronized FtpClientRepository getInstance(NetworkAccountPOJO networkAccountPOJO) {
         if (instance == null) {
             instance = new FtpClientRepository(networkAccountPOJO);
         }

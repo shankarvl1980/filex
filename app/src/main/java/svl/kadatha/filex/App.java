@@ -33,7 +33,6 @@ import timber.log.Timber;
 public class App extends Application {
 
     private static App mInstance;
-
     /**
      * @return the Context of this application
      */
@@ -77,7 +76,16 @@ public class App extends Application {
             registerReceiver(new NsdService.ServerActionsReceiver(), intentFilter);
         }
 
+        // Use TinyDB or SharedPreferences
+        TinyDB tinydb = new TinyDB(getApplicationContext());
+
+        boolean isDatabaseDeleted = tinydb.getBoolean("isDefaultAppDatabaseDeleted");
+
+        if (!isDatabaseDeleted) {
+           DefaultAppDatabaseHelper defaultAppDatabaseHelper = new DefaultAppDatabaseHelper(getApplicationContext());
+            defaultAppDatabaseHelper.deleteTable();
+            defaultAppDatabaseHelper.close();
+            tinydb.putBoolean("isDefaultAppDatabaseDeleted", true);
+        }
     }
-
-
 }

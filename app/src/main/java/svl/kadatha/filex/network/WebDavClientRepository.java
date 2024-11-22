@@ -29,10 +29,10 @@ public class WebDavClientRepository {
     private static WebDavClientRepository instance;
     public final String baseUrl;
     private final Sardine sardine;
-    private NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO;
+    private NetworkAccountPOJO networkAccountPOJO;
     private String discoveredBasePath; // Cached base path
 
-    private WebDavClientRepository(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) throws IOException {
+    private WebDavClientRepository(NetworkAccountPOJO networkAccountPOJO) throws IOException {
         Timber.tag(TAG).d("Entering WebDavClientRepository constructor");
         this.networkAccountPOJO = networkAccountPOJO;
         this.baseUrl = buildBaseUrl();
@@ -53,7 +53,7 @@ public class WebDavClientRepository {
         discoveredBasePath = discoverBasePath(sardine);
     }
 
-    public static synchronized WebDavClientRepository getInstance(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) throws IOException {
+    public static synchronized WebDavClientRepository getInstance(NetworkAccountPOJO networkAccountPOJO) throws IOException {
         Timber.tag(TAG).d("Entering getInstance method");
         if (instance == null) {
             Timber.tag(TAG).d("Creating new WebDavClientRepository instance");

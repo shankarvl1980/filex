@@ -50,10 +50,10 @@ public class SmbClientRepository {
     private final ScheduledExecutorService keepAliveScheduler = Executors.newScheduledThreadPool(1);
     // Added property for shareName
     private final String shareName;
-    private NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO;
+    private NetworkAccountPOJO networkAccountPOJO;
     private int initialSessions;
 
-    private SmbClientRepository(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) {
+    private SmbClientRepository(NetworkAccountPOJO networkAccountPOJO) {
         this.networkAccountPOJO = networkAccountPOJO;
 
         // Set the shareName from networkAccountPOJO
@@ -87,7 +87,7 @@ public class SmbClientRepository {
         initializeSessions();
     }
 
-    public static synchronized SmbClientRepository getInstance(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) {
+    public static synchronized SmbClientRepository getInstance(NetworkAccountPOJO networkAccountPOJO) {
         if (instance == null) {
             instance = new SmbClientRepository(networkAccountPOJO);
         }

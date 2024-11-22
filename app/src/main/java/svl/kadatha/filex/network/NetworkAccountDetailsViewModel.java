@@ -30,10 +30,10 @@ import svl.kadatha.filex.RepositoryClass;
 public class NetworkAccountDetailsViewModel extends AndroidViewModel {
 
     private static final String TAG = "NetworkAccountViewModel";
-    public static NetworkAccountsDetailsDialog.NetworkAccountPOJO FTP_NETWORK_ACCOUNT_POJO;
-    public static NetworkAccountsDetailsDialog.NetworkAccountPOJO SFTP_NETWORK_ACCOUNT_POJO;
-    public static NetworkAccountsDetailsDialog.NetworkAccountPOJO WEBDAV_NETWORK_ACCOUNT_POJO;
-    public static NetworkAccountsDetailsDialog.NetworkAccountPOJO SMB_NETWORK_ACCOUNT_POJO;
+    public static NetworkAccountPOJO FTP_NETWORK_ACCOUNT_POJO;
+    public static NetworkAccountPOJO SFTP_NETWORK_ACCOUNT_POJO;
+    public static NetworkAccountPOJO WEBDAV_NETWORK_ACCOUNT_POJO;
+    public static NetworkAccountPOJO SMB_NETWORK_ACCOUNT_POJO;
     public static String FTP_WORKING_DIR_PATH;
     public static String SFTP_WORKING_DIR_PATH;
     public static String WEBDAV_WORKING_DIR_PATH;
@@ -49,13 +49,13 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
     public final MutableLiveData<AsyncTaskStatus> disconnectNetworkConnectionAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     private final Application application;
     private final NetworkAccountsDatabaseHelper networkAccountsDatabaseHelper;
-    public List<NetworkAccountsDetailsDialog.NetworkAccountPOJO> networkAccountPOJOList;
-    public IndexedLinkedHashMap<Integer, NetworkAccountsDetailsDialog.NetworkAccountPOJO> mselecteditems = new IndexedLinkedHashMap<>();
+    public List<NetworkAccountPOJO> networkAccountPOJOList;
+    public IndexedLinkedHashMap<Integer, NetworkAccountPOJO> mselecteditems = new IndexedLinkedHashMap<>();
     public boolean loggedInStatus;
     public boolean networkAccountPOJOAlreadyExists;
     public boolean isNetworkConnected;
     public String type;
-    public NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO = null;
+    public NetworkAccountPOJO networkAccountPOJO = null;
     private boolean isCancelled;
     private Future<?> future1;
     private Future<?> future2;
@@ -134,7 +134,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         });
     }
 
-    public synchronized void deleteNetworkAccountPojo(List<NetworkAccountsDetailsDialog.NetworkAccountPOJO> networkAccountPOJOS_for_delete) {
+    public synchronized void deleteNetworkAccountPojo(List<NetworkAccountPOJO> networkAccountPOJOS_for_delete) {
         if (deleteAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
             return;
         }
@@ -146,7 +146,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
 
                 int size = networkAccountPOJOS_for_delete.size();
                 for (int i = 0; i < size; ++i) {
-                    NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO = networkAccountPOJOS_for_delete.get(i);
+                    NetworkAccountPOJO networkAccountPOJO = networkAccountPOJOS_for_delete.get(i);
                     int j = networkAccountsDatabaseHelper.delete(networkAccountPOJO.host, networkAccountPOJO.port, networkAccountPOJO.user_name, type);
                     if (j > 0) {
                         networkAccountPOJOList.remove(networkAccountPOJO);
@@ -157,7 +157,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         });
     }
 
-    public synchronized void connectNetworkAccount(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) {
+    public synchronized void connectNetworkAccount(NetworkAccountPOJO networkAccountPOJO) {
         if (networkConnectAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
             return;
         }
@@ -193,7 +193,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                 String host = bundle.getString("host");
                 int port = bundle.getInt("port");
                 String user_name = bundle.getString("user_name");
-                NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO = networkAccountsDatabaseHelper.getNetworkAccountPOJO(host, port, user_name, type);
+                NetworkAccountPOJO networkAccountPOJO = networkAccountsDatabaseHelper.getNetworkAccountPOJO(host, port, user_name, type);
                 type = networkAccountPOJO.type;
                 if (type.equals(NetworkAccountsDetailsDialog.FTP)) {
                     connectFtp(networkAccountPOJO, replaceAndConnectNetworkAccountAsyncTaskStatus);
@@ -208,12 +208,12 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         });
     }
 
-    private void connectFtp(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO, MutableLiveData<AsyncTaskStatus> asyncTaskStatus) {
+    private void connectFtp(NetworkAccountPOJO networkAccountPOJO, MutableLiveData<AsyncTaskStatus> asyncTaskStatus) {
         loggedInStatus = false;
         FtpClientRepository ftpClientRepository = null;
         FTPClient ftpClient = null;
         try {
-            NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJOCopy = networkAccountPOJO.deepCopy();
+            NetworkAccountPOJO networkAccountPOJOCopy = networkAccountPOJO.deepCopy();
             ftpClientRepository = FtpClientRepository.getInstance(networkAccountPOJOCopy);
             ftpClientRepository.shutdown();
             ftpClientRepository = FtpClientRepository.getInstance(networkAccountPOJO);
@@ -243,12 +243,12 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         }
     }
 
-    private void connectSftp(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO, MutableLiveData<AsyncTaskStatus> asyncTaskStatus) {
+    private void connectSftp(NetworkAccountPOJO networkAccountPOJO, MutableLiveData<AsyncTaskStatus> asyncTaskStatus) {
         loggedInStatus = false;
         SftpChannelRepository sftpChannelRepository = null;
         ChannelSftp channelSftp = null;
         try {
-            NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJOCopy = networkAccountPOJO.deepCopy();
+            NetworkAccountPOJO networkAccountPOJOCopy = networkAccountPOJO.deepCopy();
             sftpChannelRepository = SftpChannelRepository.getInstance(networkAccountPOJOCopy);
             sftpChannelRepository.shutdown();
             sftpChannelRepository = SftpChannelRepository.getInstance(networkAccountPOJO);
@@ -278,12 +278,12 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         }
     }
 
-    private void connectWebDav(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO, MutableLiveData<AsyncTaskStatus> asyncTaskStatus) {
+    private void connectWebDav(NetworkAccountPOJO networkAccountPOJO, MutableLiveData<AsyncTaskStatus> asyncTaskStatus) {
         loggedInStatus = false;
         WebDavClientRepository webDavClientRepository;
         Sardine sardine;
         try {
-            NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJOCopy = networkAccountPOJO.deepCopy();
+            NetworkAccountPOJO networkAccountPOJOCopy = networkAccountPOJO.deepCopy();
             webDavClientRepository = WebDavClientRepository.getInstance(networkAccountPOJOCopy);
             webDavClientRepository.shutdown();
             webDavClientRepository = WebDavClientRepository.getInstance(networkAccountPOJO);
@@ -310,12 +310,12 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         }
     }
 
-    private void connectSmb(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO, MutableLiveData<AsyncTaskStatus> asyncTaskStatus) {
+    private void connectSmb(NetworkAccountPOJO networkAccountPOJO, MutableLiveData<AsyncTaskStatus> asyncTaskStatus) {
         loggedInStatus = false;
         SmbClientRepository smbClientRepository = null;
         Session session = null;
         try {
-            NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJOCopy = networkAccountPOJO.deepCopy();
+            NetworkAccountPOJO networkAccountPOJOCopy = networkAccountPOJO.deepCopy();
             smbClientRepository = SmbClientRepository.getInstance(networkAccountPOJOCopy);
             smbClientRepository.shutdown();
             smbClientRepository = SmbClientRepository.getInstance(networkAccountPOJO);
@@ -351,7 +351,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         String original_host = bundle.getString("original_host");
         String original_user_name = bundle.getString("original_user_name");
         int original_port = bundle.getInt("original_port");
-        NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO = bundle.getParcelable("networkAccountPOJO");
+        NetworkAccountPOJO networkAccountPOJO = bundle.getParcelable("networkAccountPOJO");
         boolean update = bundle.getBoolean("update");
         boolean replace = bundle.getBoolean("replace");
         if (original_host == null) {
@@ -414,7 +414,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 networkAccountPOJOAlreadyExists = false;
-                NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO = networkAccountsDatabaseHelper.getNetworkAccountPOJO(host, port, user_name, type);
+                NetworkAccountPOJO networkAccountPOJO = networkAccountsDatabaseHelper.getNetworkAccountPOJO(host, port, user_name, type);
                 networkAccountPOJOAlreadyExists = networkAccountPOJO != null;
                 checkDuplicateNetworkAccountDisplayAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }

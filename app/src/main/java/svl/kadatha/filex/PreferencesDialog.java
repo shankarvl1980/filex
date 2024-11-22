@@ -61,7 +61,6 @@ public class PreferencesDialog extends DialogFragment {
                     dark_rb_checked = false;
                     system_rb_checked = false;
                 }
-
             }
         });
 
@@ -78,7 +77,6 @@ public class PreferencesDialog extends DialogFragment {
                     light_rb_checked = false;
                     system_rb_checked = false;
                 }
-
             }
         });
 
@@ -120,7 +118,6 @@ public class PreferencesDialog extends DialogFragment {
                     system_rb_checked = false;
                     break;
             }
-
         }
 
 
@@ -198,7 +195,6 @@ public class PreferencesDialog extends DialogFragment {
     @Override
     public void onResume() {
         super.onResume();
-
         Window window = getDialog().getWindow();
         window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -209,5 +205,4 @@ public class PreferencesDialog extends DialogFragment {
         super.onDestroy();
         defaultAppDatabaseHelper.close();
     }
-
 }

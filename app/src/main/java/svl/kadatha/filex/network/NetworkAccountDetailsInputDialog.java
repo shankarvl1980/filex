@@ -72,7 +72,7 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
     private boolean update, replace;
     private Bundle bundle;
 
-    public static NetworkAccountDetailsInputDialog getInstance(String request_code, String type, NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) {
+    public static NetworkAccountDetailsInputDialog getInstance(String request_code, String type, NetworkAccountPOJO networkAccountPOJO) {
         NetworkAccountDetailsInputDialog networkAccountDetailsInputDialog = new NetworkAccountDetailsInputDialog();
         Bundle bundle = new Bundle();
         bundle.putString("request_code", request_code);
@@ -104,7 +104,7 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
         if (bundle != null) {
             String request_code = bundle.getString("request_code");
             type = bundle.getString("type");
-            NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO = bundle.getParcelable("networkAccountPOJO");
+            NetworkAccountPOJO networkAccountPOJO = bundle.getParcelable("networkAccountPOJO");
 
             if (networkAccountPOJO != null) {
                 original_host = networkAccountPOJO.host;
@@ -366,7 +366,7 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
             bundle.putString("original_user_name", original_user_name);
             bundle.putBoolean("update", update);
             bundle.putBoolean("replace", replace);
-            NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO = new NetworkAccountsDetailsDialog.NetworkAccountPOJO(
+            NetworkAccountPOJO networkAccountPOJO = new NetworkAccountPOJO(
                     host, port, user_name, password, encoding, display, type, mode, anonymous, useFTPS, privateKeyPath, privateKeyPassphrase, knownHostsPath, basePath, useHTTPS, domain, shareName, smbVersion);
             bundle.putParcelable("networkAccountPOJO", networkAccountPOJO);
 
@@ -377,7 +377,7 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
     }
 
     private boolean whetherFtpPOJOAlreadyExists(String host, String user_name, String type) {
-        NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO = networkAccountsDatabaseHelper.getNetworkAccountPOJO(host, port, user_name, type);
+        NetworkAccountPOJO networkAccountPOJO = networkAccountsDatabaseHelper.getNetworkAccountPOJO(host, port, user_name, type);
         return networkAccountPOJO != null;
     }
 

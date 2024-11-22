@@ -37,10 +37,10 @@ public class SftpChannelRepository {
     private final ConcurrentLinkedQueue<ChannelSftp> inUseChannels;
     private final Map<ChannelSftp, Long> lastUsedTimes;
     private final ScheduledExecutorService keepAliveScheduler;
-    private NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO;
+    private NetworkAccountPOJO networkAccountPOJO;
     private int initialChannels;
 
-    private SftpChannelRepository(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) {
+    private SftpChannelRepository(NetworkAccountPOJO networkAccountPOJO) {
         this.sftpChannels = new ConcurrentLinkedQueue<>();
         this.inUseChannels = new ConcurrentLinkedQueue<>();
         this.lastUsedTimes = new ConcurrentHashMap<>();
@@ -49,7 +49,7 @@ public class SftpChannelRepository {
         initializeChannels();
     }
 
-    public static synchronized SftpChannelRepository getInstance(NetworkAccountsDetailsDialog.NetworkAccountPOJO networkAccountPOJO) {
+    public static synchronized SftpChannelRepository getInstance(NetworkAccountPOJO networkAccountPOJO) {
         if (instance == null) {
             instance = new SftpChannelRepository(networkAccountPOJO);
         }

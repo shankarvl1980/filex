@@ -936,7 +936,6 @@ public class TextEditorActivity extends BaseActivity implements TextEditorSettin
                                 } else if (viewModel.action_after_save.equals("go_next")) {
                                     go_next();
                                 }
-
                                 progress_bar.setVisibility(View.GONE);
                             }
                         });
