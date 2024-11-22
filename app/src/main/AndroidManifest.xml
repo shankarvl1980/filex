@@ -237,6 +237,11 @@
             android:exported="true"
             android:label="@string/ftp_server" />
 
+        <activity
+            android:name=".cloud.CloudAuthActivity"
+            android:exported="false"
+            android:label="@string/cloud_accounts" />
+
         <service
             android:name=".audio.AudioPlayerService"
             android:exported="false"

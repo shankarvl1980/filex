@@ -74,7 +74,7 @@ public class StorageAnalyserSortDialog extends DialogFragment {
     }
 
     private void set_selection() {
-        switch (Global.STORAGE_ANALYSER_SORT) {
+        switch (StorageAnalyserActivityViewModel.SORT) {
             case "d_name_asc":
             case "f_name_asc":
                 name_asc_btn.setSelected(true);
@@ -170,7 +170,7 @@ public class StorageAnalyserSortDialog extends DialogFragment {
                 selected_sort = "d_size_desc";
             }
 
-            if (!selected_sort.equals(Global.STORAGE_ANALYSER_SORT)) {
+            if (!selected_sort.equals(StorageAnalyserActivityViewModel.SORT)) {
                 StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) getParentFragmentManager().findFragmentById(R.id.storage_analyser_container);
                 if (storageAnalyserFragment != null && storageAnalyserFragment.progress_bar.getVisibility() == View.GONE) {
                     if (storageAnalyserFragment.fileclickselected.equals("Duplicate Files") && (id != R.id.storage_analyser_name_desc && id != R.id.storage_analyser_name_asc)) {
@@ -178,6 +178,7 @@ public class StorageAnalyserSortDialog extends DialogFragment {
                         return;
                     }
                     Global.STORAGE_ANALYSER_SORT = selected_sort;
+                    StorageAnalyserActivityViewModel.SORT = selected_sort;
                     set_selection();
 
                     getParentFragmentManager().beginTransaction().detach(storageAnalyserFragment).commit();

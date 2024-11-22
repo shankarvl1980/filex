@@ -321,7 +321,6 @@ public class AllAudioListFragment extends Fragment {
                     String tree_uri_path = result.getString("tree_uri_path");
                     String source_folder = result.getString("source_folder");
                     deleteAudioViewModel.deleteAudioPOJO(false, audioListViewModel.audios_selected_for_delete, tree_uri, tree_uri_path);
-
                 }
             }
         });

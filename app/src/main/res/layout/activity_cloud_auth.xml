@@ -1,0 +1,111 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/activity_cloud_list_heading"
+        android:layout_width="0dp"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="?attr/dialog_title"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="@dimen/ten_dp"
+        android:paddingVertical="@dimen/layout_margin"
+        android:textSize="19sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/activity_cloud_account_recyclerview"
+        style="@style/my_scrollbar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="?attr/dialog_recyclerview_background"
+        android:clipToPadding="false"
+        android:fadeScrollbars="true"
+        android:layoutAnimation="@anim/layout_animation_fall_down"
+        android:paddingBottom="100dp"
+        android:scrollbarThumbVertical="@drawable/scrollbar"
+        android:scrollbars="vertical"
+        android:scrollingCache="false"
+        app:layout_constraintBottom_toTopOf="@id/fragment_network_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/activity_cloud_list_heading" />
+
+    <TextView
+        android:id="@+id/activity_cloud_details_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:background="@drawable/rounded_rectangle_shape"
+        android:padding="@dimen/layout_margin"
+        android:textColor="?attr/recycler_text_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/activity_cloud_list_heading" />
+
+    <TextView
+        android:id="@+id/activity_cloud_details_empty"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="?attr/dialog_recyclerview_background"
+        android:gravity="center"
+        android:paddingBottom="?attr/actionBarSize"
+        android:text="@string/nothing_found_here"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/fragment_network_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/activity_cloud_list_heading" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/fragment_network_bottom_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/toolbar_background"
+        android:elevation="6dp"
+        android:stateListAnimator="@null"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/activity_cloud_list_progressbar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clickable="true"
+        android:elevation="6dp"
+        android:focusable="true"
+        android:foregroundGravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+    </FrameLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floating_action_cloud_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/floating_button_margin_end"
+        android:layout_marginBottom="@dimen/floating_button_margin_bottom"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/back_icon"
+        app:backgroundTint="?attr/toolbar_background"
+        app:elevation="6dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

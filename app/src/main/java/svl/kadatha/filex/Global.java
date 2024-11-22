@@ -153,6 +153,7 @@ public class Global {
     public static File WEBDAV_CACHE_DIR;
     public static File SMB_CACHE_DIR;
     public static File ROOT_CACHE_DIR;
+    public static File CLOUD_CACHE_DIR;
     public static File APK_ICON_DIR;
     static List<UriPOJO> URI_PERMISSION_LIST = new ArrayList<>();
     public static int ORIENTATION;
@@ -502,7 +503,6 @@ public class Global {
                 FileSelectorActivity.GRID_COUNT = GRID_COUNT_MEDIUM;
                 break;
         }
-
         DETERMINE_TO_CLEAR_CACHE_TODAY(tinyDB);
     }
 
@@ -968,6 +968,20 @@ public class Global {
                 return FileObjectType.WEBDAV_TYPE;
             case "SMB_TYPE":
                 return FileObjectType.SMB_TYPE;
+            case "GOOGLE_DRIVE_TYPE":
+                return FileObjectType.GOOGLE_DRIVE_TYPE;
+            case "ONE_DRIVE_TYPE":
+                return FileObjectType.ONE_DRIVE_TYPE;
+            case "DROP_BOX_TYPE":
+                return FileObjectType.DROP_BOX_TYPE;
+            case "MEDIA_FIRE_TYPE":
+                return FileObjectType.MEDIA_FIRE_TYPE;
+            case "BOX_TYPE":
+                return FileObjectType.BOX_TYPE;
+            case "NEXT_CLOUD_TYPE":
+                return FileObjectType.NEXT_CLOUD_TYPE;
+            case "YANDEX_TYPE":
+                return FileObjectType.YANDEX_TYPE;
             default:
                 return null;
         }
@@ -989,6 +1003,20 @@ public class Global {
                 return "(WebDAV)";
             case SMB_TYPE:
                 return "(SMB)";
+            case GOOGLE_DRIVE_TYPE:
+                return "(GDrive)";
+            case ONE_DRIVE_TYPE:
+                return "(OneDrive)";
+            case DROP_BOX_TYPE:
+                return "(DropBox)";
+            case MEDIA_FIRE_TYPE:
+                return "(MediaFire)";
+            case BOX_TYPE:
+                return "(Box)";
+            case NEXT_CLOUD_TYPE:
+                return "(NextCloud)";
+            case YANDEX_TYPE:
+                return "(Yandex)";
             default:
                 return "";
         }

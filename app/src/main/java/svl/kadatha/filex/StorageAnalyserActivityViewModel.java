@@ -13,6 +13,7 @@ public class StorageAnalyserActivityViewModel extends AndroidViewModel {
     String tool_bar_shown;
     private boolean isCancelled;
     private Future<?> future1, future2, future3;
+    public static String SORT="d_size_desc";
 
     public StorageAnalyserActivityViewModel(@NonNull Application application) {
         super(application);
@@ -25,6 +26,7 @@ public class StorageAnalyserActivityViewModel extends AndroidViewModel {
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
         repositoryClass.hashmap_internal_directory_size = new ConcurrentHashMap<>();
         repositoryClass.hashmap_external_directory_size = new ConcurrentHashMap<>();
+        SORT="d_size_desc";
     }
 
     public void cancel(boolean mayInterruptRunning) {
@@ -54,7 +56,6 @@ public class StorageAnalyserActivityViewModel extends AndroidViewModel {
                 repositoryClass.getLargeFileList(isCancelled);
             }
         });
-
     }
 
     public void getDuplicateFileList(boolean isCancelled) {
@@ -66,6 +67,5 @@ public class StorageAnalyserActivityViewModel extends AndroidViewModel {
                 repositoryClass.getDuplicateFileList(isCancelled);
             }
         });
-
     }
 }

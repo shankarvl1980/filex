@@ -202,7 +202,6 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
                 }
             }
         });
-
         return v;
     }
 
@@ -224,7 +223,6 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
             } else {
                 viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                 viewModel.populateFilePOJO(fileObjectType, fileclickselected, currentUsbFile, false, true);
-
             }
 
             ExecutorService executorService = MyExecutorService.getExecutorService();
@@ -235,7 +233,6 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
                 }
             });
         }
-
     }
 
     private void after_filledFilePojos_procedure() {
@@ -251,7 +248,7 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
         if (fileclickselected.equals("Duplicate Files")) {
             Collections.sort(filePOJO_list, Global.STORAGE_ANALYSER_SORT.equals("d_name_desc") ? FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT, false) : FileComparator.FilePOJOComparate("d_name_asc", false));
         } else {
-            Collections.sort(filePOJO_list, FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT, true));
+            Collections.sort(filePOJO_list, FileComparator.FilePOJOComparate(StorageAnalyserActivityViewModel.SORT, true));
         }
 
         if (fileclickselected.equals("Duplicate Files")) {
@@ -261,7 +258,6 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
         }
         set_adapter();
         progress_bar.setVisibility(View.GONE);
-
     }
 
 
@@ -347,7 +343,7 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
                 if (fileclickselected.equals("Duplicate Files")) {
                     Collections.sort(filePOJO_list, Global.STORAGE_ANALYSER_SORT.equals("d_name_desc") ? FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT, false) : FileComparator.FilePOJOComparate("d_name_asc", false));
                 } else {
-                    Collections.sort(filePOJO_list, FileComparator.FilePOJOComparate(Global.STORAGE_ANALYSER_SORT, true));
+                    Collections.sort(filePOJO_list, FileComparator.FilePOJOComparate(StorageAnalyserActivityViewModel.SORT, true));
                 }
 
                 adapter.notifyDataSetChanged();
@@ -360,9 +356,7 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
                     folder_empty_textview.setVisibility(View.GONE);
                 }
             }
-
         }
-
     }
 
     public void clear_cache_and_refresh(String file_path, FileObjectType fileObjectType) {
