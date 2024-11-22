@@ -706,7 +706,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 String tag = fileSelectorFragment.getTag();
 
                 while (tag != null && !(fileSelectorFragment.fileObjectType == FileObjectType.FILE_TYPE && new File(tag).exists()) && fileSelectorFragment.currentUsbFile == null
-                        && !Global.WHETHER_FILE_OBJECT_TYPE_NETWORK_TYPE_AND_CONTAINED_IN_STORAGE_DIR(fileSelectorFragment.fileObjectType)) {
+                        && !Global.WHETHER_FILE_OBJECT_TYPE_NETWORK_OR_CLOUD_TYPE_AND_CONTAINED_IN_STORAGE_DIR(fileSelectorFragment.fileObjectType)) {
                     fm.popBackStack();
                     ++frag;
                     if (frag > entry_count) {

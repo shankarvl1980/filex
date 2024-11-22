@@ -502,7 +502,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
             file_ext = file_name.substring(idx + 1);
         }
 
-        if (file_ext.isEmpty() || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context, file_ext)) {
+        if (file_ext.isEmpty() || Global.NO_APPS_FOR_RECOGNISED_FILE_EXT(context, file_ext)) {
             FileTypeSelectDialog fileTypeSelectDialog = FileTypeSelectDialog.getInstance(file_path, fileObjectType, tree_uri, tree_uri_path, select_app, file_size);
             fileTypeSelectDialog.show(getParentFragmentManager(), "");
         } else {

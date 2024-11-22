@@ -270,7 +270,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
             return;
         }
 
-        if (file_ext.isEmpty() || !Global.CHECK_APPS_FOR_RECOGNISED_FILE_EXT(context, file_ext)) {
+        if (file_ext.isEmpty() || Global.NO_APPS_FOR_RECOGNISED_FILE_EXT(context, file_ext)) {
             FileTypeSelectDialog fileTypeSelectDialog = FileTypeSelectDialog.getInstance(file_path, null, tree_uri, tree_uri_path, select_app, file_size);
             fileTypeSelectDialog.show(getParentFragmentManager(), "");
         } else {

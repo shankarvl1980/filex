@@ -23,12 +23,9 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.FileProvider;
@@ -78,6 +75,7 @@ public class Global {
     static public final String LOCAL_BROADCAST_COPY_TO_FILE_ACTION = FILEX_PACKAGE + ".FILE_COPY_TO";
     static public final String TAG = "shankar";
     public static final List<FileObjectType> NETWORK_FILE_OBJECT_TYPES = Arrays.asList(FileObjectType.FTP_TYPE, FileObjectType.SFTP_TYPE, FileObjectType.WEBDAV_TYPE, FileObjectType.SMB_TYPE);
+    public static final List<FileObjectType> CLOUD_FILE_OBJECT_TYPES = Arrays.asList(FileObjectType.GOOGLE_DRIVE_TYPE, FileObjectType.ONE_DRIVE_TYPE, FileObjectType.DROP_BOX_TYPE, FileObjectType.MEDIA_FIRE_TYPE,FileObjectType.BOX_TYPE,FileObjectType.NEXT_CLOUD_TYPE,FileObjectType.YANDEX_TYPE);
     public static final List<String> APK_ICON_PACKAGE_NAME_LIST = new ArrayList<>();
     static final HashMap<String, List<LibraryAlbumSelectDialog.LibraryDirPOJO>> LIBRARY_FILTER_HASHMAP = new HashMap<>();
     static final String TEXT_REGEX = "(?i)txt|json|java|xml|cpp|c|h|log|html|htm";
@@ -387,6 +385,7 @@ public class Global {
         WEBDAV_CACHE_DIR = context.getExternalFilesDir(".webdav_cache");
         SMB_CACHE_DIR = context.getExternalFilesDir(".smb_cache");
         ROOT_CACHE_DIR = context.getExternalFilesDir(".root_cache");
+        CLOUD_CACHE_DIR = context.getExternalFilesDir(".cloud_cache");
         APK_ICON_DIR = context.getExternalFilesDir(".apk_icons");
         APK_ICON_PACKAGE_NAME_LIST.addAll(Arrays.asList(APK_ICON_DIR.list()));
         SIZE_APK_ICON_LIST = APK_ICON_PACKAGE_NAME_LIST.size();
@@ -613,16 +612,15 @@ public class Global {
         }
     }
 
-    public static boolean CHECK_APPS_FOR_RECOGNISED_FILE_EXT(Context context, String file_extn) {
-
+    public static boolean NO_APPS_FOR_RECOGNISED_FILE_EXT(Context context, String file_ext) {
         String mime_type = "";
         Uri uri;
         File f = new File("/dummy");
         uri = FileProvider.getUriForFile(context, context.getPackageName() + ".provider", f);
         final Intent intent = new Intent(Intent.ACTION_VIEW);
-        mime_type = FileIntentDispatch.SET_INTENT_FOR_VIEW(intent, mime_type, "", file_extn, null, false, uri);
+        mime_type = FileIntentDispatch.SET_INTENT_FOR_VIEW(intent, mime_type, "", file_ext, null, false, uri);
         List<ResolveInfo> resolveInfoList = context.getPackageManager().queryIntentActivities(intent, 0);
-        return !resolveInfoList.isEmpty();
+        return resolveInfoList.isEmpty();
     }
 
     public static void REMOVE_RECURSIVE_PATHS(List<String> files_selected_array, FileObjectType sourceFileObjectType, String dest_folder, FileObjectType destFileObjectType) {
@@ -903,8 +901,8 @@ public class Global {
         return false;
     }
 
-    public static boolean WHETHER_FILE_OBJECT_TYPE_NETWORK_TYPE_AND_CONTAINED_IN_STORAGE_DIR(FileObjectType fileObjectType) {
-        if (NETWORK_FILE_OBJECT_TYPES.contains(fileObjectType)) {
+    public static boolean WHETHER_FILE_OBJECT_TYPE_NETWORK_OR_CLOUD_TYPE_AND_CONTAINED_IN_STORAGE_DIR(FileObjectType fileObjectType) {
+        if (NETWORK_FILE_OBJECT_TYPES.contains(fileObjectType) || CLOUD_FILE_OBJECT_TYPES.contains(fileObjectType)) {
             RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
             Iterator<FilePOJO> iterator = repositoryClass.storage_dir.iterator();
             while (iterator.hasNext()) {
@@ -1153,20 +1151,6 @@ public class Global {
         }
     }
 
-    public static boolean createNativeNewFile(@NonNull final File file) {
-        if (file.exists()) {
-            return false;
-        }
-        try {
-            if (file.createNewFile()) {
-                return true;
-            }
-        } catch (IOException e) {
-
-        }
-        return false;
-    }
-
     public static File COPY_TO_CACHE(String file_path, FileObjectType fileObjectType) {
         File cache_file = null;
         switch (fileObjectType) {
@@ -1190,6 +1174,10 @@ public class Global {
                 break;
         }
 
+        if(CLOUD_FILE_OBJECT_TYPES.contains(fileObjectType)){
+            cache_file = new File(CLOUD_CACHE_DIR, file_path);
+        }
+
         long[] bytes_read = new long[1];
         File parent_file = cache_file.getParentFile();
         if (parent_file != null) {
@@ -1203,7 +1191,8 @@ public class Global {
 
     public static boolean whether_file_cached(FileObjectType fileObjectType) {
         return fileObjectType == FileObjectType.ROOT_TYPE || fileObjectType == FileObjectType.USB_TYPE || fileObjectType == FileObjectType.FTP_TYPE
-                || fileObjectType == FileObjectType.SFTP_TYPE || fileObjectType == FileObjectType.WEBDAV_TYPE || fileObjectType == FileObjectType.SMB_TYPE;
+                || fileObjectType == FileObjectType.SFTP_TYPE || fileObjectType == FileObjectType.WEBDAV_TYPE || fileObjectType == FileObjectType.SMB_TYPE
+                || CLOUD_FILE_OBJECT_TYPES.contains(fileObjectType);
     }
 
     public static Bitmap scaleToFitHeight(Bitmap bitmap, int height) {
@@ -1227,33 +1216,4 @@ public class Global {
         return path.startsWith("/") && !parentPath.startsWith("/") ? "/" + parentPath : parentPath;
     }
 
-    public static void TOGGLE_VIEW(Context context, View view, boolean show) {
-        // Load animations from XML
-        Animation slideDown = AnimationUtils.loadAnimation(context, R.anim.slide_up_from_below_with_reverse_fade);
-        Animation slideUp = AnimationUtils.loadAnimation(context, R.anim.slide_down_from_normal_with_fade);
-
-        Animation animation = show ? slideDown : slideUp;
-
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                if (show) {
-                    view.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                if (!show) {
-                    view.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        });
-
-        view.startAnimation(animation);
-    }
 }

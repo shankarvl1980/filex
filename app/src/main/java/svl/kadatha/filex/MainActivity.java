@@ -1285,7 +1285,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 String df_tag = df.getTag();
                 while (!(df.fileObjectType == FileObjectType.FILE_TYPE && new File(df_tag).exists()) && !library_categories.contains(df_tag) && !df_tag.equals("Large Files")
                         && !df_tag.equals("Duplicate Files") && df.currentUsbFile == null
-                        && !Global.WHETHER_FILE_OBJECT_TYPE_NETWORK_TYPE_AND_CONTAINED_IN_STORAGE_DIR(df.fileObjectType)) {
+                        && !Global.WHETHER_FILE_OBJECT_TYPE_NETWORK_OR_CLOUD_TYPE_AND_CONTAINED_IN_STORAGE_DIR(df.fileObjectType)) {
                     fm.popBackStack();
                     ++frag;
                     if (frag > entry_count) {

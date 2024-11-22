@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
 
 import svl.kadatha.filex.BaseActivity;
 import svl.kadatha.filex.FileIntentDispatch;
@@ -16,12 +17,14 @@ import svl.kadatha.filex.imagepdfvideo.ImageViewFragment;
 
 public class CloudAuthActivity extends BaseActivity {
     public boolean clear_cache;
+    public CloudAccountViewModel viewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Context context = this;
         setContentView(R.layout.activity_cloud_auth);
+        viewModel = new ViewModelProvider(this).get(CloudAccountViewModel.class);
     }
 
 
