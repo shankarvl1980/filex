@@ -19,6 +19,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import svl.kadatha.filex.FileObjectType;
 
 public class MediaFireAuthProvider implements CloudAuthProvider {
     private static final String AUTHORIZATION_ENDPOINT = "https://www.mediafire.com/dialog/oauth.php";
@@ -144,7 +145,7 @@ public class MediaFireAuthProvider implements CloudAuthProvider {
                 long expiryTime = System.currentTimeMillis() + (timeRemaining * 1000);
 
                 cloudAccount = new CloudAccountPOJO(
-                        "mediafire",
+                        FileObjectType.MEDIA_FIRE_TYPE.toString(),
                         userDisplayName,
                         userId,
                         sessionToken,

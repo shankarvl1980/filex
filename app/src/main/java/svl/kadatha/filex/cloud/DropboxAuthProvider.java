@@ -6,6 +6,8 @@ import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import com.dropbox.core.android.Auth;
 
+import svl.kadatha.filex.FileObjectType;
+
 public class DropboxAuthProvider implements CloudAuthProvider {
     private final Activity activity;
     private AuthCallback authCallback;
@@ -29,7 +31,7 @@ public class DropboxAuthProvider implements CloudAuthProvider {
             String accountName = "Dropbox User"; // Fetch actual account info if needed
 
             cloudAccount = new CloudAccountPOJO(
-                    "dropbox",
+                    FileObjectType.DROP_BOX_TYPE.toString(),
                     accountName,
                     uid,
                     accessToken,

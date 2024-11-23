@@ -9,6 +9,8 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.Task;
 
+import svl.kadatha.filex.FileObjectType;
+
 public class GoogleDriveAuthProvider implements CloudAuthProvider {
     private static final int RC_SIGN_IN = 1000;
     private final Activity activity;
@@ -79,7 +81,7 @@ public class GoogleDriveAuthProvider implements CloudAuthProvider {
                 long tokenExpiryTime = System.currentTimeMillis() + 3600 * 1000; // 1 hour
 
                 cloudAccount = new CloudAccountPOJO(
-                        "google_drive",
+                        FileObjectType.GOOGLE_DRIVE_TYPE.toString(),
                         account.getDisplayName(),
                         account.getId(),
                         accessToken,

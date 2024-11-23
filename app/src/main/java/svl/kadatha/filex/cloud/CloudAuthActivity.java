@@ -43,10 +43,7 @@ public class CloudAuthActivity extends BaseActivity {
     }
 
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-    }
+
 
     @Override
     protected void onStart() {
@@ -99,6 +96,19 @@ public class CloudAuthActivity extends BaseActivity {
             case YANDEX_TYPE:
                 break;
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(viewModel.authProvider instanceof GoogleDriveAuthProvider){
+            ((GoogleDriveAuthProvider)viewModel.authProvider).handleSignInResult(requestCode, resultCode, data);
+        } else if(viewModel.authProvider instanceof DropboxAuthProvider){
+            ((DropboxAuthProvider)viewModel.authProvider).handleAuthResult();
+        } else if(viewModel.authProvider instanceof MediaFireAuthProvider){
+
+        }
+
     }
 
 
