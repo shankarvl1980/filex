@@ -35,6 +35,5 @@ public class CloudAccountViewModel extends ViewModel {
             }
         });
     }
-
     // Other methods...
 }
