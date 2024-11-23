@@ -632,14 +632,79 @@
 
                 />
 
+            <View
+                android:id="@+id/cloud_layout_background"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/layout_margin"
+                android:background="@drawable/select_drawer_item"
+                app:layout_constraintBottom_toBottomOf="@id/cloud_heading"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/network_recyclerview"
+
+                />
+
+            <TextView
+                android:id="@+id/cloud_heading"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:minHeight="48dp"
+                android:paddingStart="@dimen/ten_dp"
+                android:paddingEnd="@dimen/ten_dp"
+                android:text="@string/cloud"
+                android:textColor="?attr/heading_text_color"
+                android:textSize="17sp"
+                app:layout_constraintEnd_toStartOf="@id/cloud_expand_indicator"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/cloud_layout_background"
+
+                />
+
+            <ImageView
+                android:id="@+id/cloud_expand_indicator"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="10dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/down_arrow_drawer_icon"
+                app:layout_constraintBottom_toBottomOf="@id/cloud_heading"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/cloud_heading"
+                app:layout_constraintTop_toTopOf="@id/cloud_heading"
+
+                />
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/cloud_layout_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:constraint_referenced_ids="cloud_recyclerview" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/cloud_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/drawer_title"
+                android:choiceMode="singleChoice"
+                android:paddingStart="@dimen/layout_margin"
+                android:paddingEnd="@dimen/layout_margin"
+                android:paddingBottom="@dimen/layout_margin"
+                app:layout_constraintEnd_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cloud_layout_background"
+
+                />
+
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/network_recyclerview"
-
-                />
+                app:layout_constraintTop_toBottomOf="@+id/cloud_recyclerview" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,7 +17,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     public final MutableLiveData<AsyncTaskStatus> isDeletionCompleted = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     private final Application application;
     private final TinyDB tinyDB;
-    public boolean archive_view, working_dir_open, library_or_search_shown, network_shown;
+    public boolean archive_view, working_dir_open, library_or_search_shown, network_shown, cloud_shown;
     public String toolbar_shown = "bottom";
     public Intent send_intent;
     private boolean isCancelled;
@@ -148,7 +148,6 @@ public class MainActivityViewModel extends AndroidViewModel {
                 repositoryClass.getDownLoadList(isCancelled);
             }
         });
-
     }
 
     public void getDocumentList(boolean isCancelled) {

@@ -841,10 +841,10 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 vh.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.usb_icon));
                 vh.textView.setText(DetailFragment.USB_FILE_PREFIX + filePOJO.getName());
             } else if (fileObjectType == FileObjectType.FTP_TYPE) {
-                vh.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ftp_file_icon));
+                vh.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.network_icon));
                 vh.textView.setText(DetailFragment.FTP_FILE_PREFIX + filePOJO.getName());
             } else if (fileObjectType == FileObjectType.SFTP_TYPE) {
-                vh.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ftp_file_icon));
+                vh.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.network_icon));
                 vh.textView.setText(DetailFragment.SFTP_FILE_PREFIX + filePOJO.getName());
             } else if (fileObjectType == FileObjectType.ROOT_TYPE) {
                 vh.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.device_icon));

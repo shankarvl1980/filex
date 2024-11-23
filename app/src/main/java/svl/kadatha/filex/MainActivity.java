@@ -77,6 +77,7 @@ import me.jahnen.libaums.core.fs.FileSystem;
 import me.jahnen.libaums.core.fs.UsbFile;
 import svl.kadatha.filex.appmanager.AppManagerActivity;
 import svl.kadatha.filex.audio.AudioPlayerActivity;
+import svl.kadatha.filex.cloud.CloudAuthActivity;
 import svl.kadatha.filex.ftpserver.FtpServerActivity;
 import svl.kadatha.filex.network.NetworkAccountsDetailsDialog;
 
@@ -120,9 +121,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     ActionModeListener actionModeListener;
     private List<String> library_categories = new ArrayList<>();
     private FilePOJO drawer_storage_file_pojo_selected;
-    private ImageView working_dir_expand_indicator, library_expand_indicator, network_expand_indicator;
+    private ImageView working_dir_expand_indicator, library_expand_indicator, network_expand_indicator, cloud_expand_indicator;
     private RecyclerView workingDirListRecyclerView;
-    private RecyclerView networkRecyclerView;
+    private RecyclerView networkRecyclerView, cloudRecyclerView;
     private int countBackPressed = 0;
     private Group working_dir_button_layout;
     private WorkingDirRecyclerAdapter workingDirRecyclerAdapter;
@@ -156,7 +157,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     });
     private ListPopupWindowPOJO extract_listPopupWindowPOJO, open_listPopupWindowPOJO;
     private ListPopupWindowPOJO.PopupWindowAdapter popupWindowAdapter;
-    private Group library_layout_group, network_layout_group;
+    private Group library_layout_group, network_layout_group,cloud_layout_group;
     private Handler h;
     private NestedScrollView nestedScrollView;
     private RepositoryClass repositoryClass;
@@ -454,7 +455,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     workingDirListRecyclerView.setVisibility(View.VISIBLE);
                     working_dir_button_layout.setVisibility(View.VISIBLE);
                     viewModel.working_dir_open = true;
-
                 } else {
                     working_dir_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.down_arrow_drawer_icon));
                     workingDirListRecyclerView.setVisibility(View.GONE);
@@ -737,8 +737,39 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         networkRecyclerView = findViewById(R.id.network_recyclerview);
         networkRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         networkRecyclerView.addItemDecoration(Global.DIVIDERITEMDECORATION);
-        int[] network_icon_image_array = {R.drawable.ftp_file_icon, R.drawable.ftp_file_icon, R.drawable.ftp_file_icon, R.drawable.ftp_file_icon};
+        int[] network_icon_image_array = {R.drawable.network_icon, R.drawable.network_icon, R.drawable.network_icon, R.drawable.network_icon};
         networkRecyclerView.setAdapter(new NetworkRecyclerAdapter(network_types, network_icon_image_array));
+
+
+        cloud_layout_group = findViewById(R.id.cloud_layout_group);
+        View cloud_heading_layout = findViewById(R.id.cloud_layout_background);
+        cloud_heading_layout.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (cloud_layout_group.getVisibility() == View.GONE) {
+                    cloud_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.right_arrow_drawer_icon));
+                    cloud_layout_group.setVisibility(View.VISIBLE);
+                    nestedScrollView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            nestedScrollView.smoothScrollTo(0, networkRecyclerView.getBottom());
+                        }
+                    });
+                    viewModel.cloud_shown = true;
+                } else {
+                    cloud_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.down_arrow_drawer_icon));
+                    cloud_layout_group.setVisibility(View.GONE);
+                    viewModel.cloud_shown = false;
+                }
+            }
+        });
+
+        cloud_expand_indicator = findViewById(R.id.cloud_expand_indicator);
+        List<String> cloud_types = Arrays.asList(getResources().getStringArray(R.array.cloud_types));
+        cloudRecyclerView = findViewById(R.id.cloud_recyclerview);
+        cloudRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        cloudRecyclerView.addItemDecoration(Global.DIVIDERITEMDECORATION);
+        int[] cloud_icon_image_array = {R.drawable.cloud_icon, R.drawable.cloud_icon, R.drawable.cloud_icon};
+        cloudRecyclerView.setAdapter(new CloudRecyclerAdapter(cloud_types, cloud_icon_image_array));
 
 
         int drawer_width = (int) getResources().getDimension(R.dimen.drawer_width_with_padding);
@@ -1221,6 +1252,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             network_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.right_arrow_drawer_icon));
             network_layout_group.setVisibility(View.VISIBLE);
         }
+
+        if (viewModel.cloud_shown) {
+            cloud_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.right_arrow_drawer_icon));
+            cloud_layout_group.setVisibility(View.VISIBLE);
+        }
+
         clear_cache = savedInstanceState.getBoolean("clear_cache");
     }
 
@@ -2130,16 +2167,16 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.usb_icon));
                 p1.textView_storage_dir.setText(DetailFragment.USB_FILE_PREFIX + filePOJO.getName());
             } else if (fileObjectType == FileObjectType.FTP_TYPE) {
-                p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ftp_file_icon));
+                p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.network_icon));
                 p1.textView_storage_dir.setText(DetailFragment.FTP_FILE_PREFIX + filePOJO.getName());
             } else if (fileObjectType == FileObjectType.SFTP_TYPE) {
-                p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ftp_file_icon));
+                p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.network_icon));
                 p1.textView_storage_dir.setText(DetailFragment.SFTP_FILE_PREFIX + filePOJO.getName());
             } else if (fileObjectType == FileObjectType.WEBDAV_TYPE) {
-                p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ftp_file_icon));
+                p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.network_icon));
                 p1.textView_storage_dir.setText(DetailFragment.WEBDAV_FILE_PREFIX + filePOJO.getName());
             } else if (fileObjectType == FileObjectType.SMB_TYPE) {
-                p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ftp_file_icon));
+                p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.network_icon));
                 p1.textView_storage_dir.setText(DetailFragment.SMB_FILE_PREFIX + filePOJO.getName());
             } else if (fileObjectType == FileObjectType.ROOT_TYPE) {
                 p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.device_icon));
@@ -2313,6 +2350,78 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                                     NetworkAccountsDetailsDialog networkAccountsDetailsDialog = NetworkAccountsDetailsDialog.getInstance(NetworkAccountsDetailsDialog.SMB);
                                     networkAccountsDetailsDialog.show(fm, "");
                                 }
+                                pbf.dismissAllowingStateLoss();
+                            }
+                        }, 500);
+                    }
+                });
+            }
+        }
+    }
+
+    private class CloudRecyclerAdapter extends RecyclerView.Adapter<CloudRecyclerAdapter.ViewHolder> {
+        final List<String> cloud_arraylist;
+        final int[] icon_image_list;
+
+        CloudRecyclerAdapter(List<String> cloud_arraylist, int[] icon_image_list) {
+            this.cloud_arraylist = cloud_arraylist;
+            this.icon_image_list = icon_image_list;
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
+            View v = LayoutInflater.from(context).inflate(R.layout.storage_dir_recyclerview_layout, p1, false);
+            return new ViewHolder(v);
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder p1, int p2) {
+            p1.textView_network.setText(cloud_arraylist.get(p2));
+            p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, icon_image_list[p2]));
+        }
+
+        @Override
+        public int getItemCount() {
+            return cloud_arraylist.size();
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+            final View v;
+            final ImageView imageview;
+            final ImageView overlay_imageview;
+            final TextView textView_network;
+
+            ViewHolder(View v) {
+                super(v);
+                this.v = v;
+                imageview = v.findViewById(R.id.image_storage_dir);
+                overlay_imageview = v.findViewById(R.id.overlay_image_storage_dir);
+                textView_network = v.findViewById(R.id.text_storage_dir_name);
+                overlay_imageview.setVisibility(View.GONE);
+                final int[] position = new int[1];
+                v.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View p) {
+                        position[0] = getBindingAdapterPosition();
+                        final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
+                        pbf.show(fm, "");
+                        drawerLayout.closeDrawer(drawer);
+                        Handler h = new Handler();
+                        h.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
+                                action_mode_finish(df);
+                                Intent intent=new Intent(context, CloudAuthActivity.class);
+                                FileObjectType fileObjectType = null;
+                                if (position[0] == 0) {
+                                    fileObjectType=FileObjectType.GOOGLE_DRIVE_TYPE;
+                                } else if (position[0] == 1) {
+                                    fileObjectType=FileObjectType.DROP_BOX_TYPE;
+                                } else if (position[0] == 2) {
+                                    fileObjectType=FileObjectType.MEDIA_FIRE_TYPE;
+                                }
+                                intent.putExtra("fileObjectType",fileObjectType);
+                                startActivity(intent);
                                 pbf.dismissAllowingStateLoss();
                             }
                         }, 500);

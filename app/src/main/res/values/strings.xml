@@ -380,6 +380,10 @@
     <string name="webdav_client">WebDAV</string>
     <string name="smb_client">SMB</string>"
 
+    <string name="google_drive">Google Drive</string>
+    <string name="drop_box">Drop Box</string>
+    <string name="media_fire">Media Fire</string>
+
     <string-array name="library_categories">
         <item>@string/download</item>
         <item>@string/document</item>
@@ -402,6 +406,11 @@
         <item>SMB3</item>
     </string-array>
 
+    <string-array name="cloud_types">
+        <item>@string/google_drive</item>
+        <item>@string/drop_box</item>
+        <item>@string/media_fire</item>
+    </string-array>
 
     <string name="running_label">FTP Server</string>
     <string name="running_summary_stopped">Toggle the state of the ftp server</string>
@@ -512,5 +521,6 @@
     <string name="enter_a_proper_port_number">Enter a proper port number</string>
     <string name="select_a_file">Select a file</string>
     <string name="cloud_accounts">Cloud Accounts</string>
+    <string name="cloud">Cloud</string>
 
 </resources>

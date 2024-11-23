@@ -31,7 +31,7 @@
         android:scrollbarThumbVertical="@drawable/scrollbar"
         android:scrollbars="vertical"
         android:scrollingCache="false"
-        app:layout_constraintBottom_toTopOf="@id/fragment_network_toolbar"
+        app:layout_constraintBottom_toTopOf="@id/activity_cloud_bottom_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/activity_cloud_list_heading" />
@@ -57,13 +57,13 @@
         android:paddingBottom="?attr/actionBarSize"
         android:text="@string/nothing_found_here"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/fragment_network_toolbar"
+        app:layout_constraintBottom_toTopOf="@id/activity_cloud_bottom_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/activity_cloud_list_heading" />
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/fragment_network_bottom_toolbar"
+        android:id="@+id/activity_cloud_bottom_toolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="?attr/toolbar_background"
@@ -95,7 +95,7 @@
     </FrameLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floating_action_cloud_list"
+        android:id="@+id/floating_action_cloud_activity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/floating_button_margin_end"

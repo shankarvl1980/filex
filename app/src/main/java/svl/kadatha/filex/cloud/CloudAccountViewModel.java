@@ -6,15 +6,21 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.ViewModel;
 
+import java.util.List;
+
 import svl.kadatha.filex.FileObjectType;
+import svl.kadatha.filex.IndexedLinkedHashMap;
 import svl.kadatha.filex.cloud.CloudAccountPOJO;
 import svl.kadatha.filex.cloud.CloudAuthProvider;
+import svl.kadatha.filex.network.NetworkAccountPOJO;
 
 public class CloudAccountViewModel extends AndroidViewModel {
     public CloudAuthProvider authProvider;
     private FileObjectType fileObjectType;
     private CloudAccountPOJO cloudAccount;
     private CloudAccountsDatabaseHelper cloudAccountsDatabaseHelper;
+    public List<CloudAccountPOJO> cloudAccountPOJOList;
+    public IndexedLinkedHashMap<Integer, CloudAccountPOJO> mselecteditems = new IndexedLinkedHashMap<>();
 
     public CloudAccountViewModel(@NonNull Application application) {
         super(application);
