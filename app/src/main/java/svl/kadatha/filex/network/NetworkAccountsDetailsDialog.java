@@ -388,9 +388,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                 if (requestKey.equals(NETWORK_ACCOUNT_INPUT_DETAILS_REQUEST_CODE)) {
                     progress_bar.setVisibility(View.VISIBLE);
                     if (result.getBoolean("whetherToConnect")) {
-                        if (type.equals(FTP)) {
-                            viewModel.replaceAndConnectNetworkAccount(result);
-                        }
+                        viewModel.replaceAndConnectNetworkAccount(result);
                     } else {
                         viewModel.replaceNetworkAccountPojoList(result);
                     }

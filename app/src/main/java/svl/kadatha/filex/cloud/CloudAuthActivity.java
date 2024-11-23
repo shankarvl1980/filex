@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import svl.kadatha.filex.BaseActivity;
 import svl.kadatha.filex.FileIntentDispatch;
+import svl.kadatha.filex.FileObjectType;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.R;
 import svl.kadatha.filex.RealPathUtil;
@@ -18,6 +19,7 @@ import svl.kadatha.filex.imagepdfvideo.ImageViewFragment;
 public class CloudAuthActivity extends BaseActivity {
     public boolean clear_cache;
     public CloudAccountViewModel viewModel;
+    private FileObjectType fileObjectType;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,7 +32,7 @@ public class CloudAuthActivity extends BaseActivity {
 
     private void on_intent(Intent intent, Bundle savedInstanceState) {
         if (intent != null) {
-
+            fileObjectType= (FileObjectType) intent.getSerializableExtra("fileObjectType");
         }
     }
 
@@ -76,4 +78,28 @@ public class CloudAuthActivity extends BaseActivity {
     public void clearCache() {
         Global.CLEAR_CACHE();
     }
+
+    private void authenticate(){
+        switch (fileObjectType){
+            case GOOGLE_DRIVE_TYPE:
+                viewModel.setAuthProvider(new GoogleDriveAuthProvider(this));
+                break;
+            case ONE_DRIVE_TYPE:
+                break;
+            case DROP_BOX_TYPE:
+                viewModel.setAuthProvider(new DropboxAuthProvider(this));
+                break;
+            case MEDIA_FIRE_TYPE:
+                viewModel.setAuthProvider(new MediaFireAuthProvider(this));
+                break;
+            case BOX_TYPE:
+                break;
+            case NEXT_CLOUD_TYPE:
+                break;
+            case YANDEX_TYPE:
+                break;
+        }
+    }
+
+
 }

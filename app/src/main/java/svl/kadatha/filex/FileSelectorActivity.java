@@ -477,7 +477,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                         } else {
                             Uri uri = fileSelectorActivityViewModel.uri_list.get(0);
                             resultIntent = new Intent();
-                            resultIntent.setAction(Intent.ACTION_SEND);
+                            resultIntent.setAction(Intent.ACTION_VIEW);
                             resultIntent.setDataAndType(uri, "*/*");
                         }
                         resultIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
