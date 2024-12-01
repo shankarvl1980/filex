@@ -19,9 +19,9 @@ public class CloudAccountPOJO implements Parcelable {
     public final String type;
     public final String displayName;
     public final String userId;
-    public final String accessToken;
+    public String accessToken;
     public final String refreshToken;
-    public final long tokenExpiryTime;
+    public long tokenExpiryTime;
     public final String scopes;
     public final String extra1;
     public final String extra2;

@@ -56,6 +56,9 @@
         <meta-data
             android:name="svl.kadatha.filex.GlideConfiguration"
             android:value="GlideModule" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
         <activity
             android:name=".MainActivity"
@@ -239,8 +242,20 @@
 
         <activity
             android:name=".cloud.CloudAuthActivity"
-            android:exported="false"
-            android:label="@string/cloud_accounts" />
+            android:exported="true"
+            android:label="@string/cloud_accounts" >
+        </activity>
+
+        <activity android:name="net.openid.appauth.AuthorizationManagementActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="svl.kadatha.filex"
+                    android:host="oauth2redirect"/>
+            </intent-filter>
+        </activity>
 
         <service
             android:name=".audio.AudioPlayerService"
