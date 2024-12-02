@@ -1,9 +1,16 @@
 package svl.kadatha.filex.cloud;
 
+import android.content.Intent;
+
+import svl.kadatha.filex.cloud.CloudAccountPOJO;
+
 public interface CloudAuthProvider {
 
     // Starts the authentication process
     void authenticate(AuthCallback callback);
+
+    // Handles the authentication response via Intent (e.g., onNewIntent())
+    void handleAuthorizationResponse(Intent intent);
 
     // Refreshes the access token if needed
     void refreshToken(AuthCallback callback);

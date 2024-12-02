@@ -1,6 +1,7 @@
 package svl.kadatha.filex.cloud;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
@@ -21,6 +22,11 @@ public class DropboxAuthProvider implements CloudAuthProvider {
     public void authenticate(AuthCallback callback) {
         this.authCallback = callback;
         Auth.startOAuth2Authentication(activity, "YOUR_APP_KEY");
+    }
+
+    @Override
+    public void handleAuthorizationResponse(Intent intent) {
+
     }
 
     // Call this method in your Activity's onResume()

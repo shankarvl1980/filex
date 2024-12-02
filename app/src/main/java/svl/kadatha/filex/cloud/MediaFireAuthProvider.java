@@ -1,6 +1,7 @@
 package svl.kadatha.filex.cloud;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -52,6 +53,11 @@ public class MediaFireAuthProvider implements CloudAuthProvider {
 
         // Launch a WebView for user authentication
         launchWebView(authUrl);
+    }
+
+    @Override
+    public void handleAuthorizationResponse(Intent intent) {
+
     }
 
     private void launchWebView(String authUrl) {

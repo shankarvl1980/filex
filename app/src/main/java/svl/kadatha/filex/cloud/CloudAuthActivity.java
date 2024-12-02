@@ -56,14 +56,14 @@ public class CloudAuthActivity extends BaseActivity {
     private CloudAccountPOJO connected_cloud_account_pojo;
     private CloudAccountPojoListAdapter cloudAccountPojoListAdapter;
     private static final String client_id = "566755170747-8lio5rj01qgmpq469e036791bpqu9qjg.apps.googleusercontent.com";
-    public ActivityResultLauncher<Intent> googleDriveAuthLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            if (viewModel.authProvider instanceof GoogleDriveAuthProvider) {
-                ((GoogleDriveAuthProvider) viewModel.authProvider).handleAuthResult(result.getResultCode(), result.getData());
-            }
-        }
-    });
+    //    public ActivityResultLauncher<Intent> googleDriveAuthLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+//        @Override
+//        public void onActivityResult(ActivityResult result) {
+//            if (viewModel.authProvider instanceof GoogleDriveAuthProvider) {
+//                ((GoogleDriveAuthProvider) viewModel.authProvider).handleAuthResult(result.getResultCode(), result.getData());
+//            }
+//        }
+//    });
     public ActivityResultLauncher<Intent> dropboxAuthLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult o) {
@@ -105,10 +105,10 @@ public class CloudAuthActivity extends BaseActivity {
         disconnect_btn.setOnClickListener(bottomToolbarClickListener);
         edit_btn.setOnClickListener(bottomToolbarClickListener);
 
-        Intent intent = getIntent();
-        on_intent(intent, savedInstanceState);
 
         viewModel = new ViewModelProvider(this).get(CloudAccountViewModel.class);
+        Intent intent = getIntent();
+        on_intent(intent, savedInstanceState);
 
         progress_bar = findViewById(R.id.activity_cloud_list_progressbar);
         progress_bar.setVisibility(View.GONE);
@@ -160,6 +160,9 @@ public class CloudAuthActivity extends BaseActivity {
     private void on_intent(Intent intent, Bundle savedInstanceState) {
         if (intent != null) {
             fileObjectType = (FileObjectType) intent.getSerializableExtra("fileObjectType");
+            if (viewModel.authProvider != null) {
+                viewModel.authProvider.handleAuthorizationResponse(intent);
+            }
         }
     }
 

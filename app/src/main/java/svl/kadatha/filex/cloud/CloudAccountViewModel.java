@@ -49,15 +49,19 @@ public class CloudAccountViewModel extends AndroidViewModel {
         authProvider.authenticate(new CloudAuthProvider.AuthCallback() {
             @Override
             public void onSuccess(CloudAccountPOJO account) {
-                cloudAccountsDatabaseHelper.updateOrInsert(cloudAccount.type,cloudAccount.userId,account);
+                cloudAccountsDatabaseHelper.updateOrInsert(account.type, account.userId, account);
+                // Update the list of accounts if necessary
+                //cloudAccountPOJOList = cloudAccountsDatabaseHelper.getAllAccounts();
+                // Notify observers if you're using LiveData
             }
 
             @Override
             public void onError(Exception e) {
-                // Handle error
+                // Handle error (e.g., show a message)
             }
         });
     }
+
 
     // Other methods...
 }

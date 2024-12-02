@@ -1,11 +1,11 @@
 package svl.kadatha.filex.cloud;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.net.Uri;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import net.openid.appauth.*;
 
@@ -13,21 +13,19 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 import okhttp3.*;
-import svl.kadatha.filex.Global;
 import svl.kadatha.filex.MyExecutorService;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class GoogleDriveAuthProvider implements CloudAuthProvider {
 
-    private static final int RC_AUTH = 1000;
-    private final AppCompatActivity activity;
+    private final Activity activity;
     private AuthCallback authCallback;
     private CloudAccountPOJO cloudAccount;
 
-    private static final String client_id="566755170747-8lio5rj01qgmpq469e036791bpqu9qjg.apps.googleusercontent.com";
-    private static final String redirect_uri = Global.FILEX_PACKAGE+":/oauth2redirect";
+    private static final String client_id = "YOUR_CLIENT_ID.apps.googleusercontent.com";
     private static final String authorization_endpoint = "https://accounts.google.com/o/oauth2/v2/auth";
     private static final String token_endpoint = "https://oauth2.googleapis.com/token";
     private static final String[] scopes = {
@@ -38,10 +36,11 @@ public class GoogleDriveAuthProvider implements CloudAuthProvider {
             "https://www.googleapis.com/auth/drive.appdata"
     };
 
-    private final AuthorizationService authService;
+    private AuthorizationService authService;
     private AuthorizationRequest authRequest;
+    private AuthState authState;
 
-    public GoogleDriveAuthProvider(AppCompatActivity activity) {
+    public GoogleDriveAuthProvider(Activity activity) {
         this.activity = activity;
         authService = new AuthorizationService(activity);
         buildAuthRequest();
@@ -53,85 +52,105 @@ public class GoogleDriveAuthProvider implements CloudAuthProvider {
                 Uri.parse(token_endpoint)
         );
 
-        authRequest = new AuthorizationRequest.Builder(
+        // Generate a loopback redirect URI
+        Uri redirectUri = Uri.parse("http://localhost");
+
+        AuthorizationRequest.Builder authRequestBuilder = new AuthorizationRequest.Builder(
                 serviceConfig,
                 client_id,
                 ResponseTypeValues.CODE,
-                Uri.parse(redirect_uri)
+                redirectUri
         )
                 .setScopes(scopes)
-                .build();
+                .setPrompt("consent"); // Set the 'prompt' parameter directly
+
+        authRequest = authRequestBuilder.build();
     }
 
     @Override
     public void authenticate(AuthCallback callback) {
         this.authCallback = callback;
-        Intent authIntent = authService.getAuthorizationRequestIntent(authRequest);
-        //activity.startActivityForResult(authIntent, RC_AUTH);
-        ((CloudAuthActivity)activity).googleDriveAuthLauncher.launch(authIntent);
+
+        // Start the authorization flow
+        authService.performAuthorizationRequest(
+                authRequest,
+                createPendingIntent()
+        );
     }
 
-    // Call this method from your Activity's onActivityResult
-    public void handleAuthResult(int resultCode, @Nullable Intent data) {
+    private PendingIntent createPendingIntent() {
+        Intent intent = new Intent(activity.getApplicationContext(), activity.getClass());
+        intent.setAction("com.google.auth.TOKEN_ACTION");
+        return PendingIntent.getActivity(
+                activity, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+    }
 
-        AuthorizationResponse authResponse = AuthorizationResponse.fromIntent(data);
-        AuthorizationException authException = AuthorizationException.fromIntent(data);
+    @Override
+    public void handleAuthorizationResponse(Intent intent) {
+        if (!"com.google.auth.TOKEN_ACTION".equals(intent.getAction())) {
+            return;
+        }
 
-        if (authResponse != null) {
-            exchangeAuthorizationCode(authResponse);
+        AuthorizationResponse response = AuthorizationResponse.fromIntent(intent);
+        AuthorizationException error = AuthorizationException.fromIntent(intent);
+
+        if (response != null) {
+            authService.performTokenRequest(
+                    response.createTokenExchangeRequest(),
+                    (tokenResponse, exception) -> {
+                        if (tokenResponse != null) {
+                            handleTokenResponse(tokenResponse);
+                        } else {
+                            if (authCallback != null) {
+                                authCallback.onError(exception != null ? exception : new Exception("Token exchange failed"));
+                            }
+                        }
+                    }
+            );
         } else {
             if (authCallback != null) {
-                authCallback.onError(authException != null ? authException : new Exception("Unknown error"));
+                authCallback.onError(error != null ? error : new Exception("Authorization failed"));
             }
         }
     }
 
-    private void exchangeAuthorizationCode(AuthorizationResponse authResponse) {
-        TokenRequest tokenRequest = authResponse.createTokenExchangeRequest();
+    private void handleTokenResponse(TokenResponse response) {
+        long tokenExpiryTime = response.accessTokenExpirationTime != null
+                ? response.accessTokenExpirationTime
+                : System.currentTimeMillis() + (3600 * 1000); // Default to 1 hour
 
-        authService.performTokenRequest(tokenRequest, (response, ex) -> {
-            if (response != null) {
-                // Handle token response
-                long tokenExpiryTime = response.accessTokenExpirationTime != null
-                        ? response.accessTokenExpirationTime
-                        : System.currentTimeMillis() + (3600 * 1000); // Default to 1 hour
+        // Fetch user info
+        fetchUserInfo(response.accessToken, (userInfo, userInfoEx) -> {
+            if (userInfo != null) {
+                cloudAccount = new CloudAccountPOJO(
+                        "google_drive",
+                        userInfo.name,
+                        userInfo.id,
+                        response.accessToken,
+                        response.refreshToken,
+                        tokenExpiryTime,
+                        null, // scopes
+                        null,
+                        null,
+                        null
+                );
 
-                // Fetch user info
-                fetchUserInfo(response.accessToken, (userInfo, userInfoEx) -> {
-                    if (userInfo != null) {
-                        cloudAccount = new CloudAccountPOJO(
-                                "google_drive",
-                                userInfo.name,
-                                userInfo.id,
-                                response.accessToken,
-                                response.refreshToken,
-                                tokenExpiryTime,
-                                null, // scopes
-                                null,
-                                null,
-                                null
-                        );
-
-                        if (authCallback != null) {
-                            authCallback.onSuccess(cloudAccount);
-                        }
-                    } else {
-                        if (authCallback != null) {
-                            authCallback.onError(userInfoEx != null ? userInfoEx : new Exception("Failed to fetch user info"));
-                        }
-                    }
-                });
-
+                if (authCallback != null) {
+                    authCallback.onSuccess(cloudAccount);
+                }
             } else {
                 if (authCallback != null) {
-                    authCallback.onError(ex != null ? ex : new Exception("Token exchange failed"));
+                    authCallback.onError(userInfoEx != null ? userInfoEx : new Exception("Failed to fetch user info"));
                 }
             }
         });
     }
 
     private void fetchUserInfo(String accessToken, UserInfoCallback callback) {
-        Executors.newSingleThreadExecutor().execute(() -> {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        executorService.execute(() -> {
             try {
                 OkHttpClient client = new OkHttpClient();
 
@@ -230,7 +249,7 @@ public class GoogleDriveAuthProvider implements CloudAuthProvider {
     @Override
     public void logout(AuthCallback callback) {
         if (cloudAccount != null && cloudAccount.accessToken != null) {
-            ExecutorService executorService= MyExecutorService.getExecutorService();
+            ExecutorService executorService = MyExecutorService.getExecutorService();
             executorService.execute(() -> {
                 try {
                     OkHttpClient client = new OkHttpClient();
@@ -268,6 +287,13 @@ public class GoogleDriveAuthProvider implements CloudAuthProvider {
             if (callback != null) {
                 callback.onSuccess(null);
             }
+        }
+    }
+
+    // Dispose of AuthorizationService when done
+    public void dispose() {
+        if (authService != null) {
+            authService.dispose();
         }
     }
 }
