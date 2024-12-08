@@ -563,7 +563,7 @@ public class FilePOJOUtil {
                     // Construct a path. If fileclickselected is "/", path might be "/filename"
                     String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
                     // Make a FilePOJO from the Google Drive metadata
-                    FilePOJO filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO_FromDriveAPI(meta, false, fileObjectType,oauthToken);
+                    FilePOJO filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO_FromDriveAPI(path, false, fileObjectType,oauthToken);
                     if (!filePOJO.getName().startsWith(".")) {
                         filePOJOS_filtered.add(filePOJO);
                     }
@@ -575,8 +575,7 @@ public class FilePOJOUtil {
         } else if (fileObjectType == FileObjectType.DROP_BOX_TYPE) {
             try {
                 // Get Dropbox client
-                DropboxClientRepository dropboxClientRepository = DropboxClientRepository.getInstance(NetworkAccountDetailsViewModel.DROP_BOX_NETWORK_ACCOUNT_POJO);
-                DbxClientV2 dbxClient = dropboxClientRepository.getDbxClient();
+                DbxClientV2 dbxClient = .getDbxClient();
 
                 // For Dropbox, if fileclickselected is "/", we can try listing "" (empty string) to represent root
                 String dropboxPath = fileclickselected.equals("/") ? "" : fileclickselected;
