@@ -2,6 +2,8 @@ package svl.kadatha.filex;
 
 import android.os.Build;
 
+import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.Metadata;
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
 import com.hierynomus.smbj.session.Session;
 import com.hierynomus.smbj.share.DiskShare;
@@ -29,6 +31,7 @@ import me.jahnen.libaums.core.fs.UsbFile;
 import svl.kadatha.filex.audio.AudioPOJO;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FileModelFactory;
+import svl.kadatha.filex.filemodel.GoogleDriveFileModel;
 import svl.kadatha.filex.network.FtpClientRepository;
 import svl.kadatha.filex.network.NetworkAccountDetailsViewModel;
 import svl.kadatha.filex.network.SftpChannelRepository;
@@ -480,7 +483,7 @@ public class FilePOJOUtil {
                 }
             }
         } else if (fileObjectType == FileObjectType.WEBDAV_TYPE) {
-            WebDavClientRepository webDavClientRepository = null;
+            WebDavClientRepository webDavClientRepository;
             Sardine sardine;
             try {
                 webDavClientRepository = WebDavClientRepository.getInstance(NetworkAccountDetailsViewModel.WEBDAV_NETWORK_ACCOUNT_POJO);
@@ -542,7 +545,59 @@ public class FilePOJOUtil {
                     smbClientRepository.releaseSession(session);
                 }
             }
-        } else {
+        }
+        else if (fileObjectType == FileObjectType.GOOGLE_DRIVE_TYPE) {
+            try {
+                // Obtain OAuth token and possibly a helper class for Google Drive operations
+
+                String oauthToken = googleDriveClientRepository.getOAuthToken();
+
+                // Determine the parent folder ID. If fileclickselected represents root, use 'root'.
+                String parentId = "root";
+                // If fileclickselected is always root or a known folder ID, adjust accordingly.
+                // If you have a method: listFilesInFolder(String folderId, String oauthToken)
+                List<GoogleDriveFileModel.GoogleDriveFileMetadata> driveFiles = googleDriveClientRepository.listFilesInFolder(parentId, oauthToken);
+
+                for (GoogleDriveFileModel.GoogleDriveFileMetadata meta : driveFiles) {
+                    String name = meta.name;
+                    // Construct a path. If fileclickselected is "/", path might be "/filename"
+                    String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
+                    // Make a FilePOJO from the Google Drive metadata
+                    FilePOJO filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO_FromDriveAPI(meta, false, fileObjectType,oauthToken);
+                    if (!filePOJO.getName().startsWith(".")) {
+                        filePOJOS_filtered.add(filePOJO);
+                    }
+                    filePOJOS.add(filePOJO);
+                }
+            } catch (Exception e) {
+                return;
+            }
+        } else if (fileObjectType == FileObjectType.DROP_BOX_TYPE) {
+            try {
+                // Get Dropbox client
+                DropboxClientRepository dropboxClientRepository = DropboxClientRepository.getInstance(NetworkAccountDetailsViewModel.DROP_BOX_NETWORK_ACCOUNT_POJO);
+                DbxClientV2 dbxClient = dropboxClientRepository.getDbxClient();
+
+                // For Dropbox, if fileclickselected is "/", we can try listing "" (empty string) to represent root
+                String dropboxPath = fileclickselected.equals("/") ? "" : fileclickselected;
+                List<Metadata> entries = dbxClient.files().listFolder(dropboxPath).getEntries();
+
+                for (Metadata meta : entries) {
+                    String name = meta.getName();
+                    String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
+                    // Convert the Dropbox Metadata to FilePOJO
+                    FilePOJO filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO(meta, false, fileObjectType, path, dbxClient);
+                    if (!filePOJO.getName().startsWith(".")) {
+                        filePOJOS_filtered.add(filePOJO);
+                    }
+                    filePOJOS.add(filePOJO);
+                }
+            } catch (Exception e) {
+                return;
+            }
+        }
+
+        else {
             FileModel fileModel = FileModelFactory.getFileModel(fileclickselected, fileObjectType, null, null);
             FileModel[] fileModels = fileModel.list();
             int size = fileModels.length;

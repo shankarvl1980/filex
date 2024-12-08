@@ -17,7 +17,7 @@ public class GoogleDriveFileModel implements FileModel {
     private final OkHttpClient httpClient;
     private final Gson gson;
     private final String fileId;
-    private DriveFileMetadata metadata;
+    private GoogleDriveFileMetadata metadata;
 
 
     // Constructor for root directory
@@ -89,7 +89,7 @@ public class GoogleDriveFileModel implements FileModel {
         return currentFolderId;
     }
 
-    private DriveFileMetadata getFileMetadata(String fileId) throws IOException {
+    private GoogleDriveFileMetadata getFileMetadata(String fileId) throws IOException {
         HttpUrl url = HttpUrl.parse("https://www.googleapis.com/drive/v3/files/" + fileId)
                 .newBuilder()
                 .addQueryParameter("fields", "*")
@@ -104,7 +104,7 @@ public class GoogleDriveFileModel implements FileModel {
         Response response = httpClient.newCall(request).execute();
         if (response.isSuccessful()) {
             String responseBody = response.body().string();
-            DriveFileMetadata metadata = gson.fromJson(responseBody, DriveFileMetadata.class);
+            GoogleDriveFileMetadata metadata = gson.fromJson(responseBody, GoogleDriveFileMetadata.class);
             return metadata;
         } else {
             throw new IOException("Failed to get file metadata: " + response.code() + " - " + response.message());
@@ -121,7 +121,7 @@ public class GoogleDriveFileModel implements FileModel {
         try {
             if (metadata.parents != null && !metadata.parents.isEmpty()) {
                 String parentId = metadata.parents.get(0);
-                DriveFileMetadata parentMetadata = getFileMetadata(parentId);
+                GoogleDriveFileMetadata parentMetadata = getFileMetadata(parentId);
                 return parentMetadata.name;
             } else {
                 return null; // No parent
@@ -142,13 +142,13 @@ public class GoogleDriveFileModel implements FileModel {
         }
     }
 
-    private String buildPath(DriveFileMetadata fileMetadata) throws IOException {
+    private String buildPath(GoogleDriveFileMetadata fileMetadata) throws IOException {
         if (fileMetadata.parents != null && !fileMetadata.parents.isEmpty()) {
             String parentId = fileMetadata.parents.get(0);
             if ("root".equals(parentId)) {
                 return "/" + fileMetadata.name;
             } else {
-                DriveFileMetadata parentMetadata = getFileMetadata(parentId);
+                GoogleDriveFileMetadata parentMetadata = getFileMetadata(parentId);
                 String parentPath = buildPath(parentMetadata);
                 return parentPath + "/" + fileMetadata.name;
             }
@@ -165,7 +165,7 @@ public class GoogleDriveFileModel implements FileModel {
                 if ("root".equals(parentId)) {
                     return "/";
                 } else {
-                    DriveFileMetadata parentMetadata = getFileMetadata(parentId);
+                    GoogleDriveFileMetadata parentMetadata = getFileMetadata(parentId);
                     return buildPath(parentMetadata);
                 }
             } else {
@@ -205,7 +205,7 @@ public class GoogleDriveFileModel implements FileModel {
 
             if (response.isSuccessful()) {
                 String responseBody = response.body().string();
-                metadata = gson.fromJson(responseBody, DriveFileMetadata.class);
+                metadata = gson.fromJson(responseBody, GoogleDriveFileMetadata.class);
                 return true;
             } else {
                 System.err.println("Rename failed: " + response.code() + " - " + response.message());
@@ -367,7 +367,7 @@ public class GoogleDriveFileModel implements FileModel {
                     String responseBody = response.body().string();
                     DriveFilesListResponse filesListResponse = gson.fromJson(responseBody, DriveFilesListResponse.class);
 
-                    for (DriveFileMetadata fileMetadata : filesListResponse.files) {
+                    for (GoogleDriveFileMetadata fileMetadata : filesListResponse.files) {
                         fileModels.add(new GoogleDriveFileModel(accessToken, fileMetadata.id));
                     }
 
@@ -564,7 +564,7 @@ public class GoogleDriveFileModel implements FileModel {
 
                         if (createResponse.isSuccessful()) {
                             String createResponseBody = createResponse.body().string();
-                            DriveFileMetadata createdFolder = gson.fromJson(createResponseBody, DriveFileMetadata.class);
+                            GoogleDriveFileMetadata createdFolder = gson.fromJson(createResponseBody, GoogleDriveFileMetadata.class);
                             parentId = createdFolder.id;
                         } else {
                             System.err.println("Create directory failed: " + createResponse.code() + " - " + createResponse.message());
@@ -639,9 +639,9 @@ public class GoogleDriveFileModel implements FileModel {
     }
 
     // Helper classes
-    private static class DriveFileMetadata {
+    public static class GoogleDriveFileMetadata {
         String id;
-        String name;
+        public String name;
         String mimeType;
         Long size;
         String modifiedTime;
@@ -652,7 +652,7 @@ public class GoogleDriveFileModel implements FileModel {
     private static class DriveFilesListResponse {
         @SerializedName("nextPageToken")
         String nextPageToken;
-        List<DriveFileMetadata> files;
+        List<GoogleDriveFileMetadata> files;
     }
 
     // Custom RequestBody to read from InputStream
