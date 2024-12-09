@@ -687,4 +687,59 @@ public class GoogleDriveFileModel implements FileModel {
             }
         }
     }
+
+    public static List<GoogleDriveFileMetadata> listFilesInFolder(String parentId, String oauthToken) {
+        List<GoogleDriveFileMetadata> metadataList = new ArrayList<>();
+        String pageToken = null;
+
+        try {
+            do {
+                HttpUrl.Builder urlBuilder = HttpUrl.parse("https://www.googleapis.com/drive/v3/files")
+                        .newBuilder()
+                        .addQueryParameter("q", "'" + parentId + "' in parents and trashed=false")
+                        .addQueryParameter("fields", "nextPageToken, files(id, name, mimeType, parents)")
+                        .addQueryParameter("pageSize", "1000");
+
+                if (pageToken != null) {
+                    urlBuilder.addQueryParameter("pageToken", pageToken);
+                }
+
+                HttpUrl url = urlBuilder.build();
+
+                Request request = new Request.Builder()
+                        .url(url)
+                        .addHeader("Authorization", "Bearer " + oauthToken)
+                        .get()
+                        .build();
+
+                Response response = new OkHttpClient().newCall(request).execute();
+                if (!response.isSuccessful()) {
+                    System.err.println("List failed: " + response.code() + " - " + response.message());
+                    response.close();
+                    break;
+                }
+
+                String responseBody = response.body().string();
+                response.close();
+
+                DriveFilesListResponse filesListResponse = new Gson().fromJson(responseBody, DriveFilesListResponse.class);
+                if (filesListResponse == null || filesListResponse.files == null) {
+                    // No files or unexpected response
+                    break;
+                }
+
+                // Add all files to our metadata list
+                metadataList.addAll(filesListResponse.files);
+
+                pageToken = filesListResponse.nextPageToken;
+            } while (pageToken != null);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            // In case of error, return the files collected so far or empty list
+        }
+
+        return metadataList;
+    }
+
 }

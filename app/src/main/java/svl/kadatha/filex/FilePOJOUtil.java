@@ -29,6 +29,7 @@ import java.util.Vector;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 import svl.kadatha.filex.audio.AudioPOJO;
+import svl.kadatha.filex.cloud.CloudAccountViewModel;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FileModelFactory;
 import svl.kadatha.filex.filemodel.GoogleDriveFileModel;
@@ -545,25 +546,23 @@ public class FilePOJOUtil {
                     smbClientRepository.releaseSession(session);
                 }
             }
-        }
-        else if (fileObjectType == FileObjectType.GOOGLE_DRIVE_TYPE) {
+        } else if (fileObjectType == FileObjectType.GOOGLE_DRIVE_TYPE) {
             try {
                 // Obtain OAuth token and possibly a helper class for Google Drive operations
-
-                String oauthToken = googleDriveClientRepository.getOAuthToken();
+                String oauthToken = CloudAccountViewModel.GOOGLE_DRIVE_ACCESS_TOKEN;
 
                 // Determine the parent folder ID. If fileclickselected represents root, use 'root'.
                 String parentId = "root";
                 // If fileclickselected is always root or a known folder ID, adjust accordingly.
                 // If you have a method: listFilesInFolder(String folderId, String oauthToken)
-                List<GoogleDriveFileModel.GoogleDriveFileMetadata> driveFiles = googleDriveClientRepository.listFilesInFolder(parentId, oauthToken);
+                List<GoogleDriveFileModel.GoogleDriveFileMetadata> driveFiles = GoogleDriveFileModel.listFilesInFolder(parentId, oauthToken);
 
                 for (GoogleDriveFileModel.GoogleDriveFileMetadata meta : driveFiles) {
                     String name = meta.name;
                     // Construct a path. If fileclickselected is "/", path might be "/filename"
                     String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
                     // Make a FilePOJO from the Google Drive metadata
-                    FilePOJO filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO_FromDriveAPI(path, false, fileObjectType,oauthToken);
+                    FilePOJO filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO_FromDriveAPI(path, false, fileObjectType, oauthToken);
                     if (!filePOJO.getName().startsWith(".")) {
                         filePOJOS_filtered.add(filePOJO);
                     }
@@ -574,8 +573,9 @@ public class FilePOJOUtil {
             }
         } else if (fileObjectType == FileObjectType.DROP_BOX_TYPE) {
             try {
+                String accessToken = CloudAccountViewModel.DROP_BOX_ACCESS_TOKEN;
                 // Get Dropbox client
-                DbxClientV2 dbxClient = .getDbxClient();
+                DbxClientV2 dbxClient = new DbxClientV2(new com.dropbox.core.DbxRequestConfig("YourAppName"), accessToken);
 
                 // For Dropbox, if fileclickselected is "/", we can try listing "" (empty string) to represent root
                 String dropboxPath = fileclickselected.equals("/") ? "" : fileclickselected;
@@ -594,9 +594,7 @@ public class FilePOJOUtil {
             } catch (Exception e) {
                 return;
             }
-        }
-
-        else {
+        } else {
             FileModel fileModel = FileModelFactory.getFileModel(fileclickselected, fileObjectType, null, null);
             FileModel[] fileModels = fileModel.list();
             int size = fileModels.length;

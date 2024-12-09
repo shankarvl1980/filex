@@ -287,7 +287,7 @@ public class CloudAuthActivity extends BaseActivity {
                             }
 
                             progress_bar.setVisibility(View.VISIBLE);
-//                            CloudAccountPOJO cloudAccountPOJO = viewModel.cloudAccountPOJOList.get(pos);
+                            CloudAccountPOJO cloudAccountPOJO = viewModel.cloudAccountPOJOList.get(pos);
 //                            viewModel.connectNetworkAccount(networkAccountPOJO);
                         }
                     }
