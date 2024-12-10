@@ -18,7 +18,7 @@ import svl.kadatha.filex.network.NetworkAccountPOJO;
 
 public class CloudAccountViewModel extends AndroidViewModel {
     public CloudAuthProvider authProvider;
-    private FileObjectType fileObjectType;
+    public FileObjectType fileObjectType;
     private CloudAccountPOJO cloudAccount;
     private final CloudAccountsDatabaseHelper cloudAccountsDatabaseHelper;
     public List<CloudAccountPOJO> cloudAccountPOJOList;
@@ -60,6 +60,26 @@ public class CloudAccountViewModel extends AndroidViewModel {
                 // Notify observers if you're using LiveData
                 if(l!=-1){
                     cloudAccount=account;
+                    switch (fileObjectType) {
+                        case GOOGLE_DRIVE_TYPE:
+                            GOOGLE_DRIVE_ACCESS_TOKEN=account.accessToken;
+                            break;
+                        case ONE_DRIVE_TYPE:
+                            break;
+                        case DROP_BOX_TYPE:
+                            DROP_BOX_ACCESS_TOKEN= account.accessToken;
+                            break;
+                        case MEDIA_FIRE_TYPE:
+
+                            break;
+                        case BOX_TYPE:
+                            break;
+                        case NEXT_CLOUD_TYPE:
+                            break;
+                        case YANDEX_TYPE:
+                            break;
+                    }
+                    cloudAccountConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
                 }
             }
 

@@ -73,6 +73,7 @@ public class Global {
     static public final String LOCAL_BROADCAST_CUT_COPY_FILE_ACTION = FILEX_PACKAGE + ".FILE_CUT_COPY";
     static public final String LOCAL_BROADCAST_ARCHIVE_UNARCHIVE_FILE_ACTION = FILEX_PACKAGE + ".FILE_ARCHIVE_UNARCHIVE";
     static public final String LOCAL_BROADCAST_COPY_TO_FILE_ACTION = FILEX_PACKAGE + ".FILE_COPY_TO";
+    static public final String LOCAL_BROADCAST_CONNECTED_TO_CLOUD_ACTION = FILEX_PACKAGE + ".CONNECTED_TO_CLOUD";
     static public final String TAG = "shankar";
     public static final List<FileObjectType> NETWORK_FILE_OBJECT_TYPES = Arrays.asList(FileObjectType.FTP_TYPE, FileObjectType.SFTP_TYPE, FileObjectType.WEBDAV_TYPE, FileObjectType.SMB_TYPE);
     public static final List<FileObjectType> CLOUD_FILE_OBJECT_TYPES = Arrays.asList(FileObjectType.GOOGLE_DRIVE_TYPE, FileObjectType.ONE_DRIVE_TYPE, FileObjectType.DROP_BOX_TYPE, FileObjectType.MEDIA_FIRE_TYPE,FileObjectType.BOX_TYPE,FileObjectType.NEXT_CLOUD_TYPE,FileObjectType.YANDEX_TYPE);

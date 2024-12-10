@@ -20,7 +20,9 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,6 +31,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
+import svl.kadatha.filex.AsyncTaskStatus;
 import svl.kadatha.filex.BaseActivity;
 import svl.kadatha.filex.EquallyDistributedButtonsWithTextLayout;
 import svl.kadatha.filex.FileObjectType;
@@ -107,6 +110,19 @@ public class CloudAuthActivity extends BaseActivity {
 
 
         viewModel = new ViewModelProvider(this).get(CloudAccountViewModel.class);
+        viewModel.cloudAccountConnectionAsyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
+            @Override
+            public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED){
+                    Bundle bundle=new Bundle();
+                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_CONNECTED_TO_CLOUD_ACTION, LocalBroadcastManager.getInstance(context),bundle);
+                }
+                viewModel.cloudAccountConnectionAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+                finish();
+            }
+        });
+
+
         Intent intent = getIntent();
         on_intent(intent, savedInstanceState);
 
@@ -224,6 +240,7 @@ public class CloudAuthActivity extends BaseActivity {
             case YANDEX_TYPE:
                 break;
         }
+        viewModel.fileObjectType=fileObjectType;
         viewModel.authenticate();
     }
 

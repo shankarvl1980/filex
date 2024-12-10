@@ -157,7 +157,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     });
     private ListPopupWindowPOJO extract_listPopupWindowPOJO, open_listPopupWindowPOJO;
     private ListPopupWindowPOJO.PopupWindowAdapter popupWindowAdapter;
-    private Group library_layout_group, network_layout_group,cloud_layout_group;
+    private Group library_layout_group, network_layout_group, cloud_layout_group;
     private Handler h;
     private NestedScrollView nestedScrollView;
     private RepositoryClass repositoryClass;
@@ -1403,7 +1403,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         search_toolbar.setVisibility(View.GONE); //no need to call adapter.filter with null to refill filepjos as calling datasetchanged replenished df.adapter.filepojo listUri
         search_toolbar_visible = false;
 
-    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    }
+
+    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -2411,16 +2413,16 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                             public void run() {
                                 DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
                                 action_mode_finish(df);
-                                Intent intent=new Intent(context, CloudAuthActivity.class);
+                                Intent intent = new Intent(context, CloudAuthActivity.class);
                                 FileObjectType fileObjectType = null;
                                 if (position[0] == 0) {
-                                    fileObjectType=FileObjectType.GOOGLE_DRIVE_TYPE;
+                                    fileObjectType = FileObjectType.GOOGLE_DRIVE_TYPE;
                                 } else if (position[0] == 1) {
-                                    fileObjectType=FileObjectType.DROP_BOX_TYPE;
+                                    fileObjectType = FileObjectType.DROP_BOX_TYPE;
                                 } else if (position[0] == 2) {
-                                    fileObjectType=FileObjectType.MEDIA_FIRE_TYPE;
+                                    fileObjectType = FileObjectType.MEDIA_FIRE_TYPE;
                                 }
-                                intent.putExtra("fileObjectType",fileObjectType);
+                                intent.putExtra("fileObjectType", fileObjectType);
                                 startActivity(intent);
                                 pbf.dismissAllowingStateLoss();
                             }
@@ -2640,9 +2642,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                         }
                     }
                     break;
+                case Global.LOCAL_BROADCAST_CONNECTED_TO_CLOUD_ACTION:
+                    if (bundle != null) {
+                        FileObjectType fileObjectType= (FileObjectType) bundle.getSerializable("fileObjectType");
+                        createFragmentTransaction("/",fileObjectType);
+                    }
+                    break;
             }
         }
     }
-
-
 }

@@ -63,7 +63,6 @@ public class GoogleDriveAuthProvider implements CloudAuthProvider {
         )
                 .setScopes(scopes)
                 .setPrompt("consent"); // Set the 'prompt' parameter directly
-
         authRequest = authRequestBuilder.build();
     }
 
