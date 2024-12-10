@@ -219,6 +219,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_CUT_COPY_FILE_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_ARCHIVE_UNARCHIVE_FILE_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_COPY_TO_FILE_ACTION);
+
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_CONNECTED_TO_CLOUD_ACTION);
         localBroadcastManager.registerReceiver(localBroadcastReceiver, localBroadcastIntentFilter);
 
         usbReceiver = new USBReceiver();

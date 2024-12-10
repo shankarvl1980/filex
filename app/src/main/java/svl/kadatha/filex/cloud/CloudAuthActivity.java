@@ -58,7 +58,7 @@ public class CloudAuthActivity extends BaseActivity {
     private Context context;
     private CloudAccountPOJO connected_cloud_account_pojo;
     private CloudAccountPojoListAdapter cloudAccountPojoListAdapter;
-    private static final String client_id = "566755170747-8lio5rj01qgmpq469e036791bpqu9qjg.apps.googleusercontent.com";
+    private static final String client_id = "603518003549-h5ptja0jib68fqtrs3sk2ad7fla8f6dm.apps.googleusercontent.com";
     //    public ActivityResultLauncher<Intent> googleDriveAuthLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
 //        @Override
 //        public void onActivityResult(ActivityResult result) {
@@ -116,9 +116,9 @@ public class CloudAuthActivity extends BaseActivity {
                 if(asyncTaskStatus==AsyncTaskStatus.COMPLETED){
                     Bundle bundle=new Bundle();
                     Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_CONNECTED_TO_CLOUD_ACTION, LocalBroadcastManager.getInstance(context),bundle);
+                    viewModel.cloudAccountConnectionAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+                    finish();
                 }
-                viewModel.cloudAccountConnectionAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-                finish();
             }
         });
 

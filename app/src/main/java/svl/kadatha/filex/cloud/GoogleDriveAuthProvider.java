@@ -25,7 +25,7 @@ public class GoogleDriveAuthProvider implements CloudAuthProvider {
     private AuthCallback authCallback;
     private CloudAccountPOJO cloudAccount;
 
-    private static final String client_id = "YOUR_CLIENT_ID.apps.googleusercontent.com";
+    private static final String client_id = "603518003549-h5ptja0jib68fqtrs3sk2ad7fla8f6dm.apps.googleusercontent.com";
     private static final String authorization_endpoint = "https://accounts.google.com/o/oauth2/v2/auth";
     private static final String token_endpoint = "https://oauth2.googleapis.com/token";
     private static final String[] scopes = {
