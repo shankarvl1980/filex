@@ -53,7 +53,7 @@ public class GoogleDriveAuthProvider implements CloudAuthProvider {
         );
 
         // Generate a loopback redirect URI
-        Uri redirectUri = Uri.parse("svl.kadatha.filex:/oauth2redirect");
+        Uri redirectUri = Uri.parse("svl.kadatha.filex://oauth2redirect");
 
         AuthorizationRequest.Builder authRequestBuilder = new AuthorizationRequest.Builder(
                 serviceConfig,
