@@ -33,24 +33,44 @@ public class MakeCloudFilePOJOUtil {
             String oauthToken
     ) throws IOException {
 
-        String fileName = new File(file_path).getName();
-        // Build a query for the Drive API. For example, to match file names exactly:
-        // q=name='somefilename'
-        String query = "name='" + fileName.replace("'", "\\'") + "'";
+        // Handle the root folder case
+        if (file_path.equals("/")) {
+            // Create a FilePOJO representing the root folder
+            return new FilePOJO(
+                    fileObjectType,
+                    "/",            // name
+                    null,           // package_name (not needed)
+                    "/",            // path
+                    true,           // isDirectory
+                    0L,             // dateLong
+                    null,           // date (no modification time for root)
+                    0L,             // sizeLong
+                    null,           // si
+                    R.drawable.folder_icon, // type (folder)
+                    null,           // file_ext
+                    Global.ENABLE_ALFA,
+                    View.INVISIBLE,
+                    0,
+                    0L,
+                    null,
+                    0,
+                    null,
+                    null
+            );
+        }
 
-        // fields parameter: only request what we need
+        // For non-root paths:
+        String fileName = new File(file_path).getName();
+        String query = "name='" + fileName.replace("'", "\\'") + "'";
         String fields = "files(id,name,mimeType,modifiedTime,size)";
 
-        String url = "https://www.googleapis.com/drive/v3/files?q=" +
-                java.net.URLEncoder.encode(query, "UTF-8") +
-                "&fields=" + fields;
+        String encodedQuery = java.net.URLEncoder.encode(query, "UTF-8");
+        String url = "https://www.googleapis.com/drive/v3/files?q=" + encodedQuery + "&fields=" + fields;
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(url)
                 .addHeader("Authorization", "Bearer " + oauthToken)
-                .addHeader("Accept", "application/json")
-                .header("User-Agent", "YOUR_USER_AGENT")
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
@@ -107,8 +127,7 @@ public class MakeCloudFilePOJOUtil {
                     si = FileUtil.humanReadableByteCount(sizeLong);
                 }
             } else {
-                // For directories, if you need sub-file count, you'd do another request.
-                // Here we just leave si empty or something like "(folder)"
+                // For directories, if you need sub-file count, do another request.
             }
 
             return new FilePOJO(

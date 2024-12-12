@@ -7,6 +7,8 @@ import android.view.View;
 
 import androidx.annotation.RequiresApi;
 
+import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.Metadata;
 import com.hierynomus.msfscc.FileAttributes;
 import com.hierynomus.msfscc.fileinformation.FileAllInformation;
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
@@ -40,6 +42,7 @@ import java.util.zip.ZipFile;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 import svl.kadatha.filex.appmanager.AppManagerListFragment;
+import svl.kadatha.filex.cloud.CloudAccountViewModel;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.WebDavFileModel;
 import svl.kadatha.filex.network.FtpClientRepository;
@@ -812,6 +815,56 @@ public class MakeFilePOJOUtil {
                     Timber.tag(TAG).d("SMB session released");
                 }
             }
+        } else if (fileObjectType == FileObjectType.GOOGLE_DRIVE_TYPE) {
+            try {
+                String oauthToken = CloudAccountViewModel.GOOGLE_DRIVE_ACCESS_TOKEN;
+
+                // Attempt to create a FilePOJO from the given file path and OAuth token
+                filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO_FromDriveAPI(file_path, true, fileObjectType, oauthToken);
+            } catch (IOException e) {
+                Timber.tag(TAG).e("Error creating FilePOJO for Google Drive file: %s", e.getMessage());
+            }
+        } else if (fileObjectType == FileObjectType.DROP_BOX_TYPE) {
+            try {
+                String accessToken = CloudAccountViewModel.DROP_BOX_ACCESS_TOKEN;
+                // Get Dropbox client
+                DbxClientV2 dbxClient = new DbxClientV2(new com.dropbox.core.DbxRequestConfig("YourAppName"), accessToken);
+
+                if (file_path.equals("/")) {
+                    // Treat root as empty string in Dropbox
+                    // Create a FilePOJO representing the root directory
+                    filePOJO = new FilePOJO(
+                            fileObjectType,
+                            "/",             // name
+                            null,            // package_name
+                            "/",             // path
+                            true,            // isDirectory
+                            0L,              // dateLong
+                            null,            // date
+                            0L,              // sizeLong
+                            null,            // si
+                            R.drawable.folder_icon, // type (folder)
+                            null,            // file_ext
+                            Global.ENABLE_ALFA,
+                            View.INVISIBLE,
+                            0,
+                            0L,
+                            null,
+                            0,
+                            null,
+                            null
+                    );
+                } else {
+                    // For non-root paths, fetch metadata
+                    Metadata metadata = dbxClient.files().getMetadata(file_path);
+                    // Create a FilePOJO from the metadata
+                    filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO(metadata, true, fileObjectType, file_path, dbxClient);
+                }
+            } catch (Exception e) {
+                Timber.tag(TAG).e("Error creating FilePOJO for Dropbox file: %s", e.getMessage());
+            }
+        } else if (fileObjectType == FileObjectType.MEDIA_FIRE_TYPE) {
+
         }
         return filePOJO;
     }

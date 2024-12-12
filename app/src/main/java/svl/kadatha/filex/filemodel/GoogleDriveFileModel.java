@@ -640,7 +640,7 @@ public class GoogleDriveFileModel implements FileModel {
 
     // Helper classes
     public static class GoogleDriveFileMetadata {
-        String id;
+        public String id;
         public String name;
         String mimeType;
         Long size;
@@ -649,10 +649,10 @@ public class GoogleDriveFileModel implements FileModel {
         // Other fields as needed...
     }
 
-    private static class DriveFilesListResponse {
+    public static class DriveFilesListResponse {
         @SerializedName("nextPageToken")
         String nextPageToken;
-        List<GoogleDriveFileMetadata> files;
+        public List<GoogleDriveFileMetadata> files;
     }
 
     // Custom RequestBody to read from InputStream

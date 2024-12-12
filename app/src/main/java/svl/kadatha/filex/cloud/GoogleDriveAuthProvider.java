@@ -25,7 +25,7 @@ public class GoogleDriveAuthProvider implements CloudAuthProvider {
     private AuthCallback authCallback;
     private CloudAccountPOJO cloudAccount;
 
-    private static final String client_id = "603518003549-h5ptja0jib68fqtrs3sk2ad7fla8f6dm.apps.googleusercontent.com";
+    private static final String client_id = "566755170747-8lio5rj01qgmpq469e036791bpqu9qjg.apps.googleusercontent.com";
     private static final String authorization_endpoint = "https://accounts.google.com/o/oauth2/v2/auth";
     private static final String token_endpoint = "https://oauth2.googleapis.com/token";
     private static final String[] scopes = {
@@ -53,7 +53,7 @@ public class GoogleDriveAuthProvider implements CloudAuthProvider {
         );
 
         // Generate a loopback redirect URI
-        Uri redirectUri = Uri.parse("http://localhost");
+        Uri redirectUri = Uri.parse("svl.kadatha.filex:/oauth2redirect");
 
         AuthorizationRequest.Builder authRequestBuilder = new AuthorizationRequest.Builder(
                 serviceConfig,

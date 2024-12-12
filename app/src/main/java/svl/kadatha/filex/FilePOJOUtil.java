@@ -4,6 +4,7 @@ import android.os.Build;
 
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.Metadata;
+import com.google.gson.Gson;
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
 import com.hierynomus.smbj.session.Session;
 import com.hierynomus.smbj.share.DiskShare;
@@ -28,6 +29,10 @@ import java.util.Map;
 import java.util.Vector;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import svl.kadatha.filex.audio.AudioPOJO;
 import svl.kadatha.filex.cloud.CloudAccountViewModel;
 import svl.kadatha.filex.filemodel.FileModel;
@@ -552,7 +557,7 @@ public class FilePOJOUtil {
                 String oauthToken = CloudAccountViewModel.GOOGLE_DRIVE_ACCESS_TOKEN;
 
                 // Determine the parent folder ID. If fileclickselected represents root, use 'root'.
-                String parentId = "root";
+                String parentId = getFileIdByPath(fileclickselected,oauthToken);
                 // If fileclickselected is always root or a known folder ID, adjust accordingly.
                 // If you have a method: listFilesInFolder(String folderId, String oauthToken)
                 List<GoogleDriveFileModel.GoogleDriveFileMetadata> driveFiles = GoogleDriveFileModel.listFilesInFolder(parentId, oauthToken);
@@ -832,4 +837,70 @@ public class FilePOJOUtil {
             }
         }
     }
+
+
+    public static String getFileIdByPath(String file_path, String oauthToken) throws IOException {
+        // Create the OkHttpClient and Gson instances here
+        OkHttpClient httpClient = new OkHttpClient();
+        Gson gson = new Gson();
+
+        // Normalize path
+        if (!file_path.startsWith("/")) {
+            file_path = "/" + file_path;
+        }
+
+        // If the path is just root "/"
+        if (file_path.equals("/")) {
+            return "root";
+        }
+
+        String[] parts = file_path.split("/");
+        String currentFolderId = "root"; // Start from root
+
+        for (int i = 1; i < parts.length; i++) {
+            String name = parts[i].trim();
+            if (name.isEmpty()) {
+                // Skip empty components (e.g. if path ends with "/")
+                continue;
+            }
+
+            // Escape single quotes in the name
+            String escapedName = name.replace("'", "\\'");
+
+            // Search for a child with the given name under the current folder
+            String query = "name = '" + escapedName + "' and '" + currentFolderId + "' in parents and trashed = false";
+            HttpUrl url = HttpUrl.parse("https://www.googleapis.com/drive/v3/files")
+                    .newBuilder()
+                    .addQueryParameter("q", query)
+                    .addQueryParameter("fields", "files(id, name)")
+                    .build();
+
+            Request request = new Request.Builder()
+                    .url(url)
+                    .addHeader("Authorization", "Bearer " + oauthToken)
+                    .get()
+                    .build();
+
+            try (Response response = httpClient.newCall(request).execute()) {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Failed to retrieve file ID: " + response.code() + " - " + response.message());
+                }
+
+                String responseBody = response.body().string();
+                GoogleDriveFileModel.DriveFilesListResponse filesListResponse = gson.fromJson(responseBody, GoogleDriveFileModel.DriveFilesListResponse.class);
+
+                if (filesListResponse.files != null && !filesListResponse.files.isEmpty()) {
+                    // Take the first matching file/folder
+                    currentFolderId = filesListResponse.files.get(0).id;
+                } else {
+                    // Item not found
+                    return null;
+                }
+            }
+        }
+
+        return currentFolderId;
+    }
+
+
 }

@@ -303,7 +303,7 @@ public class CloudAuthActivity extends BaseActivity {
                                 return;
                             }
 
-                            progress_bar.setVisibility(View.VISIBLE);
+                            //progress_bar.setVisibility(View.VISIBLE);
                             CloudAccountPOJO cloudAccountPOJO = viewModel.cloudAccountPOJOList.get(pos);
 //                            viewModel.connectNetworkAccount(networkAccountPOJO);
                         }
