@@ -19,13 +19,13 @@ public class CloudAccountPOJO implements Parcelable {
     public final String type;
     public final String displayName;
     public final String userId;
-    public String accessToken;
     public final String refreshToken;
-    public long tokenExpiryTime;
     public final String scopes;
     public final String extra1;
     public final String extra2;
     public final String extra3;
+    public String accessToken;
+    public long tokenExpiryTime;
 
     // Constructor
     public CloudAccountPOJO(String type, String displayName, String userId,
@@ -57,11 +57,6 @@ public class CloudAccountPOJO implements Parcelable {
         this.extra3 = other.extra3 != null ? new String(other.extra3) : null;
     }
 
-    // Method to return a deep copy
-    public CloudAccountPOJO deepCopy() {
-        return new CloudAccountPOJO(this);
-    }
-
     // Parcelable implementation
     protected CloudAccountPOJO(Parcel in) {
         type = in.readString();
@@ -74,6 +69,11 @@ public class CloudAccountPOJO implements Parcelable {
         extra1 = in.readString();
         extra2 = in.readString();
         extra3 = in.readString();
+    }
+
+    // Method to return a deep copy
+    public CloudAccountPOJO deepCopy() {
+        return new CloudAccountPOJO(this);
     }
 
     @Override

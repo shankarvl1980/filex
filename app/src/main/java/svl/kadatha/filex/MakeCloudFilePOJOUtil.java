@@ -26,12 +26,7 @@ import okhttp3.Response;
 public class MakeCloudFilePOJOUtil {
 
 
-    static FilePOJO MAKE_FilePOJO_FromDriveAPI(
-            String file_path,
-            boolean extract_icon,
-            FileObjectType fileObjectType,
-            String oauthToken
-    ) throws IOException {
+    static FilePOJO MAKE_FilePOJO_FromDriveAPI(String file_path, boolean extract_icon, FileObjectType fileObjectType, String oauthToken) throws IOException {
 
         // Handle the root folder case
         if (file_path.equals("/")) {

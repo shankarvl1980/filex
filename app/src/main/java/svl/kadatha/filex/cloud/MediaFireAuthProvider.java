@@ -3,7 +3,6 @@ package svl.kadatha.filex.cloud;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.webkit.CookieManager;
@@ -31,10 +30,10 @@ public class MediaFireAuthProvider implements CloudAuthProvider {
     private static final String RESPONSE_TYPE = "code";
 
     private final Activity activity;
-    private AuthCallback authCallback;
-    private CloudAccountPOJO cloudAccount;
     private final OkHttpClient httpClient;
     private final Gson gson;
+    private AuthCallback authCallback;
+    private CloudAccountPOJO cloudAccount;
 
     public MediaFireAuthProvider(Activity activity) {
         this.activity = activity;

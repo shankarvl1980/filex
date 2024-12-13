@@ -47,14 +47,14 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
     private final List<String> zip_entries_array;
     private final String zip_file_path;
     private final long[] counter_size_files = new long[1];
+    private final String base_path;
     private String current_file_name;
     private FilePOJO filePOJO;
     private ZipFile zipfile;
     private int counter_no_files;
-    private final String base_path;
 
 
-    public UnarchiveAsyncTask(String dest_folder, ArrayList<String> zip_entries_array, FileObjectType sourceFileObjectType, FileObjectType destFileObjectType, String zip_folder_name, String zip_file_path, Uri tree_uri, String tree_uri_path, String base_path,TaskProgressListener listener) {
+    public UnarchiveAsyncTask(String dest_folder, ArrayList<String> zip_entries_array, FileObjectType sourceFileObjectType, FileObjectType destFileObjectType, String zip_folder_name, String zip_file_path, Uri tree_uri, String tree_uri_path, String base_path, TaskProgressListener listener) {
         this.dest_folder = dest_folder;
         this.zip_entries_array = zip_entries_array;
         this.destFileObjectType = destFileObjectType;
@@ -64,7 +64,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
         this.tree_uri = tree_uri;
         this.tree_uri_path = tree_uri_path;
         this.listener = listener;
-        this.base_path=base_path;
+        this.base_path = base_path;
 
         written_file_name_list = new ArrayList<>();
         written_file_path_list = new ArrayList<>();

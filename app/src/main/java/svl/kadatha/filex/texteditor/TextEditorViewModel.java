@@ -198,7 +198,6 @@ public class TextEditorViewModel extends AndroidViewModel {
     }
 
 
-
     public synchronized void setUpInitialization(FileObjectType fileObjectType, String file_path) {
         if (initializedSetUp.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
             return;

@@ -1407,7 +1407,24 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
     }
 
-    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    public void workingDirAdd() {
+        DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
+        if (working_dir_arraylist.size() > 20) {
+            Global.print(context, getString(R.string.more_than_20_directories_cannot_be_added));
+            return;
+        }
+
+        String file_path = df.fileclickselected;
+        if (df.fileObjectType == FileObjectType.FILE_TYPE || df.fileObjectType == FileObjectType.ROOT_TYPE) {
+            File file = new File(file_path);
+            if (file.isDirectory() && !working_dir_arraylist.contains(file_path) && !StorageUtil.STORAGE_DIR.contains(file) && !viewModel.archive_view) {
+                int i = workingDirRecyclerAdapter.insert(file_path);
+                workingDirListRecyclerView.scrollToPosition(i);
+                tinyDB.putListString("working_dir_arraylist", working_dir_arraylist);
+                setRecyclerViewHeight(workingDirListRecyclerView);
+            }
+        }
+    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -1446,25 +1463,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     });
-
-    public void workingDirAdd() {
-        DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-        if (working_dir_arraylist.size() > 20) {
-            Global.print(context, getString(R.string.more_than_20_directories_cannot_be_added));
-            return;
-        }
-
-        String file_path = df.fileclickselected;
-        if (df.fileObjectType == FileObjectType.FILE_TYPE || df.fileObjectType == FileObjectType.ROOT_TYPE) {
-            File file = new File(file_path);
-            if (file.isDirectory() && !working_dir_arraylist.contains(file_path) && !StorageUtil.STORAGE_DIR.contains(file) && !viewModel.archive_view) {
-                int i = workingDirRecyclerAdapter.insert(file_path);
-                workingDirListRecyclerView.scrollToPosition(i);
-                tinyDB.putListString("working_dir_arraylist", working_dir_arraylist);
-                setRecyclerViewHeight(workingDirListRecyclerView);
-            }
-        }
-    }
 
     public void workingDirRemove() {
         if (working_dir_arraylist == null || working_dir_arraylist.isEmpty()) {
@@ -2646,11 +2644,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     break;
                 case Global.LOCAL_BROADCAST_CONNECTED_TO_CLOUD_ACTION:
                     if (bundle != null) {
-                        FileObjectType fileObjectType= (FileObjectType) bundle.getSerializable("fileObjectType");
-                        createFragmentTransaction("/",fileObjectType);
+                        FileObjectType fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
+                        createFragmentTransaction("/", fileObjectType);
                     }
                     break;
             }
         }
     }
+
+
 }

@@ -2,9 +2,21 @@ package svl.kadatha.filex.filemodel;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.DbxClientV2;
-import com.dropbox.core.v2.files.*;
+import com.dropbox.core.v2.files.CreateFolderErrorException;
+import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.files.FolderMetadata;
+import com.dropbox.core.v2.files.GetMetadataErrorException;
+import com.dropbox.core.v2.files.ListFolderResult;
+import com.dropbox.core.v2.files.Metadata;
+import com.dropbox.core.v2.files.RelocationResult;
+import com.dropbox.core.v2.files.WriteMode;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -195,7 +207,9 @@ public class DropBoxFileModel implements FileModel {
         String[] dirs = extended_path.split("/");
         String currentPath = path;
         for (String dir : dirs) {
-            if (dir.isEmpty()) continue;
+            if (dir.isEmpty()) {
+                continue;
+            }
             currentPath = currentPath.equals("/") ? "/" + dir : currentPath + "/" + dir;
             try {
                 dbxClient.files().createFolderV2(currentPath);

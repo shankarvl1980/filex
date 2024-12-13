@@ -33,6 +33,7 @@ import timber.log.Timber;
 public class App extends Application {
 
     private static App mInstance;
+
     /**
      * @return the Context of this application
      */
@@ -82,7 +83,7 @@ public class App extends Application {
         boolean isDatabaseDeleted = tinydb.getBoolean("isDefaultAppDatabaseDeleted");
 
         if (!isDatabaseDeleted) {
-           DefaultAppDatabaseHelper defaultAppDatabaseHelper = new DefaultAppDatabaseHelper(getApplicationContext());
+            DefaultAppDatabaseHelper defaultAppDatabaseHelper = new DefaultAppDatabaseHelper(getApplicationContext());
             defaultAppDatabaseHelper.deleteTable();
             defaultAppDatabaseHelper.close();
             tinydb.putBoolean("isDefaultAppDatabaseDeleted", true);

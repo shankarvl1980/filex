@@ -1031,6 +1031,18 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         public ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
             return new FileSelectorAdapter.ViewHolder(new FileSelectorRecyclerViewLayoutGrid(context, false));
         }
+    }
+
+    public static class FileSelectorAdapterList extends FileSelectorAdapter {
+
+        FileSelectorAdapterList(Context context, FileSelectorFragment fileSelectorFragment, int action_sought_request_code) {
+            super(context, fileSelectorFragment, action_sought_request_code == PICK_FILE_REQUEST_CODE || action_sought_request_code == FILE_PATH_REQUEST_CODE);
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
+            return new FileSelectorAdapter.ViewHolder(new FileSelectorRecyclerViewLayoutList(context, false));
+        }
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_files_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -1070,18 +1082,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         }
     });
-
-    public static class FileSelectorAdapterList extends FileSelectorAdapter {
-
-        FileSelectorAdapterList(Context context, FileSelectorFragment fileSelectorFragment, int action_sought_request_code) {
-            super(context, fileSelectorFragment, action_sought_request_code == PICK_FILE_REQUEST_CODE || action_sought_request_code == FILE_PATH_REQUEST_CODE);
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
-            return new FileSelectorAdapter.ViewHolder(new FileSelectorRecyclerViewLayoutList(context, false));
-        }
-    }
 
     private class LocalBroadcastReceiver extends BroadcastReceiver {
         @Override
@@ -1250,6 +1250,8 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         }
     }
+
+
 
 
 }

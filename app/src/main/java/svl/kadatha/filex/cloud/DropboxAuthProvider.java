@@ -2,9 +2,8 @@ package svl.kadatha.filex.cloud;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
+
 import com.dropbox.core.android.Auth;
 
 import svl.kadatha.filex.FileObjectType;
@@ -13,6 +12,7 @@ public class DropboxAuthProvider implements CloudAuthProvider {
     private final Activity activity;
     private AuthCallback authCallback;
     private CloudAccountPOJO cloudAccount;
+    private String app_key="igtdjo14bfrwsck";
 
     public DropboxAuthProvider(Activity activity) {
         this.activity = activity;
@@ -21,7 +21,7 @@ public class DropboxAuthProvider implements CloudAuthProvider {
     @Override
     public void authenticate(AuthCallback callback) {
         this.authCallback = callback;
-        Auth.startOAuth2Authentication(activity, "YOUR_APP_KEY");
+        Auth.startOAuth2Authentication(activity, app_key);
     }
 
     @Override

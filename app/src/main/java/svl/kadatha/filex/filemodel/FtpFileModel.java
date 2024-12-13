@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import svl.kadatha.filex.network.FtpClientRepository;
 import svl.kadatha.filex.Global;
+import svl.kadatha.filex.network.FtpClientRepository;
 import svl.kadatha.filex.network.NetworkAccountDetailsViewModel;
 
 public class FtpFileModel implements FileModel {

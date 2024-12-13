@@ -66,12 +66,12 @@ import svl.kadatha.filex.FileUtil;
 import svl.kadatha.filex.GlideApp;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.IndexedLinkedHashMap;
-import svl.kadatha.filex.instacrop.InstaCropperActivity;
 import svl.kadatha.filex.ListPopupWindowPOJO;
 import svl.kadatha.filex.PropertiesDialog;
 import svl.kadatha.filex.R;
 import svl.kadatha.filex.SAFPermissionHelperDialog;
 import svl.kadatha.filex.UriPOJO;
+import svl.kadatha.filex.instacrop.InstaCropperActivity;
 
 public class
 ImageViewFragment extends Fragment {

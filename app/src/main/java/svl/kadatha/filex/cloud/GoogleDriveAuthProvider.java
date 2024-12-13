@@ -5,25 +5,30 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.net.Uri;
 
-import androidx.annotation.Nullable;
-
-import net.openid.appauth.*;
-
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
-import okhttp3.*;
-import svl.kadatha.filex.MyExecutorService;
+import net.openid.appauth.AuthState;
+import net.openid.appauth.AuthorizationException;
+import net.openid.appauth.AuthorizationRequest;
+import net.openid.appauth.AuthorizationResponse;
+import net.openid.appauth.AuthorizationService;
+import net.openid.appauth.AuthorizationServiceConfiguration;
+import net.openid.appauth.GrantTypeValues;
+import net.openid.appauth.ResponseTypeValues;
+import net.openid.appauth.TokenRequest;
+import net.openid.appauth.TokenResponse;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
-public class GoogleDriveAuthProvider implements CloudAuthProvider {
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import svl.kadatha.filex.MyExecutorService;
 
-    private final Activity activity;
-    private AuthCallback authCallback;
-    private CloudAccountPOJO cloudAccount;
+public class GoogleDriveAuthProvider implements CloudAuthProvider {
 
     private static final String client_id = "566755170747-8lio5rj01qgmpq469e036791bpqu9qjg.apps.googleusercontent.com";
     private static final String authorization_endpoint = "https://accounts.google.com/o/oauth2/v2/auth";
@@ -35,7 +40,9 @@ public class GoogleDriveAuthProvider implements CloudAuthProvider {
             "https://www.googleapis.com/auth/drive.file",
             "https://www.googleapis.com/auth/drive.appdata"
     };
-
+    private final Activity activity;
+    private AuthCallback authCallback;
+    private CloudAccountPOJO cloudAccount;
     private AuthorizationService authService;
     private AuthorizationRequest authRequest;
     private AuthState authState;
@@ -180,22 +187,6 @@ public class GoogleDriveAuthProvider implements CloudAuthProvider {
         });
     }
 
-    // UserInfo class to parse JSON response
-    private static class UserInfo {
-        @SerializedName("sub")
-        String id;
-        @SerializedName("name")
-        String name;
-        @SerializedName("email")
-        String email;
-        @SerializedName("picture")
-        String picture;
-    }
-
-    private interface UserInfoCallback {
-        void onUserInfoFetched(UserInfo userInfo, Exception e);
-    }
-
     public void refreshToken(AuthCallback callback) {
         if (cloudAccount == null || cloudAccount.refreshToken == null) {
             if (callback != null) {
@@ -294,5 +285,21 @@ public class GoogleDriveAuthProvider implements CloudAuthProvider {
         if (authService != null) {
             authService.dispose();
         }
+    }
+
+    private interface UserInfoCallback {
+        void onUserInfoFetched(UserInfo userInfo, Exception e);
+    }
+
+    // UserInfo class to parse JSON response
+    private static class UserInfo {
+        @SerializedName("sub")
+        String id;
+        @SerializedName("name")
+        String name;
+        @SerializedName("email")
+        String email;
+        @SerializedName("picture")
+        String picture;
     }
 }

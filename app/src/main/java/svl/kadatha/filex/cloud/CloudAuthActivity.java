@@ -41,24 +41,9 @@ import svl.kadatha.filex.PermissionsUtil;
 import svl.kadatha.filex.R;
 
 public class CloudAuthActivity extends BaseActivity {
+    private static final String client_id = "603518003549-h5ptja0jib68fqtrs3sk2ad7fla8f6dm.apps.googleusercontent.com";
     public boolean clear_cache;
     public CloudAccountViewModel viewModel;
-    private FileObjectType fileObjectType;
-    private Toolbar bottom_toolbar;
-    private RecyclerView cloud_account_list_recyclerview;
-    private List<CloudAccountPOJO> cloudAccountPOJO_selected_for_delete = new ArrayList<>();
-    private boolean toolbar_visible = true;
-    private int scroll_distance;
-    private int num_all_network_account;
-    private Button delete_btn, disconnect_btn;
-    private Button edit_btn;
-    private PermissionsUtil permissionsUtil;
-    private FrameLayout progress_bar;
-    private TextView cloud_number_text_view, empty_cloud_account_list_tv;
-    private Context context;
-    private CloudAccountPOJO connected_cloud_account_pojo;
-    private CloudAccountPojoListAdapter cloudAccountPojoListAdapter;
-    private static final String client_id = "603518003549-h5ptja0jib68fqtrs3sk2ad7fla8f6dm.apps.googleusercontent.com";
     //    public ActivityResultLauncher<Intent> googleDriveAuthLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
 //        @Override
 //        public void onActivityResult(ActivityResult result) {
@@ -83,7 +68,21 @@ public class CloudAuthActivity extends BaseActivity {
             }
         }
     });
-
+    private FileObjectType fileObjectType;
+    private Toolbar bottom_toolbar;
+    private RecyclerView cloud_account_list_recyclerview;
+    private List<CloudAccountPOJO> cloudAccountPOJO_selected_for_delete = new ArrayList<>();
+    private boolean toolbar_visible = true;
+    private int scroll_distance;
+    private int num_all_network_account;
+    private Button delete_btn, disconnect_btn;
+    private Button edit_btn;
+    private PermissionsUtil permissionsUtil;
+    private FrameLayout progress_bar;
+    private TextView cloud_number_text_view, empty_cloud_account_list_tv;
+    private Context context;
+    private CloudAccountPOJO connected_cloud_account_pojo;
+    private CloudAccountPojoListAdapter cloudAccountPojoListAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -113,10 +112,19 @@ public class CloudAuthActivity extends BaseActivity {
         viewModel.cloudAccountConnectionAsyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
             @Override
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
-                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED){
-                    Bundle bundle=new Bundle();
-                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_CONNECTED_TO_CLOUD_ACTION, LocalBroadcastManager.getInstance(context),bundle);
+                if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
+                    Bundle bundle = new Bundle();
+                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_CONNECTED_TO_CLOUD_ACTION, LocalBroadcastManager.getInstance(context), bundle);
                     viewModel.cloudAccountConnectionAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+                    finish();
+                }
+            }
+        });
+
+        viewModel.cloudAccountStorageDirFillAsyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
+            @Override
+            public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED){
                     finish();
                 }
             }
@@ -240,8 +248,34 @@ public class CloudAuthActivity extends BaseActivity {
             case YANDEX_TYPE:
                 break;
         }
-        viewModel.fileObjectType=fileObjectType;
+        viewModel.fileObjectType = fileObjectType;
         viewModel.authenticate();
+    }
+
+    private void enable_disable_buttons(boolean enable, int selection_size) {
+        if (enable) {
+            delete_btn.setAlpha(Global.ENABLE_ALFA);
+            if (selection_size == 1) {
+                edit_btn.setAlpha(Global.ENABLE_ALFA);
+            } else {
+                edit_btn.setAlpha(Global.DISABLE_ALFA);
+            }
+        } else {
+            delete_btn.setAlpha(Global.DISABLE_ALFA);
+            edit_btn.setAlpha(Global.DISABLE_ALFA);
+        }
+        delete_btn.setEnabled(enable);
+        edit_btn.setEnabled(enable && selection_size == 1);
+    }
+
+    public void clear_selection() {
+        viewModel.mselecteditems = new IndexedLinkedHashMap<>();
+        if (cloudAccountPojoListAdapter != null) {
+            cloudAccountPojoListAdapter.notifyDataSetChanged();
+        }
+
+        enable_disable_buttons(false, 0);
+        cloud_number_text_view.setText(viewModel.mselecteditems.size() + "/" + num_all_network_account);
     }
 
     private class CloudAccountPojoListAdapter extends RecyclerView.Adapter<CloudAccountPojoListAdapter.VH> {
@@ -303,9 +337,10 @@ public class CloudAuthActivity extends BaseActivity {
                                 return;
                             }
 
-                            //progress_bar.setVisibility(View.VISIBLE);
+
+                            progress_bar.setVisibility(View.VISIBLE);
                             CloudAccountPOJO cloudAccountPOJO = viewModel.cloudAccountPOJOList.get(pos);
-//                            viewModel.connectNetworkAccount(networkAccountPOJO);
+                            viewModel.populateStorageDir(fileObjectType, cloudAccountPOJO);
                         }
                     }
                 });
@@ -389,31 +424,5 @@ public class CloudAuthActivity extends BaseActivity {
                 finish();
             }
         }
-    }
-
-    private void enable_disable_buttons(boolean enable, int selection_size) {
-        if (enable) {
-            delete_btn.setAlpha(Global.ENABLE_ALFA);
-            if (selection_size == 1) {
-                edit_btn.setAlpha(Global.ENABLE_ALFA);
-            } else {
-                edit_btn.setAlpha(Global.DISABLE_ALFA);
-            }
-        } else {
-            delete_btn.setAlpha(Global.DISABLE_ALFA);
-            edit_btn.setAlpha(Global.DISABLE_ALFA);
-        }
-        delete_btn.setEnabled(enable);
-        edit_btn.setEnabled(enable && selection_size == 1);
-    }
-
-    public void clear_selection() {
-        viewModel.mselecteditems = new IndexedLinkedHashMap<>();
-        if (cloudAccountPojoListAdapter != null) {
-            cloudAccountPojoListAdapter.notifyDataSetChanged();
-        }
-
-        enable_disable_buttons(false, 0);
-        cloud_number_text_view.setText(viewModel.mselecteditems.size() + "/" + num_all_network_account);
     }
 }

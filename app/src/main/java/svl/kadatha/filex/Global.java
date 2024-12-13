@@ -76,23 +76,11 @@ public class Global {
     static public final String LOCAL_BROADCAST_CONNECTED_TO_CLOUD_ACTION = FILEX_PACKAGE + ".CONNECTED_TO_CLOUD";
     static public final String TAG = "shankar";
     public static final List<FileObjectType> NETWORK_FILE_OBJECT_TYPES = Arrays.asList(FileObjectType.FTP_TYPE, FileObjectType.SFTP_TYPE, FileObjectType.WEBDAV_TYPE, FileObjectType.SMB_TYPE);
-    public static final List<FileObjectType> CLOUD_FILE_OBJECT_TYPES = Arrays.asList(FileObjectType.GOOGLE_DRIVE_TYPE, FileObjectType.ONE_DRIVE_TYPE, FileObjectType.DROP_BOX_TYPE, FileObjectType.MEDIA_FIRE_TYPE,FileObjectType.BOX_TYPE,FileObjectType.NEXT_CLOUD_TYPE,FileObjectType.YANDEX_TYPE);
+    public static final List<FileObjectType> CLOUD_FILE_OBJECT_TYPES = Arrays.asList(FileObjectType.GOOGLE_DRIVE_TYPE, FileObjectType.ONE_DRIVE_TYPE, FileObjectType.DROP_BOX_TYPE, FileObjectType.MEDIA_FIRE_TYPE, FileObjectType.BOX_TYPE, FileObjectType.NEXT_CLOUD_TYPE, FileObjectType.YANDEX_TYPE);
     public static final List<String> APK_ICON_PACKAGE_NAME_LIST = new ArrayList<>();
-    static final HashMap<String, List<LibraryAlbumSelectDialog.LibraryDirPOJO>> LIBRARY_FILTER_HASHMAP = new HashMap<>();
-    static final String TEXT_REGEX = "(?i)txt|json|java|xml|cpp|c|h|log|html|htm";
-    static final String RTF_REGEX = "(?i)rtf";
     public static final String IMAGE_REGEX = "(?i)png|jpg|jpeg|svg|gif|tif|webp|avif";
     public static final String AUDIO_REGEX = "(?i)mp3|ogg|wav|aac|wma|opus|m4r|m4a|awb";
     public static final String VIDEO_REGEX = "(?i)3gp|mp4|avi|mov|flv|wmv|webm";
-    static final String ZIP_REGEX = "(?i)zip|rar|jar|7z";
-    static final String UNIX_ARCHIVE_REGEX = "(?i)tar|gzip|gz";
-    static final String GZIP_REGEX = "(?i)gzip|gz";
-    static final String APK_REGEX = "(?i)apk";
-    static final String PDF_REGEX = "(?i)pdf";
-    static final String DOC_REGEX = "(?i)doc|docx";
-    static final String XLS_REGEX = "(?i)xls|xlsx";
-    static final String PPT_REGEX = "(?i)ppt|pptx";
-    static final String DB_REGEX = "(?i)db";
     public static final float DISABLE_ALFA = (float) 0.4;
     public static final float ENABLE_ALFA = (float) 1.0;
     public static final int FONT_SIZE_SMALL_FIRST_LINE = 15;
@@ -104,6 +92,18 @@ public class Global {
     public static final int IMAGE_VIEW_DIMENSION_MULTIPLIER_SMALL = 8;
     public static final int IMAGE_VIEW_DIMENSION_MULTIPLIER_MEDIUM = 9;
     public static final int IMAGE_VIEW_DIMENSION_MULTIPLIER_LARGE = 10;
+    static final HashMap<String, List<LibraryAlbumSelectDialog.LibraryDirPOJO>> LIBRARY_FILTER_HASHMAP = new HashMap<>();
+    static final String TEXT_REGEX = "(?i)txt|json|java|xml|cpp|c|h|log|html|htm";
+    static final String RTF_REGEX = "(?i)rtf";
+    static final String ZIP_REGEX = "(?i)zip|rar|jar|7z";
+    static final String UNIX_ARCHIVE_REGEX = "(?i)tar|gzip|gz";
+    static final String GZIP_REGEX = "(?i)gzip|gz";
+    static final String APK_REGEX = "(?i)apk";
+    static final String PDF_REGEX = "(?i)pdf";
+    static final String DOC_REGEX = "(?i)doc|docx";
+    static final String XLS_REGEX = "(?i)xls|xlsx";
+    static final String PPT_REGEX = "(?i)ppt|pptx";
+    static final String DB_REGEX = "(?i)db";
     static final Set<String> SORT_CODE_SET = new HashSet<>(Arrays.asList("d_name_asc", "d_name_desc", "d_date_asc", "d_date_desc", "d_size_asc", "d_size_desc",
             "f_name_asc", "f_name_desc", "f_date_asc", "f_date_desc", "f_size_asc", "f_size_desc"));
     static final Set<String> THEME_CODE_SET = new HashSet<>(Arrays.asList("system", "light", "dark"));
@@ -144,8 +144,6 @@ public class Global {
     public static FileObjectType USB_CACHED_FILE_OBJECT;
     public static int ARCHIVE_CACHE_DIR_LENGTH;
     public static String INTERNAL_PRIMARY_STORAGE_PATH = "";
-    static String USB_STORAGE_PATH;
-    static File USB_CACHE_DIR;
     public static File TEMP_ROTATE_CACHE_DIR;
     public static File FTP_CACHE_DIR;
     public static File SFTP_CACHE_DIR;
@@ -154,14 +152,10 @@ public class Global {
     public static File ROOT_CACHE_DIR;
     public static File CLOUD_CACHE_DIR;
     public static File APK_ICON_DIR;
-    static List<UriPOJO> URI_PERMISSION_LIST = new ArrayList<>();
     public static int ORIENTATION;
     public static int SCREEN_WIDTH, SCREEN_HEIGHT, DIALOG_WIDTH, DIALOG_HEIGHT, WIDTH;
-    static float SCREEN_RATIO;
     public static String SORT;
-    static String STORAGE_ANALYSER_SORT;
     public static String APP_MANAGER_SORT;
-    static String THEME;
     public static int RECYCLER_VIEW_FONT_SIZE_FACTOR;
     public static int IMAGEVIEW_DIMENSION_SMALL_LIST;
     public static int IMAGEVIEW_DIMENSION_MEDIUM_LIST;
@@ -170,11 +164,6 @@ public class Global {
     public static int IMAGEVIEW_DIMENSION_MEDIUM_GRID;
     public static int IMAGEVIEW_DIMENSION_LARGE_GRID;
     public static int GRID_COUNT_SMALL, GRID_COUNT_MEDIUM, GRID_COUNT_LARGE, GRID_COUNT;
-    static int BUTTON_HEIGHT;
-    static float ONE_DP;
-    static int TWO_DP;
-    static int THIRTY_SIX_DP;
-    static int SELECTOR_ICON_DIMENSION;
     public static int FOUR_DP;
     public static int FIVE_DP;
     public static int SIX_DP;
@@ -184,13 +173,24 @@ public class Global {
     public static int FOURTEEN_DP;
     public static int RECYCLERVIEW_ITEM_SPACING;
     public static int LIST_POPUP_WINDOW_DROP_DOWN_OFFSET;
+    public static boolean IS_TABLET;
+    public static DividerItemDecoration DIVIDERITEMDECORATION;
+    static String USB_STORAGE_PATH;
+    static File USB_CACHE_DIR;
+    static List<UriPOJO> URI_PERMISSION_LIST = new ArrayList<>();
+    static float SCREEN_RATIO;
+    static String STORAGE_ANALYSER_SORT;
+    static String THEME;
+    static int BUTTON_HEIGHT;
+    static float ONE_DP;
+    static int TWO_DP;
+    static int THIRTY_SIX_DP;
+    static int SELECTOR_ICON_DIMENSION;
     static boolean BYTE_COUNT_BLOCK_1000;
     static boolean FILE_GRID_LAYOUT;
     static boolean IMAGE_VIDEO_GRID_LAYOUT;
     static boolean SHOW_FILE_PATH;
-    public static boolean IS_TABLET;
     static boolean RECOGNISE_USB;
-    public static DividerItemDecoration DIVIDERITEMDECORATION;
     static boolean WHETHER_TO_CLEAR_CACHE_TODAY;
     static int SIZE_APK_ICON_LIST, CURRENT_MONTH;
 
@@ -1175,7 +1175,7 @@ public class Global {
                 break;
         }
 
-        if(CLOUD_FILE_OBJECT_TYPES.contains(fileObjectType)){
+        if (CLOUD_FILE_OBJECT_TYPES.contains(fileObjectType)) {
             cache_file = new File(CLOUD_CACHE_DIR, file_path);
         }
 

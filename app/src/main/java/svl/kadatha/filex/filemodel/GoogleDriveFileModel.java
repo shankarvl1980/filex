@@ -1,16 +1,33 @@
 package svl.kadatha.filex.filemodel;
 
-import okhttp3.*;
-import okio.BufferedSink;
-import okio.Okio;
-import okio.Source;
-
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import okhttp3.Headers;
+import okhttp3.HttpUrl;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okio.BufferedSink;
+import okio.Okio;
+import okio.Source;
 
 public class GoogleDriveFileModel implements FileModel {
     private final String accessToken;
@@ -35,6 +52,60 @@ public class GoogleDriveFileModel implements FileModel {
             throw new FileNotFoundException("File not found: " + path);
         }
         this.metadata = getFileMetadata(this.fileId);
+    }
+
+    public static List<GoogleDriveFileMetadata> listFilesInFolder(String parentId, String oauthToken) {
+        List<GoogleDriveFileMetadata> metadataList = new ArrayList<>();
+        String pageToken = null;
+
+        try {
+            do {
+                HttpUrl.Builder urlBuilder = HttpUrl.parse("https://www.googleapis.com/drive/v3/files")
+                        .newBuilder()
+                        .addQueryParameter("q", "'" + parentId + "' in parents and trashed=false")
+                        .addQueryParameter("fields", "nextPageToken, files(id, name, mimeType, parents)")
+                        .addQueryParameter("pageSize", "1000");
+
+                if (pageToken != null) {
+                    urlBuilder.addQueryParameter("pageToken", pageToken);
+                }
+
+                HttpUrl url = urlBuilder.build();
+
+                Request request = new Request.Builder()
+                        .url(url)
+                        .addHeader("Authorization", "Bearer " + oauthToken)
+                        .get()
+                        .build();
+
+                Response response = new OkHttpClient().newCall(request).execute();
+                if (!response.isSuccessful()) {
+                    System.err.println("List failed: " + response.code() + " - " + response.message());
+                    response.close();
+                    break;
+                }
+
+                String responseBody = response.body().string();
+                response.close();
+
+                DriveFilesListResponse filesListResponse = new Gson().fromJson(responseBody, DriveFilesListResponse.class);
+                if (filesListResponse == null || filesListResponse.files == null) {
+                    // No files or unexpected response
+                    break;
+                }
+
+                // Add all files to our metadata list
+                metadataList.addAll(filesListResponse.files);
+
+                pageToken = filesListResponse.nextPageToken;
+            } while (pageToken != null);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            // In case of error, return the files collected so far or empty list
+        }
+
+        return metadataList;
     }
 
     // Method to resolve path to fileId
@@ -514,7 +585,9 @@ public class GoogleDriveFileModel implements FileModel {
             String parentId = fileId;
 
             for (String dirName : paths) {
-                if (dirName.isEmpty()) continue;
+                if (dirName.isEmpty()) {
+                    continue;
+                }
 
                 // Check if directory exists
                 String query = "name = '" + dirName + "' and '" + parentId + "' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false";
@@ -632,7 +705,6 @@ public class GoogleDriveFileModel implements FileModel {
         }
     }
 
-
     @Override
     public boolean isHidden() {
         return metadata.name != null && metadata.name.startsWith(".");
@@ -650,9 +722,9 @@ public class GoogleDriveFileModel implements FileModel {
     }
 
     public static class DriveFilesListResponse {
+        public List<GoogleDriveFileMetadata> files;
         @SerializedName("nextPageToken")
         String nextPageToken;
-        public List<GoogleDriveFileMetadata> files;
     }
 
     // Custom RequestBody to read from InputStream
@@ -686,60 +758,6 @@ public class GoogleDriveFileModel implements FileModel {
                 source.close();
             }
         }
-    }
-
-    public static List<GoogleDriveFileMetadata> listFilesInFolder(String parentId, String oauthToken) {
-        List<GoogleDriveFileMetadata> metadataList = new ArrayList<>();
-        String pageToken = null;
-
-        try {
-            do {
-                HttpUrl.Builder urlBuilder = HttpUrl.parse("https://www.googleapis.com/drive/v3/files")
-                        .newBuilder()
-                        .addQueryParameter("q", "'" + parentId + "' in parents and trashed=false")
-                        .addQueryParameter("fields", "nextPageToken, files(id, name, mimeType, parents)")
-                        .addQueryParameter("pageSize", "1000");
-
-                if (pageToken != null) {
-                    urlBuilder.addQueryParameter("pageToken", pageToken);
-                }
-
-                HttpUrl url = urlBuilder.build();
-
-                Request request = new Request.Builder()
-                        .url(url)
-                        .addHeader("Authorization", "Bearer " + oauthToken)
-                        .get()
-                        .build();
-
-                Response response = new OkHttpClient().newCall(request).execute();
-                if (!response.isSuccessful()) {
-                    System.err.println("List failed: " + response.code() + " - " + response.message());
-                    response.close();
-                    break;
-                }
-
-                String responseBody = response.body().string();
-                response.close();
-
-                DriveFilesListResponse filesListResponse = new Gson().fromJson(responseBody, DriveFilesListResponse.class);
-                if (filesListResponse == null || filesListResponse.files == null) {
-                    // No files or unexpected response
-                    break;
-                }
-
-                // Add all files to our metadata list
-                metadataList.addAll(filesListResponse.files);
-
-                pageToken = filesListResponse.nextPageToken;
-            } while (pageToken != null);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            // In case of error, return the files collected so far or empty list
-        }
-
-        return metadataList;
     }
 
 }
