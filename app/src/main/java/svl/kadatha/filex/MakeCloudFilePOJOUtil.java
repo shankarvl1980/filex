@@ -206,4 +206,119 @@ public class MakeCloudFilePOJOUtil {
     static class DriveFileListResponse {
         List<DriveFileMetadata> files;
     }
+
+    static FilePOJO MAKE_FilePOJO(YandexResource resource, boolean extract_icon,
+                                         FileObjectType fileObjectType, String file_path) {
+        String name = resource.name;
+        boolean isDirectory = "dir".equalsIgnoreCase(resource.type);
+        long dateLong = 0L;
+        String date = "";
+        long sizeLong = 0L;
+        String si = "";
+        String file_ext = "";
+        int overlay_visible = View.INVISIBLE;
+        float alfa = Global.ENABLE_ALFA;
+        String package_name = null;
+        int type = R.drawable.folder_icon;
+
+        if (!isDirectory) {
+            // It's a file
+            type = R.drawable.unknown_file_icon;
+            int idx = name.lastIndexOf(".");
+            if (idx != -1 && idx < name.length() - 1) {
+                file_ext = name.substring(idx + 1);
+                type = GET_FILE_TYPE(false, file_ext);
+                if (type == -2) {
+                    overlay_visible = View.VISIBLE;
+                } else if (extract_icon && type == 0) {
+                    package_name = EXTRACT_ICON(file_path, file_ext);
+                }
+            }
+
+            if (resource.size != null) {
+                sizeLong = resource.size;
+                si = FileUtil.humanReadableByteCount(sizeLong);
+            }
+
+            // Parse modified time if available
+            if (resource.modified != null) {
+                try {
+                    // If Global.SDF matches the RFC3339 pattern, use it directly.
+                    // If not, create a dedicated parser like:
+                    // SimpleDateFormat rfc3339 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+                    // rfc3339.setTimeZone(TimeZone.getTimeZone("UTC"));
+                    // Date d = rfc3339.parse(metadata.modified);
+                    Date d = Global.SDF.parse(resource.modified);
+                    if (d != null) {
+                        date = Global.SDF.format(d);
+                        dateLong = d.getTime();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+        } else {
+            // It's a directory
+            type = R.drawable.folder_icon;
+            // If you want to count items inside, you would do an additional Yandex Disk API request.
+            // Otherwise, just leave si blank or set to something indicative.
+        }
+
+        return new FilePOJO(
+                fileObjectType,
+                name,
+                package_name,
+                file_path,
+                isDirectory,
+                dateLong,
+                date,
+                sizeLong,
+                si,
+                type,
+                file_ext,
+                alfa,
+                overlay_visible,
+                0,     // Assume no special flags
+                0L,    // Assume no special date
+                null,  // No special associated object
+                0,     // Another reserved int field
+                null,  // Another reserved field
+                null   // Another reserved field
+        );
+    }
+
+
+    static class YandexResourceListResponse {
+        // If you have a list response similar to DriveFileListResponse
+        List<YandexResource> items;
+    }
+
+    public class YandexResource {
+        public String name;
+        String type;       // "file" or "dir"
+        public String path;       // e.g. "disk:/Folder/File.txt"
+        public String modified;   // RFC3339 format, e.g. "2023-11-02T10:20:30Z"
+        public Long size;
+        public YandexResourceEmbedded _embedded;
+
+        boolean isFile() { return "file".equals(type); }
+        public boolean isDir() { return "dir".equals(type); }
+    }
+
+    public class YandexResourceEmbedded {
+        public java.util.List<YandexResource> items;
+    }
+
+    public class YandexDownloadResponse {
+        public String href;
+        String method;
+        boolean templated;
+    }
+
+    public class YandexUploadResponse {
+        public String href;
+        String method;
+        boolean templated;
+    }
 }

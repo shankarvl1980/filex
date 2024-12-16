@@ -41,33 +41,19 @@ import svl.kadatha.filex.PermissionsUtil;
 import svl.kadatha.filex.R;
 
 public class CloudAuthActivity extends BaseActivity {
-    private static final String client_id = "603518003549-h5ptja0jib68fqtrs3sk2ad7fla8f6dm.apps.googleusercontent.com";
+
     public boolean clear_cache;
     public CloudAccountViewModel viewModel;
-    //    public ActivityResultLauncher<Intent> googleDriveAuthLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-//        @Override
-//        public void onActivityResult(ActivityResult result) {
-//            if (viewModel.authProvider instanceof GoogleDriveAuthProvider) {
-//                ((GoogleDriveAuthProvider) viewModel.authProvider).handleAuthResult(result.getResultCode(), result.getData());
-//            }
-//        }
-//    });
-    public ActivityResultLauncher<Intent> dropboxAuthLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult o) {
-            if (viewModel.authProvider instanceof DropboxAuthProvider) {
-                ((DropboxAuthProvider) viewModel.authProvider).handleAuthResult();
-            }
-        }
-    });
+
     public ActivityResultLauncher<Intent> mediaFireAuthLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult o) {
             if (viewModel.authProvider instanceof MediaFireAuthProvider) {
-
+                //((MediaFireAuthProvider) viewModel.authProvider).handleAuthResult();
             }
         }
     });
+
     private FileObjectType fileObjectType;
     private Toolbar bottom_toolbar;
     private RecyclerView cloud_account_list_recyclerview;
@@ -124,7 +110,7 @@ public class CloudAuthActivity extends BaseActivity {
         viewModel.cloudAccountStorageDirFillAsyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
             @Override
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
-                if(asyncTaskStatus==AsyncTaskStatus.COMPLETED){
+                if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
                     finish();
                 }
             }
@@ -246,6 +232,7 @@ public class CloudAuthActivity extends BaseActivity {
             case NEXT_CLOUD_TYPE:
                 break;
             case YANDEX_TYPE:
+                viewModel.setAuthProvider(new YandexAuthProvider(this));
                 break;
         }
         viewModel.fileObjectType = fileObjectType;

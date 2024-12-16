@@ -599,7 +599,53 @@ public class FilePOJOUtil {
             } catch (Exception e) {
                 return;
             }
-        } else {
+        } else if (fileObjectType == FileObjectType.YANDEX_TYPE) {
+            try {
+                String accessToken = CloudAccountViewModel.YANDEX_ACCESS_TOKEN; // Replace with your actual variable
+                OkHttpClient client = new OkHttpClient();
+                Gson gson = new Gson();
+
+                HttpUrl url = HttpUrl.parse("https://cloud-api.yandex.net/v1/disk/resources")
+                        .newBuilder()
+                        .addQueryParameter("path", fileclickselected)
+                        .addQueryParameter("fields", "_embedded.items.name,_embedded.items.type,_embedded.items.size,_embedded.items.modified,_embedded.items.path")
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(url)
+                        .header("Authorization", "OAuth " + accessToken)
+                        .get()
+                        .build();
+
+                try (Response response = client.newCall(request).execute()) {
+                    if (!response.isSuccessful() || response.body() == null) {
+                        return;
+                    }
+
+                    // Parse the directory listing
+                    MakeCloudFilePOJOUtil.YandexResource dirRes = gson.fromJson(response.body().charStream(), MakeCloudFilePOJOUtil.YandexResource.class);
+                    if (dirRes != null && dirRes._embedded != null && dirRes._embedded.items != null) {
+                        for (MakeCloudFilePOJOUtil.YandexResource item : dirRes._embedded.items) {
+                            String name = item.name;
+                            String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
+
+                            // Create FilePOJO from YandexResource metadata
+                            FilePOJO filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO(item, false, fileObjectType, path);
+
+                            if (!filePOJO.getName().startsWith(".")) {
+                                filePOJOS_filtered.add(filePOJO);
+                            }
+                            filePOJOS.add(filePOJO);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // Handle exceptions as needed
+                return;
+            }
+        }
+
+        else {
             FileModel fileModel = FileModelFactory.getFileModel(fileclickselected, fileObjectType, null, null);
             FileModel[] fileModels = fileModel.list();
             int size = fileModels.length;
@@ -846,6 +892,50 @@ public class FilePOJOUtil {
                     filePOJOS.add(filePOJO);
                 }
             } catch (Exception e) {
+                return;
+            }
+        } else if (fileObjectType == FileObjectType.YANDEX_TYPE) {
+            try {
+                String accessToken = CloudAccountViewModel.YANDEX_ACCESS_TOKEN; // Replace with your actual variable
+                OkHttpClient client = new OkHttpClient();
+                Gson gson = new Gson();
+
+                HttpUrl url = HttpUrl.parse("https://cloud-api.yandex.net/v1/disk/resources")
+                        .newBuilder()
+                        .addQueryParameter("path", fileclickselected)
+                        .addQueryParameter("fields", "_embedded.items.name,_embedded.items.type,_embedded.items.size,_embedded.items.modified,_embedded.items.path")
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(url)
+                        .header("Authorization", "OAuth " + accessToken)
+                        .get()
+                        .build();
+
+                try (Response response = client.newCall(request).execute()) {
+                    if (!response.isSuccessful() || response.body() == null) {
+                        return;
+                    }
+
+                    // Parse the directory listing
+                    MakeCloudFilePOJOUtil.YandexResource dirRes = gson.fromJson(response.body().charStream(), MakeCloudFilePOJOUtil.YandexResource.class);
+                    if (dirRes != null && dirRes._embedded != null && dirRes._embedded.items != null) {
+                        for (MakeCloudFilePOJOUtil.YandexResource item : dirRes._embedded.items) {
+                            String name = item.name;
+                            String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
+
+                            // Create FilePOJO from YandexResource metadata
+                            FilePOJO filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO(item, false, fileObjectType, path);
+
+                            if (!filePOJO.getName().startsWith(".")) {
+                                filePOJOS_filtered.add(filePOJO);
+                            }
+                            filePOJOS.add(filePOJO);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // Handle exceptions as needed
                 return;
             }
         }

@@ -20,6 +20,8 @@ import svl.kadatha.filex.RepositoryClass;
 public class CloudAccountViewModel extends AndroidViewModel {
     public static String GOOGLE_DRIVE_ACCESS_TOKEN;
     public static String DROP_BOX_ACCESS_TOKEN;
+    public static String MEDIA_FIRE_ACCESS_TOKEN;
+    public static String YANDEX_ACCESS_TOKEN;
     private final CloudAccountsDatabaseHelper cloudAccountsDatabaseHelper;
     public CloudAuthProvider authProvider;
     public FileObjectType fileObjectType;
@@ -72,13 +74,14 @@ public class CloudAccountViewModel extends AndroidViewModel {
                             DROP_BOX_ACCESS_TOKEN = account.accessToken;
                             break;
                         case MEDIA_FIRE_TYPE:
-
+                            MEDIA_FIRE_ACCESS_TOKEN = account.accessToken;
                             break;
                         case BOX_TYPE:
                             break;
                         case NEXT_CLOUD_TYPE:
                             break;
                         case YANDEX_TYPE:
+                            YANDEX_ACCESS_TOKEN = account.accessToken;
                             break;
                     }
                     cloudAccountConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
@@ -102,13 +105,14 @@ public class CloudAccountViewModel extends AndroidViewModel {
             public void run() {
                 ;
                 String type = cloudAccountPOJO.type;
-                switch (type) {
-                    case "google_drive":
-                        CloudAccountViewModel.GOOGLE_DRIVE_ACCESS_TOKEN = cloudAccountPOJO.accessToken;
-                        ;
-                        break;
-                    case "dropbox":
-                        CloudAccountViewModel.DROP_BOX_ACCESS_TOKEN = cloudAccountPOJO.accessToken;
+                if (type.equals(FileObjectType.GOOGLE_DRIVE_TYPE.toString())) {
+                    CloudAccountViewModel.GOOGLE_DRIVE_ACCESS_TOKEN = cloudAccountPOJO.accessToken;
+                } else if (type.equals(FileObjectType.DROP_BOX_TYPE.toString())) {
+                    CloudAccountViewModel.DROP_BOX_ACCESS_TOKEN = cloudAccountPOJO.accessToken;
+                } else if (type.equals(FileObjectType.MEDIA_FIRE_TYPE.toString())) {
+                    CloudAccountViewModel.MEDIA_FIRE_ACCESS_TOKEN = cloudAccountPOJO.accessToken;
+                } else if (type.equals(FileObjectType.YANDEX_TYPE.toString())) {
+                    CloudAccountViewModel.YANDEX_ACCESS_TOKEN = cloudAccountPOJO.accessToken;
                 }
                 if (!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FILE_OBJECT(fileObjectType)) {
                     RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();

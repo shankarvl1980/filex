@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi;
 
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.Metadata;
+import com.google.gson.Gson;
 import com.hierynomus.msfscc.FileAttributes;
 import com.hierynomus.msfscc.fileinformation.FileAllInformation;
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
@@ -41,6 +42,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import svl.kadatha.filex.appmanager.AppManagerListFragment;
 import svl.kadatha.filex.cloud.CloudAccountViewModel;
 import svl.kadatha.filex.filemodel.FileModel;
@@ -865,6 +870,38 @@ public class MakeFilePOJOUtil {
             }
         } else if (fileObjectType == FileObjectType.MEDIA_FIRE_TYPE) {
 
+        } else if (fileObjectType == FileObjectType.YANDEX_TYPE) {
+            try {
+                String accessToken = CloudAccountViewModel.YANDEX_ACCESS_TOKEN;
+                OkHttpClient client = new OkHttpClient();
+                Gson gson = new Gson();
+                HttpUrl url = HttpUrl.parse("https://cloud-api.yandex.net/v1/disk/resources")
+                        .newBuilder()
+                        .addQueryParameter("path", file_path)
+                        .addQueryParameter("fields", "name,type,size,modified,path")
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(url)
+                        .header("Authorization", "OAuth " + accessToken)
+                        .get()
+                        .build();
+
+                try (Response response = client.newCall(request).execute()) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        MakeCloudFilePOJOUtil.YandexResource resource = gson.fromJson(response.body().charStream(), MakeCloudFilePOJOUtil.YandexResource.class);
+                        if (resource != null) {
+                            // Convert the YandexResource into a FilePOJO
+                            filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO(resource, true, fileObjectType, file_path);
+                        }
+                    } else {
+                        Timber.tag(TAG).e("Failed to fetch Yandex metadata: %s %s", response.code(), response.message());
+                    }
+                }
+
+            } catch (Exception e) {
+                Timber.tag(TAG).e("Error creating FilePOJO for Yandex file: %s", e.getMessage());
+            }
         }
         return filePOJO;
     }

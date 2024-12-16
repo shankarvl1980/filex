@@ -12,7 +12,7 @@ public class DropboxAuthProvider implements CloudAuthProvider {
     private final Activity activity;
     private AuthCallback authCallback;
     private CloudAccountPOJO cloudAccount;
-    private String app_key="igtdjo14bfrwsck";
+    private String app_key = "igtdjo14bfrwsck";
 
     public DropboxAuthProvider(Activity activity) {
         this.activity = activity;
@@ -26,10 +26,9 @@ public class DropboxAuthProvider implements CloudAuthProvider {
 
     @Override
     public void handleAuthorizationResponse(Intent intent) {
-
+        handleAuthResult();
     }
 
-    // Call this method in your Activity's onResume()
     public void handleAuthResult() {
         String accessToken = Auth.getOAuth2Token();
         if (accessToken != null) {

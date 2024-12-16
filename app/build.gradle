@@ -103,6 +103,4 @@ dependencies {
     //implementation 'com.microsoft.graph:microsoft-graph:5.45.0'
     //implementation 'com.microsoft.identity.client:msal:2.0.15'
 
-
-
 }

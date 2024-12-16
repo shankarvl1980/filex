@@ -26,6 +26,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import svl.kadatha.filex.FileObjectType;
 import svl.kadatha.filex.MyExecutorService;
 
 public class GoogleDriveAuthProvider implements CloudAuthProvider {
@@ -131,7 +132,7 @@ public class GoogleDriveAuthProvider implements CloudAuthProvider {
         fetchUserInfo(response.accessToken, (userInfo, userInfoEx) -> {
             if (userInfo != null) {
                 cloudAccount = new CloudAccountPOJO(
-                        "google_drive",
+                        FileObjectType.GOOGLE_DRIVE_TYPE.toString(),
                         userInfo.name,
                         userInfo.id,
                         response.accessToken,
