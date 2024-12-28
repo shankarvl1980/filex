@@ -123,12 +123,14 @@ public class UsbDocumentProvider extends DocumentsProvider {
     public boolean onCreate() {
         Context context = getContext();
         assert context != null;
+
         Global.RECOGNISE_USB = new TinyDB(context).getBoolean("recognise_usb");
         USB_MASS_STORAGE_DEVICES = new ArrayList<>();
         localBroadcastManager = LocalBroadcastManager.getInstance(context);
         getDetail();
 
         BroadcastReceiver usbPermissionBroadcastReceiver = new BroadcastReceiver() {
+            @Override
             public void onReceive(Context context, Intent intent) {
                 UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                 if (CHECKED_TIMES < 2) {
@@ -157,12 +159,55 @@ public class UsbDocumentProvider extends DocumentsProvider {
             }
         };
 
+        // ----------------------------------------------------
+        // Registration for usbPermissionBroadcastReceiver
+        // ----------------------------------------------------
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Android 13 (API 33+) - must specify exported or not
+            context.registerReceiver(
+                    usbPermissionBroadcastReceiver,
+                    new IntentFilter(ACTION_USB_PERMISSION),
+                    Context.RECEIVER_NOT_EXPORTED // or RECEIVER_EXPORTED if you truly need it exported
+            );
+        } else {
+            // Older versions - two-argument method
+            context.registerReceiver(usbPermissionBroadcastReceiver, new IntentFilter(ACTION_USB_PERMISSION));
+        }
 
-        context.registerReceiver(usbPermissionBroadcastReceiver, new IntentFilter(ACTION_USB_PERMISSION));
-        context.registerReceiver(usbAttachedBroadcastReceiver, new IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED));
-        context.registerReceiver(usbDetachedBroadcastReceiver, new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED));
+        // ----------------------------------------------------
+        // Registration for usbAttachedBroadcastReceiver
+        // ----------------------------------------------------
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.registerReceiver(
+                    usbAttachedBroadcastReceiver,
+                    new IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED),
+                    Context.RECEIVER_NOT_EXPORTED
+            );
+        } else {
+            context.registerReceiver(
+                    usbAttachedBroadcastReceiver,
+                    new IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED)
+            );
+        }
+
+        // ----------------------------------------------------
+        // Registration for usbDetachedBroadcastReceiver
+        // ----------------------------------------------------
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.registerReceiver(
+                    usbDetachedBroadcastReceiver,
+                    new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED),
+                    Context.RECEIVER_NOT_EXPORTED
+            );
+        } else {
+            context.registerReceiver(
+                    usbDetachedBroadcastReceiver,
+                    new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED)
+            );
+        }
 
         CHECKED_TIMES++;
+
         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
         for (UsbDevice device : usbManager.getDeviceList().values()) {
             discoverDevice(device);
@@ -170,6 +215,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
 
         return true;
     }
+
 
     private void getDetail() {
 
@@ -235,7 +281,6 @@ public class UsbDocumentProvider extends DocumentsProvider {
         intent.setAction(UsbDocumentProvider.USB_ATTACH_BROADCAST);
         intent.putExtra(USB_ATTACHED, false);
         localBroadcastManager.sendBroadcast(intent);
-
     }
 
     private void addRoot(UsbMassStorageDevice device) {
