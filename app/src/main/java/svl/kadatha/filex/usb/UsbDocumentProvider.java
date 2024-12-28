@@ -1,9 +1,10 @@
-package svl.kadatha.filex;
+package svl.kadatha.filex.usb;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.hardware.usb.UsbDevice;
@@ -32,6 +33,11 @@ import me.jahnen.libaums.core.fs.UsbFile;
 import me.jahnen.libaums.core.fs.UsbFileInputStream;
 import me.jahnen.libaums.core.fs.UsbFileOutputStream;
 import me.jahnen.libaums.core.partition.Partition;
+import svl.kadatha.filex.Global;
+import svl.kadatha.filex.MainActivity;
+import svl.kadatha.filex.ParcelFileDescriptorUtil;
+import svl.kadatha.filex.R;
+import svl.kadatha.filex.TinyDB;
 import timber.log.Timber;
 
 
@@ -152,9 +158,9 @@ public class UsbDocumentProvider extends DocumentsProvider {
         };
 
 
-//        context.registerReceiver(usbPermissionBroadcastReceiver, new IntentFilter(ACTION_USB_PERMISSION));
-//        context.registerReceiver(usbAttachedBroadcastReceiver, new IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED));
-//        context.registerReceiver(usbDetachedBroadcastReceiver, new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED));
+        context.registerReceiver(usbPermissionBroadcastReceiver, new IntentFilter(ACTION_USB_PERMISSION));
+        context.registerReceiver(usbAttachedBroadcastReceiver, new IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED));
+        context.registerReceiver(usbDetachedBroadcastReceiver, new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED));
 
         CHECKED_TIMES++;
         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
@@ -210,7 +216,6 @@ public class UsbDocumentProvider extends DocumentsProvider {
                 }
             }
         }
-
     }
 
     private void detachDevice(UsbDevice usbDevice) {
@@ -482,20 +487,20 @@ public class UsbDocumentProvider extends DocumentsProvider {
         String[] path_segments = documentId.split(ROOT_SEPARATOR);
         if (path_segments.length == 1) {
             Timber.tag(TAG).d("path segments when length 1 " + path_segments[0]);
-            return MainActivity.usbFileRoot;
+            try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
+                return access.getUsbFile();
+            }
         } else {
             String path = path_segments[1];
-
-            return MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(path));
-
+            try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
+                UsbFile usbFileRoot= access.getUsbFile();
+                return usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(path));
+            }
         }
-
-
     }
 
     private static class UsbPartition {
         UsbDevice device;
         FileSystem fileSystem;
     }
-
 }

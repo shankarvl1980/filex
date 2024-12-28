@@ -37,6 +37,8 @@ import svl.kadatha.filex.network.NetworkAccountDetailsViewModel;
 import svl.kadatha.filex.network.SftpChannelRepository;
 import svl.kadatha.filex.network.SmbClientRepository;
 import svl.kadatha.filex.network.WebDavClientRepository;
+import svl.kadatha.filex.usb.ReadAccess;
+import svl.kadatha.filex.usb.UsbFileRootSingleton;
 import timber.log.Timber;
 
 public class FileCountSize {
@@ -139,11 +141,14 @@ public class FileCountSize {
                     }
                 } else if (sourceFileObjectType == FileObjectType.USB_TYPE) {
                     UsbFile[] f_array = new UsbFile[size];
-                    for (int i = 0; i < size; ++i) {
-                        UsbFile f = FileUtil.getUsbFile(MainActivity.usbFileRoot, files_selected_array.get(i));
-                        f_array[i] = f;
+                    try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
+                        UsbFile usbFileRoot= access.getUsbFile();
+                        for (int i = 0; i < size; ++i) {
+                            UsbFile f = FileUtil.getUsbFile(usbFileRoot, files_selected_array.get(i));
+                            f_array[i] = f;
+                        }
+                        populate(f_array, include_folder);
                     }
-                    populate(f_array, include_folder);
                 } else if (sourceFileObjectType == FileObjectType.FTP_TYPE) {
                     Timber.tag(TAG).d("Starting file count for FTP files");
                     FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);

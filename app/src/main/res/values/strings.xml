@@ -382,7 +382,7 @@
 
     <string name="google_drive">Google Drive</string>
     <string name="drop_box">Drop Box</string>
-    <string name="media_fire">Media Fire</string>
+    <string name="yandex">Yandex</string>
 
     <string-array name="library_categories">
         <item>@string/download</item>
@@ -409,7 +409,7 @@
     <string-array name="cloud_types">
         <item>@string/google_drive</item>
         <item>@string/drop_box</item>
-        <item>@string/media_fire</item>
+        <item>@string/yandex</item>
     </string-array>
 
     <string name="running_label">FTP Server</string>

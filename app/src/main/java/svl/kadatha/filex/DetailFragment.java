@@ -42,6 +42,8 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import svl.kadatha.filex.usb.ReadAccess;
+import svl.kadatha.filex.usb.UsbFileRootSingleton;
 
 public class DetailFragment extends Fragment implements FileModifyObserver.FileObserverListener {
     public static final String USB_FILE_PREFIX = "usb:";
@@ -159,9 +161,10 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
         }
 
         if (fileObjectType == FileObjectType.USB_TYPE) {
-            if (MainActivity.usbFileRoot != null) {
+            try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
+                UsbFile usbFileRoot = access.getUsbFile();
                 try {
-                    currentUsbFile = MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(fileclickselected));
+                    currentUsbFile = usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(fileclickselected));
                 } catch (IOException e) {
 
                 }
@@ -652,7 +655,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
     }
 
     public boolean check_availability_USB_SAF_permission(String file_path, FileObjectType fileObjectType) {
-        if (MainActivity.usbFileRoot == null) {
+        if (!UsbFileRootSingleton.getInstance().isUsbFileRootSet()) {
             return false;
         }
         UriPOJO uriPOJO = Global.CHECK_AVAILABILITY_URI_PERMISSION(file_path, fileObjectType);
@@ -740,20 +743,15 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
                                 }
                             }
                         } else if (fileObjectType == FileObjectType.USB_TYPE) {
-                            if (MainActivity.usbFileRoot == null) {
+                            if (!UsbFileRootSingleton.getInstance().isUsbFileRootSet()) {
                                 return;
                             }
-                            try {
-                                if (p2 == 0) {
-                                    file_path.append(File.separator);
-                                }
-                                String fp = file_path.toString();
-                                UsbFile f = MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(fp));
-                                if (detailFragmentListener != null) {
-                                    detailFragmentListener.createFragmentTransaction(fp, fileObjectType);
-                                }
-                            } catch (IOException e) {
-
+                            if (p2 == 0) {
+                                file_path.append(File.separator);
+                            }
+                            String fp = file_path.toString();
+                            if (detailFragmentListener != null) {
+                                detailFragmentListener.createFragmentTransaction(fp, fileObjectType);
                             }
                         } else if (fileObjectType == FileObjectType.FTP_TYPE || fileObjectType == FileObjectType.SFTP_TYPE || fileObjectType == FileObjectType.WEBDAV_TYPE || fileObjectType == FileObjectType.SMB_TYPE) {
                             String fp = file_path.toString();

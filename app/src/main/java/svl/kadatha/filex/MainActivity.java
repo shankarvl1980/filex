@@ -80,13 +80,15 @@ import svl.kadatha.filex.audio.AudioPlayerActivity;
 import svl.kadatha.filex.cloud.CloudAuthActivity;
 import svl.kadatha.filex.ftpserver.FtpServerActivity;
 import svl.kadatha.filex.network.NetworkAccountsDetailsDialog;
+import svl.kadatha.filex.usb.ReadAccess;
+import svl.kadatha.filex.usb.UsbDocumentProvider;
+import svl.kadatha.filex.usb.UsbFileRootSingleton;
 
 
 public class MainActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener,
         DeleteFileAlertDialog.OKButtonClickListener, DetailFragmentListener {
     public static final String ACTIVITY_NAME = "MAIN_ACTIVITY";
     private static final boolean[] alreadyNotificationWarned = new boolean[1];
-    public static UsbFile usbFileRoot;
     public static FileSystem usbCurrentFs;
     public static boolean USB_ATTACHED;
     public static String SU = "";
@@ -1500,10 +1502,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         int size = file_list.size();
         for (int i = 0; i < size; ++i) {
             String file_path = file_list.getValueAtIndex(i);
-            UsbFile f = FileUtil.getUsbFile(MainActivity.usbFileRoot, file_path);
-            if (f != null && !f.isDirectory()) {
-                uri_list_excluding_dir.add(FileUtil.getDocumentUri(file_path, df.tree_uri, df.tree_uri_path));
-                break;
+            try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
+                UsbFile f = FileUtil.getUsbFile(access.getUsbFile(), file_path);
+                if (f != null && !f.isDirectory()) {
+                    uri_list_excluding_dir.add(FileUtil.getDocumentUri(file_path, df.tree_uri, df.tree_uri_path));
+                    break;
+                }
             }
         }
         return uri_list_excluding_dir;
@@ -1633,50 +1637,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         df.is_toolbar_visible = true;
     }
 
-    private void setupDevice() {
-        boolean usb_path_added = false;
-        if (usbFileRoot == null) {
-            UsbMassStorageDevice device = UsbDocumentProvider.USB_MASS_STORAGE_DEVICES.get(0);
-            try {
-                device.init();
-                if (device.getPartitions().isEmpty()) {
-                    Global.print(context, getString(R.string.error_setting_up_device));
-                    return;
-                }
-                usbCurrentFs = device.getPartitions().get(0).getFileSystem();
-                usbFileRoot = usbCurrentFs.getRootDirectory();
-                FileUtil.USB_CHUNK_SIZE = usbCurrentFs.getChunkSize();
-                if (FileUtil.USB_CHUNK_SIZE == 0) {
-                    FileUtil.USB_CHUNK_SIZE = FileUtil.BUFFER_SIZE;
-                }
-
-            } catch (IOException e) {
-
-            }
-        }
-        if (usbFileRoot == null) {
-            return;
-        }
-        for (FilePOJO filePOJO : repositoryClass.storage_dir) {
-            if (filePOJO.getFileObjectType() == FileObjectType.USB_TYPE && filePOJO.getPath().equals(Global.USB_STORAGE_PATH)) {
-                usb_path_added = true;
-                break;
-            }
-        }
-
-        if (!usb_path_added) {
-            Global.USB_STORAGE_PATH = usbFileRoot.getAbsolutePath();
-            repositoryClass.storage_dir.add(MakeFilePOJOUtil.MAKE_FilePOJO(usbFileRoot, false));
-            Global.WORKOUT_AVAILABLE_SPACE();
-            storageRecyclerAdapter.notifyDataSetChanged();
-        }
-    }
-
-    private void discoverDevice() {
-        if (!UsbDocumentProvider.USB_MASS_STORAGE_DEVICES.isEmpty()) {
-            setupDevice();
-        }
-    }
 
     @Override
     public void onMediaMount(String action) {
@@ -1756,14 +1716,17 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                         createFragmentTransaction(parent_file.getAbsolutePath(), FileObjectType.FILE_TYPE);
                     }
                 } else if (df.fileObjectType == FileObjectType.USB_TYPE) {
-                    if (MainActivity.usbFileRoot == null) {
-                        return;
-                    }
-                    try {
-                        UsbFile usbFile = MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(parent_file_path));
-                        createFragmentTransaction(usbFile.getAbsolutePath(), FileObjectType.USB_TYPE);
-                    } catch (IOException ignored) {
+                    try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
+                        UsbFile usbFileRoot=access.getUsbFile();
+                        if (usbFileRoot == null) {
+                            return;
+                        }
+                        try {
+                            UsbFile usbFile = usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(parent_file_path));
+                            createFragmentTransaction(usbFile.getAbsolutePath(), FileObjectType.USB_TYPE);
+                        } catch (IOException ignored) {
 
+                        }
                     }
                 } else {
                     createFragmentTransaction(parent_file_path, df.fileObjectType);
@@ -2420,7 +2383,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                                 } else if (position[0] == 1) {
                                     fileObjectType = FileObjectType.DROP_BOX_TYPE;
                                 } else if (position[0] == 2) {
-                                    fileObjectType = FileObjectType.MEDIA_FIRE_TYPE;
+                                    fileObjectType = FileObjectType.YANDEX_TYPE;
                                 }
                                 intent.putExtra("fileObjectType", fileObjectType);
                                 startActivity(intent);
@@ -2443,18 +2406,23 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     setupDevice();
                 } else {
                     usbCurrentFs = null;
-                    usbFileRoot = null;
 
+                    // Clear the singleton so no one can use the old reference
+                    UsbFileRootSingleton.getInstance().clearUsbFileRoot();
+
+                    // The rest of your existing teardown code remains:
                     Iterator<FilePOJO> iterator = repositoryClass.storage_dir.iterator();
                     while (iterator.hasNext()) {
                         if (iterator.next().getFileObjectType() == FileObjectType.USB_TYPE) {
                             iterator.remove();
                         }
                     }
-
                     storageRecyclerAdapter.notifyDataSetChanged();
 
-                    FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), FileObjectType.USB_TYPE);
+                    FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(
+                            Collections.singletonList(""),
+                            FileObjectType.USB_TYPE
+                    );
                     DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
                     if (df != null && df.fileObjectType == FileObjectType.USB_TYPE) {
                         df.progress_bar.setVisibility(View.VISIBLE);
@@ -2479,7 +2447,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     }
                     Global.REMOVE_USB_URI_PERMISSIONS();
                 }
-                //usb_heading.setVisibility(USB_ATTACHED ? View.VISIBLE : View.GONE);
             }
             if (recentDialogListener != null) {
                 recentDialogListener.onMediaAttachedAndRemoved();
@@ -2487,6 +2454,59 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         }
     }
 
+    private void setupDevice() {
+        boolean usb_path_added = false;
+        if (UsbDocumentProvider.USB_MASS_STORAGE_DEVICES.isEmpty()) {
+            return;
+        }
+
+        UsbMassStorageDevice device = UsbDocumentProvider.USB_MASS_STORAGE_DEVICES.get(0);
+        try {
+            device.init();
+            if (device.getPartitions().isEmpty()) {
+                Global.print(this, getString(R.string.error_setting_up_device));
+                return;
+            }
+            // Save the file system
+            usbCurrentFs = device.getPartitions().get(0).getFileSystem();
+
+            // Acquire the write lock by calling setUsbFileRoot (which uses writeLock internally)
+            UsbFile usbFileRoot = usbCurrentFs.getRootDirectory();
+            UsbFileRootSingleton.getInstance().setUsbFileRoot(usbFileRoot);
+
+            // Set chunk size, etc.
+            FileUtil.USB_CHUNK_SIZE = usbCurrentFs.getChunkSize();
+            if (FileUtil.USB_CHUNK_SIZE == 0) {
+                FileUtil.USB_CHUNK_SIZE = FileUtil.BUFFER_SIZE;
+            }
+        } catch (IOException e) {
+            // Handle exception
+        }
+
+        // The rest of your existing code
+        for (FilePOJO filePOJO : repositoryClass.storage_dir) {
+            if (filePOJO.getFileObjectType() == FileObjectType.USB_TYPE
+                    && filePOJO.getPath().equals(Global.USB_STORAGE_PATH)) {
+                usb_path_added = true;
+                break;
+            }
+        }
+
+        if (!usb_path_added) {
+            Global.USB_STORAGE_PATH = usbCurrentFs.getRootDirectory().getAbsolutePath();
+            repositoryClass.storage_dir.add(
+                    MakeFilePOJOUtil.MAKE_FilePOJO(usbCurrentFs.getRootDirectory(), false)
+            );
+            Global.WORKOUT_AVAILABLE_SPACE();
+            storageRecyclerAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void discoverDevice() {
+        if (!UsbDocumentProvider.USB_MASS_STORAGE_DEVICES.isEmpty()) {
+            setupDevice();
+        }
+    }
     private class LocalBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -2594,7 +2614,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                                 if (df.detailFragmentListener != null) {
                                     if (destFileObjectType == FileObjectType.FILE_TYPE) {
                                         df.detailFragmentListener.createFragmentTransaction(dest_folder, FileObjectType.FILE_TYPE);
-                                    } else if (destFileObjectType == FileObjectType.USB_TYPE && MainActivity.usbFileRoot != null) {
+                                    } else if (destFileObjectType == FileObjectType.USB_TYPE && UsbFileRootSingleton.getInstance().isUsbFileRootSet()) {
                                         df.detailFragmentListener.createFragmentTransaction(dest_folder, FileObjectType.USB_TYPE);
                                     } else {
                                         df.detailFragmentListener.createFragmentTransaction(dest_folder, destFileObjectType);
@@ -2651,6 +2671,4 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     }
-
-
 }

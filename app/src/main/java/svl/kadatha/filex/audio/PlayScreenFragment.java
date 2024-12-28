@@ -71,6 +71,8 @@ import svl.kadatha.filex.ListPopupWindowPOJO;
 import svl.kadatha.filex.MainActivity;
 import svl.kadatha.filex.PropertiesDialog;
 import svl.kadatha.filex.R;
+import svl.kadatha.filex.usb.UsbFileRootSingleton;
+import svl.kadatha.filex.usb.WriteAccess;
 
 public class PlayScreenFragment extends Fragment {
 
@@ -706,10 +708,13 @@ public class PlayScreenFragment extends Fragment {
                     bufferedInputStream = new BufferedInputStream(new FileInputStream(AudioPlayerActivity.AUDIO_FILE.getData()));
                 } else if (AudioPlayerActivity.AUDIO_FILE.getFileObjectType() == FileObjectType.USB_TYPE) {
                     UsbFile usbFile = null;
-                    if (MainActivity.usbFileRoot != null) {
-                        usbFile = MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(AudioPlayerActivity.AUDIO_FILE.getData()));
+                    try (WriteAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForWrite()) {
+                        UsbFile usbFileRoot=access.getUsbFile();
+                        if (usbFileRoot != null) {
+                            usbFile = usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(AudioPlayerActivity.AUDIO_FILE.getData()));
+                        }
+                        bufferedInputStream = UsbFileStreamFactory.createBufferedInputStream(usbFile, MainActivity.usbCurrentFs);
                     }
-                    bufferedInputStream = UsbFileStreamFactory.createBufferedInputStream(usbFile, MainActivity.usbCurrentFs);
                 }
 
                 int size = bufferedInputStream.read(byte_array, 0, byte_array.length);

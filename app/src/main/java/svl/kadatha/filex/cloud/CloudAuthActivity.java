@@ -111,6 +111,9 @@ public class CloudAuthActivity extends BaseActivity {
             @Override
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
                 if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
+                    Bundle bundle = new Bundle();
+                    Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_CONNECTED_TO_CLOUD_ACTION, LocalBroadcastManager.getInstance(context), bundle);
+                    viewModel.cloudAccountStorageDirFillAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                     finish();
                 }
             }
@@ -127,8 +130,8 @@ public class CloudAuthActivity extends BaseActivity {
             heading.setText(R.string.google_drive);
         } else if (fileObjectType.equals(FileObjectType.DROP_BOX_TYPE)) {
             heading.setText(R.string.drop_box);
-        } else if (fileObjectType.equals(FileObjectType.MEDIA_FIRE_TYPE)) {
-            heading.setText(R.string.media_fire);
+        } else if (fileObjectType.equals(FileObjectType.YANDEX_TYPE)) {
+            heading.setText(R.string.yandex);
         }
         cloud_number_text_view = findViewById(R.id.activity_cloud_details_number);
         empty_cloud_account_list_tv = findViewById(R.id.activity_cloud_details_empty);

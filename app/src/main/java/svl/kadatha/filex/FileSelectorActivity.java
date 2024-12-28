@@ -64,6 +64,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import svl.kadatha.filex.usb.ReadAccess;
+import svl.kadatha.filex.usb.UsbDocumentProvider;
+import svl.kadatha.filex.usb.UsbFileRootSingleton;
 
 public class FileSelectorActivity extends BaseActivity implements MediaMountReceiver.MediaMountListener, DetailFragmentListener {
     public static final int FOLDER_SELECT_REQUEST_CODE = 1564;
@@ -148,6 +151,8 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_CUT_COPY_FILE_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_ARCHIVE_UNARCHIVE_FILE_ACTION);
         localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_COPY_TO_FILE_ACTION);
+
+        localBroadcastIntentFilter.addAction(Global.LOCAL_BROADCAST_CONNECTED_TO_CLOUD_ACTION);
         localBroadcastManager.registerReceiver(localBroadcastReceiver, localBroadcastIntentFilter);
 
         usbReceiver = new USBReceiver();
@@ -187,15 +192,19 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                             createFragmentTransaction(parent_file.getAbsolutePath(), FileObjectType.FILE_TYPE);
                         }
                     } else if (fileSelectorFragment.fileObjectType == FileObjectType.USB_TYPE) {
-                        if (MainActivity.usbFileRoot == null) {
-                            return;
-                        }
-                        try {
-                            UsbFile usbFile = MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(parent_file_path));
-                            createFragmentTransaction(usbFile.getAbsolutePath(), FileObjectType.USB_TYPE);
-                        } catch (IOException ignored) {
+                        try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
+                            UsbFile usbFileRoot= access.getUsbFile();
+                            if (usbFileRoot == null) {
+                                return;
+                            }
+                            try {
+                                UsbFile usbFile = usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(parent_file_path));
+                                createFragmentTransaction(usbFile.getAbsolutePath(), FileObjectType.USB_TYPE);
+                            } catch (IOException ignored) {
 
+                            }
                         }
+
                     } else {
                         createFragmentTransaction(parent_file_path, fileSelectorFragment.fileObjectType);
                     }
@@ -1102,9 +1111,9 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 case Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION:
                     break;
                 case Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT:
-                    FileObjectType fileObjectType;
+
                     if (bundle != null) {
-                        fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
+                        FileObjectType fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
                         if (fileSelectorFragment != null && fileObjectType != null && fileObjectType == fileSelectorFragment.fileObjectType) {
                             onbackpressed(false);
                         }
@@ -1201,6 +1210,12 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                                 fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
                             }
                         }
+                    }
+                    break;
+                case Global.LOCAL_BROADCAST_CONNECTED_TO_CLOUD_ACTION:
+                    if (bundle != null) {
+                        FileObjectType fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
+                        createFragmentTransaction("/", fileObjectType);
                     }
                     break;
             }

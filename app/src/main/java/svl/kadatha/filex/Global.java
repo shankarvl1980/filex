@@ -54,10 +54,14 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.ExecutorService;
 
+import me.jahnen.libaums.core.fs.UsbFile;
 import svl.kadatha.filex.appmanager.AppManagerActivity;
 import svl.kadatha.filex.audio.AudioPlayerService;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FileModelFactory;
+import svl.kadatha.filex.usb.ReadAccess;
+import svl.kadatha.filex.usb.UsbDocumentProvider;
+import svl.kadatha.filex.usb.UsbFileRootSingleton;
 
 public class Global {
     static public final SimpleDateFormat SDF = new SimpleDateFormat("dd.MM.yyyy");
@@ -190,7 +194,7 @@ public class Global {
     static boolean FILE_GRID_LAYOUT;
     static boolean IMAGE_VIDEO_GRID_LAYOUT;
     static boolean SHOW_FILE_PATH;
-    static boolean RECOGNISE_USB;
+    public static boolean RECOGNISE_USB;
     static boolean WHETHER_TO_CLEAR_CACHE_TODAY;
     static int SIZE_APK_ICON_LIST, CURRENT_MONTH;
 
@@ -600,13 +604,13 @@ public class Global {
 
                 SPACE_ARRAY.put(fileObjectType + filePOJO.getPath(), new SpacePOJO(filePOJO.getPath(), totalspace, availabelspace));
             } else if (fileObjectType == FileObjectType.USB_TYPE) {
-                if (MainActivity.usbFileRoot == null) {
-                    return;
+                try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
+                    UsbFile usbFileRoot = access.getUsbFile();
+                    String name = usbFileRoot.getName();
+                    totalspace = MainActivity.usbCurrentFs.getCapacity();
+                    availabelspace = MainActivity.usbCurrentFs.getOccupiedSpace();
+                    SPACE_ARRAY.put(fileObjectType + name, new SpacePOJO(name, totalspace, availabelspace));
                 }
-                String name = MainActivity.usbFileRoot.getName();
-                totalspace = MainActivity.usbCurrentFs.getCapacity();
-                availabelspace = MainActivity.usbCurrentFs.getOccupiedSpace();
-                SPACE_ARRAY.put(fileObjectType + name, new SpacePOJO(name, totalspace, availabelspace));
             } else if (fileObjectType == FileObjectType.ROOT_TYPE) {
                 SPACE_ARRAY.put(fileObjectType + filePOJO.getPath(), new SpacePOJO(filePOJO.getPath(), totalspace, availabelspace));
             }

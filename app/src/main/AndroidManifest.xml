@@ -333,7 +333,7 @@
         </provider>
 
         <provider
-            android:name=".UsbDocumentProvider"
+            android:name=".usb.UsbDocumentProvider"
             android:authorities="svl.kadatha.filex.usbdocuments"
             android:exported="true"
             android:grantUriPermissions="true"

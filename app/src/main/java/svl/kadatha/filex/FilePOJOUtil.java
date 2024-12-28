@@ -43,6 +43,8 @@ import svl.kadatha.filex.network.NetworkAccountDetailsViewModel;
 import svl.kadatha.filex.network.SftpChannelRepository;
 import svl.kadatha.filex.network.SmbClientRepository;
 import svl.kadatha.filex.network.WebDavClientRepository;
+import svl.kadatha.filex.usb.ReadAccess;
+import svl.kadatha.filex.usb.UsbFileRootSingleton;
 
 public class FilePOJOUtil {
     private static final String TAG = "Ftp-FilePOJOUtil";
@@ -81,9 +83,10 @@ public class FilePOJOUtil {
         if (filePOJOs == null || filePOJOs_filtered == null) {
             UsbFile currentUsbFile = null;
             if (fileObjectType == FileObjectType.USB_TYPE) {
-                if (MainActivity.usbFileRoot != null) {
+                try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
+                    UsbFile usbFileRoot = access.getUsbFile();
                     try {
-                        currentUsbFile = MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(source_folder));
+                        currentUsbFile = usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(source_folder));
 
                     } catch (IOException e) {
 
@@ -203,9 +206,10 @@ public class FilePOJOUtil {
         if (filePOJOs == null) {
             UsbFile currentUsbFile = null;
             if (fileObjectType == FileObjectType.USB_TYPE) {
-                if (MainActivity.usbFileRoot != null) {
+                try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
+                    UsbFile usbFileRoot = access.getUsbFile();
                     try {
-                        currentUsbFile = MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(dest_folder));
+                        currentUsbFile = usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(dest_folder));
                     } catch (IOException e) {
 
                     }
@@ -445,6 +449,31 @@ public class FilePOJOUtil {
                     file_type_fill_filePOJO(file, fileObjectType, filePOJOS, filePOJOS_filtered);
                 }
             }
+        } else if (fileObjectType == FileObjectType.USB_TYPE) {
+            if (!UsbFileRootSingleton.getInstance().isUsbFileRootSet()) {
+                return;
+            } else {
+                UsbFile[] file_array;
+                try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
+                    UsbFile usbFileRoot = access.getUsbFile();
+                    try {
+                        if (usbFile == null) {
+                            usbFile = usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(fileclickselected));
+                        }
+                        file_array = usbFile.listFiles();
+                        int size = file_array.length;
+                        for (int i = 0; i < size; ++i) {
+                            UsbFile f = file_array[i];
+                            FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(f, true);
+                            filePOJOS_filtered.add(filePOJO);
+                            filePOJOS.add(filePOJO);
+                        }
+
+                    } catch (IOException e) {
+                        return;
+                    }
+                }
+            }
         } else if (fileObjectType == FileObjectType.FTP_TYPE) {
             FTPFile[] file_array;
             FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
@@ -643,9 +672,7 @@ public class FilePOJOUtil {
                 // Handle exceptions as needed
                 return;
             }
-        }
-
-        else {
+        } else {
             FileModel fileModel = FileModelFactory.getFileModel(fileclickselected, fileObjectType, null, null);
             FileModel[] fileModels = fileModel.list();
             int size = fileModels.length;
@@ -717,26 +744,28 @@ public class FilePOJOUtil {
                 }
             }
         } else if (fileObjectType == FileObjectType.USB_TYPE) {
-            if (MainActivity.usbFileRoot == null) {
+            if (!UsbFileRootSingleton.getInstance().isUsbFileRootSet()) {
                 return;
             } else {
                 UsbFile[] file_array;
-                try {
-                    if (usbFile == null) {
-                        usbFile = MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(fileclickselected));
-                    }
-                    file_array = usbFile.listFiles();
-                    int size = file_array.length;
-                    for (int i = 0; i < size; ++i) {
-                        UsbFile f = file_array[i];
-                        FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(f, true);
-                        filePOJOS_filtered.add(filePOJO);
-                        filePOJOS.add(filePOJO);
-                    }
+                try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
+                    UsbFile usbFileRoot = access.getUsbFile();
+                    try {
+                        if (usbFile == null) {
+                            usbFile = usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(fileclickselected));
+                        }
+                        file_array = usbFile.listFiles();
+                        int size = file_array.length;
+                        for (int i = 0; i < size; ++i) {
+                            UsbFile f = file_array[i];
+                            FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(f, true);
+                            filePOJOS_filtered.add(filePOJO);
+                            filePOJOS.add(filePOJO);
+                        }
 
-                } catch (IOException e) {
-                    MainActivity.usbFileRoot = null;
-                    return;
+                    } catch (IOException e) {
+                        return;
+                    }
                 }
             }
         } else if (fileObjectType == FileObjectType.FTP_TYPE) {

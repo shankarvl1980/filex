@@ -28,6 +28,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import svl.kadatha.filex.usb.ReadAccess;
+import svl.kadatha.filex.usb.UsbFileRootSingleton;
 
 public class PropertiesDialog extends DialogFragment {
     public static final String PROPERTIES_DIALOG_REQUEST_CODE = "properties_dialog_request_code";
@@ -76,18 +78,20 @@ public class PropertiesDialog extends DialogFragment {
                 writable_str = file.canWrite() ? getString(R.string.yes) : getString(R.string.no);
                 hidden_str = file.isHidden() ? getString(R.string.yes) : getString(R.string.no);
             } else if (fileObjectType == FileObjectType.USB_TYPE) {
-                UsbFile file = FileUtil.getUsbFile(MainActivity.usbFileRoot, files_selected_array.get(0));
-                if (file != null) {
-                    filename_str = file.getName();
-                    file_path_str = file.getAbsolutePath();
-                    file_date_str = Global.SDF.format(file.lastModified());
-                    file_type_str = file.isDirectory() ? getString(R.string.directory) : getString(R.string.file);
-                    //getPermissions(file);
-                    readable_str = getString(R.string.yes);
-                    writable_str = getString(R.string.yes);
-                    hidden_str = getString(R.string.yes);
+                try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
+                    UsbFile usbFileRoot= access.getUsbFile();
+                    UsbFile file = FileUtil.getUsbFile(usbFileRoot, files_selected_array.get(0));
+                    if (file != null) {
+                        filename_str = file.getName();
+                        file_path_str = file.getAbsolutePath();
+                        file_date_str = Global.SDF.format(file.lastModified());
+                        file_type_str = file.isDirectory() ? getString(R.string.directory) : getString(R.string.file);
+                        //getPermissions(file);
+                        readable_str = getString(R.string.yes);
+                        writable_str = getString(R.string.yes);
+                        hidden_str = getString(R.string.yes);
+                    }
                 }
-
             } else {
                 //FTPFile ftpFile=FileUtil.getFTPFile(files_selected_array.get(0));
                 filename_str = new File(files_selected_array.get(0)).getName();

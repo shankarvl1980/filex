@@ -12,6 +12,8 @@ import android.provider.MediaStore;
 
 import java.io.File;
 
+import svl.kadatha.filex.usb.UsbDocumentProvider;
+
 public class RealPathUtil {
 
     public static String getRealPath(Context context, Uri fileUri) {

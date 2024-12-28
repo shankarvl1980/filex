@@ -55,6 +55,8 @@ import svl.kadatha.filex.network.NetworkAccountDetailsViewModel;
 import svl.kadatha.filex.network.SftpChannelRepository;
 import svl.kadatha.filex.network.SmbClientRepository;
 import svl.kadatha.filex.network.WebDavClientRepository;
+import svl.kadatha.filex.usb.ReadAccess;
+import svl.kadatha.filex.usb.UsbFileRootSingleton;
 import timber.log.Timber;
 
 public class MakeFilePOJOUtil {
@@ -387,7 +389,7 @@ public class MakeFilePOJOUtil {
                 sub_file_count = "(" + file_list.length + ")";
 
             } catch (IOException e) {
-                MainActivity.usbFileRoot = null;
+
             }
             si = sub_file_count;
         }
@@ -706,14 +708,14 @@ public class MakeFilePOJOUtil {
             File f = new File(file_path);
             filePOJO = MAKE_FilePOJO(f, true, fileObjectType);
         } else if (fileObjectType == FileObjectType.USB_TYPE) {
-            if (MainActivity.usbFileRoot == null) {
-                return null;
-            }
-            try {
-                UsbFile f = MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(file_path));
-                filePOJO = MAKE_FilePOJO(f, true);
-            } catch (IOException e) {
-                return null;
+            try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
+               UsbFile usbFileRoot=access.getUsbFile();
+                try {
+                    UsbFile f = usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(file_path));
+                    filePOJO = MAKE_FilePOJO(f, true);
+                } catch (IOException e) {
+                    return null;
+                }
             }
         } else if (fileObjectType == FileObjectType.ROOT_TYPE) {
             filePOJO = MAKE_FilePOJO_ROOT(file_path, false, fileObjectType);

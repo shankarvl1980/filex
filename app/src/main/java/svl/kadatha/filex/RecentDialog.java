@@ -37,6 +37,7 @@ import java.io.File;
 import java.util.LinkedList;
 
 import me.jahnen.libaums.core.UsbMassStorageDevice;
+import svl.kadatha.filex.usb.UsbDocumentProvider;
 
 public class RecentDialog extends DialogFragment implements MainActivity.RecentDialogListener {
     public static final int RECENT_SIZE = 30;

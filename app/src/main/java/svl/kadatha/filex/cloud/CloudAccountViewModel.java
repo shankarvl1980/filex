@@ -1,16 +1,21 @@
 package svl.kadatha.filex.cloud;
 
 import android.app.Application;
+import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
+import svl.kadatha.filex.App;
 import svl.kadatha.filex.AsyncTaskStatus;
 import svl.kadatha.filex.FileObjectType;
+import svl.kadatha.filex.FilePOJOUtil;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.IndexedLinkedHashMap;
 import svl.kadatha.filex.MakeFilePOJOUtil;
@@ -84,6 +89,7 @@ public class CloudAccountViewModel extends AndroidViewModel {
                             YANDEX_ACCESS_TOKEN = account.accessToken;
                             break;
                     }
+                    onCloudConnection();
                     cloudAccountConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
                 }
             }
@@ -114,12 +120,23 @@ public class CloudAccountViewModel extends AndroidViewModel {
                 } else if (type.equals(FileObjectType.YANDEX_TYPE.toString())) {
                     CloudAccountViewModel.YANDEX_ACCESS_TOKEN = cloudAccountPOJO.accessToken;
                 }
-                if (!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FILE_OBJECT(fileObjectType)) {
-                    RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
-                    repositoryClass.storage_dir.add(MakeFilePOJOUtil.MAKE_FilePOJO(fileObjectType, "/"));
-                }
+
+                onCloudConnection();
                 cloudAccountStorageDirFillAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
+    }
+
+    private void onCloudConnection(){
+        if (!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FILE_OBJECT(fileObjectType)) {
+            RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
+            repositoryClass.storage_dir.add(MakeFilePOJOUtil.MAKE_FilePOJO(fileObjectType, "/"));
+        }
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("fileObjectType", fileObjectType);
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION, LocalBroadcastManager.getInstance(App.getAppContext()), null);
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT, LocalBroadcastManager.getInstance(App.getAppContext()), bundle);
+        FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), fileObjectType);
+        Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.CLOUD_CACHE_DIR);
     }
 }

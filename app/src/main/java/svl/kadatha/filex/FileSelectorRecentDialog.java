@@ -29,6 +29,7 @@ import java.io.File;
 import java.util.LinkedList;
 
 import me.jahnen.libaums.core.UsbMassStorageDevice;
+import svl.kadatha.filex.usb.UsbDocumentProvider;
 
 public class FileSelectorRecentDialog extends DialogFragment implements FileSelectorActivity.RecentDialogListener, StorageAnalyserActivity.RecentDialogListener {
     public static final int RECENT_SIZE = 30;

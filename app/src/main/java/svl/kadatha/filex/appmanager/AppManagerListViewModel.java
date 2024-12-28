@@ -29,6 +29,8 @@ import svl.kadatha.filex.R;
 import svl.kadatha.filex.RepositoryClass;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FileModelFactory;
+import svl.kadatha.filex.usb.ReadAccess;
+import svl.kadatha.filex.usb.UsbFileRootSingleton;
 
 public class AppManagerListViewModel extends AndroidViewModel {
 
@@ -118,11 +120,14 @@ public class AppManagerListViewModel extends AndroidViewModel {
                 if (destFilePOJOs == null) {
                     UsbFile currentUsbFile = null;
                     if (destFileObjectType == FileObjectType.USB_TYPE) {
-                        if (MainActivity.usbFileRoot != null) {
-                            try {
-                                currentUsbFile = MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(dest_folder));
-                            } catch (IOException e) {
+                        try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
+                            UsbFile usbFileRoot = access.getUsbFile();
+                            if (usbFileRoot != null) {
+                                try {
+                                    currentUsbFile = usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(dest_folder));
+                                } catch (IOException e) {
 
+                                }
                             }
                         }
                     }

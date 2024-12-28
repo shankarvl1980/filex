@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import svl.kadatha.filex.usb.ReadAccess;
+import svl.kadatha.filex.usb.UsbFileRootSingleton;
 
 public class FileSelectorFragment extends Fragment implements FileModifyObserver.FileObserverListener {
     private final static String SAF_PERMISSION_REQUEST_CODE = "file_selector_dialog_saf_permission_request_code";
@@ -106,9 +108,10 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 
 
         if (fileObjectType == FileObjectType.USB_TYPE) {
-            if (MainActivity.usbFileRoot != null) {
+            try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
+                UsbFile usbFileRoot = access.getUsbFile();
                 try {
-                    currentUsbFile = MainActivity.usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(fileclickselected));
+                    currentUsbFile = usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(fileclickselected));
                 } catch (IOException e) {
 
                 }
@@ -295,7 +298,7 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
     }
 
     private boolean check_availability_USB_SAF_permission(String file_path, FileObjectType fileObjectType) {
-        if (MainActivity.usbFileRoot == null) {
+        if (!UsbFileRootSingleton.getInstance().isUsbFileRootSet()) {
             return false;
         }
         UriPOJO uriPOJO = Global.CHECK_AVAILABILITY_URI_PERMISSION(file_path, fileObjectType);
