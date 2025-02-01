@@ -23,7 +23,6 @@ import svl.kadatha.filex.FilePOJO;
 import svl.kadatha.filex.FilePOJOUtil;
 import svl.kadatha.filex.FileUtil;
 import svl.kadatha.filex.Global;
-import svl.kadatha.filex.MainActivity;
 import svl.kadatha.filex.MyExecutorService;
 import svl.kadatha.filex.R;
 import svl.kadatha.filex.RepositoryClass;

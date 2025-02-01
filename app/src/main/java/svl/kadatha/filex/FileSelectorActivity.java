@@ -193,7 +193,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                         }
                     } else if (fileSelectorFragment.fileObjectType == FileObjectType.USB_TYPE) {
                         try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
-                            UsbFile usbFileRoot= access.getUsbFile();
+                            UsbFile usbFileRoot = access.getUsbFile();
                             if (usbFileRoot == null) {
                                 return;
                             }
@@ -1052,7 +1052,9 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         public ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
             return new FileSelectorAdapter.ViewHolder(new FileSelectorRecyclerViewLayoutList(context, false));
         }
-    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_files_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    }
+
+    private final ActivityResultLauncher<Intent> activityResultLauncher_all_files_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -1223,7 +1225,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     }
 
     private class USBReceiver extends BroadcastReceiver {
-
         @Override
         public void onReceive(Context p1, Intent intent) {
             String action = intent.getAction();
@@ -1265,8 +1266,4 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         }
     }
-
-
-
-
 }

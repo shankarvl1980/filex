@@ -896,7 +896,9 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                 archiveViewFragment.adapter.selectInterval();
             }
         }
-    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    }
+
+    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -1020,8 +1022,6 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
             }
         }
     }
-
-
 
 
 }

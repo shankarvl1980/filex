@@ -142,7 +142,7 @@ public class FileCountSize {
                 } else if (sourceFileObjectType == FileObjectType.USB_TYPE) {
                     UsbFile[] f_array = new UsbFile[size];
                     try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
-                        UsbFile usbFileRoot= access.getUsbFile();
+                        UsbFile usbFileRoot = access.getUsbFile();
                         for (int i = 0; i < size; ++i) {
                             UsbFile f = FileUtil.getUsbFile(usbFileRoot, files_selected_array.get(i));
                             f_array[i] = f;

@@ -1,15 +1,19 @@
 package svl.kadatha.filex.usb;
 
-import java.util.concurrent.locks.ReadWriteLock;
-
 import me.jahnen.libaums.core.fs.UsbFile;
 
+/**
+ * Represents an exclusive write access to the usbFileRoot.
+ * Using try-with-resources ensures the write lock is released automatically.
+ */
 public class WriteAccess implements AutoCloseable {
-    private final ReadWriteLock lock;
+    private final MyStampedLock stampedLock;
+    private final long stamp;
     private final UsbFile usbFile;
 
-    WriteAccess(ReadWriteLock lock, UsbFile usbFile) {
-        this.lock = lock;
+    public WriteAccess(MyStampedLock stampedLock, long stamp, UsbFile usbFile) {
+        this.stampedLock = stampedLock;
+        this.stamp = stamp;
         this.usbFile = usbFile;
     }
 
@@ -19,7 +23,6 @@ public class WriteAccess implements AutoCloseable {
 
     @Override
     public void close() {
-        lock.writeLock().unlock();
+        stampedLock.unlockWrite(stamp);
     }
 }
-

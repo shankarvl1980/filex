@@ -127,7 +127,7 @@ public class CloudAccountViewModel extends AndroidViewModel {
         });
     }
 
-    private void onCloudConnection(){
+    private void onCloudConnection() {
         if (!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FILE_OBJECT(fileObjectType)) {
             RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
             repositoryClass.storage_dir.add(MakeFilePOJOUtil.MAKE_FilePOJO(fileObjectType, "/"));

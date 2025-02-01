@@ -208,7 +208,7 @@ public class MakeCloudFilePOJOUtil {
     }
 
     static FilePOJO MAKE_FilePOJO(YandexResource resource, boolean extract_icon,
-                                         FileObjectType fileObjectType, String file_path) {
+                                  FileObjectType fileObjectType, String file_path) {
         String name = resource.name;
         boolean isDirectory = "dir".equalsIgnoreCase(resource.type);
         long dateLong = 0L;
@@ -302,8 +302,13 @@ public class MakeCloudFilePOJOUtil {
         public Long size;
         public YandexResourceEmbedded _embedded;
 
-        boolean isFile() { return "file".equals(type); }
-        public boolean isDir() { return "dir".equals(type); }
+        boolean isFile() {
+            return "file".equals(type);
+        }
+
+        public boolean isDir() {
+            return "dir".equals(type);
+        }
     }
 
     public class YandexResourceEmbedded {

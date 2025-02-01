@@ -1,6 +1,5 @@
 package svl.kadatha.filex;
 
-import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
@@ -36,7 +35,6 @@ public class RealPathUtil {
      * @param uri     The Uri to query.
      * @author paulburke
      */
-    @SuppressLint("NewApi")
     public static String getRealPathFromURI_API19(final Context context, final Uri uri) {
 
         // DocumentProvider
@@ -145,7 +143,6 @@ public class RealPathUtil {
         return null;
     }
 
-    @SuppressLint("NewApi")
     private static String kadathaUriGetPath(Uri uri) {
         if (uri == null) {
             return "";
@@ -160,7 +157,7 @@ public class RealPathUtil {
         return path;
     }
 
-    @SuppressLint("NewApi")
+
     public static String getLastSegmentPath(Uri uri) {
         if (uri == null) {
             return "";

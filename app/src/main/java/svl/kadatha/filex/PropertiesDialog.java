@@ -79,7 +79,7 @@ public class PropertiesDialog extends DialogFragment {
                 hidden_str = file.isHidden() ? getString(R.string.yes) : getString(R.string.no);
             } else if (fileObjectType == FileObjectType.USB_TYPE) {
                 try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
-                    UsbFile usbFileRoot= access.getUsbFile();
+                    UsbFile usbFileRoot = access.getUsbFile();
                     UsbFile file = FileUtil.getUsbFile(usbFileRoot, files_selected_array.get(0));
                     if (file != null) {
                         filename_str = file.getName();

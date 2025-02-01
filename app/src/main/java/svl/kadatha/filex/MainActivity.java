@@ -1426,7 +1426,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 setRecyclerViewHeight(workingDirListRecyclerView);
             }
         }
-    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    }
+
+    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -1717,7 +1719,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     }
                 } else if (df.fileObjectType == FileObjectType.USB_TYPE) {
                     try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
-                        UsbFile usbFileRoot=access.getUsbFile();
+                        UsbFile usbFileRoot = access.getUsbFile();
                         if (usbFileRoot == null) {
                             return;
                         }
@@ -2507,6 +2509,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             setupDevice();
         }
     }
+
     private class LocalBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {

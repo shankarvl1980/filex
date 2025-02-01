@@ -34,7 +34,6 @@ import me.jahnen.libaums.core.fs.UsbFileInputStream;
 import me.jahnen.libaums.core.fs.UsbFileOutputStream;
 import me.jahnen.libaums.core.partition.Partition;
 import svl.kadatha.filex.Global;
-import svl.kadatha.filex.MainActivity;
 import svl.kadatha.filex.ParcelFileDescriptorUtil;
 import svl.kadatha.filex.R;
 import svl.kadatha.filex.TinyDB;
@@ -538,7 +537,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
         } else {
             String path = path_segments[1];
             try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
-                UsbFile usbFileRoot= access.getUsbFile();
+                UsbFile usbFileRoot = access.getUsbFile();
                 return usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(path));
             }
         }

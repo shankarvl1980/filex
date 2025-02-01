@@ -709,7 +709,7 @@ public class MakeFilePOJOUtil {
             filePOJO = MAKE_FilePOJO(f, true, fileObjectType);
         } else if (fileObjectType == FileObjectType.USB_TYPE) {
             try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
-               UsbFile usbFileRoot=access.getUsbFile();
+                UsbFile usbFileRoot = access.getUsbFile();
                 try {
                     UsbFile f = usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(file_path));
                     filePOJO = MAKE_FilePOJO(f, true);
