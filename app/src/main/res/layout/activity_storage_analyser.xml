@@ -111,7 +111,7 @@
         android:id="@+id/storage_analyser_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/storage_analyser_top_toolbar_background" />
 
@@ -120,7 +120,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/layout_margin"
-        android:layout_marginTop="@dimen/four_dp"
         android:background="@drawable/rounded_rectangle_shape"
         android:padding="@dimen/layout_margin"
         android:textColor="?attr/recycler_text_color"

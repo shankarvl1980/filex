@@ -17,6 +17,7 @@ import android.provider.DocumentsProvider;
 import android.util.LruCache;
 import android.webkit.MimeTypeMap;
 
+import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.FileNotFoundException;
@@ -95,7 +96,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
             String extension = MimeTypeMap.getFileExtensionFromUrl(file.getName()).toLowerCase();
             if (!extension.isEmpty()) {
                 String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-                Timber.tag(TAG).d("mimeType: " + mimeType);
+                Timber.tag(TAG).d("mimeType: %s", mimeType);
                 if (mimeType == null) {
                     mimeType = "application/octet-stream";
                 }
@@ -161,49 +162,49 @@ public class UsbDocumentProvider extends DocumentsProvider {
         // ----------------------------------------------------
         // Registration for usbPermissionBroadcastReceiver
         // ----------------------------------------------------
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // Android 13 (API 33+) - must specify exported or not
-            context.registerReceiver(
-                    usbPermissionBroadcastReceiver,
-                    new IntentFilter(ACTION_USB_PERMISSION),
-                    Context.RECEIVER_NOT_EXPORTED // or RECEIVER_EXPORTED if you truly need it exported
-            );
-        } else {
-            // Older versions - two-argument method
-            context.registerReceiver(usbPermissionBroadcastReceiver, new IntentFilter(ACTION_USB_PERMISSION));
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            // Android 13 (API 33+) - must specify exported or not
+//            context.registerReceiver(
+//                    usbPermissionBroadcastReceiver,
+//                    new IntentFilter(ACTION_USB_PERMISSION),
+//                    Context.RECEIVER_NOT_EXPORTED // or RECEIVER_EXPORTED if you truly need it exported
+//            );
+//        } else {
+//            // Older versions - two-argument method
+//            ContextCompat.registerReceiver(context, usbPermissionBroadcastReceiver, new IntentFilter(ACTION_USB_PERMISSION), ContextCompat.RECEIVER_NOT_EXPORTED);
+//        }
 
         // ----------------------------------------------------
         // Registration for usbAttachedBroadcastReceiver
         // ----------------------------------------------------
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            context.registerReceiver(
-                    usbAttachedBroadcastReceiver,
-                    new IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED),
-                    Context.RECEIVER_NOT_EXPORTED
-            );
-        } else {
-            context.registerReceiver(
-                    usbAttachedBroadcastReceiver,
-                    new IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED)
-            );
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            context.registerReceiver(
+//                    usbAttachedBroadcastReceiver,
+//                    new IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED),
+//                    Context.RECEIVER_NOT_EXPORTED
+//            );
+//        } else {
+//            context.registerReceiver(
+//                    usbAttachedBroadcastReceiver,
+//                    new IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED)
+//            );
+//        }
 
         // ----------------------------------------------------
         // Registration for usbDetachedBroadcastReceiver
         // ----------------------------------------------------
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            context.registerReceiver(
-                    usbDetachedBroadcastReceiver,
-                    new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED),
-                    Context.RECEIVER_NOT_EXPORTED
-            );
-        } else {
-            context.registerReceiver(
-                    usbDetachedBroadcastReceiver,
-                    new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED)
-            );
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            context.registerReceiver(
+//                    usbDetachedBroadcastReceiver,
+//                    new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED),
+//                    Context.RECEIVER_NOT_EXPORTED
+//            );
+//        } else {
+//            context.registerReceiver(
+//                    usbDetachedBroadcastReceiver,
+//                    new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED)
+//            );
+//        }
 
         CHECKED_TIMES++;
 
@@ -211,13 +212,11 @@ public class UsbDocumentProvider extends DocumentsProvider {
         for (UsbDevice device : usbManager.getDeviceList().values()) {
             discoverDevice(device);
         }
-
         return true;
     }
 
 
     private void getDetail() {
-
         Context context = getContext();
         assert context != null;
         UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
@@ -231,10 +230,10 @@ public class UsbDocumentProvider extends DocumentsProvider {
     }
 
     private void discoverDevice(UsbDevice device) {
-        if (!Global.RECOGNISE_USB) {
-            return;
-        }
-        Timber.tag(TAG).d("discoverDevice() " + device.toString());
+//        if (!Global.RECOGNISE_USB) {
+//            return;
+//        }
+        Timber.tag(TAG).d("discoverDevice() %s", device.toString());
         Context context = getContext();
         assert context != null;
         if (!USB_MASS_STORAGE_DEVICES.isEmpty()) {
@@ -242,33 +241,31 @@ public class UsbDocumentProvider extends DocumentsProvider {
         }
         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
 
-        for (UsbMassStorageDevice massStorageDevice : UsbMassStorageDevice.getMassStorageDevices(getContext())) {
-            if (device.equals(massStorageDevice.getUsbDevice())) {
-                if (usbManager.hasPermission(device)) {
-                    addRoot(massStorageDevice);
-                    USB_MASS_STORAGE_DEVICES.add(massStorageDevice);
-
-                    Intent intent = new Intent();
-                    intent.setAction(UsbDocumentProvider.USB_ATTACH_BROADCAST);
-                    intent.putExtra(USB_ATTACHED, true);
-                    localBroadcastManager.sendBroadcast(intent);
-
-                } else {
-                    int pending_intent_flag = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT : PendingIntent.FLAG_UPDATE_CURRENT;
-                    PendingIntent permissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(
-                            ACTION_USB_PERMISSION), pending_intent_flag);
-                    usbManager.requestPermission(device, permissionIntent);
-                }
-            }
-        }
+//        for (UsbMassStorageDevice massStorageDevice : UsbMassStorageDevice.getMassStorageDevices(getContext())) {
+//            if (device.equals(massStorageDevice.getUsbDevice())) {
+//                if (usbManager.hasPermission(device)) {
+//                    addRoot(massStorageDevice);
+//                    USB_MASS_STORAGE_DEVICES.add(massStorageDevice);
+//                    Intent intent = new Intent();
+//                    intent.setAction(UsbDocumentProvider.USB_ATTACH_BROADCAST);
+//                    intent.putExtra(USB_ATTACHED, true);
+//                    localBroadcastManager.sendBroadcast(intent);
+//                } else {
+//                    int pending_intent_flag = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT : PendingIntent.FLAG_UPDATE_CURRENT;
+//                    PendingIntent permissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(
+//                            ACTION_USB_PERMISSION), pending_intent_flag);
+//                    usbManager.requestPermission(device, permissionIntent);
+//                }
+//            }
+//        }
     }
 
     private void detachDevice(UsbDevice usbDevice) {
 
-        Timber.tag(TAG).d("detachDevice() " + usbDevice.toString());
+        Timber.tag(TAG).d("detachDevice() %s", usbDevice.toString());
         for (Map.Entry<String, UsbPartition> root : mRoots.entrySet()) {
             if (root.getValue().device.equals(usbDevice)) {
-                Timber.tag(TAG).d("remove rootId " + root.getKey());
+                Timber.tag(TAG).d("remove rootId %s", root.getKey());
                 mRoots.remove(root.getKey());
                 mFileCache.evictAll();
                 notifyRootsChanged();
@@ -283,7 +280,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
     }
 
     private void addRoot(UsbMassStorageDevice device) {
-        Timber.tag(TAG).d("addRoot() " + device.toString());
+        Timber.tag(TAG).d("addRoot() %s", device.toString());
 
         try {
             device.init();
@@ -293,12 +290,11 @@ public class UsbDocumentProvider extends DocumentsProvider {
                 usbPartition.fileSystem = partition.getFileSystem();
                 mRoots.put(Integer.toString(partition.hashCode()), usbPartition);
 
-                Timber.tag(TAG).d("found root " + partition.hashCode());
+                Timber.tag(TAG).d("found root %s", partition.hashCode());
             }
         } catch (IOException e) {
             Timber.tag(TAG).e("error setting up device");
         }
-
         notifyRootsChanged();
     }
 
@@ -321,7 +317,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
 
             String documentId = getDocIdForFile(rootDirectory);
 
-            Timber.tag(TAG).d("add root " + documentId);
+            Timber.tag(TAG).d("add root %s", documentId);
 
             final MatrixCursor.RowBuilder row = result.newRow();
             // These columns are required
@@ -344,7 +340,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
 
     @Override
     public Cursor queryDocument(String documentId, String[] projection) throws FileNotFoundException {
-        Timber.tag(TAG).d("queryDocument() " + documentId);
+        Timber.tag(TAG).d("queryDocument() %s", documentId);
 
         try {
             final MatrixCursor result = new MatrixCursor(resolveDocumentProjection(projection));
@@ -357,7 +353,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
 
     @Override
     public Cursor queryChildDocuments(String parentDocumentId, String[] projection, String sortOrder) throws FileNotFoundException {
-        Timber.tag(TAG).d("queryChildDocuments() " + parentDocumentId);
+        Timber.tag(TAG).d("queryChildDocuments() %s", parentDocumentId);
 
         try {
             final MatrixCursor result = new MatrixCursor(resolveDocumentProjection(projection));
@@ -373,7 +369,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
 
     @Override
     public ParcelFileDescriptor openDocument(String documentId, String mode, CancellationSignal signal) throws FileNotFoundException {
-        Timber.tag(TAG).d("openDocument() " + documentId);
+        Timber.tag(TAG).d("openDocument() %s", documentId);
 
         try {
             UsbFile file = getFileForDocId(documentId);
@@ -410,7 +406,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
     @Override
     public String createDocument(String parentDocumentId, String mimeType, String displayName)
             throws FileNotFoundException {
-        Timber.tag(TAG).d("createDocument() " + parentDocumentId);
+        Timber.tag(TAG).d("createDocument() %s", parentDocumentId);
 
         try {
             UsbFile parent = getFileForDocId(parentDocumentId);
@@ -431,7 +427,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
     @Override
     public String renameDocument(String documentId, String displayName)
             throws FileNotFoundException {
-        Timber.tag(TAG).d("renameDocument() " + documentId);
+        Timber.tag(TAG).d("renameDocument() %s", documentId);
 
         try (UsbFile file = getFileForDocId(documentId)) {
             file.setName(getFileName(getMimeType(file), displayName));
@@ -445,7 +441,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
 
     @Override
     public void deleteDocument(String documentId) throws FileNotFoundException {
-        Timber.tag(TAG).d("deleteDocument() " + documentId);
+        Timber.tag(TAG).d("deleteDocument() %s", documentId);
 
         try (UsbFile file = getFileForDocId(documentId)) {
             file.delete();
@@ -457,7 +453,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
 
     @Override
     public String getDocumentType(String documentId) {
-        Timber.tag(TAG).d("getDocumentType() " + documentId);
+        Timber.tag(TAG).d("getDocumentType() %s", documentId);
 
         try {
             return getMimeType(getFileForDocId(documentId));
@@ -525,12 +521,12 @@ public class UsbDocumentProvider extends DocumentsProvider {
     }
 
     private UsbFile getFileForDocId(String documentId) throws IOException {
-        Timber.tag(TAG).d("getFileForDocId() " + documentId);
-        Timber.tag(TAG).d("No cache entry for " + documentId);
+        Timber.tag(TAG).d("getFileForDocId() %s", documentId);
+        Timber.tag(TAG).d("No cache entry for %s", documentId);
 
         String[] path_segments = documentId.split(ROOT_SEPARATOR);
         if (path_segments.length == 1) {
-            Timber.tag(TAG).d("path segments when length 1 " + path_segments[0]);
+            Timber.tag(TAG).d("path segments when length 1 %s", path_segments[0]);
             try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
                 return access.getUsbFile();
             }

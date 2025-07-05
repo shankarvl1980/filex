@@ -34,9 +34,10 @@
         <item name="seek_bar_secondary_progress">@color/light_seek_bar_secondary_progress</item>
         <item name="seek_bar_progress">@color/light_seek_bar_progress</item>
         <item name="seek_bar_thumb">@color/light_seek_bar_thumb</item>
+        <item name="toolbar_seek_bar_thumb">@color/light_toolbar_seek_bar_thumb</item>
         <item name="tab_select_text_color">@color/light_tab_select_text_color</item>
         <item name="item_select_text_color">@color/light_item_select_text_color</item>
-        <item name="video_play_overlay_background">@color/light_video_play_overlay_background</item>
+        <item name="overlay_background">@color/light_overlay_background</item>
         <item name="select_color_picture_recyclerview">
             @color/light_select_color_picture_recyclerview
         </item>
@@ -103,7 +104,7 @@
         <item name="seek_bar_secondary_progress">@color/light_seek_bar_secondary_progress</item>
         <item name="seek_bar_progress">@color/light_seek_bar_progress</item>
         <item name="seek_bar_thumb">@color/light_seek_bar_thumb</item>
-
+        <item name="toolbar_seek_bar_thumb">@color/light_toolbar_seek_bar_thumb</item>
 
     </style>
 

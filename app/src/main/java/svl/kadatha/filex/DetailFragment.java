@@ -165,7 +165,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
                 UsbFile usbFileRoot = access.getUsbFile();
                 try {
                     currentUsbFile = usbFileRoot.search(Global.GET_TRUNCATED_FILE_PATH_USB(fileclickselected));
-                } catch (IOException e) {
+                } catch (Exception e) {
 
                 }
             }

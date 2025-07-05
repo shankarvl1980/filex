@@ -51,7 +51,6 @@
         android:id="@+id/video_view_bottom_butt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/layout_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -72,7 +71,7 @@
             android:id="@+id/video_play_toolbar_background"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@drawable/rounded_rectangle_shape"
+            android:background="?attr/toolbar_background"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -98,7 +97,7 @@
                 android:minHeight="?attr/actionBarSize"
                 android:progressDrawable="@drawable/seek_bar_progress"
                 android:splitTrack="false"
-                android:thumb="@drawable/seek_thumb"
+                android:thumb="@drawable/toolbar_seek_thumb"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/video_player_forward"
                 app:layout_constraintStart_toEndOf="@id/video_player_backward"

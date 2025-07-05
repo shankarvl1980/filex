@@ -2,7 +2,7 @@
 <resources>
 
     <color name="light_select_color_picture_recyclerview">@android:color/holo_orange_dark</color>
-    <color name="light_video_play_overlay_background">#800099cc</color>
+    <color name="light_overlay_background">#80C3C2C2</color>
     <color name="light_status_bar">#FF0D8F93</color>
     <color name="light_toolbar_icon_color">#ffffffff</color>
     <color name="light_toolbar_text_color">#ffffffff</color>
@@ -28,6 +28,7 @@
     <color name="light_seek_bar_secondary_progress">#3399CC</color>
     <color name="light_seek_bar_progress">@color/light_icon_color</color>
     <color name="light_seek_bar_thumb">@color/light_icon_color</color>
+    <color name="light_toolbar_seek_bar_thumb">@color/light_toolbar_icon_color</color>
     <color name="light_select_detail_recyclerview_pressed">#808F8D8D</color>
     <color name="light_select_dialog_button_pressed">#D5D4D4</color>
     <color name="light_select_rectangle_shape">@android:color/background_dark</color>

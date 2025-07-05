@@ -73,13 +73,14 @@ public class UsbFileModel implements FileModel {
             return false;
         }
         try {
-            if (!usbFile.isDirectory() && usbFile.getLength() == 0) {
-                boolean madeNonZero = make_UsbFile_non_zero_length(usbFile.getAbsolutePath());
-                if (madeNonZero) {
-                    usbFile.delete();
-                    return true;
-                }
-            } else {
+//            if (!usbFile.isDirectory() && usbFile.getLength() == 0) {
+//                boolean madeNonZero = make_UsbFile_non_zero_length(usbFile.getAbsolutePath());
+//                if (madeNonZero) {
+//                    usbFile.delete();
+//                    return true;
+//                }
+//            } else
+            {
                 usbFile.delete();
                 return true;
             }
@@ -88,7 +89,7 @@ public class UsbFileModel implements FileModel {
         } catch (IOException e) {
             return false;
         }
-        return false;
+        //return false;
     }
 
     public static boolean make_UsbFile_non_zero_length(@NonNull String target_file_path) {
@@ -194,7 +195,7 @@ public class UsbFileModel implements FileModel {
                 UsbFile current = stack.pop();
 
                 if (current.isDirectory()) {
-                    UsbFile[] list = new UsbFile[0];
+                    UsbFile[] list;
                     try {
                         list = current.listFiles();
                     } catch (IOException e) {
