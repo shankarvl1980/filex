@@ -347,7 +347,6 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
         });
     }
 
-
     private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         final int height = options.outHeight;
         final int width = options.outWidth;
