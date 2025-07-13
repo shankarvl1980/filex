@@ -21,7 +21,7 @@
         android:paddingBottom="@dimen/layout_margin"
         android:text=":"
         android:textSize="17sp"
-        android:textColor="?attr/recycler_second_text_color"/>
+        android:textColor="?attr/recycler_second_text_color" />
 
 
     <TextView

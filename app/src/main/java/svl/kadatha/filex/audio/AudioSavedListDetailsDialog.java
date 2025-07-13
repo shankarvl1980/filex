@@ -79,7 +79,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
     private boolean search_toolbar_visible;
     private PopupWindow listPopWindow;
     private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
-    private int playing_audio_text_color, rest_audio_main_text_color,rest_audio_second_text_color;
+    private int playing_audio_text_color, rest_audio_main_text_color, rest_audio_second_text_color;
     private AudioListViewModel audioListViewModel;
     private FrameLayout progress_bar;
     private String request_code;

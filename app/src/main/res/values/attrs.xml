@@ -24,7 +24,7 @@
     <attr name="list_popup_window_background" format="reference" />
     <attr name="seek_bar_progress" format="reference" />
     <attr name="seek_bar_thumb" format="reference" />
-    <attr name="toolbar_seek_bar_thumb" format="reference"/>
+    <attr name="toolbar_seek_bar_thumb" format="reference" />
 
     <attr name="select_detail_recyclerview_pressed" format="reference" />
     <attr name="select_dialog_button_pressed" format="reference" />

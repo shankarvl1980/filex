@@ -59,7 +59,7 @@
                         android:labelFor="@id/fragment_network_details_input_server"
                         android:text="@string/host_asterisk"
                         android:textSize="17sp"
-                        android:textColor="?attr/recycler_second_text_color"/>
+                        android:textColor="?attr/recycler_second_text_color" />
 
                     <EditText
                         android:id="@+id/fragment_network_details_input_server"
@@ -87,7 +87,7 @@
                         android:labelFor="@id/fragment_network_details_input_port"
                         android:text="@string/port_asterisk"
                         android:textSize="17sp"
-                        android:textColor="?attr/recycler_second_text_color"/>
+                        android:textColor="?attr/recycler_second_text_color" />
 
                     <EditText
                         android:id="@+id/fragment_network_details_input_port"
@@ -387,7 +387,7 @@
                             android:labelFor="@id/fragment_network_details_input_base_path"
                             android:text="@string/base_path"
                             android:textSize="17sp"
-                            android:textColor="?attr/recycler_second_text_color"/>
+                            android:textColor="?attr/recycler_second_text_color" />
 
                         <EditText
                             android:id="@+id/fragment_network_details_input_base_path"

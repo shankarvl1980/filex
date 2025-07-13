@@ -62,7 +62,7 @@
         android:ellipsize="end"
         android:gravity="center"
         android:singleLine="true"
-        android:textColor="?attr/recycler_second_text_color"/>
+        android:textColor="?attr/recycler_second_text_color" />
 
     <TextView
         android:id="@+id/analyser_text_subfile_count"

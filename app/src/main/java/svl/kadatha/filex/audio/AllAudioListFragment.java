@@ -81,7 +81,7 @@ public class AllAudioListFragment extends Fragment {
     private AudioPlayerActivity.SearchFilterListener searchFilterListener;
     private AudioFragmentListener audioFragmentListener;
     private AppCompatActivity activity;
-    private int playing_audio_text_color, rest_audio_main_text_color,rest_audio_second_text_color;
+    private int playing_audio_text_color, rest_audio_main_text_color, rest_audio_second_text_color;
     private AudioPlayerActivity.AudioChangeListener audioChangeListener;
 
     @Override

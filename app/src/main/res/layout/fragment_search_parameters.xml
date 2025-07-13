@@ -174,8 +174,7 @@
                         android:id="@+id/dialog_search_rb_filefoldertype"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/file_directory"
-                        />
+                        android:text="@string/file_directory" />
                 </RadioGroup>
 
                 <!-- Size Group -->
@@ -214,8 +213,7 @@
                         android:paddingEnd="@dimen/ten_dp"
                         android:text="@string/size"
                         android:textSize="17sp"
-                        android:textColor="?attr/recycler_second_text_color"
-                        />
+                        android:textColor="?attr/recycler_second_text_color" />
 
                     <RadioButton
                         android:id="@+id/dialog_search_rb_size_kb"
