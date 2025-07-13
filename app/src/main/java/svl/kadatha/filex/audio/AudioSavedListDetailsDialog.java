@@ -79,7 +79,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
     private boolean search_toolbar_visible;
     private PopupWindow listPopWindow;
     private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
-    private int playing_audio_text_color, rest_audio_text_color;
+    private int playing_audio_text_color, rest_audio_main_text_color,rest_audio_second_text_color;
     private AudioListViewModel audioListViewModel;
     private FrameLayout progress_bar;
     private String request_code;
@@ -135,8 +135,10 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
         playing_audio_text_color = getResources().getColor(R.color.light_item_select_text_color);
         TypedValue typedValue = new TypedValue();
         Resources.Theme theme = context.getTheme();
-        theme.resolveAttribute(R.attr.recycler_text_color, typedValue, true);
-        rest_audio_text_color = typedValue.data;
+        theme.resolveAttribute(R.attr.recycler_main_text_color, typedValue, true);
+        rest_audio_main_text_color = typedValue.data;
+        theme.resolveAttribute(R.attr.recycler_second_text_color, typedValue, true);
+        rest_audio_second_text_color = typedValue.data;
     }
 
     @Override
@@ -577,7 +579,7 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
             if (duration_string != null) {
                 duration = Long.parseLong(duration_string);
             }
-            String duration_str = getString(R.string.duration) + " " + (String.format("%d:%02d", duration / 1000 / 60, duration / 1000 % 60));
+            String duration_str = getString(R.string.duration_colon) + " " + (String.format("%d:%02d", duration / 1000 / 60, duration / 1000 % 60));
             String artist = getString(R.string.artists_colon) + " " + audio.getArtist();
             boolean item_selected = audioListViewModel.audio_pojo_selected_items.containsKey(p2);
 
@@ -587,10 +589,10 @@ public class AudioSavedListDetailsDialog extends DialogFragment {
                 p1.view.durationtextview.setTextColor(playing_audio_text_color);
                 p1.view.artisttextview.setTextColor(playing_audio_text_color);
             } else {
-                p1.view.titletextview.setTextColor(rest_audio_text_color);
-                p1.view.albumtextview.setTextColor(rest_audio_text_color);
-                p1.view.durationtextview.setTextColor(rest_audio_text_color);
-                p1.view.artisttextview.setTextColor(rest_audio_text_color);
+                p1.view.titletextview.setTextColor(rest_audio_main_text_color);
+                p1.view.albumtextview.setTextColor(rest_audio_second_text_color);
+                p1.view.durationtextview.setTextColor(rest_audio_second_text_color);
+                p1.view.artisttextview.setTextColor(rest_audio_second_text_color);
             }
 
             p1.view.setData(album_id, title, album, duration_str, artist, item_selected);

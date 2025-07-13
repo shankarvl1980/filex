@@ -13,7 +13,7 @@
         android:minHeight="36dp"
         android:paddingStart="@dimen/layout_margin"
         android:paddingEnd="@dimen/layout_margin"
-        android:textColor="?attr/recycler_text_color"
+        android:textColor="?attr/recycler_second_text_color"
         android:textSize="17sp" />
 
     <ImageView

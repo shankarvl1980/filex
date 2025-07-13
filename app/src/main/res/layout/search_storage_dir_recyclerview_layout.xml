@@ -22,7 +22,7 @@
         android:minHeight="36dp"
 
 
-        android:textColor="?attr/recycler_text_color"
+        android:textColor="?attr/recycler_second_text_color"
         android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="parent"
 

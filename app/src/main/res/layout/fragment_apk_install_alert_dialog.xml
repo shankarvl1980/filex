@@ -66,9 +66,10 @@
                     android:id="@+id/fragment_apk_install_apk_package_tv"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/layout_margin"
+
                     android:layout_marginEnd="@dimen/ten_dp"
                     android:textSize="15sp"
+                    android:textColor="?attr/recycler_second_text_color"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@id/fragment_apk_install_apk_name_tv"
                     app:layout_constraintTop_toBottomOf="@id/fragment_apk_install_apk_name_tv" />
@@ -90,18 +91,21 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/version"
+                            android:textColor="?attr/recycler_second_text_color"
                             android:textSize="15sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text=": "
+                            android:textColor="?attr/recycler_second_text_color"
                             android:textSize="15sp" />
 
                         <TextView
                             android:id="@+id/fragment_apk_install_apk_version_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="?attr/recycler_second_text_color"
                             android:textSize="15sp" />
                     </TableRow>
 
@@ -111,18 +115,21 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/installed_version"
+                            android:textColor="?attr/recycler_second_text_color"
                             android:textSize="15sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text=": "
+                            android:textColor="?attr/recycler_second_text_color"
                             android:textSize="15sp" />
 
                         <TextView
                             android:id="@+id/fragment_apk_install_apk_installed_version_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="?attr/recycler_second_text_color"
                             android:textSize="15sp" />
                     </TableRow>
                 </TableLayout>

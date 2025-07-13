@@ -17,15 +17,13 @@
         android:layout_height="wrap_content"
         android:includeFontPadding="false"
         android:textColor="?attr/recycler_main_text_color"
-
-
         />
 
     <TextView
         android:id="@+id/audio_file_artist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="?attr/recycler_text_color"
+        android:textColor="?attr/recycler_second_text_color"
 
         />
 
@@ -34,7 +32,7 @@
         android:id="@+id/audio_file_duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="?attr/recycler_text_color"
+        android:textColor="?attr/recycler_second_text_color"
 
         />
 
@@ -42,7 +40,7 @@
         android:id="@+id/audio_file_album"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="?attr/recycler_text_color"
+        android:textColor="?attr/recycler_second_text_color"
 
         />
 

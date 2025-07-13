@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="start"
-        android:textColor="?attr/recycler_text_color"
+        android:textColor="?attr/recycler_second_text_color"
 
         />
 
@@ -48,13 +48,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="end"
-        android:textColor="?attr/recycler_text_color" />
+        android:textColor="?attr/recycler_second_text_color" />
 
     <TextView
         android:id="@+id/text_file_path"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="?attr/recycler_text_color"
+        android:textColor="?attr/recycler_second_text_color"
         android:visibility="gone" />
 
     <ImageView

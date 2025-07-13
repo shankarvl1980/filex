@@ -63,7 +63,7 @@ public class DefaultAppsDialog extends DialogFragment {
         top_row_color = getResources().getColor(R.color.light_tab_select_text_color);
         TypedValue typedValue = new TypedValue();
         Resources.Theme theme = context.getTheme();
-        theme.resolveAttribute(R.attr.recycler_text_color, typedValue, true);
+        theme.resolveAttribute(R.attr.recycler_second_text_color, typedValue, true);
         detail_row_color = typedValue.data;
     }
 

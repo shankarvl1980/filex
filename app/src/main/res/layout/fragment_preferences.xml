@@ -86,7 +86,7 @@
                 android:layout_height="0.5dp"
                 android:layout_marginTop="@dimen/layout_margin"
                 android:layout_marginBottom="@dimen/layout_margin"
-                android:background="?attr/recycler_text_color"
+                android:background="?attr/recycler_second_text_color"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/preferences_theme_rg" />
 
@@ -131,7 +131,7 @@
                 android:layout_height="0.5dp"
                 android:layout_marginTop="@dimen/layout_margin"
                 android:layout_marginBottom="@dimen/layout_margin"
-                android:background="?attr/recycler_text_color"
+                android:background="?attr/recycler_second_text_color"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/preferences_remove_all_defaults_btn" />
 
@@ -141,7 +141,6 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/ten_dp"
                 android:text="@string/show_file_path_for_library_files"
-                android:textColor="@color/light_recycler_text_color"
                 android:textSize="17sp"
                 android:theme="@style/MyLightSwitchCompat"
                 app:layout_constraintStart_toStartOf="parent"
@@ -153,7 +152,7 @@
                 android:layout_height="0.5dp"
                 android:layout_marginTop="@dimen/ten_dp"
                 android:layout_marginBottom="@dimen/layout_margin"
-                android:background="?attr/recycler_text_color"
+                android:background="?attr/recycler_second_text_color"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/preferences_switch_show_file_path" />
 
@@ -163,7 +162,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/ten_dp"
                 android:text="@string/enable_usb_flash_drive"
-                android:textColor="@color/light_recycler_text_color"
+                android:textColor="@color/light_recycler_second_text_color"
                 android:textSize="17sp"
                 android:theme="@style/MyLightSwitchCompat"
                 android:visibility="gone"
@@ -175,7 +174,7 @@
                 android:layout_height="0.5dp"
                 android:layout_marginTop="@dimen/ten_dp"
                 android:layout_marginBottom="@dimen/layout_margin"
-                android:background="?attr/recycler_text_color"
+                android:background="?attr/recycler_second_text_color"
                 android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/preferences_switch_show_usb" />
 

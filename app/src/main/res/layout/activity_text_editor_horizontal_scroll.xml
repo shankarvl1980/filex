@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <svl.kadatha.filex.ObservableScrollView
         android:id="@+id/file_editor_scrollview"
@@ -51,7 +52,7 @@
         android:background="@drawable/rounded_rectangle_shape"
         android:elevation="7dp"
         android:padding="@dimen/layout_margin"
-        android:textColor="?attr/recycler_text_color" />
+        android:textColor="?attr/recycler_second_text_color" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/file_editor_top_toolbar"
@@ -121,4 +122,4 @@
         app:contentInsetLeft="0dp"
         app:contentInsetStart="0dp" />
 
-</merge>
+</FrameLayout>

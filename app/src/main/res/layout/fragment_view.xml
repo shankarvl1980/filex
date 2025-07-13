@@ -51,6 +51,7 @@
                     android:paddingBottom="@dimen/layout_margin"
                     android:text="@string/layout"
                     android:textSize="17sp"
+                    android:textColor="?attr/recycler_second_text_color"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -102,6 +103,7 @@
                     android:paddingBottom="@dimen/layout_margin"
                     android:text="@string/font_size"
                     android:textSize="17sp"
+                    android:textColor="?attr/recycler_second_text_color"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/seekbar_layout" />
@@ -188,6 +190,7 @@
                     android:paddingBottom="@dimen/layout_margin"
                     android:text="@string/sort"
                     android:textSize="17sp"
+                    android:textColor="?attr/recycler_second_text_color"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/sort_layout_background" />
@@ -303,7 +306,6 @@
                     android:paddingEnd="@dimen/ten_dp"
                     android:paddingBottom="@dimen/ten_dp"
                     android:text="@string/show_hidden_files"
-                    android:textColor="@color/light_recycler_text_color"
                     android:textSize="17sp"
                     android:theme="@style/MyLightSwitchCompat"
                     app:layout_constraintTop_toBottomOf="@id/sort_table_layout" />

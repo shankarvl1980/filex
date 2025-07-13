@@ -47,6 +47,7 @@
                     android:paddingHorizontal="@dimen/ten_dp"
                     android:paddingTop="@dimen/ten_dp"
                     android:textSize="17sp"
+                    android:textColor="?attr/recycler_second_text_color"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
@@ -88,6 +89,7 @@
                     android:paddingHorizontal="@dimen/ten_dp"
                     android:paddingTop="@dimen/ten_dp"
                     android:text="@string/destination_folder"
+                    android:textColor="?attr/recycler_second_text_color"
                     android:textSize="17sp"
                     app:layout_constraintEnd_toStartOf="@id/dialog_archive_destination_file_object_type"
                     app:layout_constraintStart_toStartOf="parent"
@@ -100,6 +102,7 @@
                     android:layout_marginTop="@dimen/layout_margin"
                     android:padding="@dimen/ten_dp"
                     android:textSize="13sp"
+                    android:textColor="?attr/recycler_second_text_color"
                     app:layout_constraintStart_toEndOf="@id/dialog_archive_destination_folder"
                     app:layout_constraintTop_toTopOf="@id/dialog_archive_destination_folder" />
 

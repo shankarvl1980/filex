@@ -69,11 +69,13 @@
                             android:id="@+id/dialog_fragment_cut_copy_delete_from_label"
                             android:layout_height="wrap_content"
                             android:text="@string/from"
+                            android:textColor="?attr/recycler_second_text_color"
                             android:textSize="17sp" />
 
                         <TextView
                             android:layout_height="wrap_content"
                             android:text=" : "
+                            android:textColor="?attr/recycler_second_text_color"
                             android:textSize="17sp" />
 
                         <TextView
@@ -94,11 +96,13 @@
                             android:id="@+id/dialog_fragment_cut_copy_delete_to_label"
                             android:layout_height="wrap_content"
                             android:text="@string/to"
+                            android:textColor="?attr/recycler_second_text_color"
                             android:textSize="17sp" />
 
                         <TextView
                             android:layout_height="wrap_content"
                             android:text=" : "
+                            android:textColor="?attr/recycler_second_text_color"
                             android:textSize="17sp" />
 
                         <TextView
@@ -119,6 +123,7 @@
                     android:paddingStart="@dimen/ten_dp"
                     android:text="@string/current_file"
                     android:textSize="17sp"
+                    android:textColor="?attr/recycler_second_text_color"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_tablelayout" />
 
@@ -127,6 +132,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=" - "
+                    android:textColor="?attr/recycler_second_text_color"
                     android:textSize="17sp"
                     app:layout_constraintStart_toEndOf="@id/dialog_fragment_cut_copy_current_file_label"
                     app:layout_constraintTop_toBottomOf="@id/fragment_cut_copy_delete_tablelayout" />

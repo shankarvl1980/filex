@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/dialog_background">
+    android:background="?attr/dialog_background"
+    android:fitsSystemWindows="true">
 
     <TextView
         android:id="@+id/ftp_server_heading"
@@ -60,6 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/ten_dp"
                 android:textSize="17sp"
+                android:theme="@style/MyLightSwitchCompat"
                 app:layout_constraintBaseline_toBaselineOf="@id/ftp_server_switch_label"
                 app:layout_constraintEnd_toEndOf="parent" />
 
@@ -69,7 +71,7 @@
                 android:layout_height="0.5dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:background="?attr/recycler_text_color"
+                android:background="?attr/recycler_second_text_color"
                 app:layout_constraintTop_toBottomOf="@id/ftp_server_switch_label" />
 
             <CheckBox
@@ -94,6 +96,7 @@
                 android:layout_marginBottom="15dp"
                 android:text="@string/anonymous_summary"
                 android:textSize="15sp"
+                android:textColor="?attr/recycler_second_text_color"
                 app:layout_constraintTop_toBottomOf="@id/ftp_server_anonymous_check_box" />
 
             <View
@@ -102,7 +105,7 @@
                 android:layout_height="0.5dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:background="?attr/recycler_text_color"
+                android:background="?attr/recycler_second_text_color"
                 app:layout_constraintTop_toBottomOf="@id/ftp_server_anonymous_description" />
 
             <TextView
@@ -130,6 +133,7 @@
                 android:paddingBottom="@dimen/layout_margin"
                 android:text="@string/port"
                 android:textSize="17sp"
+                android:textColor="?attr/recycler_second_text_color"
                 app:layout_constraintEnd_toStartOf="@id/ftp_server_port"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
                 app:layout_constraintStart_toStartOf="parent"
@@ -160,6 +164,7 @@
                 android:paddingBottom="@dimen/layout_margin"
                 android:text="@string/user_name"
                 android:textSize="17sp"
+                android:textColor="?attr/recycler_second_text_color"
                 app:layout_constraintEnd_toStartOf="@id/ftp_server_user_name"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
                 app:layout_constraintStart_toStartOf="parent"
@@ -187,6 +192,7 @@
                 android:paddingEnd="@dimen/layout_margin"
                 android:paddingBottom="@dimen/layout_margin"
                 android:text="@string/password"
+                android:textColor="?attr/recycler_second_text_color"
                 android:textSize="17sp"
                 app:layout_constraintEnd_toStartOf="@id/ftp_server_pword"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
@@ -216,6 +222,7 @@
                 android:paddingEnd="@dimen/layout_margin"
                 android:paddingBottom="@dimen/layout_margin"
                 android:text="@string/directory"
+                android:textColor="?attr/recycler_second_text_color"
                 android:textSize="17sp"
                 app:layout_constraintEnd_toStartOf="@id/ftp_server_chroot"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"

@@ -2,10 +2,12 @@ package svl.kadatha.filex;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -98,6 +100,10 @@ public class CreateFileDialog extends DialogFragment {
         int paddingTop = file_label_textview.getPaddingTop();
         int paddingRight = file_label_textview.getPaddingRight();
         file_label_textview.setPadding(paddingLeft, paddingTop, paddingRight, 0);
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = context.getTheme();
+        theme.resolveAttribute(R.attr.recycler_second_text_color, typedValue, true);
+        file_label_textview.setTextColor(typedValue.data);
         if (file_type == 0) {
             dialog_heading_textview.setText(R.string.enter_file_name);
             file_label_textview.setText(R.string.file_name);

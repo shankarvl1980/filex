@@ -91,9 +91,7 @@ public class AudioListRecyclerViewItem extends ViewGroup {
             } else {
                 itemWidth = Global.SCREEN_WIDTH;
             }
-
         }
-
     }
 
 
@@ -219,6 +217,4 @@ public class AudioListRecyclerViewItem extends ViewGroup {
         durationtextview.setText(duration);
         artisttextview.setText(artist);
     }
-
-
 }

@@ -91,7 +91,7 @@
             android:paddingStart="@dimen/ten_dp"
             android:paddingEnd="@dimen/ten_dp"
             android:textAlignment="center"
-            android:textColor="?attr/recycler_text_color"
+            android:textColor="?attr/recycler_second_text_color"
             android:textSize="18sp"
             android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@id/prev_image_button"
@@ -150,7 +150,7 @@
             android:layout_marginBottom="8dp"
             android:gravity="start"
             android:padding="10dp"
-            android:textColor="?attr/recycler_text_color"
+            android:textColor="?attr/recycler_second_text_color"
             app:layout_constraintBottom_toTopOf="@id/current_play_bottom_toolbar"
             app:layout_constraintEnd_toStartOf="@+id/audio_player_seekbar"
             app:layout_constraintStart_toStartOf="parent" />
@@ -174,7 +174,7 @@
             android:layout_marginBottom="8dp"
             android:gravity="end"
             android:padding="10dp"
-            android:textColor="?attr/recycler_text_color"
+            android:textColor="?attr/recycler_second_text_color"
             app:layout_constraintBottom_toTopOf="@id/current_play_bottom_toolbar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/audio_player_seekbar" />

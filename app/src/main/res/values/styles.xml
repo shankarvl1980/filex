@@ -4,7 +4,7 @@
 
     <style name="MyLightBaseTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
 
-        <item name="android:textColor">@color/light_recycler_text_color</item>
+        <item name="android:textColor">@color/light_recycler_main_text_color</item>
         <item name="android:checkboxStyle">@style/MyLightCheckbox</item>
         <item name="radioButtonStyle">@style/MyLightRadioButton</item>
         <item name="android:windowBackground">@color/light_activity_background</item>
@@ -16,7 +16,7 @@
         <item name="icon_color">@color/light_icon_color</item>
         <item name="toolbar_background">@color/light_toolbar_background</item>
         <item name="recycler_main_text_color">@color/light_recycler_main_text_color</item>
-        <item name="recycler_text_color">@color/light_recycler_text_color</item>
+        <item name="recycler_second_text_color">@color/light_recycler_second_text_color</item>
         <item name="heading_text_color">@color/light_heading_text_color</item>
         <item name="edit_text_color">@color/light_edit_text_color</item>
         <item name="activity_background">@color/light_activity_background</item>
@@ -64,7 +64,7 @@
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
 
-        <item name="android:textColor">@color/light_recycler_text_color</item>
+        <item name="android:textColor">@color/light_recycler_main_text_color</item>
         <item name="android:checkboxStyle">@style/MyLightCheckbox</item>
         <item name="radioButtonStyle">@style/MyLightRadioButton</item>
         <item name="android:windowBackground">@color/light_activity_background</item>
@@ -83,12 +83,12 @@
         <item name="android:checkboxStyle">@style/MyLightCheckbox</item>
         <item name="radioButtonStyle">@style/MyLightRadioButton</item>
 
-        <item name="android:textColor">@color/light_recycler_text_color</item>
+        <item name="android:textColor">@color/light_recycler_main_text_color</item>
         <item name="android:windowBackground">@color/light_activity_background</item>
         <item name="android:colorPrimaryDark">@color/light_status_bar</item>
         <item name="icon_color">@color/light_icon_color</item>
         <item name="toolbar_background">@color/light_toolbar_background</item>
-        <item name="recycler_text_color">@color/light_recycler_text_color</item>
+        <item name="recycler_second_text_color">@color/light_recycler_second_text_color</item>
         <item name="heading_text_color">@color/light_heading_text_color</item>
         <item name="edit_text_color">@color/light_edit_text_color</item>
         <item name="activity_background">@color/light_activity_background</item>
@@ -110,13 +110,13 @@
 
 
     <style name="MyLightCheckbox" parent="@style/Widget.AppCompat.CompoundButton.CheckBox">
-        <item name="android:textColor">@color/light_recycler_text_color</item>
+        <item name="android:textColor">@color/light_recycler_main_text_color</item>
         <item name="android:buttonTint">@color/light_icon_color</item>
 
     </style>
 
     <style name="MyLightRadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
-        <item name="android:textColor">@color/light_recycler_text_color</item>
+        <item name="android:textColor">@color/light_recycler_main_text_color</item>
         <item name="android:buttonTint">@color/light_icon_color</item>
     </style>
 

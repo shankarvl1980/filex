@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="start"
-        android:textColor="?attr/recycler_text_color" />
+        android:textColor="?attr/recycler_second_text_color" />
 
     <TextView
         android:id="@+id/app_manager_app_version"
@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:gravity="start"
         android:maxLines="1"
-        android:textColor="?attr/recycler_text_color" />
+        android:textColor="?attr/recycler_second_text_color" />
 
 
     <TextView
@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:gravity="start"
         android:maxLines="1"
-        android:textColor="?attr/recycler_text_color" />
+        android:textColor="?attr/recycler_second_text_color" />
 
     <TextView
         android:id="@+id/app_manager_app_date"
@@ -55,7 +55,7 @@
         android:layout_height="wrap_content"
         android:gravity="end"
         android:maxLines="1"
-        android:textColor="?attr/recycler_text_color" />
+        android:textColor="?attr/recycler_second_text_color" />
 
 
 </merge>

@@ -309,8 +309,6 @@ public class FtpServerActivity extends BaseActivity {
     }
 
     private void updateRunningState() {
-
-
         boolean service_started = FsService.isRunning();
         if (FsService.isRunning()) {
 

@@ -66,7 +66,7 @@
         android:paddingTop="10dp"
         android:paddingEnd="@dimen/ten_dp"
         android:paddingBottom="@dimen/layout_margin"
-        android:textColor="?attr/recycler_text_color"
+        android:textColor="?attr/recycler_second_text_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/current_play_toolbar" />
@@ -79,7 +79,7 @@
         android:paddingStart="@dimen/ten_dp"
         android:paddingEnd="@dimen/ten_dp"
         android:paddingBottom="@dimen/layout_margin"
-        android:textColor="?attr/recycler_text_color"
+        android:textColor="?attr/recycler_second_text_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/current_play_album" />
@@ -94,7 +94,7 @@
         android:paddingStart="@dimen/ten_dp"
         android:paddingEnd="@dimen/ten_dp"
         android:paddingBottom="@dimen/layout_margin"
-        android:textColor="?attr/recycler_text_color"
+        android:textColor="?attr/recycler_second_text_color"
         android:textStyle="bold|italic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -132,7 +132,7 @@
         android:paddingTop="@dimen/layout_margin"
         android:paddingEnd="@dimen/ten_dp"
         android:text="@string/volume"
-        android:textColor="?attr/recycler_text_color"
+        android:textColor="?attr/recycler_second_text_color"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/current_play_next_audio_title" />
 
@@ -173,7 +173,7 @@
         android:layout_marginBottom="8dp"
         android:gravity="start"
         android:padding="10dp"
-        android:textColor="?attr/recycler_text_color"
+        android:textColor="?attr/recycler_second_text_color"
         app:layout_constraintBottom_toTopOf="@id/current_play_bottom_toolbar"
         app:layout_constraintEnd_toStartOf="@+id/audio_player_seekbar"
         app:layout_constraintStart_toStartOf="parent" />
@@ -197,7 +197,7 @@
         android:layout_marginBottom="8dp"
         android:gravity="end"
         android:padding="10dp"
-        android:textColor="?attr/recycler_text_color"
+        android:textColor="?attr/recycler_second_text_color"
         app:layout_constraintBottom_toTopOf="@id/current_play_bottom_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/audio_player_seekbar" />

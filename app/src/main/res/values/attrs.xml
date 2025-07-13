@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-
     <attr name="toolbar_icon_color" format="reference" />
     <attr name="toolbar_text_color" format="reference" />
     <attr name="icon_color" format="reference" />
     <attr name="toolbar_background" format="reference" />
     <attr name="recycler_main_text_color" format="reference" />
-    <attr name="recycler_text_color" format="reference" />
+    <attr name="recycler_second_text_color" format="reference" />
     <attr name="heading_text_color" format="reference" />
     <attr name="edit_text_color" format="reference" />
     <attr name="activity_background" format="reference" />

@@ -534,7 +534,7 @@ public class AlbumDetailsDialog extends DialogFragment {
             if (duration_string != null) {
                 duration = Long.parseLong(duration_string);
             }
-            String duration_str = getString(R.string.duration) + " " + (String.format("%d:%02d", duration / 1000 / 60, duration / 1000 % 60));
+            String duration_str = getString(R.string.duration_colon) + " " + (String.format("%d:%02d", duration / 1000 / 60, duration / 1000 % 60));
             String artist = getString(R.string.artists_colon) + " " + audio.getArtist();
             boolean item_selected = audioListViewModel.audio_pojo_selected_items.containsKey(p2);
             p1.view.setData(albumID, title, album, duration_str, artist, item_selected);

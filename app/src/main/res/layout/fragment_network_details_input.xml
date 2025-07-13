@@ -58,7 +58,8 @@
                         android:layout_marginEnd="4dp"
                         android:labelFor="@id/fragment_network_details_input_server"
                         android:text="@string/host_asterisk"
-                        android:textSize="17sp" />
+                        android:textSize="17sp"
+                        android:textColor="?attr/recycler_second_text_color"/>
 
                     <EditText
                         android:id="@+id/fragment_network_details_input_server"
@@ -85,7 +86,8 @@
                         android:layout_marginEnd="4dp"
                         android:labelFor="@id/fragment_network_details_input_port"
                         android:text="@string/port_asterisk"
-                        android:textSize="17sp" />
+                        android:textSize="17sp"
+                        android:textColor="?attr/recycler_second_text_color"/>
 
                     <EditText
                         android:id="@+id/fragment_network_details_input_port"
@@ -113,6 +115,7 @@
                         android:layout_marginEnd="4dp"
                         android:labelFor="@id/fragment_network_details_input_username"
                         android:text="@string/user_name_asterisk"
+                        android:textColor="?attr/recycler_second_text_color"
                         android:textSize="17sp" />
 
                     <EditText
@@ -138,6 +141,7 @@
                         android:layout_marginEnd="4dp"
                         android:labelFor="@id/fragment_network_details_input_password"
                         android:text="@string/password"
+                        android:textColor="?attr/recycler_second_text_color"
                         android:textSize="17sp" />
 
                     <EditText
@@ -165,6 +169,7 @@
                         android:layout_marginEnd="4dp"
                         android:labelFor="@id/fragment_network_details_input_encoding"
                         android:text="@string/encoding"
+                        android:textColor="?attr/recycler_second_text_color"
                         android:textSize="17sp" />
 
                     <EditText
@@ -190,6 +195,7 @@
                         android:layout_marginEnd="4dp"
                         android:labelFor="@id/fragment_network_details_input_display"
                         android:text="@string/display"
+                        android:textColor="?attr/recycler_second_text_color"
                         android:textSize="17sp" />
 
                     <EditText
@@ -215,6 +221,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="4dp"
                         android:text="@string/mode"
+                        android:textColor="?attr/recycler_second_text_color"
                         android:textSize="17sp" />
 
                     <RadioGroup
@@ -274,6 +281,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:text="@string/private_key"
+                        android:textColor="?attr/recycler_second_text_color"
                         android:textSize="17sp" />
 
                     <LinearLayout
@@ -314,6 +322,7 @@
                             android:layout_marginEnd="4dp"
                             android:labelFor="@id/fragment_network_details_input_private_key_passphrase"
                             android:text="@string/private_key_passphrase"
+                            android:textColor="?attr/recycler_second_text_color"
                             android:textSize="17sp" />
 
                         <EditText
@@ -341,6 +350,7 @@
                             android:layout_marginEnd="4dp"
                             android:labelFor="@id/fragment_network_details_input_known_hosts_path"
                             android:text="@string/known_hosts_path"
+                            android:textColor="?attr/recycler_second_text_color"
                             android:textSize="17sp" />
 
                         <EditText
@@ -376,7 +386,8 @@
                             android:layout_marginEnd="4dp"
                             android:labelFor="@id/fragment_network_details_input_base_path"
                             android:text="@string/base_path"
-                            android:textSize="17sp" />
+                            android:textSize="17sp"
+                            android:textColor="?attr/recycler_second_text_color"/>
 
                         <EditText
                             android:id="@+id/fragment_network_details_input_base_path"
@@ -419,6 +430,7 @@
                             android:layout_marginEnd="4dp"
                             android:labelFor="@id/fragment_network_details_input_domain"
                             android:text="@string/domain"
+                            android:textColor="?attr/recycler_second_text_color"
                             android:textSize="17sp" />
 
                         <EditText
@@ -444,6 +456,7 @@
                             android:layout_marginEnd="4dp"
                             android:labelFor="@id/fragment_network_details_input_share_name"
                             android:text="@string/share_name_asterisk"
+                            android:textColor="?attr/recycler_second_text_color"
                             android:textSize="17sp" />
 
                         <EditText
@@ -468,6 +481,7 @@
                             android:layout_marginStart="10dp"
                             android:layout_marginEnd="4dp"
                             android:text="@string/smb_version"
+                            android:textColor="?attr/recycler_second_text_color"
                             android:textSize="17sp" />
 
                         <EditText

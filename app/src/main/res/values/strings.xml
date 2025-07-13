@@ -187,9 +187,9 @@
     <string name="play">Play</string>
 
 
-    <string name="tracks">Tracks</string>
+    <string name="tracks_colon">Tracks:</string>
 
-    <string name="duration">Duration</string>
+    <string name="duration_colon">Duration:</string>
 
     <string name="not_able_to_process">not able to process</string>
     <string name="wait_till_all_audios_populated_in_all_songs_tab">wait till all audios are populated in All Songs tab</string>

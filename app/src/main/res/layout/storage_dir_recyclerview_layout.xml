@@ -47,7 +47,7 @@
         android:layout_margin="@dimen/layout_margin"
         android:gravity="center_vertical"
         android:minHeight="40dp"
-        android:textColor="?attr/recycler_text_color"
+        android:textColor="?attr/recycler_second_text_color"
         android:textSize="17sp"
 
         app:layout_constraintBottom_toBottomOf="parent"

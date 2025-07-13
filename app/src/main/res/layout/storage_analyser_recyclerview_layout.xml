@@ -53,7 +53,7 @@
         android:gravity="start"
         android:paddingStart="@dimen/layout_margin"
         android:paddingEnd="0dp"
-        android:textColor="?attr/recycler_text_color" />
+        android:textColor="?attr/recycler_second_text_color" />
 
     <TextView
         android:id="@+id/analyser_text_size_percentage"
@@ -61,7 +61,8 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:gravity="center"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:textColor="?attr/recycler_second_text_color"/>
 
     <TextView
         android:id="@+id/analyser_text_subfile_count"
@@ -70,7 +71,7 @@
         android:gravity="end"
         android:paddingStart="0dp"
         android:paddingEnd="@dimen/layout_margin"
-        android:textColor="?attr/recycler_text_color" />
+        android:textColor="?attr/recycler_second_text_color" />
 
     <ImageView
         android:id="@+id/analyser_file_select_indicator"

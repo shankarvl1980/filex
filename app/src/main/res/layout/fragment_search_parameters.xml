@@ -56,6 +56,7 @@
                     android:paddingTop="@dimen/ten_dp"
                     android:paddingEnd="@dimen/ten_dp"
                     android:text="@string/name"
+                    android:textColor="?attr/recycler_second_text_color"
                     android:textSize="17sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -128,6 +129,7 @@
                     android:paddingBottom="@dimen/layout_margin"
                     android:text="@string/type"
                     android:textSize="17sp"
+                    android:textColor="?attr/recycler_second_text_color"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/dialog_fragment_search_regex_checkbox"
@@ -173,7 +175,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/file_directory"
-
                         />
                 </RadioGroup>
 
@@ -213,7 +214,7 @@
                         android:paddingEnd="@dimen/ten_dp"
                         android:text="@string/size"
                         android:textSize="17sp"
-
+                        android:textColor="?attr/recycler_second_text_color"
                         />
 
                     <RadioButton
@@ -247,6 +248,7 @@
                     android:id="@+id/dialog_fragment_search_greater_less_than_table"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingStart="16dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/dialog_fragment_search_size_rg">
 
@@ -341,6 +343,7 @@
                     android:paddingBottom="@dimen/layout_margin"
                     android:text="@string/search_in"
                     android:textSize="17sp"
+                    android:textColor="?attr/recycler_second_text_color"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_greater_less_than_table" />

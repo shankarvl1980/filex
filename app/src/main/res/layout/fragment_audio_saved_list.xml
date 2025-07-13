@@ -25,7 +25,7 @@
         android:layout_margin="@dimen/layout_margin"
         android:background="@drawable/rounded_rectangle_shape"
         android:padding="@dimen/layout_margin"
-        android:textColor="?attr/recycler_text_color" />
+        android:textColor="?attr/recycler_second_text_color" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/audio_saved_list_bottom_toolbar"

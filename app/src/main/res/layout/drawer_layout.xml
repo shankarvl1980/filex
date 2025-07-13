@@ -642,8 +642,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/network_recyclerview"
-                android:visibility="gone"
-                />
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/cloud_heading"
@@ -659,8 +658,7 @@
                 app:layout_constraintEnd_toStartOf="@id/cloud_expand_indicator"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/cloud_layout_background"
-                android:visibility="gone"
-                />
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/cloud_expand_indicator"
@@ -674,8 +672,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/cloud_heading"
                 app:layout_constraintTop_toTopOf="@id/cloud_heading"
-                android:visibility="gone"
-                />
+                android:visibility="gone" />
 
             <androidx.constraintlayout.widget.Group
                 android:id="@+id/cloud_layout_group"
@@ -696,8 +693,7 @@
                 app:layout_constraintEnd_toStartOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cloud_layout_background"
-                android:visibility="gone"
-                />
+                android:visibility="gone" />
 
             <Space
                 android:layout_width="match_parent"

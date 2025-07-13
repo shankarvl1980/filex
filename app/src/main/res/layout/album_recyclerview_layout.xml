@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/layout_margin"
         android:paddingHorizontal="@dimen/layout_margin"
-        android:textColor="?attr/recycler_text_color"
+        android:textColor="?attr/recycler_second_text_color"
         android:textSize="15sp"
         app:layout_constraintEnd_toStartOf="@id/album_image_dir"
         app:layout_constraintStart_toStartOf="parent"

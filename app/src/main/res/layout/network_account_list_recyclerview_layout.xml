@@ -39,7 +39,7 @@
         android:gravity="center_vertical"
         android:paddingStart="@dimen/layout_margin"
         android:paddingEnd="@dimen/layout_margin"
-        android:textColor="?attr/recycler_text_color"
+        android:textColor="?attr/recycler_second_text_color"
 
         android:textSize="15sp"
         app:layout_constraintStart_toStartOf="@id/network_list_recyclerview_display"
@@ -56,7 +56,7 @@
         android:paddingStart="@dimen/layout_margin"
         android:paddingEnd="@dimen/layout_margin"
         android:paddingBottom="@dimen/layout_margin"
-        android:textColor="?attr/recycler_text_color"
+        android:textColor="?attr/recycler_second_text_color"
 
         android:textSize="15sp"
         app:layout_constraintStart_toStartOf="@id/network_list_recyclerview_display"

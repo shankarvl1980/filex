@@ -561,7 +561,7 @@ public class AlbumListFragment extends Fragment {
             AlbumPOJO album = album_list.get(p2);
             String album_id = album.getId();
             String album_name = album.getAlbumName();
-            String no_of_songs = getString(R.string.tracks) + " " + album.getNoOfSongs();
+            String no_of_songs = getString(R.string.tracks_colon) + " " + album.getNoOfSongs();
             String artist = getString(R.string.artists_colon) + " " + album.getArtist();
             boolean item_selected = audioListViewModel.album_pojo_selected_items.containsKey(p2);
             p1.view.setData(album_id, album_name, no_of_songs, artist, item_selected);
