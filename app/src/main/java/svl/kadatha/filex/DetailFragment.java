@@ -43,6 +43,7 @@ import java.util.concurrent.ExecutorService;
 import me.jahnen.libaums.core.fs.UsbFile;
 import svl.kadatha.filex.usb.ReadAccess;
 import svl.kadatha.filex.usb.UsbFileRootSingleton;
+import timber.log.Timber;
 
 public class DetailFragment extends Fragment implements FileModifyObserver.FileObserverListener {
     public static final String USB_FILE_PREFIX = "usb:";
@@ -71,7 +72,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
     public String fileclickselected = "";
     public String file_click_selected_name = "";
     public UsbFile currentUsbFile;
-    public String search_file_name;
+    public static String search_file_name;
     public Set<FilePOJO> search_in_dir = new HashSet<>();
     public String search_file_type;
     public boolean search_whole_word, search_case_sensitive, search_regex;
@@ -246,7 +247,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
         LinearLayoutManager file_path_lm = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         filepath_recyclerview.setLayoutManager(file_path_lm);
 
-        if (file_click_selected_name.equals("Image") || file_click_selected_name.equals("Video")) {
+        if (fileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE) && (file_click_selected_name.equals("Image") || file_click_selected_name.equals("Video"))) {
             grid_layout = Global.IMAGE_VIDEO_GRID_LAYOUT;
         } else {
             grid_layout = Global.FILE_GRID_LAYOUT;

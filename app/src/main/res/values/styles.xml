@@ -44,6 +44,9 @@
         <item name="select_detail_recyclerview_pressed">
             @color/light_select_detail_recyclerview_pressed
         </item>
+        <item name="select_drawer_recyclerview_pressed">
+            @color/light_select_drawer_recyclerview_pressed
+        </item>
         <item name="select_dialog_button_pressed">@color/light_select_dialog_button_pressed</item>
         <item name="select_rectangle_shape">@color/light_select_rectangle_shape</item>
         <item name="drawer_icon_color">@color/light_drawer_icon_color</item>
@@ -63,6 +66,7 @@
         <item name="android:windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
+
 
         <item name="android:textColor">@color/light_recycler_main_text_color</item>
         <item name="android:checkboxStyle">@style/MyLightCheckbox</item>

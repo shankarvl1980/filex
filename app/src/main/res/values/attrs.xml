@@ -27,6 +27,7 @@
     <attr name="toolbar_seek_bar_thumb" format="reference" />
 
     <attr name="select_detail_recyclerview_pressed" format="reference" />
+    <attr name="select_drawer_recyclerview_pressed" format="reference"/>
     <attr name="select_dialog_button_pressed" format="reference" />
     <attr name="select_rectangle_shape" format="reference" />
 

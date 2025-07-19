@@ -935,7 +935,7 @@ public class MakeFilePOJOUtil {
         } else if (file_ext.matches(Global.AUDIO_REGEX)) {
             return R.drawable.audio_file_icon;
         } else if (file_ext.matches(Global.PDF_REGEX)) {
-            return R.drawable.pdf_file_icon;
+            return -3;//R.drawable.pdf_file_icon;
         } else if (file_ext.matches(Global.APK_REGEX)) {
             return 0;
         } else if (file_ext.matches(Global.ZIP_REGEX) || file_ext.matches(Global.UNIX_ARCHIVE_REGEX)) {

@@ -30,6 +30,7 @@
     <color name="light_seek_bar_thumb">@color/light_icon_color</color>
     <color name="light_toolbar_seek_bar_thumb">@color/light_toolbar_icon_color</color>
     <color name="light_select_detail_recyclerview_pressed">#808F8D8D</color>
+    <color name="light_select_drawer_recyclerview_pressed">#E6CCC6C6</color>
     <color name="light_select_dialog_button_pressed">#D5D4D4</color>
     <color name="light_select_rectangle_shape">@android:color/background_dark</color>
     <color name="light_select_indicator_border_color">@color/light_icon_color</color>

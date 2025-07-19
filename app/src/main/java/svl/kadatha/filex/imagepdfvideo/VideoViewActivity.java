@@ -3,10 +3,17 @@ package svl.kadatha.filex.imagepdfvideo;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
+import android.widget.FrameLayout;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import svl.kadatha.filex.BaseActivity;
@@ -28,12 +35,18 @@ public class VideoViewActivity extends BaseActivity {
     public boolean clear_cache;
     public FilteredFilePOJOViewModel viewModel;
     TinyDB tinyDB;
+    private FrameLayout root;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Context context = this;
         setContentView(R.layout.activity_blank_view);
+
+        root = findViewById(R.id.activity_blank_view_container);
+
+        hideStatusBarKeepNavBar();
+        applyBottomInsetOnly();
         tinyDB = new TinyDB(context);
         Intent intent = getIntent();
         on_intent(intent, savedInstanceState);
@@ -46,6 +59,42 @@ public class VideoViewActivity extends BaseActivity {
                 getOnBackPressedDispatcher().onBackPressed();
             }
         });
+    }
+
+    /** Hides status bar, keeps nav bar visible */
+    private void hideStatusBarKeepNavBar() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            getWindow().setDecorFitsSystemWindows(false);   // we’ll handle insets ourselves
+            WindowInsetsController c = getWindow().getInsetsController();
+            if (c != null) {
+                c.hide(WindowInsets.Type.statusBars());     // hide only status bar
+                c.show(WindowInsets.Type.navigationBars()); // keep nav bar
+            }
+        } else {
+            // Legacy APIs 21‑29
+            int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN   // allow drawing under status bar
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN;         // hide status bar
+            getWindow().getDecorView().setSystemUiVisibility(flags);
+        }
+    }
+
+    /** Gives the root view bottom padding equal to nav‑bar height (API‑safe) */
+    private void applyBottomInsetOnly() {
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            // Height of navigation bar (0 if gesture nav hidden)
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
+            v.setPadding(0, 0, 0, bottom);
+            return WindowInsetsCompat.CONSUMED;   // we handled what we need
+        });
+        // Trigger first inset pass
+        ViewCompat.requestApplyInsets(root);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) hideStatusBarKeepNavBar();   // re‑enter fullscreen after transient bars
     }
 
     private void on_intent(Intent intent, Bundle savedInstanceState) {
