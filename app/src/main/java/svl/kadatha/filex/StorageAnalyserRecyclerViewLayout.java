@@ -19,7 +19,7 @@ import java.io.File;
 public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
     private final Context context;
     private final boolean show_file_path;
-    private ImageView fileimageview, overlay_fileimageview, file_select_indicator;
+    private ImageView fileimageview, play_overlay_imageview,pdf_overlay_imageview, file_select_indicator;
     private TextView filenametextview, filesizetextview, filesizepercentagetextview, filesubfilecounttextview, itemlinebackground, itemlineforeground;
     private View item_separator;
     private int imageview_dimension;
@@ -53,7 +53,8 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
         View view = LayoutInflater.from(context).inflate(R.layout.storage_analyser_recyclerview_layout, this, true);
 
         fileimageview = view.findViewById(R.id.analyser_image_file);
-        overlay_fileimageview = view.findViewById(R.id.analyser_overlay_image_file);
+        play_overlay_imageview = view.findViewById(R.id.analyser_play_overlay_image_file);
+        pdf_overlay_imageview = view.findViewById(R.id.analyser_pdf_overlay_image_file);
         file_select_indicator = view.findViewById(R.id.analyser_file_select_indicator);
         filenametextview = view.findViewById(R.id.analyser_text_file_name);
         filesizetextview = view.findViewById(R.id.analyser_text_size);
@@ -87,8 +88,11 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
         fileimageview.getLayoutParams().height = imageview_dimension;
 
         int overlay_image_dimension = imageview_dimension / 2 - Global.TWO_DP;
-        overlay_fileimageview.getLayoutParams().width = overlay_image_dimension;
-        overlay_fileimageview.getLayoutParams().height = overlay_image_dimension;
+        play_overlay_imageview.getLayoutParams().width = overlay_image_dimension;
+        play_overlay_imageview.getLayoutParams().height = overlay_image_dimension;
+
+        pdf_overlay_imageview.getLayoutParams().width = overlay_image_dimension;
+        pdf_overlay_imageview.getLayoutParams().height = overlay_image_dimension;
 
         filenametextview.setTextSize(first_line_font_size);
         filesizetextview.setTextSize(second_line_font_size);
@@ -112,7 +116,8 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
 
         usedWidth = Global.FOURTEEN_DP;
         measureChildWithMargins(fileimageview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
-        measureChildWithMargins(overlay_fileimageview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
+        measureChildWithMargins(play_overlay_imageview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
+        measureChildWithMargins(pdf_overlay_imageview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
 
         usedWidth += imageview_dimension;
         iconheight = imageview_dimension;
@@ -163,12 +168,15 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
         v.layout(x, top_for_icon, x + fileMeasuredWidth, top_for_icon + fileMeasuredHeight);
 
         // Then lay out the overlay_fileimageview at the bottom-right corner of fileimageview
-        v = overlay_fileimageview;
+        v = play_overlay_imageview;
         int overlayMeasuredHeight = v.getMeasuredHeight();
         int overlayMeasuredWidth = v.getMeasuredWidth();
 
         int overlayX = x + fileMeasuredWidth - overlayMeasuredWidth;
         int overlayY = top_for_icon + fileMeasuredHeight - overlayMeasuredHeight;
+        v.layout(overlayX, overlayY, overlayX + overlayMeasuredWidth, overlayY + overlayMeasuredHeight);
+
+        v = pdf_overlay_imageview;
         v.layout(overlayX, overlayY, overlayX + overlayMeasuredWidth, overlayY + overlayMeasuredHeight);
 
         x += fileMeasuredWidth + Global.TEN_DP;
@@ -262,7 +270,8 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
     }
 
     public void setData(FilePOJO filePOJO, boolean item_selected) {
-        overlay_fileimageview.setVisibility(filePOJO.getOverlayVisibility());
+        play_overlay_imageview.setVisibility(filePOJO.getPlayOverlayVisibility());
+        pdf_overlay_imageview.setVisibility(filePOJO.getPdfOverlayVisibility());
         file_select_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
         if (filePOJO.getType() == 0) {
             GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath() + File.separator + filePOJO.getPackage_name() + ".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(fileimageview);

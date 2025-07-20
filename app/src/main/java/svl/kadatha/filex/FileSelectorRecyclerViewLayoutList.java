@@ -19,7 +19,7 @@ import java.io.File;
 public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
     private final Context context;
     public int itemWidth, itemHeight;
-    private ImageView fileimageview, overlay_fileimageview, file_select_indicator;
+    private ImageView fileimageview, play_overlay_imageview,pdf_overlay_imageview, file_select_indicator;
     private TextView filenametextview, filesubfilecounttextview, filepermissionstextView, filemoddatetextview, filepathtextview;
     private int imageview_dimension;
     private int select_indicator_offset_linear;
@@ -31,8 +31,9 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
     }
 
 
-    public static void setIcon(Context context, FilePOJO filePOJO, ImageView fileimageview, ImageView overlay_fileimageview) {
-        overlay_fileimageview.setVisibility(filePOJO.getOverlayVisibility());
+    public static void setIcon(Context context, FilePOJO filePOJO, ImageView fileimageview, ImageView play_overlay_imageview,ImageView pdf_overlay_imageview) {
+        play_overlay_imageview.setVisibility(filePOJO.getPlayOverlayVisibility());
+        pdf_overlay_imageview.setVisibility(filePOJO.getPdfOverlayVisibility());
         if (filePOJO.getType() == 0) {
             GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath() + File.separator + filePOJO.getPackage_name() + ".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(fileimageview);
         } else if (filePOJO.getType() < 0) {
@@ -51,7 +52,8 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
     private void init() {
         View view = LayoutInflater.from(context).inflate(R.layout.filedetail_recyclerview_layout, this, true);
         fileimageview = view.findViewById(R.id.image_file);
-        overlay_fileimageview = view.findViewById(R.id.overlay_image_file);
+        play_overlay_imageview = view.findViewById(R.id.play_overlay_image_file);
+        pdf_overlay_imageview = view.findViewById(R.id.pdf_overlay_image_file);
         file_select_indicator = view.findViewById(R.id.file_select_indicator);
         filenametextview = view.findViewById(R.id.text_file_name);
         filesubfilecounttextview = view.findViewById(R.id.text_subfile_count);
@@ -84,8 +86,11 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
         fileimageview.getLayoutParams().width = imageview_dimension;
         fileimageview.getLayoutParams().height = imageview_dimension;
 
-        overlay_fileimageview.getLayoutParams().width = overlay_image_dimension;
-        overlay_fileimageview.getLayoutParams().height = overlay_image_dimension;
+        play_overlay_imageview.getLayoutParams().width = overlay_image_dimension;
+        play_overlay_imageview.getLayoutParams().height = overlay_image_dimension;
+
+        pdf_overlay_imageview.getLayoutParams().width = overlay_image_dimension;
+        pdf_overlay_imageview.getLayoutParams().height = overlay_image_dimension;
 
         filenametextview.setTextSize(first_line_font_size);
         filesubfilecounttextview.setTextSize(second_line_font_size);
@@ -98,7 +103,6 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
         } else {
             itemWidth = Global.SCREEN_WIDTH;
         }
-
         select_indicator_offset_linear = Global.TEN_DP * 4; //around 40 dp which is about 1 & half of select indicator icon;
     }
 
@@ -110,7 +114,8 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
 
         usedWidth = Global.FOURTEEN_DP;
         measureChildWithMargins(fileimageview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
-        measureChildWithMargins(overlay_fileimageview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
+        measureChildWithMargins(play_overlay_imageview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
+        measureChildWithMargins(pdf_overlay_imageview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
 
         usedWidth += imageview_dimension;
         iconheight = imageview_dimension;
@@ -151,12 +156,15 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
         v.layout(x, d, x + fileMeasuredWidth, d + fileMeasuredHeight);
 
         // Then lay out the overlay_fileimageview at the bottom-right corner of fileimageview
-        v = overlay_fileimageview;
+        v = play_overlay_imageview;
         int overlayMeasuredWidth = v.getMeasuredWidth();
         int overlayMeasuredHeight = v.getMeasuredHeight();
 
         int overlayX = x + fileMeasuredWidth - overlayMeasuredWidth;
         int overlayY = d + fileMeasuredHeight - overlayMeasuredHeight;
+        v.layout(overlayX, overlayY, overlayX + overlayMeasuredWidth, overlayY + overlayMeasuredHeight);
+
+        v = pdf_overlay_imageview;
         v.layout(overlayX, overlayY, overlayX + overlayMeasuredWidth, overlayY + overlayMeasuredHeight);
 
         x += fileMeasuredWidth + Global.TEN_DP;
@@ -231,7 +239,8 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
     }
 
     public void setData(FilePOJO filePOJO, boolean item_selected) {
-        overlay_fileimageview.setVisibility(filePOJO.getOverlayVisibility());
+        play_overlay_imageview.setVisibility(filePOJO.getPlayOverlayVisibility());
+        pdf_overlay_imageview.setVisibility(filePOJO.getPdfOverlayVisibility());
         fileimageview.setAlpha(filePOJO.getAlfa());
         file_select_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
         if (filePOJO.getType() == 0) {

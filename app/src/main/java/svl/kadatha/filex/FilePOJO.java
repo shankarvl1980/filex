@@ -28,7 +28,8 @@ public class FilePOJO implements Parcelable {
     private int type;
     private String ext;
     private float alfa;
-    private int overlay_visible;
+    private int play_overlay_visible;
+    private int pdf_overlay_visible;
     private int totalFiles;
     private long totalSizeLong;
     private String totalSize;
@@ -38,7 +39,7 @@ public class FilePOJO implements Parcelable {
     private boolean whetherExternal;
 
     FilePOJO(FileObjectType fileObjectType, String n, String p_n, String p, boolean dir, long dl, String d, long sl, String s, int t,
-             String ext, float a, int o, int tf, long tsl, String ts, double tspd, String tsp, String checksum) {
+             String ext, float a, int play_o, int pdf_o,int tf, long tsl, String ts, double tspd, String tsp, String checksum) {
         this.fileObjectType = fileObjectType;
         this.name = n;
         this.lower_name = n.toLowerCase();
@@ -52,7 +53,8 @@ public class FilePOJO implements Parcelable {
         this.type = t;
         this.ext = ext;
         this.alfa = a;
-        this.overlay_visible = o;
+        this.play_overlay_visible = play_o;
+        this.pdf_overlay_visible= pdf_o;
         this.totalFiles = tf;
         this.totalSizeLong = tsl;
         this.totalSize = ts;
@@ -80,7 +82,8 @@ public class FilePOJO implements Parcelable {
         type = in.readInt();
         ext = in.readString();
         alfa = in.readFloat();
-        overlay_visible = in.readInt();
+        play_overlay_visible = in.readInt();
+        pdf_overlay_visible = in.readInt();
         totalFiles = in.readInt();
         totalSizeLong = in.readLong();
         totalSize = in.readString();
@@ -105,7 +108,8 @@ public class FilePOJO implements Parcelable {
         dest.writeInt(type);
         dest.writeString(ext);
         dest.writeFloat(alfa);
-        dest.writeInt(overlay_visible);
+        dest.writeInt(play_overlay_visible);
+        dest.writeInt(pdf_overlay_visible);
         dest.writeInt(totalFiles);
         dest.writeLong(totalSizeLong);
         dest.writeString(totalSize);
@@ -217,12 +221,20 @@ public class FilePOJO implements Parcelable {
         this.alfa = alfa;
     }
 
-    public int getOverlayVisibility() {
-        return this.overlay_visible;
+    public int getPlayOverlayVisibility() {
+        return this.play_overlay_visible;
     }
 
-    public void setOverlayVisibility(int overlay_visible) {
-        this.overlay_visible = overlay_visible;
+    public int getPdfOverlayVisibility() {
+        return this.pdf_overlay_visible;
+    }
+
+    public void setPlayOverlayVisibility(int play_overlay_visible) {
+        this.play_overlay_visible = play_overlay_visible;
+    }
+
+    public void setPdfOverlayVisibility(int pdf_overlay_visible) {
+        this.pdf_overlay_visible = pdf_overlay_visible;
     }
 
     public int getTotalFiles() {

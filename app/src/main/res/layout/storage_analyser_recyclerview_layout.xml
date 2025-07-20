@@ -11,7 +11,14 @@
         android:scaleType="centerCrop" />
 
     <ImageView
-        android:id="@+id/analyser_overlay_image_file"
+        android:id="@+id/analyser_play_overlay_image_file"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@null"
+        android:src="@drawable/play_overlay_icon"
+        android:visibility="invisible" />
+    <ImageView
+        android:id="@+id/analyser_pdf_overlay_image_file"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:background="@null"

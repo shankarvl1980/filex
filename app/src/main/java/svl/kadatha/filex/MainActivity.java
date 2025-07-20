@@ -480,7 +480,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 if (!f.exists()) {
                     Global.print(context, getString(R.string.directory_does_not_exist));
                 } else {
-                    drawer_storage_file_pojo_selected = new FilePOJO(FileObjectType.FILE_TYPE, f.getName(), null, f.getAbsolutePath(), true, 0L, null, 0L, null, R.drawable.folder_icon, null, 0, 0, 0, 0L, null, 0, null, null);
+                    drawer_storage_file_pojo_selected = new FilePOJO(FileObjectType.FILE_TYPE, f.getName(), null, f.getAbsolutePath(), true, 0L, null, 0L, null, R.drawable.folder_icon, null, 0,0 ,0, 0, 0L, null, 0, null, null);
                 }
             }
         });
@@ -2206,16 +2206,17 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         class ViewHolder extends RecyclerView.ViewHolder {
             final View v;
             final ImageView imageview;
-            final ImageView overlay_imageview;
+            final ImageView play_overlay_imageview,pdf_overlay_imageview;
             final TextView textView_library;
 
             ViewHolder(View v) {
                 super(v);
                 this.v = v;
                 imageview = v.findViewById(R.id.image_storage_dir);
-                overlay_imageview = v.findViewById(R.id.overlay_image_storage_dir);
+                play_overlay_imageview = v.findViewById(R.id.play_overlay_image_file);
+                pdf_overlay_imageview = v.findViewById(R.id.pdf_overlay_image_file);
                 textView_library = v.findViewById(R.id.text_storage_dir_name);
-                overlay_imageview.setVisibility(View.GONE);
+                play_overlay_imageview.setVisibility(View.GONE);
                 final int[] position = new int[1];
                 v.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View p) {
@@ -2244,7 +2245,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                                 name = "APK";
                                 break;
                         }
-                        drawer_storage_file_pojo_selected = new FilePOJO(FileObjectType.SEARCH_LIBRARY_TYPE, name, null, name, false, 0L, null, 0L, null, R.drawable.folder_icon, null, 0, 0, 0, 0L, null, 0, null, null);
+                        drawer_storage_file_pojo_selected = new FilePOJO(FileObjectType.SEARCH_LIBRARY_TYPE, name, null, name, false, 0L, null, 0L, null, R.drawable.folder_icon, null, 0,0, 0, 0, 0L, null, 0, null, null);
                         drawerLayout.closeDrawer(drawer);
                     }
                 });
@@ -2281,16 +2282,17 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         class ViewHolder extends RecyclerView.ViewHolder {
             final View v;
             final ImageView imageview;
-            final ImageView overlay_imageview;
+            final ImageView play_overlay_imageview,pdf_overlay_imageview;
             final TextView textView_network;
 
             ViewHolder(View v) {
                 super(v);
                 this.v = v;
                 imageview = v.findViewById(R.id.image_storage_dir);
-                overlay_imageview = v.findViewById(R.id.overlay_image_storage_dir);
+                play_overlay_imageview = v.findViewById(R.id.play_overlay_image_file);
+                pdf_overlay_imageview = v.findViewById(R.id.pdf_overlay_image_file);
                 textView_network = v.findViewById(R.id.text_storage_dir_name);
-                overlay_imageview.setVisibility(View.GONE);
+                play_overlay_imageview.setVisibility(View.GONE);
                 final int[] position = new int[1];
                 v.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View p) {
@@ -2355,16 +2357,17 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         class ViewHolder extends RecyclerView.ViewHolder {
             final View v;
             final ImageView imageview;
-            final ImageView overlay_imageview;
+            final ImageView play_overlay_imageview,pdf_overlay_imageview;
             final TextView textView_network;
 
             ViewHolder(View v) {
                 super(v);
                 this.v = v;
                 imageview = v.findViewById(R.id.image_storage_dir);
-                overlay_imageview = v.findViewById(R.id.overlay_image_storage_dir);
+                play_overlay_imageview = v.findViewById(R.id.play_overlay_image_file);
+                pdf_overlay_imageview = v.findViewById(R.id.pdf_overlay_image_file);
                 textView_network = v.findViewById(R.id.text_storage_dir_name);
-                overlay_imageview.setVisibility(View.GONE);
+                play_overlay_imageview.setVisibility(View.GONE);
                 final int[] position = new int[1];
                 v.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View p) {

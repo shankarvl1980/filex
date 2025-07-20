@@ -45,6 +45,7 @@ public class MakeCloudFilePOJOUtil {
                     null,           // file_ext
                     Global.ENABLE_ALFA,
                     View.INVISIBLE,
+                    View.INVISIBLE,
                     0,
                     0L,
                     null,
@@ -100,7 +101,8 @@ public class MakeCloudFilePOJOUtil {
             long sizeLong = 0L;
             String si = "";
             String file_ext = "";
-            int overlay_visible = View.INVISIBLE;
+            int play_overlay_visible = View.INVISIBLE;
+            int pdf_overlay_visible = View.INVISIBLE;
             float alfa = Global.ENABLE_ALFA;
             String package_name = null;
             int type = R.drawable.folder_icon;
@@ -112,8 +114,12 @@ public class MakeCloudFilePOJOUtil {
                     file_ext = name.substring(idx + 1);
                     type = GET_FILE_TYPE(false, file_ext);
                     if (type == -2) {
-                        overlay_visible = View.VISIBLE;
-                    } else if (extract_icon && type == 0) {
+                        play_overlay_visible = View.VISIBLE;
+                    }
+                    else if (type == -3) {
+                        pdf_overlay_visible = View.VISIBLE;
+                    }
+                    else if (extract_icon && type == 0) {
                         package_name = EXTRACT_ICON(file_path, file_ext);
                     }
                 }
@@ -138,7 +144,8 @@ public class MakeCloudFilePOJOUtil {
                     type,
                     file_ext,
                     alfa,
-                    overlay_visible,
+                    play_overlay_visible,
+                    pdf_overlay_visible,
                     0,
                     0L,
                     null,
@@ -158,7 +165,8 @@ public class MakeCloudFilePOJOUtil {
         long sizeLong = 0L;
         String si = "";
         String file_ext = "";
-        int overlay_visible = View.INVISIBLE;
+        int play_overlay_visible = View.INVISIBLE;
+        int pdf_overlay_visible = View.INVISIBLE;
         float alfa = Global.ENABLE_ALFA;
         String package_name = null;
         int type = R.drawable.folder_icon;
@@ -171,8 +179,12 @@ public class MakeCloudFilePOJOUtil {
                 file_ext = name.substring(idx + 1);
                 type = GET_FILE_TYPE(false, file_ext);
                 if (type == -2) {
-                    overlay_visible = View.VISIBLE;
-                } else if (extract_icon && type == 0) {
+                    play_overlay_visible = View.VISIBLE;
+                }
+                else if (type == -3) {
+                    pdf_overlay_visible = View.VISIBLE;
+                }
+                else if (extract_icon && type == 0) {
                     package_name = EXTRACT_ICON(file_path, file_ext);
                 }
             }
@@ -191,7 +203,7 @@ public class MakeCloudFilePOJOUtil {
             // si = "(" + count + ")";
         }
 
-        return new FilePOJO(fileObjectType, name, package_name, file_path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, overlay_visible, 0, 0L, null, 0, null, null);
+        return new FilePOJO(fileObjectType, name, package_name, file_path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible,pdf_overlay_visible, 0, 0L, null, 0, null, null);
     }
 
     static class DriveFileMetadata {
@@ -216,7 +228,8 @@ public class MakeCloudFilePOJOUtil {
         long sizeLong = 0L;
         String si = "";
         String file_ext = "";
-        int overlay_visible = View.INVISIBLE;
+        int play_overlay_visible = View.INVISIBLE;
+        int pdf_overlay_visible = View.INVISIBLE;
         float alfa = Global.ENABLE_ALFA;
         String package_name = null;
         int type = R.drawable.folder_icon;
@@ -229,8 +242,12 @@ public class MakeCloudFilePOJOUtil {
                 file_ext = name.substring(idx + 1);
                 type = GET_FILE_TYPE(false, file_ext);
                 if (type == -2) {
-                    overlay_visible = View.VISIBLE;
-                } else if (extract_icon && type == 0) {
+                    play_overlay_visible = View.VISIBLE;
+                }
+                else if (type == -3) {
+                    pdf_overlay_visible = View.VISIBLE;
+                }
+                else if (extract_icon && type == 0) {
                     package_name = EXTRACT_ICON(file_path, file_ext);
                 }
             }
@@ -278,7 +295,8 @@ public class MakeCloudFilePOJOUtil {
                 type,
                 file_ext,
                 alfa,
-                overlay_visible,
+                play_overlay_visible,
+                pdf_overlay_visible,
                 0,     // Assume no special flags
                 0L,    // Assume no special date
                 null,  // No special associated object

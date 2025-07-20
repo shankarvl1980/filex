@@ -283,7 +283,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
                     p1.textView_recent_dir.setText(DetailFragment.SMB_FILE_PREFIX + filePOJO.getName() + space);
                 }
             } else {
-                RecyclerViewLayoutList.setIcon(context, filePOJO, p1.fileimageview, p1.overlay_fileimageview);
+                RecyclerViewLayoutList.setIcon(context, filePOJO, p1.fileimageview, p1.play_overlay_imageview,p1.pdf_overlay_imageview);
                 if (filePOJO.getFileObjectType() == FileObjectType.USB_TYPE) {
                     p1.textView_recent_dir.setText(DetailFragment.USB_FILE_PREFIX + filePOJO.getPath());
                 } else if (filePOJO.getFileObjectType() == FileObjectType.FTP_TYPE) {
@@ -313,7 +313,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
         class ViewHolder extends RecyclerView.ViewHolder {
             final View view;
             final ImageView fileimageview;
-            final ImageView overlay_fileimageview;
+            final ImageView play_overlay_imageview,pdf_overlay_imageview;
             final TextView textView_recent_dir;
             int pos;
 
@@ -321,7 +321,8 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
                 super(view);
                 this.view = view;
                 fileimageview = view.findViewById(R.id.image_storage_dir);
-                overlay_fileimageview = view.findViewById(R.id.overlay_image_storage_dir);
+                play_overlay_imageview = view.findViewById(R.id.play_overlay_image_file);
+                pdf_overlay_imageview = view.findViewById(R.id.pdf_overlay_image_file);
                 textView_recent_dir = view.findViewById(R.id.text_storage_dir_name);
 
                 this.view.setOnClickListener(new View.OnClickListener() {
