@@ -2213,8 +2213,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 super(v);
                 this.v = v;
                 imageview = v.findViewById(R.id.image_storage_dir);
-                play_overlay_imageview = v.findViewById(R.id.play_overlay_image_file);
-                pdf_overlay_imageview = v.findViewById(R.id.pdf_overlay_image_file);
+                play_overlay_imageview = v.findViewById(R.id.play_overlay_image_storage_dir);
+                pdf_overlay_imageview = v.findViewById(R.id.pdf_overlay_image_storage_dir);
                 textView_library = v.findViewById(R.id.text_storage_dir_name);
                 play_overlay_imageview.setVisibility(View.GONE);
                 final int[] position = new int[1];
@@ -2289,8 +2289,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 super(v);
                 this.v = v;
                 imageview = v.findViewById(R.id.image_storage_dir);
-                play_overlay_imageview = v.findViewById(R.id.play_overlay_image_file);
-                pdf_overlay_imageview = v.findViewById(R.id.pdf_overlay_image_file);
+                play_overlay_imageview = v.findViewById(R.id.play_overlay_image_storage_dir);
+                pdf_overlay_imageview = v.findViewById(R.id.pdf_overlay_image_storage_dir);
                 textView_network = v.findViewById(R.id.text_storage_dir_name);
                 play_overlay_imageview.setVisibility(View.GONE);
                 final int[] position = new int[1];
@@ -2364,8 +2364,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 super(v);
                 this.v = v;
                 imageview = v.findViewById(R.id.image_storage_dir);
-                play_overlay_imageview = v.findViewById(R.id.play_overlay_image_file);
-                pdf_overlay_imageview = v.findViewById(R.id.pdf_overlay_image_file);
+                play_overlay_imageview = v.findViewById(R.id.play_overlay_image_storage_dir);
+                pdf_overlay_imageview = v.findViewById(R.id.pdf_overlay_image_storage_dir);
                 textView_network = v.findViewById(R.id.text_storage_dir_name);
                 play_overlay_imageview.setVisibility(View.GONE);
                 final int[] position = new int[1];

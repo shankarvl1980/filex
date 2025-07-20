@@ -289,8 +289,8 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
                 super(view);
                 this.view = view;
                 fileimageview = view.findViewById(R.id.image_storage_dir);
-                play_overlay_imageview = view.findViewById(R.id.play_overlay_image_file);
-                pdf_overlay_imageview = view.findViewById(R.id.pdf_overlay_image_file);
+                play_overlay_imageview = view.findViewById(R.id.play_overlay_image_storage_dir);
+                pdf_overlay_imageview = view.findViewById(R.id.pdf_overlay_image_storage_dir);
                 textView_recent_dir = view.findViewById(R.id.text_storage_dir_name);
 
                 this.view.setOnClickListener(new View.OnClickListener() {
