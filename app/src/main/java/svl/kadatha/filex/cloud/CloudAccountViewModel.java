@@ -109,7 +109,6 @@ public class CloudAccountViewModel extends AndroidViewModel {
         executorService.submit(new Runnable() {
             @Override
             public void run() {
-                ;
                 String type = cloudAccountPOJO.type;
                 if (type.equals(FileObjectType.GOOGLE_DRIVE_TYPE.toString())) {
                     CloudAccountViewModel.GOOGLE_DRIVE_ACCESS_TOKEN = cloudAccountPOJO.accessToken;

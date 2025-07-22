@@ -19,6 +19,7 @@ public class ThumbnailBuilderFactory implements ModelLoaderFactory<String, Bitma
      * {@link Context} that pass to {@link ThumbnailBuilder} class
      */
     private final Context mContext;
+
     public ThumbnailBuilderFactory(Context mContext) {
         this.mContext = mContext;
     }

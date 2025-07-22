@@ -115,11 +115,9 @@ public class MakeCloudFilePOJOUtil {
                     type = GET_FILE_TYPE(false, file_ext);
                     if (type == -2) {
                         play_overlay_visible = View.VISIBLE;
-                    }
-                    else if (type == -3) {
+                    } else if (type == -3) {
                         pdf_overlay_visible = View.VISIBLE;
-                    }
-                    else if (extract_icon && type == 0) {
+                    } else if (extract_icon && type == 0) {
                         package_name = EXTRACT_ICON(file_path, file_ext);
                     }
                 }
@@ -180,11 +178,9 @@ public class MakeCloudFilePOJOUtil {
                 type = GET_FILE_TYPE(false, file_ext);
                 if (type == -2) {
                     play_overlay_visible = View.VISIBLE;
-                }
-                else if (type == -3) {
+                } else if (type == -3) {
                     pdf_overlay_visible = View.VISIBLE;
-                }
-                else if (extract_icon && type == 0) {
+                } else if (extract_icon && type == 0) {
                     package_name = EXTRACT_ICON(file_path, file_ext);
                 }
             }
@@ -203,7 +199,7 @@ public class MakeCloudFilePOJOUtil {
             // si = "(" + count + ")";
         }
 
-        return new FilePOJO(fileObjectType, name, package_name, file_path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible,pdf_overlay_visible, 0, 0L, null, 0, null, null);
+        return new FilePOJO(fileObjectType, name, package_name, file_path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible, 0, 0L, null, 0, null, null);
     }
 
     static class DriveFileMetadata {
@@ -243,11 +239,9 @@ public class MakeCloudFilePOJOUtil {
                 type = GET_FILE_TYPE(false, file_ext);
                 if (type == -2) {
                     play_overlay_visible = View.VISIBLE;
-                }
-                else if (type == -3) {
+                } else if (type == -3) {
                     pdf_overlay_visible = View.VISIBLE;
-                }
-                else if (extract_icon && type == 0) {
+                } else if (extract_icon && type == 0) {
                     package_name = EXTRACT_ICON(file_path, file_ext);
                 }
             }

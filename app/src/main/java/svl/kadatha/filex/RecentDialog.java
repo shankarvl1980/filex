@@ -283,7 +283,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
                     p1.textView_recent_dir.setText(DetailFragment.SMB_FILE_PREFIX + filePOJO.getName() + space);
                 }
             } else {
-                RecyclerViewLayoutList.setIcon(context, filePOJO, p1.fileimageview, p1.play_overlay_imageview,p1.pdf_overlay_imageview);
+                RecyclerViewLayoutList.setIcon(context, filePOJO, p1.fileimageview, p1.play_overlay_imageview, p1.pdf_overlay_imageview);
                 if (filePOJO.getFileObjectType() == FileObjectType.USB_TYPE) {
                     p1.textView_recent_dir.setText(DetailFragment.USB_FILE_PREFIX + filePOJO.getPath());
                 } else if (filePOJO.getFileObjectType() == FileObjectType.FTP_TYPE) {
@@ -313,7 +313,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
         class ViewHolder extends RecyclerView.ViewHolder {
             final View view;
             final ImageView fileimageview;
-            final ImageView play_overlay_imageview,pdf_overlay_imageview;
+            final ImageView play_overlay_imageview, pdf_overlay_imageview;
             final TextView textView_recent_dir;
             int pos;
 

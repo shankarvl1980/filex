@@ -43,6 +43,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
         if (Global.WHETHER_TO_CLEAR_CACHE_TODAY) {
             Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(application.getCacheDir());
+            Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.PDF_CACHE_DIR);
             if (Global.SIZE_APK_ICON_LIST > 800) {
                 Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.APK_ICON_DIR);
             }

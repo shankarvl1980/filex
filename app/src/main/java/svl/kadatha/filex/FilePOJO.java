@@ -39,7 +39,7 @@ public class FilePOJO implements Parcelable {
     private boolean whetherExternal;
 
     FilePOJO(FileObjectType fileObjectType, String n, String p_n, String p, boolean dir, long dl, String d, long sl, String s, int t,
-             String ext, float a, int play_o, int pdf_o,int tf, long tsl, String ts, double tspd, String tsp, String checksum) {
+             String ext, float a, int play_o, int pdf_o, int tf, long tsl, String ts, double tspd, String tsp, String checksum) {
         this.fileObjectType = fileObjectType;
         this.name = n;
         this.lower_name = n.toLowerCase();
@@ -54,7 +54,7 @@ public class FilePOJO implements Parcelable {
         this.ext = ext;
         this.alfa = a;
         this.play_overlay_visible = play_o;
-        this.pdf_overlay_visible= pdf_o;
+        this.pdf_overlay_visible = pdf_o;
         this.totalFiles = tf;
         this.totalSizeLong = tsl;
         this.totalSize = ts;

@@ -20,7 +20,7 @@ import java.io.File;
 public class FileSelectorRecyclerViewLayoutGrid extends RecyclerViewLayout {
     private final Context context;
     public int itemWidth, itemHeight;
-    private ImageView fileimageview, play_overlay_imageview,pdf_overlay_imageview, file_select_indicator;
+    private ImageView fileimageview, play_overlay_imageview, pdf_overlay_imageview, file_select_indicator;
     private TextView filenametextview, filesubfilecounttextview, filepermissionstextView, filemoddatetextview, filepathtextview;
     private int imageview_dimension;
 
@@ -31,15 +31,15 @@ public class FileSelectorRecyclerViewLayoutGrid extends RecyclerViewLayout {
     }
 
 
-    public static void setIcon(Context context, FilePOJO filePOJO, ImageView fileimageview, ImageView play_overlay_imageview,ImageView pdf_overlay_imageview) {
+    public static void setIcon(Context context, FilePOJO filePOJO, ImageView fileimageview, ImageView play_overlay_imageview, ImageView pdf_overlay_imageview) {
         play_overlay_imageview.setVisibility(filePOJO.getPlayOverlayVisibility());
         pdf_overlay_imageview.setVisibility(filePOJO.getPdfOverlayVisibility());
         if (filePOJO.getType() == 0) {
             GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath() + File.separator + filePOJO.getPackage_name() + ".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(fileimageview);
         } else if (filePOJO.getType() < 0) {
-            if(filePOJO.getType()==-3){
+            if (filePOJO.getType() == -3) {
                 GlideApp.with(context).load(filePOJO.getPath()).signature(new ObjectKey(filePOJO.getDateLong())).placeholder(R.drawable.pdf_file_icon).error(R.drawable.pdf_file_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(fileimageview);
-            } else{
+            } else {
                 GlideApp.with(context).load(filePOJO.getPath()).signature(new ObjectKey(filePOJO.getDateLong())).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(fileimageview);
             }
         } else {
@@ -228,9 +228,9 @@ public class FileSelectorRecyclerViewLayoutGrid extends RecyclerViewLayout {
         if (filePOJO.getType() == 0) {
             GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath() + File.separator + filePOJO.getPackage_name() + ".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(fileimageview);
         } else if (filePOJO.getType() < 0) {
-            if(filePOJO.getType()==-3){
+            if (filePOJO.getType() == -3) {
                 GlideApp.with(context).load(filePOJO.getPath()).signature(new ObjectKey(filePOJO.getDateLong())).placeholder(R.drawable.pdf_file_icon).error(R.drawable.pdf_file_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(fileimageview);
-            } else{
+            } else {
                 GlideApp.with(context).load(filePOJO.getPath()).signature(new ObjectKey(filePOJO.getDateLong())).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(fileimageview);
             }
         } else {

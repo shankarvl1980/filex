@@ -243,24 +243,31 @@
         <activity
             android:name=".cloud.CloudAuthActivity"
             android:exported="true"
-            android:label="@string/cloud_accounts" >
+            android:label="@string/cloud_accounts">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="yandex-your_client_id"
+
+                <data
+                    android:scheme="yandex-your_client_id"
                     android:host="callback" />
             </intent-filter>
         </activity>
 
-        <activity android:name="net.openid.appauth.AuthorizationManagementActivity"
+        <activity
+            android:name="net.openid.appauth.AuthorizationManagementActivity"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="svl.kadatha.filex"
-                    android:host="oauth2redirect"/>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="svl.kadatha.filex"
+                    android:host="oauth2redirect" />
             </intent-filter>
         </activity>
 

@@ -57,7 +57,7 @@ public class CloudAuthActivity extends BaseActivity {
     private FileObjectType fileObjectType;
     private Toolbar bottom_toolbar;
     private RecyclerView cloud_account_list_recyclerview;
-    private List<CloudAccountPOJO> cloudAccountPOJO_selected_for_delete = new ArrayList<>();
+    private final List<CloudAccountPOJO> cloudAccountPOJO_selected_for_delete = new ArrayList<>();
     private boolean toolbar_visible = true;
     private int scroll_distance;
     private int num_all_network_account;

@@ -10,7 +10,6 @@ import android.os.ParcelFileDescriptor;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.Options;
@@ -20,6 +19,8 @@ import com.bumptech.glide.signature.ObjectKey;
 
 import java.io.File;
 import java.io.FileOutputStream;
+
+import svl.kadatha.filex.Global;
 
 /**
  * 1st step
@@ -61,8 +62,8 @@ public class ThumbnailBuilder implements ModelLoader<String, Bitmap> {
         @Override
         public void loadData(@NonNull Priority priority, @NonNull DataCallback<? super Bitmap> callback) {
             try {
-                File photoCacheDir = Glide.getPhotoCacheDir(mContext.getApplicationContext());
-                File thumbnail = new File(photoCacheDir, Uri.parse(input).getLastPathSegment() + ".png");
+
+                File thumbnail = new File(Global.PDF_CACHE_DIR, Uri.parse(input).getLastPathSegment() + ".png");
                 // check if file is already exist then there is no need to re create it
                 if (!thumbnail.exists()) {
                     File file = new File(input);

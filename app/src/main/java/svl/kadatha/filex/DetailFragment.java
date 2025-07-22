@@ -43,7 +43,6 @@ import java.util.concurrent.ExecutorService;
 import me.jahnen.libaums.core.fs.UsbFile;
 import svl.kadatha.filex.usb.ReadAccess;
 import svl.kadatha.filex.usb.UsbFileRootSingleton;
-import timber.log.Timber;
 
 public class DetailFragment extends Fragment implements FileModifyObserver.FileObserverListener {
     public static final String USB_FILE_PREFIX = "usb:";

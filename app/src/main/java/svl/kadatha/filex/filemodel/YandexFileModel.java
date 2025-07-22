@@ -27,6 +27,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import svl.kadatha.filex.MakeCloudFilePOJOUtil;
+import timber.log.Timber;
 
 public class YandexFileModel implements FileModel {
     private static final String TAG = "YandexFileModel";
@@ -78,7 +79,7 @@ public class YandexFileModel implements FileModel {
             if (response.isSuccessful() && response.body() != null) {
                 return gson.fromJson(response.body().charStream(), MakeCloudFilePOJOUtil.YandexResource.class);
             } else {
-                Log.e(TAG, "Failed to fetch metadata: " + response.code() + " " + response.message());
+                Timber.tag(TAG).e("Failed to fetch metadata: " + response.code() + " " + response.message());
                 return null;
             }
         }
@@ -156,7 +157,7 @@ public class YandexFileModel implements FileModel {
                 metadata = fetchMetadata(newPath);
                 return true;
             } else {
-                Log.e(TAG, "Rename failed: " + response.code() + " " + response.message());
+                Timber.tag(TAG).e("Rename failed: " + response.code() + " " + response.message());
                 return false;
             }
         } catch (IOException e) {
@@ -272,7 +273,7 @@ public class YandexFileModel implements FileModel {
                             Request putReq = new Request.Builder().url(uplResp.href).put(uploadBody).build();
                             try (Response putRes = client.newCall(putReq).execute()) {
                                 if (!putRes.isSuccessful()) {
-                                    Log.e(TAG, "Upload failed: " + putRes.code() + " " + putRes.message());
+                                    Timber.tag(TAG).e("Upload failed: " + putRes.code() + " " + putRes.message());
                                 }
                             }
 
@@ -322,7 +323,7 @@ public class YandexFileModel implements FileModel {
                     return fileModels.toArray(new FileModel[0]);
                 }
             } else {
-                Log.e(TAG, "List directory failed: " + (response != null ? response.code() : "no response"));
+                Timber.tag(TAG).e("List directory failed: " + (response != null ? response.code() : "no response"));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -356,7 +357,7 @@ public class YandexFileModel implements FileModel {
 
         try (Response uRes = client.newCall(uReq).execute()) {
             if (!uRes.isSuccessful() || uRes.body() == null) {
-                Log.e(TAG, "Get upload URL failed: " + (uRes != null ? uRes.code() : "no response"));
+                Timber.tag(TAG).e("Get upload URL failed: " + (uRes != null ? uRes.code() : "no response"));
                 return false;
             }
             MakeCloudFilePOJOUtil.YandexUploadResponse uplResp = gson.fromJson(uRes.body().charStream(), MakeCloudFilePOJOUtil.YandexUploadResponse.class);

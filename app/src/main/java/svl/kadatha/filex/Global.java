@@ -155,6 +155,7 @@ public class Global {
     public static File SMB_CACHE_DIR;
     public static File ROOT_CACHE_DIR;
     public static File CLOUD_CACHE_DIR;
+    public static File PDF_CACHE_DIR;
     public static File APK_ICON_DIR;
     public static int ORIENTATION;
     public static int SCREEN_WIDTH, SCREEN_HEIGHT, DIALOG_WIDTH, DIALOG_HEIGHT, WIDTH;
@@ -392,6 +393,7 @@ public class Global {
         ROOT_CACHE_DIR = context.getExternalFilesDir(".root_cache");
         CLOUD_CACHE_DIR = context.getExternalFilesDir(".cloud_cache");
         APK_ICON_DIR = context.getExternalFilesDir(".apk_icons");
+        PDF_CACHE_DIR = context.getExternalFilesDir(".pdf_cache_dir");
         APK_ICON_PACKAGE_NAME_LIST.addAll(Arrays.asList(APK_ICON_DIR.list()));
         SIZE_APK_ICON_LIST = APK_ICON_PACKAGE_NAME_LIST.size();
         ARCHIVE_CACHE_DIR_LENGTH = ARCHIVE_EXTRACT_DIR.getAbsolutePath().length();

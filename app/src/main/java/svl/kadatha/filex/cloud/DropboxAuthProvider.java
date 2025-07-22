@@ -12,7 +12,7 @@ public class DropboxAuthProvider implements CloudAuthProvider {
     private final Activity activity;
     private AuthCallback authCallback;
     private CloudAccountPOJO cloudAccount;
-    private String app_key = "igtdjo14bfrwsck";
+    private final String app_key = "igtdjo14bfrwsck";
 
     public DropboxAuthProvider(Activity activity) {
         this.activity = activity;
