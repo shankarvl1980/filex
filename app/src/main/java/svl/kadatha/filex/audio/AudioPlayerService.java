@@ -266,7 +266,6 @@ public class AudioPlayerService extends Service {
             handler = new Handler(getLooper(), new Handler.Callback() {
                 @Override
                 public boolean handleMessage(@NonNull Message message) {
-
                     switch (message.what) {
                         case INIT_MEDIA_PLAYER:
                             Bundle bundle = message.getData();
@@ -306,11 +305,9 @@ public class AudioPlayerService extends Service {
                             break;
 
                     }
-
                     return true;
                 }
             });
-
         }
 
         private void initMediaPlayer(final Uri data, AudioPlayerService audioPlayerService) {
@@ -339,11 +336,10 @@ public class AudioPlayerService extends Service {
 
             try {
                 mp.setDataSource(audioPlayerService, data);
-            } catch (IOException e) {
+                mp.prepareAsync();
+            } catch (IOException | IllegalStateException | IllegalArgumentException e) {
                 stop_();
-                return;
             }
-            mp.prepareAsync();
         }
 
         private void updatePlaybackState() {
@@ -422,7 +418,6 @@ public class AudioPlayerService extends Service {
 
             stopForeground(true);
             stopSelf();
-
         }
 
         private void goto_next() {

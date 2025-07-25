@@ -43,6 +43,7 @@ import java.util.concurrent.ExecutorService;
 import me.jahnen.libaums.core.fs.UsbFile;
 import svl.kadatha.filex.usb.ReadAccess;
 import svl.kadatha.filex.usb.UsbFileRootSingleton;
+import timber.log.Timber;
 
 public class DetailFragment extends Fragment implements FileModifyObserver.FileObserverListener {
     public static final String USB_FILE_PREFIX = "usb:";
@@ -611,6 +612,16 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
         if (adapter != null) {
             modification_observed = false;
             local_activity_delete = false;
+            RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
+            viewModel.filePOJOS = repositoryClass.hashmap_file_pojo.get(fileObjectType + fileclickselected);
+            viewModel.filePOJOS_filtered = repositoryClass.hashmap_file_pojo_filtered.get(fileObjectType + fileclickselected);
+            if (MainActivity.SHOW_HIDDEN_FILE) {
+                filePOJO_list = viewModel.filePOJOS;
+                totalFilePOJO_list = viewModel.filePOJOS;
+            } else {
+                filePOJO_list = viewModel.filePOJOS_filtered;
+                totalFilePOJO_list = viewModel.filePOJOS_filtered;
+            }
             totalFilePOJO_list_Size = totalFilePOJO_list.size();
             file_list_size = filePOJO_list.size();
             if (detailFragmentListener != null) {
