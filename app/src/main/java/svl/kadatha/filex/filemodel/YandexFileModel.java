@@ -1,7 +1,5 @@
 package svl.kadatha.filex.filemodel;
 
-import android.util.Log;
-
 import com.google.gson.Gson;
 
 import java.io.ByteArrayInputStream;
