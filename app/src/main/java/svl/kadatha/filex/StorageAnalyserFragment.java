@@ -330,9 +330,9 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
             modification_observed = false;
             local_activity_delete = false;
             RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
-            List<FilePOJO>fjos = repositoryClass.hashmap_file_pojo.get(fileObjectType + fileclickselected);
-            if(fjos!=null){
-                viewModel.filePOJOS=fjos;
+            List<FilePOJO> fjos = repositoryClass.hashmap_file_pojo.get(fileObjectType + fileclickselected);
+            if (fjos != null) {
+                viewModel.filePOJOS = fjos;
                 viewModel.filePOJOS_filtered = repositoryClass.hashmap_file_pojo_filtered.get(fileObjectType + fileclickselected);
             }
             if (MainActivity.SHOW_HIDDEN_FILE) {

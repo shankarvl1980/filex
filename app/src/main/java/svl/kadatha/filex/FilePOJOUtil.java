@@ -577,7 +577,8 @@ public class FilePOJOUtil {
                         // remove the directory itself if present
                         try {
                             resources.remove(0);
-                        } catch (Exception ignore) {}
+                        } catch (Exception ignore) {
+                        }
                     }
                     for (DavResource resource : resources) {
                         try {
@@ -750,7 +751,6 @@ public class FilePOJOUtil {
     }
 
 
-
     public static void FILL_FILE_POJO1(List<FilePOJO> filePOJOS, List<FilePOJO> filePOJOS_filtered, FileObjectType fileObjectType,
                                        String fileclickselected, UsbFile usbFile, boolean archive_view) {
         filePOJOS.clear();
@@ -916,7 +916,10 @@ public class FilePOJOUtil {
                     String url = webDavClientRepository.buildUrl(fullPath);
                     List<DavResource> resources = sardine.list(url);
                     if (!resources.isEmpty()) {
-                        try { resources.remove(0); } catch (Exception ignore) {}
+                        try {
+                            resources.remove(0);
+                        } catch (Exception ignore) {
+                        }
                     }
                     for (DavResource resource : resources) {
                         try {
@@ -1167,8 +1170,6 @@ public class FilePOJOUtil {
 
 
 }
-
-
 
 
 //public static void FILL_FILE_POJO(List<FilePOJO> filePOJOS, List<FilePOJO> filePOJOS_filtered, FileObjectType fileObjectType,

@@ -613,8 +613,8 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
             local_activity_delete = false;
             RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
             List<FilePOJO> fjos = repositoryClass.hashmap_file_pojo.get(fileObjectType + fileclickselected);
-            if(fjos!=null){
-                viewModel.filePOJOS=fjos;
+            if (fjos != null) {
+                viewModel.filePOJOS = fjos;
                 viewModel.filePOJOS_filtered = repositoryClass.hashmap_file_pojo_filtered.get(fileObjectType + fileclickselected);
             }
 

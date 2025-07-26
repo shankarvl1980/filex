@@ -61,7 +61,9 @@ public class VideoViewActivity extends BaseActivity {
         });
     }
 
-    /** Hides status bar, keeps nav bar visible */
+    /**
+     * Hides status bar, keeps nav bar visible
+     */
     private void hideStatusBarKeepNavBar() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             getWindow().setDecorFitsSystemWindows(false);   // we’ll handle insets ourselves
@@ -79,7 +81,9 @@ public class VideoViewActivity extends BaseActivity {
         }
     }
 
-    /** Gives the root view bottom padding equal to nav‑bar height (API‑safe) */
+    /**
+     * Gives the root view bottom padding equal to nav‑bar height (API‑safe)
+     */
     private void applyBottomInsetOnly() {
         ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
             // Height of navigation bar (0 if gesture nav hidden)

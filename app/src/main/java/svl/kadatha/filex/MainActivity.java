@@ -1856,9 +1856,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 FilePOJO filePOJO = df.filePOJO_list.get(df.viewModel.mselecteditems.getKeyAtIndex(0)); //take file pojo from df.adapter.filepojolist, not from df.filepojolist
                 String parent_file_path = new File(filePOJO.getPath()).getParent();
                 String existing_name = filePOJO.getName();
-                String ext=filePOJO.getExt();
+                String ext = filePOJO.getExt();
                 boolean isDirectory = filePOJO.getIsDirectory();
-                RenameFileDialog renameFileAlertDialog = RenameFileDialog.getInstance(parent_file_path, existing_name,ext, isDirectory, filePOJO.getFileObjectType(), df.fileclickselected);
+                RenameFileDialog renameFileAlertDialog = RenameFileDialog.getInstance(parent_file_path, existing_name, ext, isDirectory, filePOJO.getFileObjectType(), df.fileclickselected);
                 renameFileAlertDialog.show(fm, "rename_dialog");
                 action_mode_finish(df);
             } else if (id == R.id.toolbar_btn_4) {

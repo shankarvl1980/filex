@@ -51,12 +51,12 @@ public class RenameFileDialog extends DialogFragment {
     private FrameLayout progress_bar;
     private String ext;
 
-    public static RenameFileDialog getInstance(String parent_file_path, String existing_name,String ext, boolean isDirectory, FileObjectType fileObjectType, String filePOJOHashmapKeyPath) {
+    public static RenameFileDialog getInstance(String parent_file_path, String existing_name, String ext, boolean isDirectory, FileObjectType fileObjectType, String filePOJOHashmapKeyPath) {
         RenameFileDialog renameFileDialog = new RenameFileDialog();
         Bundle bundle = new Bundle();
         bundle.putString("parent_file_path", parent_file_path);
         bundle.putString("existing_name", existing_name);
-        bundle.putString("ext",ext);
+        bundle.putString("ext", ext);
         bundle.putBoolean("isDirectory", isDirectory);
         bundle.putSerializable("fileObjectType", fileObjectType);
         bundle.putString("filePOJOHashmapKeyPath", filePOJOHashmapKeyPath);
@@ -78,7 +78,7 @@ public class RenameFileDialog extends DialogFragment {
         if (bundle != null) {
             parent_file_path = bundle.getString("parent_file_path");
             existing_name = bundle.getString("existing_name");
-            ext= bundle.getString("ext");
+            ext = bundle.getString("ext");
             isDirectory = bundle.getBoolean("isDirectory", false);
             fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
             filePOJOHashmapKeyPath = bundle.getString("filePOJOHashmapKeyPath");
@@ -91,7 +91,7 @@ public class RenameFileDialog extends DialogFragment {
             new_file_path = savedInstanceState.getString("new_file_path");
             overwriting = savedInstanceState.getBoolean("overwriting");
             isWritable = savedInstanceState.getBoolean("isWritable");
-            modified_name=savedInstanceState.getString("modified_name");
+            modified_name = savedInstanceState.getString("modified_name");
         }
     }
 
@@ -103,7 +103,7 @@ public class RenameFileDialog extends DialogFragment {
         dialog_message_textview.setVisibility(View.GONE);
         new_file_name_edittext = v.findViewById(R.id.dialog_fragment_rename_delete_newfilename);
         CheckBox modify_ext_check_box = v.findViewById(R.id.dialog_fragment_rename_modify_ext_check_box);
-        if(ext!=null && !ext.isEmpty()){
+        if (ext != null && !ext.isEmpty()) {
             modify_ext_check_box.setVisibility(View.VISIBLE);
             String main = context.getString(R.string.modify_file_extension);
             String suffix = " (." + ext + ")";
@@ -182,13 +182,13 @@ public class RenameFileDialog extends DialogFragment {
         });
 
 
-        if(modified_name==null || modified_name.isEmpty()){
-            modified_name=existing_name;
-            if(!viewModel.modify_ext){
+        if (modified_name == null || modified_name.isEmpty()) {
+            modified_name = existing_name;
+            if (!viewModel.modify_ext) {
                 int idx = modified_name.lastIndexOf(".");
                 if (idx > 0) {
                     String new_ext = modified_name.substring(idx + 1);
-                    if(new_ext.equals(ext)){
+                    if (new_ext.equals(ext)) {
                         modified_name = modified_name.substring(0, idx);
                     }
                 }
@@ -205,20 +205,19 @@ public class RenameFileDialog extends DialogFragment {
         modify_ext_check_box.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                modified_name =new_file_name_edittext.getText().toString().trim();
-                if(((CheckBox)view).isChecked() && !ext.isEmpty()){
+                modified_name = new_file_name_edittext.getText().toString().trim();
+                if (((CheckBox) view).isChecked() && !ext.isEmpty()) {
                     //modify ext, hence, show extension
-                    viewModel.modify_ext=true;
+                    viewModel.modify_ext = true;
                     new_file_name_edittext.setText(modified_name + "." + ext);
-                }
-                else{
+                } else {
                     //do not modify, hence, remove extension
-                    viewModel.modify_ext=false;
+                    viewModel.modify_ext = false;
                     String new_ext;
                     int idx = modified_name.lastIndexOf(".");
                     if (idx > 0) {
                         new_ext = modified_name.substring(idx + 1);
-                        if(new_ext.equals(ext)){
+                        if (new_ext.equals(ext)) {
                             modified_name = modified_name.substring(0, idx);
                             new_file_name_edittext.setText(modified_name);
                         }
@@ -235,8 +234,8 @@ public class RenameFileDialog extends DialogFragment {
                     return;
                 }
 
-                if(!viewModel.modify_ext && !ext.isEmpty()){
-                    new_name=new_name+"."+ext;
+                if (!viewModel.modify_ext && !ext.isEmpty()) {
+                    new_name = new_name + "." + ext;
                 }
                 if (new_name.equals(existing_name)) {
                     imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(), 0);
@@ -317,7 +316,7 @@ public class RenameFileDialog extends DialogFragment {
         outState.putString("new_file_path", new_file_path);
         outState.putBoolean("overwriting", overwriting);
         outState.putBoolean("isWritable", isWritable);
-        outState.putString("modified_name",new_file_name_edittext.getText().toString().trim());
+        outState.putString("modified_name", new_file_name_edittext.getText().toString().trim());
     }
 
     private void onRenameResult(boolean fileNameChanged, final String new_name, FilePOJO filePOJO) {
