@@ -27,7 +27,7 @@ public class FileIntentDispatch {
         String file_extn = "";
         Uri uri;
         int file_extn_idx = file_path.lastIndexOf(".");
-        if (file_extn_idx != -1) {
+        if (file_extn_idx > 0) {
             file_extn = file_path.substring(file_extn_idx + 1);
         }
 
@@ -39,7 +39,7 @@ public class FileIntentDispatch {
     public static void openUri(Context context, String file_path, String mime_type, FileObjectType fileObjectType, Uri tree_uri, String tree_uri_path, boolean select_app, long file_size, boolean fromArchive) {
         String file_extn = "";
         int file_extn_idx = file_path.lastIndexOf(".");
-        if (file_extn_idx != -1) {
+        if (file_extn_idx > 0) {
             file_extn = file_path.substring(file_extn_idx + 1);
         }
         Uri uri = FileUtil.getDocumentUri(file_path, tree_uri, tree_uri_path);

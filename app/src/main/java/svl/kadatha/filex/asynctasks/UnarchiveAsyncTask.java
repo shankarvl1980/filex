@@ -272,7 +272,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
                 publishProgress(null);
                 current_file_name = zip_entry_name;
                 int idx = zip_entry_name.indexOf(File.separator);
-                if (idx != -1) {
+                if (idx > 0) {
                     String first_part = zip_entry_name.substring(0, idx);
                     first_part_entry_name_set.add(first_part);
                     first_part_entry_path_set.add(Global.CONCATENATE_PARENT_CHILD_PATH(zip_dest_path, first_part));
@@ -330,7 +330,7 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
                     current_file_name = zip_entry_name;
                     String entry_name = zipEntry.getName();
                     int idx = entry_name.indexOf(File.separator);
-                    if (idx != -1) {
+                    if (idx > 0) {
                         String first_part = zip_entry_name.substring(0, idx);
                         first_part_entry_name_set.add(first_part);
                         first_part_entry_path_set.add((Global.CONCATENATE_PARENT_CHILD_PATH(zip_dest_path, first_part)));

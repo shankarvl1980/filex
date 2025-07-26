@@ -109,7 +109,7 @@ public class AudioPlayViewModel extends AndroidViewModel {
                         if (!filePOJO.getIsDirectory()) {
                             String file_ext;
                             int idx = filePOJO.getName().lastIndexOf(".");
-                            if (idx != -1) {
+                            if (idx > 0) {
                                 file_ext = filePOJO.getName().substring(idx + 1);
                                 if (file_ext.matches(Global.AUDIO_REGEX)) {
                                     AudioPOJO audio = AudioPlayerActivity.getAudioPojo(App.getAppContext(), filePOJO.getPath(), fileObjectType);

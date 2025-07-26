@@ -439,7 +439,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
         }
         boolean show_file_path = false;
         if (fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
-            if (DetailFragment.SEARCH_RESULT.equals(fileclickselected)) {
+            if (DetailFragment.SEARCH_RESULT.equals(fileclickselected) || fileclickselected.equals("Large Files")) {
                 show_file_path = true;
             } else {
                 show_file_path = Global.SHOW_FILE_PATH;
@@ -501,7 +501,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
     public void file_open_intent_dispatch(final String file_path, final FileObjectType fileObjectType, String file_name, boolean select_app, long file_size) {
         int idx = file_name.lastIndexOf(".");
         String file_ext = "";
-        if (idx != -1) {
+        if (idx > 0) {
             file_ext = file_name.substring(idx + 1);
         }
 
@@ -613,8 +613,12 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
             modification_observed = false;
             local_activity_delete = false;
             RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
-            viewModel.filePOJOS = repositoryClass.hashmap_file_pojo.get(fileObjectType + fileclickselected);
-            viewModel.filePOJOS_filtered = repositoryClass.hashmap_file_pojo_filtered.get(fileObjectType + fileclickselected);
+            List<FilePOJO> fjos = repositoryClass.hashmap_file_pojo.get(fileObjectType + fileclickselected);
+            if(fjos!=null){
+                viewModel.filePOJOS=fjos;
+                viewModel.filePOJOS_filtered = repositoryClass.hashmap_file_pojo_filtered.get(fileObjectType + fileclickselected);
+            }
+
             if (MainActivity.SHOW_HIDDEN_FILE) {
                 filePOJO_list = viewModel.filePOJOS;
                 totalFilePOJO_list = viewModel.filePOJOS;

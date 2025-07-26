@@ -175,10 +175,6 @@ public class CopyToActivity extends BaseActivity {
                     return;
                 }
 
-//                if (!file_name.isEmpty()) {
-//                    file_name_list.clear();
-//                    file_name_list.add(file_name);
-//                }
                 RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
                 viewModel.destFilePOJOs = repositoryClass.hashmap_file_pojo.get(destFileObjectType + dest_folder);
                 final String full_path = Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder, file_name);
@@ -220,6 +216,7 @@ public class CopyToActivity extends BaseActivity {
         if (savedInstanceState == null) {
             first_start = true;
         }
+
         Intent intent = getIntent();
         try {
             on_intent(intent, savedInstanceState);

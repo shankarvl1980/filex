@@ -158,7 +158,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
     private void file_open_intent_dispatch(final String file_path, final FileObjectType fileObjectType, String file_name, long file_size) {
         int idx = file_name.lastIndexOf(".");
         String file_ext = "";
-        if (idx != -1) {
+        if (idx > 0) {
             file_ext = file_name.substring(idx + 1);
         }
 

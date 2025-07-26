@@ -82,7 +82,7 @@ public class MakeFilePOJOUtil {
         if (!isDirectory) {
             type = R.drawable.unknown_file_icon;
             int idx = name.lastIndexOf(".");
-            if (idx != -1) {
+            if (idx > 0) {
                 file_ext = name.substring(idx + 1);
                 type = GET_FILE_TYPE(isDirectory, file_ext);
                 if (type == -2) {
@@ -137,7 +137,7 @@ public class MakeFilePOJOUtil {
         if (!isDirectory) {
             type = R.drawable.unknown_file_icon;
             int idx = name.lastIndexOf(".");
-            if (idx != -1) {
+            if (idx > 0) {
                 file_ext = name.substring(idx + 1);
                 type = GET_FILE_TYPE(isDirectory, file_ext);
                 if (type == -2) {
@@ -184,7 +184,7 @@ public class MakeFilePOJOUtil {
         if (!isDirectory) {
             type = R.drawable.unknown_file_icon;
             int idx = name.lastIndexOf(".");
-            if (idx != -1) {
+            if (idx > 0) {
                 file_ext = name.substring(idx + 1);
                 type = GET_FILE_TYPE(isDirectory, file_ext);
                 if (type == -2) {
@@ -255,7 +255,7 @@ public class MakeFilePOJOUtil {
         if (!isDirectory) {
             type = R.drawable.unknown_file_icon;
             int idx = name.lastIndexOf(".");
-            if (idx != -1) {
+            if (idx > 0) {
                 file_ext = name.substring(idx + 1);
                 type = GET_FILE_TYPE(isDirectory, file_ext);
                 if (type == -2) {
@@ -322,7 +322,7 @@ public class MakeFilePOJOUtil {
         if (!isDirectory) {
             type = R.drawable.unknown_file_icon;
             int idx = name.lastIndexOf(".");
-            if (idx != -1) {
+            if (idx > 0) {
                 file_ext = name.substring(idx + 1);
                 type = GET_FILE_TYPE(isDirectory, file_ext);
                 if (type == -2) {
@@ -386,7 +386,7 @@ public class MakeFilePOJOUtil {
         if (!isDirectory) {
             type = R.drawable.unknown_file_icon;
             int idx = name.lastIndexOf(".");
-            if (idx != -1) {
+            if (idx > 0) {
                 file_ext = name.substring(idx + 1);
                 type = GET_FILE_TYPE(isDirectory, file_ext);
                 if (type == -2) {
@@ -447,7 +447,7 @@ public class MakeFilePOJOUtil {
         if (!isDirectory) {
             type = R.drawable.unknown_file_icon;
             int idx = name.lastIndexOf(".");
-            if (idx != -1) {
+            if (idx > 0) {
                 file_ext = name.substring(idx + 1);
                 type = GET_FILE_TYPE(isDirectory, file_ext);
                 if (type == -2) {
@@ -525,7 +525,7 @@ public class MakeFilePOJOUtil {
         if (!isDirectory) {
             type = R.drawable.unknown_file_icon;
             int idx = name.lastIndexOf(".");
-            if (idx != -1) {
+            if (idx > 0) {
                 file_ext = name.substring(idx + 1);
                 type = GET_FILE_TYPE(isDirectory, file_ext);
                 if (type == -2) {
@@ -581,7 +581,7 @@ public class MakeFilePOJOUtil {
         if (!isDirectory) {
             type = R.drawable.unknown_file_icon;
             int idx = name.lastIndexOf(".");
-            if (idx != -1) {
+            if (idx > 0) {
                 file_ext = name.substring(idx + 1);
                 type = GET_FILE_TYPE(isDirectory, file_ext);
                 if (type == -2) {
@@ -638,7 +638,7 @@ public class MakeFilePOJOUtil {
         if (!isDirectory) {
             type = R.drawable.unknown_file_icon;
             int idx = name.lastIndexOf(".");
-            if (idx != -1) {
+            if (idx > 0) {
                 file_ext = name.substring(idx + 1);
                 type = GET_FILE_TYPE(isDirectory, file_ext);
                 if (type == -2) {
@@ -688,7 +688,7 @@ public class MakeFilePOJOUtil {
         if (!isDirectory) {
             type = R.drawable.unknown_file_icon;
             int idx = name.lastIndexOf(".");
-            if (idx != -1) {
+            if (idx > 0) {
                 file_ext = name.substring(idx + 1);
                 type = GET_FILE_TYPE(isDirectory, file_ext);
                 if (type == -2) {

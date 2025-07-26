@@ -6,6 +6,9 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +17,8 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView.LayoutParams;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -35,7 +40,7 @@ public class RenameFileDialog extends DialogFragment {
     private Context context;
     private String tree_uri_path = "";
     private Uri tree_uri;
-    private String parent_file_path, existing_name;
+    private String parent_file_path, existing_name, modified_name;
     private boolean isDirectory;
     private FileObjectType fileObjectType;
     private Button okbutton;
@@ -45,12 +50,14 @@ public class RenameFileDialog extends DialogFragment {
     private String other_file_permission, existing_file_path, new_file_path;
     private String new_name;
     private FrameLayout progress_bar;
+    private String ext;
 
-    public static RenameFileDialog getInstance(String parent_file_path, String existing_name, boolean isDirectory, FileObjectType fileObjectType, String filePOJOHashmapKeyPath) {
+    public static RenameFileDialog getInstance(String parent_file_path, String existing_name,String ext, boolean isDirectory, FileObjectType fileObjectType, String filePOJOHashmapKeyPath) {
         RenameFileDialog renameFileDialog = new RenameFileDialog();
         Bundle bundle = new Bundle();
         bundle.putString("parent_file_path", parent_file_path);
         bundle.putString("existing_name", existing_name);
+        bundle.putString("ext",ext);
         bundle.putBoolean("isDirectory", isDirectory);
         bundle.putSerializable("fileObjectType", fileObjectType);
         bundle.putString("filePOJOHashmapKeyPath", filePOJOHashmapKeyPath);
@@ -72,6 +79,7 @@ public class RenameFileDialog extends DialogFragment {
         if (bundle != null) {
             parent_file_path = bundle.getString("parent_file_path");
             existing_name = bundle.getString("existing_name");
+            ext= bundle.getString("ext");
             isDirectory = bundle.getBoolean("isDirectory", false);
             fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
             filePOJOHashmapKeyPath = bundle.getString("filePOJOHashmapKeyPath");
@@ -79,10 +87,12 @@ public class RenameFileDialog extends DialogFragment {
         existing_file_path = Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path, existing_name);
         other_file_permission = Global.GET_OTHER_FILE_PERMISSION(existing_file_path);
 
+
         if (savedInstanceState != null) {
             new_file_path = savedInstanceState.getString("new_file_path");
             overwriting = savedInstanceState.getBoolean("overwriting");
             isWritable = savedInstanceState.getBoolean("isWritable");
+            modified_name=savedInstanceState.getString("modified_name");
         }
     }
 
@@ -93,6 +103,26 @@ public class RenameFileDialog extends DialogFragment {
         TextView dialog_message_textview = v.findViewById(R.id.dialog_fragment_rename_delete_message);
         dialog_message_textview.setVisibility(View.GONE);
         new_file_name_edittext = v.findViewById(R.id.dialog_fragment_rename_delete_newfilename);
+        CheckBox modify_ext_check_box = v.findViewById(R.id.dialog_fragment_rename_modify_ext_check_box);
+        if(ext!=null && !ext.isEmpty()){
+            modify_ext_check_box.setVisibility(View.VISIBLE);
+            String main = context.getString(R.string.modify_file_extension);
+            String suffix = " (." + ext + ")";
+
+            SpannableStringBuilder ssb = new SpannableStringBuilder(main).append(suffix);
+            int start = ssb.length() - suffix.length();
+
+            // current text size is in px; convert to sp
+            float currentPx = modify_ext_check_box.getTextSize();
+            float scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
+            float currentSp = currentPx / scaledDensity;
+
+            float scale = 13f / currentSp; // targetSP / currentSP
+
+            ssb.setSpan(new RelativeSizeSpan(scale), start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            modify_ext_check_box.setText(ssb);
+        }
         TextView no_of_files_textview = v.findViewById(R.id.dialog_fragment_rename_delete_no_of_files);
         TextView files_size_textview = v.findViewById(R.id.dialog_fragment_rename_delete_total_size);
         no_of_files_textview.setVisibility(View.GONE);
@@ -106,12 +136,7 @@ public class RenameFileDialog extends DialogFragment {
         cancelbutton.setText(R.string.cancel);
 
         dialog_heading_textview.setText(R.string.rename);
-        new_file_name_edittext.setText(existing_name);
-        int l = existing_name.lastIndexOf(".");
-        if (l == -1) {
-            l = existing_name.length();
-        }
-        new_file_name_edittext.setSelection(0, l);
+
         df = (DetailFragment) getParentFragmentManager().findFragmentById(R.id.detail_fragment);
         imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -157,9 +182,63 @@ public class RenameFileDialog extends DialogFragment {
             }
         });
 
+
+        if(modified_name==null || modified_name.isEmpty()){
+            modified_name=existing_name;
+            if(!viewModel.modify_ext){
+                int idx = modified_name.lastIndexOf(".");
+                if (idx > 0) {
+                    String new_ext = modified_name.substring(idx + 1);
+                    if(new_ext.equals(ext)){
+                        modified_name = modified_name.substring(0, idx);
+                    }
+                }
+            }
+        }
+
+        new_file_name_edittext.setText(modified_name);//new_file_name_edittext.setText(existing_name);
+        int l = modified_name.lastIndexOf(".");
+        if (l == -1) {
+            l = modified_name.length();
+        }
+        new_file_name_edittext.setSelection(0, l);
+
+        modify_ext_check_box.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                modified_name =new_file_name_edittext.getText().toString().trim();
+                if(((CheckBox)view).isChecked() && !ext.isEmpty()){
+                    //modify ext, hence, show extension
+                    viewModel.modify_ext=true;
+                    new_file_name_edittext.setText(modified_name + "." + ext);
+                }
+                else{
+                    //do not modify, hence, remove extension
+                    viewModel.modify_ext=false;
+                    String new_ext;
+                    int idx = modified_name.lastIndexOf(".");
+                    if (idx > 0) {
+                        new_ext = modified_name.substring(idx + 1);
+                        if(new_ext.equals(ext)){
+                            modified_name = modified_name.substring(0, idx);
+                            new_file_name_edittext.setText(modified_name);
+                        }
+                    }
+                }
+            }
+        });
+
         okbutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 new_name = new_file_name_edittext.getText().toString().trim();
+                if (new_name.isEmpty()) {
+                    Global.print(context, getString(R.string.enter_file_name));
+                    return;
+                }
+
+                if(!viewModel.modify_ext && !ext.isEmpty()){
+                    new_name=new_name+"."+ext;
+                }
                 if (new_name.equals(existing_name)) {
                     imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(), 0);
                     dismissAllowingStateLoss();
@@ -175,10 +254,7 @@ public class RenameFileDialog extends DialogFragment {
                     Global.print(context, getString(R.string.avoid_name_involving_special_characters));
                     return;
                 }
-                if (new_name.isEmpty()) {
-                    Global.print(context, getString(R.string.enter_file_name));
-                    return;
-                }
+
 
                 if (!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(fileObjectType, null)) {
                     Global.print(context, getString(R.string.wait_till_completion_on_going_operation_on_usb));
@@ -242,6 +318,7 @@ public class RenameFileDialog extends DialogFragment {
         outState.putString("new_file_path", new_file_path);
         outState.putBoolean("overwriting", overwriting);
         outState.putBoolean("isWritable", isWritable);
+        outState.putString("modified_name",new_file_name_edittext.getText().toString().trim());
     }
 
     private void onRenameResult(boolean fileNameChanged, final String new_name, FilePOJO filePOJO) {

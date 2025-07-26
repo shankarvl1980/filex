@@ -45,6 +45,7 @@ import svl.kadatha.filex.network.SmbClientRepository;
 import svl.kadatha.filex.network.WebDavClientRepository;
 import svl.kadatha.filex.usb.ReadAccess;
 import svl.kadatha.filex.usb.UsbFileRootSingleton;
+import timber.log.Timber;
 
 public class FilePOJOUtil {
     private static final String TAG = "Ftp-FilePOJOUtil";
@@ -403,6 +404,7 @@ public class FilePOJOUtil {
 
     public static void FILL_FILE_POJO(List<FilePOJO> filePOJOS, List<FilePOJO> filePOJOS_filtered, FileObjectType fileObjectType,
                                       String fileclickselected, UsbFile usbFile, boolean archive_view) {
+        Timber.tag(Global.TAG).d("in fill_file_pojo method fileobjecttype - "+fileObjectType+"   fileclickselected - "+fileclickselected );
         filePOJOS.clear();
         filePOJOS_filtered.clear();
         File file = new File(fileclickselected);
@@ -562,6 +564,7 @@ public class FilePOJOUtil {
                         if (name.equals(".") || name.equals("..")) {
                             continue;
                         }
+
                         String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
 
                         // Create SmbFileInfo
@@ -573,7 +576,9 @@ public class FilePOJOUtil {
                         filePOJOS.add(filePOJO);
                     }
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
+                Timber.tag(Global.TAG).d("returning");
                 return;
             } finally {
                 if (smbClientRepository != null && session != null) {
@@ -690,6 +695,7 @@ public class FilePOJOUtil {
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
         repositoryClass.hashmap_file_pojo.put(fileObjectType + fileclickselected, filePOJOS);
         repositoryClass.hashmap_file_pojo_filtered.put(fileObjectType + fileclickselected, filePOJOS_filtered);
+        Timber.tag(Global.TAG).d("fileobjecttype - "+fileObjectType+"   fileclickselected - "+fileclickselected );
     }
 
     public static void FILL_FILE_POJO1(List<FilePOJO> filePOJOS, List<FilePOJO> filePOJOS_filtered, FileObjectType fileObjectType,

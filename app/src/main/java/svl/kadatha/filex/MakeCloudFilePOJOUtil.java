@@ -110,7 +110,7 @@ public class MakeCloudFilePOJOUtil {
             if (!isDirectory) {
                 type = R.drawable.unknown_file_icon;
                 int idx = name.lastIndexOf(".");
-                if (idx != -1) {
+                if (idx > 0) {
                     file_ext = name.substring(idx + 1);
                     type = GET_FILE_TYPE(false, file_ext);
                     if (type == -2) {
@@ -173,7 +173,7 @@ public class MakeCloudFilePOJOUtil {
             FileMetadata fMeta = (FileMetadata) metadata;
             type = R.drawable.unknown_file_icon;
             int idx = name.lastIndexOf(".");
-            if (idx != -1) {
+            if (idx > 0) {
                 file_ext = name.substring(idx + 1);
                 type = GET_FILE_TYPE(false, file_ext);
                 if (type == -2) {
@@ -234,7 +234,7 @@ public class MakeCloudFilePOJOUtil {
             // It's a file
             type = R.drawable.unknown_file_icon;
             int idx = name.lastIndexOf(".");
-            if (idx != -1 && idx < name.length() - 1) {
+            if (idx > 0 && idx < name.length() - 1) {
                 file_ext = name.substring(idx + 1);
                 type = GET_FILE_TYPE(false, file_ext);
                 if (type == -2) {

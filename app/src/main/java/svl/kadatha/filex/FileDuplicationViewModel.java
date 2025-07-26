@@ -299,7 +299,6 @@ public class FileDuplicationViewModel extends ViewModel {
                             source_duplicate_file_path_array.add(uri_name);
                             destination_duplicate_file_path_array.add(filePOJO.getPath());
                             String unique_file_name, name_prefix, extension;
-                            //File originalFile = new File(file_path);
                             String originalFileName = uri_name;
 
                             int lastDotIndex = originalFileName.lastIndexOf(".");

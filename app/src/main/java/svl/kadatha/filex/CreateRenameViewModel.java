@@ -23,6 +23,7 @@ public class CreateRenameViewModel extends AndroidViewModel {
     public boolean file_created;
     public boolean fileNameChanged;
     public List<FilePOJO> destFilePOJOs;
+    public boolean modify_ext;
 
     public CreateRenameViewModel(@NonNull Application application) {
         super(application);

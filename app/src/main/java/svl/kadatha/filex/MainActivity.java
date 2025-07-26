@@ -1406,7 +1406,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         search_view.clearFocus();
         search_toolbar.setVisibility(View.GONE); //no need to call adapter.filter with null to refill filepjos as calling datasetchanged replenished df.adapter.filepojo listUri
         search_toolbar_visible = false;
-
     }
 
     public void workingDirAdd() {
@@ -1857,8 +1856,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 FilePOJO filePOJO = df.filePOJO_list.get(df.viewModel.mselecteditems.getKeyAtIndex(0)); //take file pojo from df.adapter.filepojolist, not from df.filepojolist
                 String parent_file_path = new File(filePOJO.getPath()).getParent();
                 String existing_name = filePOJO.getName();
+                String ext=filePOJO.getExt();
                 boolean isDirectory = filePOJO.getIsDirectory();
-                RenameFileDialog renameFileAlertDialog = RenameFileDialog.getInstance(parent_file_path, existing_name, isDirectory, filePOJO.getFileObjectType(), df.fileclickselected);
+                RenameFileDialog renameFileAlertDialog = RenameFileDialog.getInstance(parent_file_path, existing_name,ext, isDirectory, filePOJO.getFileObjectType(), df.fileclickselected);
                 renameFileAlertDialog.show(fm, "rename_dialog");
                 action_mode_finish(df);
             } else if (id == R.id.toolbar_btn_4) {
@@ -1924,7 +1924,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                                 String file_name = new File(path).getName();
                                 String file_ext = "";
                                 int idx = file_name.lastIndexOf(".");
-                                if (idx != -1) {
+                                if (idx > 0) {
                                     file_ext = file_name.substring(idx + 1);
                                 }
                                 if (file_ext.matches(("(?i)zip"))) {

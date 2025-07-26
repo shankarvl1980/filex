@@ -44,7 +44,7 @@
         android:minHeight="36dp"
         android:padding="@dimen/ten_dp"
         android:text="@string/remember_the_choice"
-        android:textSize="19sp"
+        android:textSize="17sp"
         app:layout_constraintBottom_toTopOf="@id/fragment_app_selector_button_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dialog_select_app_recyclerview" />

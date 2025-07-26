@@ -261,7 +261,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
     public void file_open_intent_dispatch(final String file_path, final FileObjectType fileObjectType, String file_name, boolean select_app, long file_size) {
         int idx = file_name.lastIndexOf(".");
         String file_ext = "";
-        if (idx != -1) {
+        if (idx > 0) {
             file_ext = file_name.substring(idx + 1);
         }
 
@@ -327,7 +327,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                     detailFragmentListener.createFragmentTransaction(filePOJO.getPath(), filePOJO.getFileObjectType());
                 } else {
                     int idx = filePOJO.getName().lastIndexOf(".");
-                    if (idx != -1) {
+                    if (idx > 0) {
                         String file_ext = filePOJO.getName().substring(idx + 1);
                         if (file_ext.matches("(?i)zip")) {
                             Global.print(context, getString(R.string.can_not_open_file));

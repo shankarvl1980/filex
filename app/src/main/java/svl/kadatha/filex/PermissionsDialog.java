@@ -147,8 +147,6 @@ public class PermissionsDialog extends DialogFragment {
                     owner_permission_int -= 4;
                 }
             }
-
-
         });
 
         owner_write_chkbox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {

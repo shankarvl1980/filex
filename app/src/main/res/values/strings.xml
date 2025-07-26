@@ -522,5 +522,6 @@
     <string name="select_a_file">Select a file</string>
     <string name="cloud_accounts">Cloud Accounts</string>
     <string name="cloud">Cloud</string>
+    <string name="modify_file_extension">Modify file extension</string>
 
 </resources>

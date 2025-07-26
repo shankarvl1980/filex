@@ -174,7 +174,7 @@ public class StorageUtil {
 
         if (!isDirectory) {
             int idx = name.lastIndexOf(".");
-            if (idx != -1) {
+            if (idx > 0) {
                 file_ext = name.substring(idx + 1);
                 if (file_ext.matches(Global.VIDEO_REGEX)) {
                     play_overlay_visible = View.VISIBLE;
