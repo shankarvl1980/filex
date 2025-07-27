@@ -38,8 +38,7 @@ public class FtpFileModel implements FileModel {
                 return true;
             } else {
                 ftpClient = ftpClientRepository.getFtpClient();
-                boolean success = ftpClient.makeDirectory(file_path);
-                return success;
+                return ftpClient.makeDirectory(file_path);
             }
         } catch (IOException e) {
             return false;
@@ -70,8 +69,7 @@ public class FtpFileModel implements FileModel {
         try {
             ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
             ftpClient = ftpClientRepository.getFtpClient();
-            boolean isDirectory = ftpClient.changeWorkingDirectory(filePath);
-            return isDirectory;
+            return ftpClient.changeWorkingDirectory(filePath);
         } catch (IOException e) {
             return false;
         } finally {
@@ -83,15 +81,13 @@ public class FtpFileModel implements FileModel {
 
     @Override
     public String getName() {
-        String name = new File(path).getName();
-        return name;
+        return new File(path).getName();
     }
 
     @Override
     public String getParentName() {
         File parentFile = new File(path).getParentFile();
-        String parentName = (parentFile != null) ? parentFile.getName() : null;
-        return parentName;
+        return (parentFile != null) ? parentFile.getName() : null;
     }
 
     @Override
@@ -101,14 +97,12 @@ public class FtpFileModel implements FileModel {
 
     @Override
     public String getParentPath() {
-        String parentPath = new File(path).getParent();
-        return parentPath;
+        return new File(path).getParent();
     }
 
     @Override
     public boolean isDirectory() {
-        boolean isDir = isDirectory(path);
-        return isDir;
+        return isDirectory(path);
     }
 
     @Override
@@ -119,8 +113,7 @@ public class FtpFileModel implements FileModel {
         try {
             ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
             ftpClient = ftpClientRepository.getFtpClient();
-            boolean renamed = ftpClient.rename(path, new_file_path);
-            return renamed;
+            return ftpClient.rename(path, new_file_path);
         } catch (IOException e) {
             return false;
         } finally {
@@ -267,8 +260,7 @@ public class FtpFileModel implements FileModel {
         FTPClient ftpClient = null;
         try {
             ftpClient = ftpClientRepository.getFtpClient();
-            boolean created = ftpClient.storeFile(file_path, bin);
-            return created;
+            return ftpClient.storeFile(file_path, bin);
         } catch (IOException e) {
             return false;
         } finally {
@@ -281,14 +273,12 @@ public class FtpFileModel implements FileModel {
     @Override
     public boolean makeDirIfNotExists(String dir_name) {
         String dir_path = Global.CONCATENATE_PARENT_CHILD_PATH(path, dir_name);
-        boolean created = mkdirFtp(dir_path);
-        return created;
+        return mkdirFtp(dir_path);
     }
 
     @Override
     public boolean makeDirsRecursively(String extended_path) {
-        boolean created = mkdirsFTP(path, extended_path);
-        return created;
+        return mkdirsFTP(path, extended_path);
     }
 
     @Override
@@ -328,9 +318,7 @@ public class FtpFileModel implements FileModel {
 
             FTPFile[] files = ftpClient.listFiles(parentDir, filter);
 
-            boolean exists = files.length > 0;
-
-            return exists;
+            return files.length > 0;
         } catch (IOException e) {
             return false;
         } finally {

@@ -83,7 +83,7 @@ public class ArchiveDeletePasteFileService1 extends Service implements TaskProgr
         intent_action = intent.getAction();
 
         Uri source_uri;
-        String source_uri_path = "";
+        String source_uri_path;
         final ParcelableStringStringLinkedMap sourceFileDestNameMap;
         switch (intent_action) {
             case ArchiveAsyncTask.TASK_TYPE:

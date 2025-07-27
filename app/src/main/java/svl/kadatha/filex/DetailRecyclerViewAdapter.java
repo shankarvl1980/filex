@@ -28,7 +28,7 @@ public abstract class DetailRecyclerViewAdapter extends RecyclerView.Adapter<Det
             df.detailFragmentListener.setFileNumberView(df.viewModel.mselecteditems.size() + "/" + df.file_list_size);
             if (df.fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
                 if (df.file_click_selected_name.equals(DetailFragment.SEARCH_RESULT)) {
-                    df.detailFragmentListener.setCurrentDirText(df.search_file_name);
+                    df.detailFragmentListener.setCurrentDirText(DetailFragment.search_file_name);
                 }
                 df.detailFragmentListener.enableParentDirImageButton(false);
             } else if (df.fileObjectType == FileObjectType.FILE_TYPE) {

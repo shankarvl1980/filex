@@ -402,7 +402,7 @@ public class UsbFileModel implements FileModel {
         return path.startsWith(".");
     }
 
-    public class LockedUsbInputStream extends java.io.FilterInputStream {
+    public static class LockedUsbInputStream extends java.io.FilterInputStream {
         private final ReadAccess readAccess;
 
         public LockedUsbInputStream(InputStream in, ReadAccess readAccess) {
@@ -421,7 +421,7 @@ public class UsbFileModel implements FileModel {
         }
     }
 
-    public class LockedUsbOutputStream extends java.io.FilterOutputStream {
+    public static class LockedUsbOutputStream extends java.io.FilterOutputStream {
         private final WriteAccess writeAccess;
 
         public LockedUsbOutputStream(OutputStream out, WriteAccess writeAccess) {

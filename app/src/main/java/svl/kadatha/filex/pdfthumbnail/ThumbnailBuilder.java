@@ -52,11 +52,8 @@ public class ThumbnailBuilder implements ModelLoader<String, Bitmap> {
     private static class ThumbnailCreator implements DataFetcher<Bitmap> {
         private final String input;
 
-        private final Context mContext;
-
         public ThumbnailCreator(Context mContext, String input) {
             this.input = input;
-            this.mContext = mContext;
         }
 
         @Override

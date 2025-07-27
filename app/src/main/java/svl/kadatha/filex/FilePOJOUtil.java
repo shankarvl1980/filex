@@ -564,8 +564,8 @@ public class FilePOJOUtil {
                 }
 
             } else if (fileObjectType == FileObjectType.WEBDAV_TYPE) {
-                WebDavClientRepository webDavClientRepository = null;
-                Sardine sardine = null;
+                WebDavClientRepository webDavClientRepository;
+                Sardine sardine;
                 try {
                     webDavClientRepository = WebDavClientRepository.getInstance(NetworkAccountDetailsViewModel.WEBDAV_NETWORK_ACCOUNT_POJO);
                     sardine = webDavClientRepository.getSardine();
@@ -906,8 +906,8 @@ public class FilePOJOUtil {
                 }
 
             } else if (fileObjectType == FileObjectType.WEBDAV_TYPE) {
-                WebDavClientRepository webDavClientRepository = null;
-                Sardine sardine = null;
+                WebDavClientRepository webDavClientRepository;
+                Sardine sardine;
                 try {
                     webDavClientRepository = WebDavClientRepository.getInstance(NetworkAccountDetailsViewModel.WEBDAV_NETWORK_ACCOUNT_POJO);
                     sardine = webDavClientRepository.getSardine();
@@ -939,7 +939,7 @@ public class FilePOJOUtil {
             } else if (fileObjectType == FileObjectType.SMB_TYPE) {
                 SmbClientRepository smbClientRepository = null;
                 Session session = null;
-                String shareName = null;
+                String shareName;
                 try {
                     smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
                     session = smbClientRepository.getSession();

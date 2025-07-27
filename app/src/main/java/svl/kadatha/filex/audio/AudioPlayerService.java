@@ -439,7 +439,7 @@ public class AudioPlayerService extends Service {
             });
 
 
-            Uri data = null;
+            Uri data;
             File f = new File(current_audio.getData());
             if (f.exists()) {
                 data = FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", f);
@@ -473,7 +473,7 @@ public class AudioPlayerService extends Service {
             });
 
 
-            Uri data = null;
+            Uri data;
             File f = new File(current_audio.getData());
             if (f.exists()) {
                 data = FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", f);

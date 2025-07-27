@@ -130,7 +130,7 @@ public class FileComparator {
                 String chunkAStr = chunkA.toString();
                 String chunkBStr = chunkB.toString();
 
-                int result = 0;
+                int result;
 
                 if (isDigitA && isDigitB) {
                     // Remove leading zeros

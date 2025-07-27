@@ -291,7 +291,7 @@ public abstract class FtpServerFileUtil {
     }
 
     public static boolean mkdirs(Context context, File file) {
-        boolean isSuccessful = true;
+        boolean isSuccessful;
         isSuccessful = mkdir(new File(file.getPath()), context);
         return isSuccessful;
     }

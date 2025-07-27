@@ -120,7 +120,7 @@ public class SmbFileModel implements FileModel {
         Timber.tag(TAG).d("Checking if SMB path is directory: %s", filePath);
         SmbClientRepository smbClientRepository = null;
         Session session = null;
-        String shareName = null;
+        String shareName;
         try {
             smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
             session = smbClientRepository.getSession();

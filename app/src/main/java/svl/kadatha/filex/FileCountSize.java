@@ -201,7 +201,7 @@ public class FileCountSize {
                 } else if (sourceFileObjectType == FileObjectType.WEBDAV_TYPE) {
                     Timber.tag(TAG).d("Starting file count for WebDAV files");
 
-                    Sardine sardine = null;
+                    Sardine sardine;
                     String url;
                     try {
                         WebDavClientRepository webDavClientRepository = WebDavClientRepository.getInstance(NetworkAccountDetailsViewModel.WEBDAV_NETWORK_ACCOUNT_POJO);
@@ -227,7 +227,7 @@ public class FileCountSize {
                     Timber.tag(TAG).d("Starting file count for SMB files");
                     SmbClientRepository smbClientRepository = null;
                     Session session = null;
-                    String shareName = null;
+                    String shareName;
                     try {
                         smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
                         session = smbClientRepository.getSession();

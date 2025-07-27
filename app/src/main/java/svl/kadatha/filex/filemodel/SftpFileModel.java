@@ -65,7 +65,7 @@ public class SftpFileModel implements FileModel {
 
     private static boolean mkdirsSftp(String parentPath, @NonNull String extendedPath) {
         Timber.tag(TAG).d("Attempting to create multiple SFTP directories: %s in %s", extendedPath, parentPath);
-        boolean success = true;
+        boolean success;
         String[] pathSegments = extendedPath.split("/");
         String currentPath = parentPath;
         for (String segment : pathSegments) {

@@ -1102,7 +1102,7 @@ public class Global {
             }
 
             NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            List<NotificationChannel> channels = null;
+            List<NotificationChannel> channels;
             channels = manager.getNotificationChannels();
             for (NotificationChannel channel : channels) {
                 if (channel.getId().equals(channelId) && channel.getImportance() == NotificationManager.IMPORTANCE_NONE) {

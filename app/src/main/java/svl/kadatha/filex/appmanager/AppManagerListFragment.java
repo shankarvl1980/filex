@@ -335,11 +335,10 @@ public class AppManagerListFragment extends Fragment {
                     intent.setData(uri);
                     startActivity(intent);
                 } else if (PLAY_STORE.equals(app_action)) {
-                    final String appPackageName = package_name;
                     try {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + package_name)));
                     } catch (ActivityNotFoundException anfe) {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + package_name)));
                     }
                 } else if (SHARE.equals(app_action)) {
                     FileIntentDispatch.sendFile(requireContext(), new ArrayList<>(Collections.singletonList(new File(app_path))));

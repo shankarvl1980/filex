@@ -240,7 +240,7 @@ public class FtpServerActivity extends BaseActivity {
 
     private boolean validateInput(boolean correctIfNotValid) {
 
-        int port = 0;
+        int port;
         try {
             port = Integer.parseInt(port_host.getText().toString());
         } catch (Exception e) {

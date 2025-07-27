@@ -676,7 +676,7 @@ public class MakeFilePOJOUtil {
         String date = Global.SDF.format(new Date(dateLong));
 
         long sizeLong = 0L;
-        String si = "";
+        String si;
 
         String file_ext = "";
         int play_overlay_visible = View.INVISIBLE;

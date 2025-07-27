@@ -296,13 +296,12 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             throw new CopyFailedException("Failed to create directory: " + path);
         }
         // Create and return a FileModel for the newly created directory
-        FileModel createdDirModel = FileModelFactory.getFileModel(
+        return FileModelFactory.getFileModel(
                 new File(baseModel.getPath(), path).getPath(),
                 fileObjectType,
                 tree_uri,
                 tree_uri_path
         );
-        return createdDirModel;
     }
 
 

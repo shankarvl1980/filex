@@ -112,7 +112,7 @@ public class LocalDataSocket {
             return socket;
         } else {
             // We're in PASV mode (not PORT)
-            Socket socket = null;
+            Socket socket;
             try {
                 socket = server.accept();
                 Timber.tag(TAG).d("onTransfer pasv accept successful");

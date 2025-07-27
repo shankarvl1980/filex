@@ -148,8 +148,8 @@ public final class FileUtil {
     }
 
     public static boolean copy_File_FileModel(@NonNull final File sourceFile, @NonNull final FileModel destFileModel, String child_name, boolean cut, long[] bytes_read) {
-        FileInputStream fileInputStream = null;
-        OutputStream outputStream = null;
+        FileInputStream fileInputStream;
+        OutputStream outputStream;
         boolean success = false;
 
         try {
@@ -175,8 +175,8 @@ public final class FileUtil {
 
 
     public static boolean copy_FileModel_FileModel(@NonNull final FileModel sourceFileModel, @NonNull final FileModel destFileModel, String child_name, boolean cut, long[] bytes_read) {
-        InputStream inputStream = null;
-        OutputStream outputStream = null;
+        InputStream inputStream;
+        OutputStream outputStream;
         boolean success = false;
 
         try {
@@ -201,8 +201,8 @@ public final class FileUtil {
     }
 
     public static boolean CopyUriFileModel(@NonNull Uri data, FileModel destFileModel, String file_name, long[] bytes_read) {
-        InputStream inStream = null;
-        OutputStream fileOutStream = null;
+        InputStream inStream;
+        OutputStream fileOutStream;
 
         try {
             inStream = App.getAppContext().getContentResolver().openInputStream(data);
@@ -239,7 +239,7 @@ public final class FileUtil {
 
     @SuppressWarnings("null")
     public static boolean copy_File_SAFFile(Context context, @NonNull final File source, @NonNull String target_file_path, String name, Uri tree_uri, String tree_uri_path, boolean cut, long[] bytes_read) {
-        OutputStream outStream = null;
+        OutputStream outStream;
         try (FileInputStream fileInStream = new FileInputStream(source)) {
             Uri uri = createDocumentUri(context, target_file_path, name, false, tree_uri, tree_uri_path);
             if (uri != null) {

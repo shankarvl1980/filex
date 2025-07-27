@@ -228,7 +228,7 @@ public class MakeCloudFilePOJOUtil {
         int pdf_overlay_visible = View.INVISIBLE;
         float alfa = Global.ENABLE_ALFA;
         String package_name = null;
-        int type = R.drawable.folder_icon;
+        int type;
 
         if (!isDirectory) {
             // It's a file
@@ -327,13 +327,13 @@ public class MakeCloudFilePOJOUtil {
         public java.util.List<YandexResource> items;
     }
 
-    public class YandexDownloadResponse {
+    public static class YandexDownloadResponse {
         public String href;
         String method;
         boolean templated;
     }
 
-    public class YandexUploadResponse {
+    public static class YandexUploadResponse {
         public String href;
         String method;
         boolean templated;
