@@ -202,19 +202,6 @@ public class MakeCloudFilePOJOUtil {
         return new FilePOJO(fileObjectType, name, package_name, file_path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible, 0, 0L, null, 0, null, null);
     }
 
-    static class DriveFileMetadata {
-        String id;
-        String name;
-        String mimeType;
-        @SerializedName("modifiedTime")
-        String modifiedTime; // in RFC3339 format, e.g. "2023-11-02T10:20:30.000Z"
-        Long size;
-    }
-
-    static class DriveFileListResponse {
-        List<DriveFileMetadata> files;
-    }
-
     static FilePOJO MAKE_FilePOJO(YandexResource resource, boolean extract_icon,
                                   FileObjectType fileObjectType, String file_path) {
         String name = resource.name;
@@ -300,31 +287,22 @@ public class MakeCloudFilePOJOUtil {
         );
     }
 
+    static class DriveFileMetadata {
+        String id;
+        String name;
+        String mimeType;
+        @SerializedName("modifiedTime")
+        String modifiedTime; // in RFC3339 format, e.g. "2023-11-02T10:20:30.000Z"
+        Long size;
+    }
+
+    static class DriveFileListResponse {
+        List<DriveFileMetadata> files;
+    }
 
     static class YandexResourceListResponse {
         // If you have a list response similar to DriveFileListResponse
         List<YandexResource> items;
-    }
-
-    public class YandexResource {
-        public String name;
-        String type;       // "file" or "dir"
-        public String path;       // e.g. "disk:/Folder/File.txt"
-        public String modified;   // RFC3339 format, e.g. "2023-11-02T10:20:30Z"
-        public Long size;
-        public YandexResourceEmbedded _embedded;
-
-        boolean isFile() {
-            return "file".equals(type);
-        }
-
-        public boolean isDir() {
-            return "dir".equals(type);
-        }
-    }
-
-    public class YandexResourceEmbedded {
-        public java.util.List<YandexResource> items;
     }
 
     public static class YandexDownloadResponse {
@@ -337,5 +315,26 @@ public class MakeCloudFilePOJOUtil {
         public String href;
         String method;
         boolean templated;
+    }
+
+    public class YandexResource {
+        public String name;
+        public String path;       // e.g. "disk:/Folder/File.txt"
+        public String modified;   // RFC3339 format, e.g. "2023-11-02T10:20:30Z"
+        public Long size;
+        public YandexResourceEmbedded _embedded;
+        String type;       // "file" or "dir"
+
+        boolean isFile() {
+            return "file".equals(type);
+        }
+
+        public boolean isDir() {
+            return "dir".equals(type);
+        }
+    }
+
+    public class YandexResourceEmbedded {
+        public java.util.List<YandexResource> items;
     }
 }

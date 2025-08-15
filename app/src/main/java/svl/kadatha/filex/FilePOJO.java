@@ -225,12 +225,12 @@ public class FilePOJO implements Parcelable {
         return this.play_overlay_visible;
     }
 
-    public int getPdfOverlayVisibility() {
-        return this.pdf_overlay_visible;
-    }
-
     public void setPlayOverlayVisibility(int play_overlay_visible) {
         this.play_overlay_visible = play_overlay_visible;
+    }
+
+    public int getPdfOverlayVisibility() {
+        return this.pdf_overlay_visible;
     }
 
     public void setPdfOverlayVisibility(int pdf_overlay_visible) {

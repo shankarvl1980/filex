@@ -10,9 +10,9 @@ import java.util.concurrent.Future;
 
 public class CopyToActivityViewModel extends AndroidViewModel {
     public List<FilePOJO> destFilePOJOs;
+    public boolean modify_ext;
     private boolean isCancelled;
     private Future<?> future1, future2, future3;
-    public boolean modify_ext;
 
     public CopyToActivityViewModel(@NonNull Application application) {
         super(application);

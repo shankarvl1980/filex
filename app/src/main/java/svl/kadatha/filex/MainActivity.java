@@ -1441,7 +1441,19 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         }
     }
 
-    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    public void workingDirRemove() {
+        if (working_dir_arraylist == null || working_dir_arraylist.isEmpty()) {
+            return;
+        }
+
+        if (workingDirRecyclerAdapter.custom_dir_selected_array.isEmpty()) {
+            Global.print(context, getString(R.string.select_directories_by_long_pressing));
+        } else {
+            workingDirRecyclerAdapter.remove(workingDirRecyclerAdapter.custom_dir_selected_array);
+            tinyDB.putListString("working_dir_arraylist", working_dir_arraylist);
+            setRecyclerViewHeight(workingDirListRecyclerView);
+        }
+    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -1480,20 +1492,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     });
-
-    public void workingDirRemove() {
-        if (working_dir_arraylist == null || working_dir_arraylist.isEmpty()) {
-            return;
-        }
-
-        if (workingDirRecyclerAdapter.custom_dir_selected_array.isEmpty()) {
-            Global.print(context, getString(R.string.select_directories_by_long_pressing));
-        } else {
-            workingDirRecyclerAdapter.remove(workingDirRecyclerAdapter.custom_dir_selected_array);
-            tinyDB.putListString("working_dir_arraylist", working_dir_arraylist);
-            setRecyclerViewHeight(workingDirListRecyclerView);
-        }
-    }
 
     private void setRecyclerViewHeight(RecyclerView v) {
         int number_items = Math.min(5, v.getAdapter().getItemCount());
@@ -1680,6 +1678,60 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     recentDialogListener.onMediaAttachedAndRemoved();
                 }
                 break;
+        }
+    }
+
+    private void setupDevice() {
+        boolean usb_path_added = false;
+        if (UsbDocumentProvider.USB_MASS_STORAGE_DEVICES.isEmpty()) {
+            return;
+        }
+
+        UsbMassStorageDevice device = UsbDocumentProvider.USB_MASS_STORAGE_DEVICES.get(0);
+        try {
+            device.init();
+            if (device.getPartitions().isEmpty()) {
+                Global.print(this, getString(R.string.error_setting_up_device));
+                return;
+            }
+            // Save the file system
+            usbCurrentFs = device.getPartitions().get(0).getFileSystem();
+
+            // Acquire the write lock by calling setUsbFileRoot (which uses writeLock internally)
+            UsbFile usbFileRoot = usbCurrentFs.getRootDirectory();
+            UsbFileRootSingleton.getInstance().setUsbFileRoot(usbFileRoot);
+
+            // Set chunk size, etc.
+            FileUtil.USB_CHUNK_SIZE = usbCurrentFs.getChunkSize();
+            if (FileUtil.USB_CHUNK_SIZE == 0) {
+                FileUtil.USB_CHUNK_SIZE = FileUtil.BUFFER_SIZE;
+            }
+        } catch (IOException e) {
+            // Handle exception
+        }
+
+        // The rest of your existing code
+        for (FilePOJO filePOJO : repositoryClass.storage_dir) {
+            if (filePOJO.getFileObjectType() == FileObjectType.USB_TYPE
+                    && filePOJO.getPath().equals(Global.USB_STORAGE_PATH)) {
+                usb_path_added = true;
+                break;
+            }
+        }
+
+        if (!usb_path_added) {
+            Global.USB_STORAGE_PATH = usbCurrentFs.getRootDirectory().getAbsolutePath();
+            repositoryClass.storage_dir.add(
+                    MakeFilePOJOUtil.MAKE_FilePOJO(usbCurrentFs.getRootDirectory(), false)
+            );
+            Global.WORKOUT_AVAILABLE_SPACE();
+            storageRecyclerAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void discoverDevice() {
+        if (!UsbDocumentProvider.USB_MASS_STORAGE_DEVICES.isEmpty()) {
+            setupDevice();
         }
     }
 
@@ -2348,7 +2400,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         }
     }
 
-
     private class NetworkRecyclerAdapter extends RecyclerView.Adapter<NetworkRecyclerAdapter.ViewHolder> {
         final List<String> network_arraylist;
         final int[] icon_image_list;
@@ -2555,60 +2606,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         }
     }
 
-    private void setupDevice() {
-        boolean usb_path_added = false;
-        if (UsbDocumentProvider.USB_MASS_STORAGE_DEVICES.isEmpty()) {
-            return;
-        }
-
-        UsbMassStorageDevice device = UsbDocumentProvider.USB_MASS_STORAGE_DEVICES.get(0);
-        try {
-            device.init();
-            if (device.getPartitions().isEmpty()) {
-                Global.print(this, getString(R.string.error_setting_up_device));
-                return;
-            }
-            // Save the file system
-            usbCurrentFs = device.getPartitions().get(0).getFileSystem();
-
-            // Acquire the write lock by calling setUsbFileRoot (which uses writeLock internally)
-            UsbFile usbFileRoot = usbCurrentFs.getRootDirectory();
-            UsbFileRootSingleton.getInstance().setUsbFileRoot(usbFileRoot);
-
-            // Set chunk size, etc.
-            FileUtil.USB_CHUNK_SIZE = usbCurrentFs.getChunkSize();
-            if (FileUtil.USB_CHUNK_SIZE == 0) {
-                FileUtil.USB_CHUNK_SIZE = FileUtil.BUFFER_SIZE;
-            }
-        } catch (IOException e) {
-            // Handle exception
-        }
-
-        // The rest of your existing code
-        for (FilePOJO filePOJO : repositoryClass.storage_dir) {
-            if (filePOJO.getFileObjectType() == FileObjectType.USB_TYPE
-                    && filePOJO.getPath().equals(Global.USB_STORAGE_PATH)) {
-                usb_path_added = true;
-                break;
-            }
-        }
-
-        if (!usb_path_added) {
-            Global.USB_STORAGE_PATH = usbCurrentFs.getRootDirectory().getAbsolutePath();
-            repositoryClass.storage_dir.add(
-                    MakeFilePOJOUtil.MAKE_FilePOJO(usbCurrentFs.getRootDirectory(), false)
-            );
-            Global.WORKOUT_AVAILABLE_SPACE();
-            storageRecyclerAdapter.notifyDataSetChanged();
-        }
-    }
-
-    private void discoverDevice() {
-        if (!UsbDocumentProvider.USB_MASS_STORAGE_DEVICES.isEmpty()) {
-            setupDevice();
-        }
-    }
-
     private class LocalBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -2773,4 +2770,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     }
+
+
 }

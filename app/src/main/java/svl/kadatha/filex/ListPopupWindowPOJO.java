@@ -45,7 +45,7 @@ public class ListPopupWindowPOJO {
                 vh = new ViewHolder();
                 vh.imageView = v.findViewById(R.id.list_popupwindow_layout_iv);
                 vh.textView = v.findViewById(R.id.list_popupwindow_tv);
-                vh.divider=v.findViewById(R.id.list_pop_up_window_item_divider);
+                vh.divider = v.findViewById(R.id.list_pop_up_window_item_divider);
                 v.setTag(vh);
             } else {
                 v = convertView;

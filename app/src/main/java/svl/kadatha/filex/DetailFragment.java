@@ -61,6 +61,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
     public static String CUT_COPY_FILE_CLICK_SELECTED = "";
     public static ArrayList<String> FILE_SELECTED_FOR_CUT_COPY = new ArrayList<>();
     public static FilePOJO TO_BE_MOVED_TO_FILE_POJO;
+    public static String search_file_name;
     public List<FilePOJO> filePOJO_list, totalFilePOJO_list;
     public int totalFilePOJO_list_Size;
     public RecyclerView filepath_recyclerview;
@@ -71,7 +72,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
     public String fileclickselected = "";
     public String file_click_selected_name = "";
     public UsbFile currentUsbFile;
-    public static String search_file_name;
     public Set<FilePOJO> search_in_dir = new HashSet<>();
     public String search_file_type;
     public boolean search_whole_word, search_case_sensitive, search_regex;

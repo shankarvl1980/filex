@@ -141,6 +141,8 @@ public class Global {
             return !s.startsWith(".");
         }
     };
+    static final String DUPLICATE_FILE_SIZE = "262144"; //0.25mb
+    static final String LARGE_FILE_SIZE = "20971520"; //20mb
     public static File ARCHIVE_EXTRACT_DIR;
     static public int ACTION_BAR_HEIGHT;
     static public int ACTION_BAR_HEIGHT_IN_DP;
@@ -180,6 +182,7 @@ public class Global {
     public static int LIST_POPUP_WINDOW_DROP_DOWN_OFFSET;
     public static boolean IS_TABLET;
     public static DividerItemDecoration DIVIDERITEMDECORATION;
+    public static boolean RECOGNISE_USB;
     static String USB_STORAGE_PATH;
     static File USB_CACHE_DIR;
     static List<UriPOJO> URI_PERMISSION_LIST = new ArrayList<>();
@@ -195,11 +198,8 @@ public class Global {
     static boolean FILE_GRID_LAYOUT;
     static boolean IMAGE_VIDEO_GRID_LAYOUT;
     static boolean SHOW_FILE_PATH;
-    public static boolean RECOGNISE_USB;
     static boolean WHETHER_TO_CLEAR_CACHE_TODAY;
     static int SIZE_APK_ICON_LIST, CURRENT_MONTH;
-    static final String DUPLICATE_FILE_SIZE="262144"; //0.25mb
-    static final String LARGE_FILE_SIZE="20971520"; //20mb
 
     static void GET_URI_PERMISSIONS_LIST(Context context) {
         URI_PERMISSION_LIST = new ArrayList<>();
