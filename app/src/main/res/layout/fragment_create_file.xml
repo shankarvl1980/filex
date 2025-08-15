@@ -27,8 +27,7 @@
         android:layout_height="wrap_content"
         android:background="?attr/dialog_background"
         android:divider="@android:color/darker_gray"
-        android:dividerHeight="0.5dp"
-        />
+        android:dividerHeight="0.5dp" />
 
 
     <FrameLayout

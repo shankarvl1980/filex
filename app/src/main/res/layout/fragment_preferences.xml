@@ -126,7 +126,7 @@
                 android:minHeight="48dp"
                 android:text="@string/remove_selected"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/preferences_remove_all_defaults_btn"  />
+                app:layout_constraintTop_toBottomOf="@id/preferences_remove_all_defaults_btn" />
 
             <View
                 android:id="@+id/fragment_preferences_divider2"

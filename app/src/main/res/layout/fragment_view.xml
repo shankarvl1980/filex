@@ -315,6 +315,7 @@
                             android:src="@drawable/sort_size_desc_icon" />
                     </TableRow>
                 </TableLayout>
+
                 <View
                     android:id="@+id/fragment_view_divider3"
                     android:layout_width="match_parent"
@@ -324,6 +325,7 @@
                     android:background="?attr/recycler_second_text_color"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/sort_table_layout" />
+
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/view_switch_show_hidden"
                     android:layout_width="match_parent"

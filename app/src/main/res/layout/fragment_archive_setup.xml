@@ -79,6 +79,7 @@
                     android:text="@string/create_folder"
                     android:textSize="15sp"
                     app:layout_constraintTop_toBottomOf="@id/dialog_archive_textview_zip_name" />
+
                 <View
                     android:id="@+id/dialog_archive_divider1"
                     android:layout_width="match_parent"
@@ -89,6 +90,7 @@
                     android:background="?attr/recycler_second_text_color"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/dialog_archive_checkbox" />
+
                 <TextView
                     android:id="@+id/dialog_archive_destination_folder"
                     android:layout_width="wrap_content"

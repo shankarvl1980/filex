@@ -102,6 +102,7 @@
                         />
 
                 </RadioGroup>
+
                 <View
                     android:id="@+id/fragment_storage_analyser_sort_divider1"
                     android:layout_width="match_parent"
@@ -112,6 +113,7 @@
                     android:background="?attr/recycler_second_text_color"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/storage_analyser_dialog_view_layout_rg" />
+
                 <TextView
                     android:id="@+id/sort_label"
                     android:layout_width="match_parent"
