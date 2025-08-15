@@ -541,7 +541,6 @@ public class FilePOJOUtil {
                 try {
                     sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
                     channelSftp = sftpChannelRepository.getSftpChannel();
-                    @SuppressWarnings("unchecked")
                     Vector<ChannelSftp.LsEntry> lsEntries = channelSftp.ls(fileclickselected);
                     for (ChannelSftp.LsEntry lsEntry : lsEntries) {
                         try {
@@ -884,7 +883,6 @@ public class FilePOJOUtil {
                 try {
                     sftpChannelRepository = SftpChannelRepository.getInstance(NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO);
                     channelSftp = sftpChannelRepository.getSftpChannel();
-                    @SuppressWarnings("unchecked")
                     Vector<ChannelSftp.LsEntry> lsEntries = channelSftp.ls(fileclickselected);
                     for (ChannelSftp.LsEntry lsEntry : lsEntries) {
                         try {

@@ -136,7 +136,7 @@ public class AppManagerActivity extends BaseActivity {
         AppManagerListViewModel viewModel = new ViewModelProvider(this).get(AppManagerListViewModel.class);
         viewModel.populateApps();
         Intent intent = getIntent();
-        on_intent(intent, savedInstanceState);
+        //on_intent(intent, savedInstanceState);
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -152,11 +152,6 @@ public class AppManagerActivity extends BaseActivity {
             }
         });
     }
-
-    private void on_intent(Intent intent, Bundle savedInstanceState) {
-
-    }
-
 
     public void setSearchBarVisibility(boolean visible) {
         if (userAppListFragment.adapter == null || userAppListFragment.progress_bar.getVisibility() == View.VISIBLE || systemAppListFragment.adapter == null || systemAppListFragment.progress_bar.getVisibility() == View.VISIBLE) {

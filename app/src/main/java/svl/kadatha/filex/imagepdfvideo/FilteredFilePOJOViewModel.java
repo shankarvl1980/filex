@@ -214,7 +214,6 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void run() {
-
                 Uri uri = result.getData().getData();
                 String file_name = result.getData().getStringExtra(InstaCropperActivity.EXTRA_FILE_NAME);
                 File f = new File(temporaryDir, file_name);

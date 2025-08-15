@@ -122,7 +122,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     ViewPager viewPager;
     ActionModeListener actionModeListener;
     private List<String> library_categories = new ArrayList<>();
-    private List<String> clean_storage_categories = new ArrayList<>();
     private FilePOJO drawer_storage_file_pojo_selected;
     private ImageView working_dir_expand_indicator, library_expand_indicator, clean_storage_expand_indicator, network_expand_indicator, cloud_expand_indicator;
     private RecyclerView workingDirListRecyclerView;
@@ -652,7 +651,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         });
 
         clean_storage_expand_indicator = findViewById(R.id.clean_storage_expand_indicator);
-        clean_storage_categories = Arrays.asList(getResources().getStringArray(R.array.clean_storage_categories));
+        List<String> clean_storage_categories = Arrays.asList(getResources().getStringArray(R.array.clean_storage_categories));
         RecyclerView clean_storage_recyclerView = findViewById(R.id.clean_storage_recyclerview);
         clean_storage_recyclerView.setLayoutManager(new LinearLayoutManager(this));
         clean_storage_recyclerView.addItemDecoration(Global.DIVIDERITEMDECORATION);
