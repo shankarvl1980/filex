@@ -36,9 +36,6 @@ public class DefaultAppDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE);
-        onCreate(sqLiteDatabase);
     }
 
     public List<DefaultAppsDialog.DefaultAppPOJO> getDefaultAppPOJOList() {
@@ -91,16 +88,12 @@ public class DefaultAppDatabaseHelper extends SQLiteOpenHelper {
                                 defaultAppPOJOS.add(new DefaultAppsDialog.DefaultAppPOJO(mime_type, file_type, app_name, app_package_name, app_component_name));
                             } catch (PackageManager.NameNotFoundException |
                                      IllegalStateException e) {
-
                             }
-
                         }
                     }
                 }
             }
-
         }
-
         return defaultAppPOJOS;
     }
 
@@ -161,6 +154,5 @@ public class DefaultAppDatabaseHelper extends SQLiteOpenHelper {
 
     public void deleteTable() {
         getWritableDatabase().execSQL("DROP TABLE IF EXISTS " + TABLE);
-
     }
 }

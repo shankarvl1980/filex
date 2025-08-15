@@ -175,7 +175,6 @@ public class AppActionSelectDialog extends DialogFragment {
                         } else {
                             getParentFragmentManager().setFragmentResult(AppManagerListFragment.APP_ACTION_REQUEST_CODE, bundle);
                         }
-
                         dismissAllowingStateLoss();
                     }
                 });

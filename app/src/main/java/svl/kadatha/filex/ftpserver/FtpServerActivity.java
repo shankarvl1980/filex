@@ -108,7 +108,6 @@ public class FtpServerActivity extends BaseActivity {
         set_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 String username = user_name_host.getText().toString();
                 String password = password_host.getText().toString();
                 String directory = chroot_host.getText().toString();
@@ -146,7 +145,6 @@ public class FtpServerActivity extends BaseActivity {
 
         validateInput(true);
 
-
         Global.WARN_NOTIFICATIONS_DISABLED(context, FsNotification.CHANNEL_ID, alreadyNotificationWarned);
         updateRunningState();
 
@@ -162,7 +160,6 @@ public class FtpServerActivity extends BaseActivity {
                 }
             }
         });
-
 
         FrameLayout button_layout = findViewById(R.id.ftp_server_button_layout);
         button_layout.addView(new EquallyDistributedDialogButtonsLayout(context, 1, Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT));
@@ -185,6 +182,7 @@ public class FtpServerActivity extends BaseActivity {
                 chroot_host.setText(viewModel.chroot);
             }
         });
+
         getSupportFragmentManager().setFragmentResultListener(FTP_SERVER_CLOSE_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
@@ -193,7 +191,9 @@ public class FtpServerActivity extends BaseActivity {
                 }
             }
         });
+
         disable_ftp_username_pwd_tv(true);
+
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -201,7 +201,7 @@ public class FtpServerActivity extends BaseActivity {
                     YesOrNoAlertDialog ftpServerCloseAlertDialog = YesOrNoAlertDialog.getInstance(FTP_SERVER_CLOSE_REQUEST_CODE, R.string.want_to_stop_ftp_server_service, new Bundle());
                     ftpServerCloseAlertDialog.show(getSupportFragmentManager(), "");
                 } else {
-                    remove();
+                    finish();
                 }
             }
         });
@@ -210,9 +210,7 @@ public class FtpServerActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
-
         updateRunningState();
-
         Timber.tag(TAG).d("onResume: Registering the FTP server actions");
         IntentFilter filter = new IntentFilter();
         filter.addAction(FsService.ACTION_STARTED);
@@ -239,7 +237,6 @@ public class FtpServerActivity extends BaseActivity {
     }
 
     private boolean validateInput(boolean correctIfNotValid) {
-
         int port;
         try {
             port = Integer.parseInt(port_host.getText().toString());
@@ -272,7 +269,6 @@ public class FtpServerActivity extends BaseActivity {
                 if (!viewModel.chroot_list.isEmpty()) {
                     chroot_host.setText(viewModel.chroot_list.get(0));
                 }
-
             }
         }
 
