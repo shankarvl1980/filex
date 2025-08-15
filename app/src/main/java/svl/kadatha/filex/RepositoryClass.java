@@ -253,14 +253,14 @@ public class RepositoryClass {
                 cursor = context.getContentResolver().query(MediaStore.Files.getContentUri("external"), new String[]{MediaStore.Files.FileColumns.DATA},
                         "(" +
                                 MediaStore.Files.FileColumns.SIZE + " >= ?" + ")",
-                        new String[]{"20971520"}, null);
+                        new String[]{Global.LARGE_FILE_SIZE}, null);
 
                 break;
             case "Duplicate Files":
                 cursor = context.getContentResolver().query(MediaStore.Files.getContentUri("external"), new String[]{MediaStore.Files.FileColumns.DATA},
                         "(" + MediaStore.Files.FileColumns.MIME_TYPE + " NOT LIKE ?" + ")" + " AND " +
                                 "(" + MediaStore.Files.FileColumns.SIZE + " >= ?" + ")"
-                        , new String[]{DocumentsContract.Document.MIME_TYPE_DIR, "524288"}, null);
+                        , new String[]{DocumentsContract.Document.MIME_TYPE_DIR, Global.DUPLICATE_FILE_SIZE}, null);
                 break;
             case "Image":
                 cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new String[]{MediaStore.Images.Media.DATA}, null, null, null);

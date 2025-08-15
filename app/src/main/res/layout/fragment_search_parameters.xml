@@ -34,7 +34,6 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/layout_margin"
             android:layout_marginBottom="@dimen/layout_margin"
             android:fadeScrollbars="false"
             android:fillViewport="true"
@@ -115,6 +114,16 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_whole_word_checkbox" />
 
+                <View
+                    android:id="@+id/fragment_search_divider1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginStart="@dimen/divider_margin"
+                    android:layout_marginTop="@dimen/layout_margin"
+                    android:layout_marginEnd="@dimen/divider_margin"
+                    android:background="?attr/recycler_second_text_color"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/dialog_fragment_search_regex_checkbox" />
                 <!-- File Type Section -->
                 <TextView
                     android:id="@+id/dialog_fragment_search_filetype_label"
@@ -124,15 +133,15 @@
 
                     android:gravity="start"
                     android:paddingStart="@dimen/ten_dp"
-                    android:paddingTop="@dimen/ten_dp"
+                    android:paddingTop="8dp"
                     android:paddingEnd="@dimen/ten_dp"
                     android:paddingBottom="@dimen/layout_margin"
                     android:text="@string/type"
-                    android:textSize="17sp"
                     android:textColor="?attr/recycler_second_text_color"
+                    android:textSize="17sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/dialog_fragment_search_regex_checkbox"
+                    app:layout_constraintTop_toBottomOf="@id/fragment_search_divider1"
 
                     />
 
@@ -177,6 +186,16 @@
                         android:text="@string/file_directory" />
                 </RadioGroup>
 
+                <View
+                    android:id="@+id/fragment_search_divider2"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginStart="@dimen/divider_margin"
+                    android:layout_marginTop="@dimen/divider_margin"
+                    android:layout_marginEnd="@dimen/divider_margin"
+                    android:background="?attr/recycler_second_text_color"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/dialog_fragment_search_rg" />
                 <!-- Size Group -->
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/dialog_fragment_search_size_label_group"
@@ -185,7 +204,7 @@
                     app:constraint_referenced_ids="dialog_fragment_search_size_rg,dialog_fragment_search_greater_less_than_table"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_rg" />
+                    app:layout_constraintTop_toBottomOf="@+id/fragment_search_divider2" />
 
                 <!-- Size Radio Group -->
                 <RadioGroup
@@ -196,11 +215,11 @@
                     android:minHeight="36dp"
                     android:orientation="horizontal"
                     android:paddingStart="@dimen/ten_dp"
-                    android:paddingTop="@dimen/ten_dp"
+                    android:paddingTop="8dp"
                     android:paddingEnd="@dimen/ten_dp"
                     android:paddingBottom="@dimen/layout_margin"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_rg"
+                    app:layout_constraintTop_toBottomOf="@+id/fragment_search_divider2"
 
                     >
 
@@ -210,10 +229,11 @@
                         android:layout_height="wrap_content"
                         android:background="?attr/dialog_background"
                         android:gravity="start"
+
                         android:paddingEnd="@dimen/ten_dp"
                         android:text="@string/size"
-                        android:textSize="17sp"
-                        android:textColor="?attr/recycler_second_text_color" />
+                        android:textColor="?attr/recycler_second_text_color"
+                        android:textSize="17sp" />
 
                     <RadioButton
                         android:id="@+id/dialog_search_rb_size_kb"
@@ -329,6 +349,16 @@
                     </TableRow>
                 </TableLayout>
 
+                <View
+                    android:id="@+id/fragment_search_divider3"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginStart="@dimen/divider_margin"
+                    android:layout_marginTop="@dimen/divider_margin"
+                    android:layout_marginEnd="@dimen/divider_margin"
+                    android:background="?attr/recycler_second_text_color"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/dialog_fragment_search_greater_less_than_table" />
                 <!-- Search Location Section -->
                 <TextView
                     android:id="@+id/search_in_label"
@@ -336,15 +366,15 @@
                     android:layout_height="wrap_content"
                     android:background="?attr/dialog_background"
                     android:paddingStart="@dimen/ten_dp"
-                    android:paddingTop="@dimen/ten_dp"
+                    android:paddingTop="8dp"
                     android:paddingEnd="@dimen/ten_dp"
                     android:paddingBottom="@dimen/layout_margin"
                     android:text="@string/search_in"
-                    android:textSize="17sp"
                     android:textColor="?attr/recycler_second_text_color"
+                    android:textSize="17sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/dialog_fragment_search_greater_less_than_table" />
+                    app:layout_constraintTop_toBottomOf="@+id/fragment_search_divider3" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/dialog_fragment_search_storage_dir_recyclerview"

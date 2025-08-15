@@ -23,7 +23,6 @@
         android:id="@+id/fragment_library_filter_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/layout_margin"
         android:layout_marginBottom="@dimen/layout_margin"
         android:background="?attr/dialog_background"
         android:choiceMode="singleChoice"

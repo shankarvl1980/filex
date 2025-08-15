@@ -198,6 +198,8 @@ public class Global {
     public static boolean RECOGNISE_USB;
     static boolean WHETHER_TO_CLEAR_CACHE_TODAY;
     static int SIZE_APK_ICON_LIST, CURRENT_MONTH;
+    static final String DUPLICATE_FILE_SIZE="262144"; //0.25mb
+    static final String LARGE_FILE_SIZE="20971520"; //20mb
 
     static void GET_URI_PERMISSIONS_LIST(Context context) {
         URI_PERMISSION_LIST = new ArrayList<>();

@@ -44,6 +44,8 @@ public class StorageAnalyserSortDialog extends DialogFragment {
         lable.setText(getString(R.string.sort));
         Group layout_group = v.findViewById(R.id.storage_analyser_layout_group);
         layout_group.setVisibility(View.GONE);
+        View divider=v.findViewById(R.id.fragment_storage_analyser_sort_divider1);
+        divider.setVisibility(View.GONE);
         name_asc_btn = v.findViewById(R.id.storage_analyser_name_asc);
         name_desc_btn = v.findViewById(R.id.storage_analyser_name_desc);
         date_asc_btn = v.findViewById(R.id.storage_analyser_date_asc);

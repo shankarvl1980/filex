@@ -24,7 +24,6 @@
         android:id="@+id/dialog_recent_root_dir_recycler_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/layout_margin"
         android:background="?attr/dialog_background"
         android:choiceMode="singleChoice"
         android:clipToPadding="false"

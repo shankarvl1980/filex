@@ -30,7 +30,6 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/four_dp"
             android:layout_marginBottom="@dimen/layout_margin"
             android:clipToPadding="false">
 

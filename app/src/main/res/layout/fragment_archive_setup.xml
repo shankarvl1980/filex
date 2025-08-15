@@ -30,7 +30,6 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/layout_margin"
             android:layout_marginBottom="@dimen/layout_margin"
             android:fillViewport="true">
 
@@ -80,12 +79,20 @@
                     android:text="@string/create_folder"
                     android:textSize="15sp"
                     app:layout_constraintTop_toBottomOf="@id/dialog_archive_textview_zip_name" />
-
+                <View
+                    android:id="@+id/dialog_archive_divider1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginStart="@dimen/divider_margin"
+                    android:layout_marginEnd="@dimen/divider_margin"
+                    android:layout_marginTop="@dimen/layout_margin"
+                    android:background="?attr/recycler_second_text_color"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/dialog_archive_checkbox" />
                 <TextView
                     android:id="@+id/dialog_archive_destination_folder"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/layout_margin"
                     android:paddingHorizontal="@dimen/ten_dp"
                     android:paddingTop="@dimen/ten_dp"
                     android:text="@string/destination_folder"
@@ -93,7 +100,7 @@
                     android:textSize="17sp"
                     app:layout_constraintEnd_toStartOf="@id/dialog_archive_destination_file_object_type"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/dialog_archive_checkbox" />
+                    app:layout_constraintTop_toBottomOf="@id/dialog_archive_divider1" />
 
                 <TextView
                     android:id="@+id/dialog_archive_destination_file_object_type"
@@ -111,7 +118,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="@dimen/ten_dp"
-                    android:paddingTop="@dimen/ten_dp"
+                    android:paddingTop="@dimen/layout_margin"
                     app:layout_constraintTop_toBottomOf="@id/dialog_archive_destination_folder">
 
                     <RadioButton

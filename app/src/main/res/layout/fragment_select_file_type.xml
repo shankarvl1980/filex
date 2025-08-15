@@ -41,7 +41,6 @@
                 android:id="@+id/fragment_file_type_RecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/layout_margin"
                 android:background="?attr/dialog_background"
                 android:choiceMode="singleChoice"
                 android:padding="@dimen/layout_margin"

@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import android.widget.TableRow.LayoutParams;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
@@ -122,6 +124,13 @@ public class PropertiesDialog extends DialogFragment {
         //private TextView permissions;
         TableLayout properties_details_table_layout = v.findViewById(R.id.fragment_properties_details_table_layout);
 
+        int heightPx = (int) (0.5f * context.getResources().getDisplayMetrics().density);
+        //int marginPx = context.getResources().getDimensionPixelSize(R.dimen.divider_margin);
+
+        TypedValue typedValue = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.recycler_second_text_color, typedValue, true);
+        int separatorColor = ContextCompat.getColor(context, typedValue.resourceId);
+
         for (int i = 0; i < 6; ++i) {
             View row_item = inflater.inflate(R.layout.properties_item_view_layout, null);
             TextView label = row_item.findViewById(R.id.properties_label);
@@ -167,6 +176,20 @@ public class PropertiesDialog extends DialogFragment {
                     break;
             }
             properties_details_table_layout.addView(row_item);
+
+            /// Add separator except after last item
+            if (i < 5) {
+                View separator = new View(context);
+                TableLayout.LayoutParams params = new TableLayout.LayoutParams(
+                        TableLayout.LayoutParams.MATCH_PARENT,
+                        heightPx
+                );
+                //params.setMargins(marginPx, 0, marginPx, 0);
+                separator.setLayoutParams(params);
+                separator.setBackgroundColor(separatorColor);
+                properties_details_table_layout.addView(separator);
+            }
+
         }
 
         TableLayout properties_rwh_table_layout = v.findViewById(R.id.fragment_properties_rwh_tablelayout);
@@ -210,6 +233,19 @@ public class PropertiesDialog extends DialogFragment {
                     break;
             }
             properties_rwh_table_layout.addView(row_item);
+
+            /// Add separator except after last item
+            if (i < 4) {
+                View separator = new View(context);
+                TableLayout.LayoutParams params = new TableLayout.LayoutParams(
+                        TableLayout.LayoutParams.MATCH_PARENT,
+                        heightPx
+                );
+                //params.setMargins(marginPx, 0, marginPx, 0);
+                separator.setLayoutParams(params);
+                separator.setBackgroundColor(separatorColor);
+                properties_rwh_table_layout.addView(separator);
+            }
         }
 
         ViewModelFileCount.ViewModelFileCountFactory factory = new ViewModelFileCount.ViewModelFileCountFactory(context, files_selected_array, fileObjectType);

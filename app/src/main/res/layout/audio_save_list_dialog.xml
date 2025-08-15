@@ -19,7 +19,6 @@
         android:id="@+id/audio_save_list_create_add_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/layout_margin"
         android:background="?attr/dialog_background"
         android:padding="@dimen/layout_margin"
         android:scrollbars="none"

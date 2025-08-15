@@ -37,7 +37,6 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/layout_margin"
             android:layout_marginBottom="@dimen/layout_margin">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -103,7 +102,16 @@
                         />
 
                 </RadioGroup>
-
+                <View
+                    android:id="@+id/fragment_storage_analyser_sort_divider1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginStart="@dimen/divider_margin"
+                    android:layout_marginEnd="@dimen/divider_margin"
+                    android:layout_marginTop="@dimen/layout_margin"
+                    android:background="?attr/recycler_second_text_color"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/storage_analyser_dialog_view_layout_rg" />
                 <TextView
                     android:id="@+id/sort_label"
                     android:layout_width="match_parent"
@@ -118,7 +126,7 @@
                     android:textColor="?attr/recycler_second_text_color"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/storage_analyser_dialog_view_layout_rg" />
+                    app:layout_constraintTop_toBottomOf="@id/fragment_storage_analyser_sort_divider1" />
 
 
                 <TableLayout

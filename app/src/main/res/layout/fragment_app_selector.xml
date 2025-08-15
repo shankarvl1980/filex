@@ -18,7 +18,6 @@
         android:id="@+id/dialog_select_app_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/layout_margin"
         android:background="?attr/dialog_background"
         android:choiceMode="singleChoice"
         android:padding="@dimen/layout_margin"

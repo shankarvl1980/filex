@@ -62,21 +62,21 @@
                     android:id="@+id/preferences_rb_light"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
+                    android:minHeight="44dp"
                     android:text="@string/light" />
 
                 <RadioButton
                     android:id="@+id/preferences_rb_dark"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
+                    android:minHeight="44dp"
                     android:text="@string/dark" />
 
                 <RadioButton
                     android:id="@+id/preferences_rb_system"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
+                    android:minHeight="44dp"
                     android:text="@string/system_default" />
             </RadioGroup>
 
@@ -86,6 +86,8 @@
                 android:layout_height="0.5dp"
                 android:layout_marginTop="@dimen/layout_margin"
                 android:layout_marginBottom="@dimen/layout_margin"
+                android:layout_marginStart="@dimen/divider_margin"
+                android:layout_marginEnd="@dimen/divider_margin"
                 android:background="?attr/recycler_second_text_color"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/preferences_theme_rg" />
@@ -107,10 +109,10 @@
                 style="@style/Widget.AppCompat.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/ten_dp"
+                android:layout_marginStart="@dimen/ten_dp"
+                android:layout_marginEnd="@dimen/ten_dp"
                 android:minHeight="48dp"
                 android:text="@string/remove_defaults"
-                app:layout_constraintEnd_toStartOf="@id/preferences_remove_select_defaults_btn"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/default_apps_label" />
 
@@ -119,11 +121,12 @@
                 style="@style/Widget.AppCompat.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/ten_dp"
+                android:layout_marginStart="@dimen/ten_dp"
+                android:layout_marginEnd="@dimen/ten_dp"
                 android:minHeight="48dp"
                 android:text="@string/remove_selected"
-                app:layout_constraintStart_toEndOf="@+id/preferences_remove_all_defaults_btn"
-                app:layout_constraintTop_toBottomOf="@id/default_apps_label" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/preferences_remove_all_defaults_btn"  />
 
             <View
                 android:id="@+id/fragment_preferences_divider2"
@@ -131,9 +134,11 @@
                 android:layout_height="0.5dp"
                 android:layout_marginTop="@dimen/layout_margin"
                 android:layout_marginBottom="@dimen/layout_margin"
+                android:layout_marginStart="@dimen/divider_margin"
+                android:layout_marginEnd="@dimen/divider_margin"
                 android:background="?attr/recycler_second_text_color"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/preferences_remove_all_defaults_btn" />
+                app:layout_constraintTop_toBottomOf="@id/preferences_remove_select_defaults_btn" />
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/preferences_switch_show_file_path"
@@ -152,6 +157,8 @@
                 android:layout_height="0.5dp"
                 android:layout_marginTop="@dimen/ten_dp"
                 android:layout_marginBottom="@dimen/layout_margin"
+                android:layout_marginStart="@dimen/divider_margin"
+                android:layout_marginEnd="@dimen/divider_margin"
                 android:background="?attr/recycler_second_text_color"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/preferences_switch_show_file_path" />
@@ -174,6 +181,8 @@
                 android:layout_height="0.5dp"
                 android:layout_marginTop="@dimen/ten_dp"
                 android:layout_marginBottom="@dimen/layout_margin"
+                android:layout_marginStart="@dimen/divider_margin"
+                android:layout_marginEnd="@dimen/divider_margin"
                 android:background="?attr/recycler_second_text_color"
                 android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/preferences_switch_show_usb" />

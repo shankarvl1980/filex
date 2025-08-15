@@ -299,7 +299,7 @@ public class CloudAuthActivity extends BaseActivity {
 
         private class VH extends RecyclerView.ViewHolder {
             final View v;
-            final ImageView cloud_image;
+            //final ImageView cloud_image;
             final ImageView cloud_account_select_indicator;
             final TextView cloud_account_display;
             final TextView cloud_account_user_id;
@@ -309,7 +309,7 @@ public class CloudAuthActivity extends BaseActivity {
             VH(View view) {
                 super(view);
                 v = view;
-                cloud_image = v.findViewById(R.id.network_list_recyclerview_network_image);
+                //cloud_image = v.findViewById(R.id.network_list_recyclerview_network_image);
                 cloud_account_display = v.findViewById(R.id.network_list_recyclerview_display);
                 cloud_account_user_id = v.findViewById(R.id.network_list_recyclerview_user_name);
                 cloud_account_select_indicator = v.findViewById(R.id.network_list_recyclerview_select_indicator);

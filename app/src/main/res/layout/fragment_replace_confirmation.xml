@@ -22,7 +22,6 @@
         android:id="@+id/fragment_replace_confirmation_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/four_dp"
         android:background="?attr/dialog_background"
         android:padding="@dimen/dialog_inner_padding"
         app:layout_constraintEnd_toEndOf="parent"

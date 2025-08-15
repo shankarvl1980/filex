@@ -122,8 +122,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     ViewPager viewPager;
     ActionModeListener actionModeListener;
     private List<String> library_categories = new ArrayList<>();
+    private List<String> clean_storage_categories = new ArrayList<>();
     private FilePOJO drawer_storage_file_pojo_selected;
-    private ImageView working_dir_expand_indicator, library_expand_indicator, network_expand_indicator, cloud_expand_indicator;
+    private ImageView working_dir_expand_indicator, library_expand_indicator, clean_storage_expand_indicator, network_expand_indicator, cloud_expand_indicator;
     private RecyclerView workingDirListRecyclerView;
     private RecyclerView networkRecyclerView, cloudRecyclerView;
     private int countBackPressed = 0;
@@ -159,7 +160,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     });
     private ListPopupWindowPOJO extract_listPopupWindowPOJO, open_listPopupWindowPOJO;
     private ListPopupWindowPOJO.PopupWindowAdapter popupWindowAdapter;
-    private Group library_layout_group, network_layout_group, cloud_layout_group;
+    private Group library_layout_group, clean_storage_layout_group, network_layout_group, cloud_layout_group;
     private Handler h;
     private NestedScrollView nestedScrollView;
     private RepositoryClass repositoryClass;
@@ -534,12 +535,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         int[] icon_image_array = {R.drawable.lib_download_icon, R.drawable.lib_doc_icon, R.drawable.lib_image_icon, R.drawable.lib_audio_icon, R.drawable.lib_video_icon, R.drawable.compress_icon, R.drawable.android_os_outlined_icon};
         libraryRecyclerView.setAdapter(new LibraryRecyclerAdapter(library_categories, icon_image_array));
 
-
         View library_scan_heading_layout = findViewById(R.id.library_scan_label_background);
         library_scan_heading_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
                 pbf.show(fm, "");
                 drawerLayout.closeDrawer(drawer);
@@ -629,26 +628,36 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         });
 
-        View clean_storage_heading_layout = findViewById(R.id.clean_storage_label_background);
+        clean_storage_layout_group = findViewById(R.id.clean_storage_layout_group);
+        View clean_storage_heading_layout = findViewById(R.id.clean_storage_layout_background);
         clean_storage_heading_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
-                pbf.show(fm, "");
-                drawerLayout.closeDrawer(drawer);
-                Handler h = new Handler();
-                h.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-                        action_mode_finish(df);
-                        CleanStorageDialog cleanMemoryDialog = new CleanStorageDialog();
-                        cleanMemoryDialog.show(fm, "clean_storage_dialog");
-                        pbf.dismissAllowingStateLoss();
-                    }
-                }, 500);
+                if (clean_storage_layout_group.getVisibility() == View.GONE) {
+                    clean_storage_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.right_arrow_drawer_icon));
+                    clean_storage_layout_group.setVisibility(View.VISIBLE);
+                    nestedScrollView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            //nestedScrollView.smoothScrollTo(0, library_expand_indicator.getTop());
+                        }
+                    });
+                    viewModel.clean_storage_shown = true;
+                } else {
+                    clean_storage_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.down_arrow_drawer_icon));
+                    clean_storage_layout_group.setVisibility(View.GONE);
+                    viewModel.clean_storage_shown = false;
+                }
             }
         });
+
+        clean_storage_expand_indicator = findViewById(R.id.clean_storage_expand_indicator);
+        clean_storage_categories = Arrays.asList(getResources().getStringArray(R.array.clean_storage_categories));
+        RecyclerView clean_storage_recyclerView = findViewById(R.id.clean_storage_recyclerview);
+        clean_storage_recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        clean_storage_recyclerView.addItemDecoration(Global.DIVIDERITEMDECORATION);
+        int[] clean_icon_image_array = {R.drawable.scan_drawer_icon, R.drawable.scan_drawer_icon};
+        clean_storage_recyclerView.setAdapter(new CleanStorageRecyclerAdapter(clean_storage_categories, clean_icon_image_array));
 
         View app_manager_heading_layout = findViewById(R.id.app_manager_label_background);
         app_manager_heading_layout.setOnClickListener(new View.OnClickListener() {
@@ -918,6 +927,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         if (df == null) {
             return;
         }
+
         if (df.fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
             if (df.progress_bar.getVisibility() == View.VISIBLE) {
                 Global.print(context, getString(R.string.please_wait));
@@ -1250,6 +1260,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         if (viewModel.library_or_search_shown) {
             library_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.right_arrow_drawer_icon));
             library_layout_group.setVisibility(View.VISIBLE);
+        }
+
+        if (viewModel.clean_storage_shown) {
+            clean_storage_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.right_arrow_drawer_icon));
+            clean_storage_layout_group.setVisibility(View.VISIBLE);
         }
 
         if (viewModel.network_shown) {
@@ -1589,7 +1604,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
 
-
         if (size == df.file_list_size) {
             all_select.setImageResource(R.drawable.deselect_icon);
             interval_select.setAlpha(Global.DISABLE_ALFA);
@@ -1637,7 +1651,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         viewModel.toolbar_shown = "bottom";
         df.is_toolbar_visible = true;
     }
-
 
     @Override
     public void onMediaMount(String action) {
@@ -2252,6 +2265,90 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     }
+
+    private class CleanStorageRecyclerAdapter extends RecyclerView.Adapter<CleanStorageRecyclerAdapter.ViewHolder> {
+        final List<String> clean_storage_arraylist;
+        final int[] icon_image_list;
+
+        CleanStorageRecyclerAdapter(List<String> storage_dir_arraylist, int[] icon_image_list) {
+            this.clean_storage_arraylist = storage_dir_arraylist;
+            this.icon_image_list = icon_image_list;
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
+            View v = LayoutInflater.from(context).inflate(R.layout.clean_storage_recycler_layout, p1, false);
+            return new ViewHolder(v);
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder p1, int p2) {
+            p1.textView_library.setText(clean_storage_arraylist.get(p2));
+            p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, icon_image_list[p2]));
+        }
+
+        @Override
+        public int getItemCount() {
+            return clean_storage_arraylist.size();
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+            final View v;
+            final ImageView imageview;
+            final TextView textView_library;
+
+            ViewHolder(View v) {
+                super(v);
+                this.v = v;
+                imageview = v.findViewById(R.id.clean_storage_label_image);
+                textView_library = v.findViewById(R.id.clean_storage_text_label);
+
+                final int[] position = new int[1];
+                textView_library.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View p) {
+                        position[0] = getBindingAdapterPosition();
+                        String name = "Large Files";
+                        switch (position[0]) {
+                            case 0:
+                                name = "Large Files";
+                                break;
+                            case 1:
+                                name = "Duplicate Files";
+                                break;
+                        }
+                        drawer_storage_file_pojo_selected = new FilePOJO(FileObjectType.SEARCH_LIBRARY_TYPE, name, null, name, false, 0L, null, 0L, null, R.drawable.folder_icon, null, 0, 0, 0, 0, 0L, null, 0, null, null);
+                        drawerLayout.closeDrawer(drawer);
+                    }
+                });
+
+                imageview.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View p) {
+                        position[0] = getBindingAdapterPosition();
+                        final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
+                        pbf.show(fm, "");
+                        drawerLayout.closeDrawer(drawer);
+
+                        Handler h = new Handler();
+                        h.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                switch (position[0]) {
+                                    case 0:
+                                        rescanLargeDuplicateFilesLibrary("large");
+                                        break;
+                                    case 1:
+                                        rescanLargeDuplicateFilesLibrary("duplicate");
+                                        break;
+                                }
+                                pbf.dismissAllowingStateLoss();
+                            }
+                        }, 500);
+                    }
+                });
+            }
+        }
+    }
+
 
     private class NetworkRecyclerAdapter extends RecyclerView.Adapter<NetworkRecyclerAdapter.ViewHolder> {
         final List<String> network_arraylist;

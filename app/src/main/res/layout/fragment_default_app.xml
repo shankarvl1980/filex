@@ -22,24 +22,19 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/layout_margin"
-
         android:background="@null">
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="50dp"
+            android:layout_marginBottom="52dp"
             android:background="?attr/dialog_background"
-
             android:padding="@dimen/ten_dp">
 
             <TableLayout
                 android:id="@+id/default_app_table_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
-
                 />
 
 

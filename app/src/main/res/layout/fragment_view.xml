@@ -31,7 +31,6 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/layout_margin"
             android:layout_marginBottom="@dimen/layout_margin">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -84,6 +83,17 @@
                 </RadioGroup>
 
                 <View
+                    android:id="@+id/fragment_view_divider1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginStart="@dimen/divider_margin"
+                    android:layout_marginEnd="@dimen/divider_margin"
+                    android:layout_marginTop="@dimen/layout_margin"
+                    android:background="?attr/recycler_second_text_color"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/dialog_view_layout_rg" />
+
+                <View
                     android:id="@+id/seekbar_layout"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
@@ -91,7 +101,7 @@
                     app:layout_constraintBottom_toBottomOf="@id/font_small_label"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/dialog_view_layout_rg" />
+                    app:layout_constraintTop_toBottomOf="@id/fragment_view_divider1" />
 
                 <TextView
                     android:id="@+id/seekbar_heading"
@@ -171,6 +181,17 @@
                     app:layout_constraintTop_toBottomOf="@id/seekbar_fontsize" />
 
                 <View
+                    android:id="@+id/fragment_view_divider2"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginStart="@dimen/divider_margin"
+                    android:layout_marginEnd="@dimen/divider_margin"
+                    android:layout_marginTop="@dimen/layout_margin"
+                    android:background="?attr/recycler_second_text_color"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/seekbar_layout" />
+
+                <View
                     android:id="@+id/sort_layout_background"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
@@ -178,7 +199,7 @@
                     app:layout_constraintBottom_toBottomOf="@id/sort_table_layout"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/seekbar_layout" />
+                    app:layout_constraintTop_toBottomOf="@id/fragment_view_divider2" />
 
                 <TextView
                     android:id="@+id/sort_label"
@@ -294,7 +315,15 @@
                             android:src="@drawable/sort_size_desc_icon" />
                     </TableRow>
                 </TableLayout>
-
+                <View
+                    android:id="@+id/fragment_view_divider3"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginStart="@dimen/divider_margin"
+                    android:layout_marginEnd="@dimen/divider_margin"
+                    android:background="?attr/recycler_second_text_color"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/sort_table_layout" />
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/view_switch_show_hidden"
                     android:layout_width="match_parent"
@@ -308,7 +337,7 @@
                     android:text="@string/show_hidden_files"
                     android:textSize="17sp"
                     android:theme="@style/MyLightSwitchCompat"
-                    app:layout_constraintTop_toBottomOf="@id/sort_table_layout" />
+                    app:layout_constraintTop_toBottomOf="@id/fragment_view_divider3" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

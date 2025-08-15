@@ -32,7 +32,7 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginVertical="@dimen/layout_margin">
+            android:layout_marginBottom="@dimen/layout_margin">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -58,19 +58,27 @@
                     android:layout_marginHorizontal="@dimen/ten_dp"
                     android:textColor="?attr/edit_text_color"
                     app:layout_constraintTop_toBottomOf="@id/activity_copy_to_filename_label" />
-
+                <View
+                    android:id="@+id/activity_copy_to_divider1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginStart="@dimen/divider_margin"
+                    android:layout_marginEnd="@dimen/divider_margin"
+                    android:layout_marginTop="@dimen/layout_margin"
+                    android:background="?attr/recycler_second_text_color"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/activity_copy_to_filename" />
                 <TextView
                     android:id="@+id/activity_copy_to_destination_folder_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/layout_margin"
                     android:paddingHorizontal="@dimen/ten_dp"
                     android:paddingTop="@dimen/ten_dp"
                     android:text="@string/destination_folder"
                     android:textSize="17sp"
                     app:layout_constraintStart_toStartOf="parent"
                     android:textColor="?attr/recycler_second_text_color"
-                    app:layout_constraintTop_toBottomOf="@id/activity_copy_to_filename" />
+                    app:layout_constraintTop_toBottomOf="@id/activity_copy_to_divider1" />
 
                 <TextView
                     android:id="@+id/activity_copy_to_destination_file_object_type"
@@ -80,6 +88,7 @@
                     android:paddingHorizontal="@dimen/ten_dp"
                     android:paddingTop="@dimen/ten_dp"
                     android:textSize="13sp"
+                    android:textColor="?attr/recycler_second_text_color"
                     app:layout_constraintStart_toEndOf="@id/activity_copy_to_destination_folder_label"
                     app:layout_constraintTop_toTopOf="@id/activity_copy_to_destination_folder_label" />
 
