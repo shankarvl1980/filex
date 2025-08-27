@@ -41,15 +41,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.WEBDAV_CACHE_DIR);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.SMB_CACHE_DIR);
 
-        if (Global.WHETHER_TO_CLEAR_CACHE_TODAY) {
-            Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(application.getCacheDir());
-            Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.PDF_CACHE_DIR);
-            if (Global.SIZE_APK_ICON_LIST > 800) {
-                Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.APK_ICON_DIR);
-            }
-            tinyDB.putInt("cache_cleared_month", Global.CURRENT_MONTH);
-            Global.print(application, "cleared cache");
-        }
+        CacheClearer.performIfDecided(getApplication(),tinyDB);
     }
 
     public void cancel(boolean mayInterruptRunning) {
@@ -160,7 +152,6 @@ public class MainActivityViewModel extends AndroidViewModel {
                 repositoryClass.getDocumentList(isCancelled);
             }
         });
-
     }
 
     public void getImageList(boolean isCancelled) {
@@ -172,7 +163,6 @@ public class MainActivityViewModel extends AndroidViewModel {
                 repositoryClass.getImageList(isCancelled);
             }
         });
-
     }
 
     public void getAudioList(boolean isCancelled) {
@@ -184,7 +174,6 @@ public class MainActivityViewModel extends AndroidViewModel {
                 repositoryClass.getAudioList(isCancelled);
             }
         });
-
     }
 
     public void getVideoList(boolean isCancelled) {
@@ -196,7 +185,6 @@ public class MainActivityViewModel extends AndroidViewModel {
                 repositoryClass.getVideoList(isCancelled);
             }
         });
-
     }
 
     public void getArchiveList(boolean isCancelled) {
@@ -208,7 +196,6 @@ public class MainActivityViewModel extends AndroidViewModel {
                 repositoryClass.getArchiveList(isCancelled);
             }
         });
-
     }
 
     public void getApkList(boolean isCancelled) {
@@ -231,7 +218,6 @@ public class MainActivityViewModel extends AndroidViewModel {
                 repositoryClass.getLargeFileList(isCancelled);
             }
         });
-
     }
 
     public void getDuplicateFileList(boolean isCancelled) {
@@ -243,6 +229,5 @@ public class MainActivityViewModel extends AndroidViewModel {
                 repositoryClass.getDuplicateFileList(isCancelled);
             }
         });
-
     }
 }

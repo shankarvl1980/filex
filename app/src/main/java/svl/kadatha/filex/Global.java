@@ -511,7 +511,7 @@ public class Global {
                 FileSelectorActivity.GRID_COUNT = GRID_COUNT_MEDIUM;
                 break;
         }
-        DETERMINE_TO_CLEAR_CACHE_TODAY(tinyDB);
+        CacheClearer.decideForThisRun(tinyDB);
     }
 
     static void GET_ACTION_BAR_HEIGHT(Context context) {
@@ -1150,14 +1150,6 @@ public class Global {
                 FileUtil.deleteNativeDirectory(dir);
             }
         });
-    }
-
-    public static void DETERMINE_TO_CLEAR_CACHE_TODAY(TinyDB tinyDB) {
-        int cache_cleared_month = tinyDB.getInt("cache_cleared_month");
-        CURRENT_MONTH = Calendar.getInstance().get(Calendar.MONTH);
-        if (cache_cleared_month < CURRENT_MONTH || (cache_cleared_month == 11 && CURRENT_MONTH != 11)) {
-            WHETHER_TO_CLEAR_CACHE_TODAY = true;
-        }
     }
 
     public static File COPY_TO_CACHE(String file_path, FileObjectType fileObjectType) {
