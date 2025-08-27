@@ -76,12 +76,10 @@ public final class CacheClearer {
     /**
      * Call when the app is going to background/close (e.g., from ProcessLifecycleOwner.onStop()).
      * Performs deletions ONCE per run if previously decided, then writes current YYYYMM.
-     *
-     * @return true if a clear was scheduled and marked this call; false otherwise.
      */
-    public static boolean performIfDecided(Application application, TinyDB tinyDB) {
-        if (!sShouldClearThisRun.get()) return false;
-        if (!sPerformed.compareAndSet(false, true)) return false;
+    public static void performIfDecided(Application application, TinyDB tinyDB) {
+        if (!sShouldClearThisRun.get()) return;
+        if (!sPerformed.compareAndSet(false, true)) return;
 
         try {
             // ---- Your async deletions ----
@@ -95,13 +93,11 @@ public final class CacheClearer {
             // Mark as cleared for this month only after scheduling deletions
             tinyDB.putInt(KEY_CACHE_CLEARED_YYYYMM, currentYyyyMm());
             Global.print(application, "cleared cache");
-            return true;
 
         } catch (Throwable t) {
             // If something failed very early, let future attempts run again this process
             sPerformed.set(false);
             Global.print(application, "cache clear failed: " + t.getMessage());
-            return false;
         }
     }
 }
