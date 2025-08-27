@@ -95,6 +95,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     public static boolean SHOW_HIDDEN_FILE;
     public static LinkedList<FilePOJO> RECENT = new LinkedList<>();
     final ArrayList<ListPopupWindowPOJO> list_popupwindowpojos = new ArrayList<>();
+    private final int DRAWER_CLOSE_DELAY = 300;
     public Button rename, working_dir_add_btn, working_dir_remove_btn;
     public ImageButton parent_dir_image_button, all_select, interval_select;
     public TinyDB tinyDB;
@@ -538,7 +539,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         library_scan_heading_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
+                //final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
+                final BlankFragment pbf = BlankFragment.newInstance();
                 pbf.show(fm, "");
                 drawerLayout.closeDrawer(drawer);
 
@@ -559,7 +561,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                         }
                         pbf.dismissAllowingStateLoss();
                     }
-                }, 500);
+                }, DRAWER_CLOSE_DELAY);
             }
         });
 
@@ -578,7 +580,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                             fm.beginTransaction().attach(df).commit();
                         }
                     }
-                }, 500);
+                }, DRAWER_CLOSE_DELAY);
             }
         });
 
@@ -587,7 +589,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             @Override
             public void onClick(View view) {
                 clear_cache = false;
-                final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
+                //final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
+                final BlankFragment pbf = BlankFragment.newInstance();
                 pbf.show(fm, "");
                 drawerLayout.closeDrawer(drawer);
 
@@ -601,7 +604,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                         startActivity(intent);
                         pbf.dismissAllowingStateLoss();
                     }
-                }, 500);
+                }, DRAWER_CLOSE_DELAY);
             }
         });
 
@@ -610,7 +613,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             @Override
             public void onClick(View view) {
                 clear_cache = false;
-                final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
+                //final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
+                final BlankFragment pbf = BlankFragment.newInstance();
                 pbf.show(fm, "");
                 drawerLayout.closeDrawer(drawer);
                 Handler h = new Handler();
@@ -623,7 +627,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                         startActivity(intent);
                         pbf.dismissAllowingStateLoss();
                     }
-                }, 500);
+                }, DRAWER_CLOSE_DELAY);
             }
         });
 
@@ -663,7 +667,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             @Override
             public void onClick(View view) {
                 clear_cache = false;
-                final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
+                //final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
+                final BlankFragment pbf = BlankFragment.newInstance();
                 pbf.show(fm, "");
                 drawerLayout.closeDrawer(drawer);
                 Handler h = new Handler();
@@ -676,7 +681,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                         startActivity(intent);
                         pbf.dismissAllowingStateLoss();
                     }
-                }, 500);
+                }, DRAWER_CLOSE_DELAY);
             }
         });
 
@@ -684,7 +689,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         search_heading_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
+                //final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
+                final BlankFragment pbf = BlankFragment.newInstance();
                 pbf.show(fm, "");
                 drawerLayout.closeDrawer(drawer);
                 Handler h = new Handler();
@@ -697,7 +703,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                         searchDialog.show(fm, "search_dialog");
                         pbf.dismissAllowingStateLoss();
                     }
-                }, 500);
+                }, DRAWER_CLOSE_DELAY);
             }
         });
 
@@ -705,7 +711,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         access_pc_heading_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
+                //final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
+                final BlankFragment pbf = BlankFragment.newInstance();
                 pbf.show(fm, "");
                 drawerLayout.closeDrawer(drawer);
                 Handler h = new Handler();
@@ -718,7 +725,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                         startActivity(intent);
                         pbf.dismissAllowingStateLoss();
                     }
-                }, 500);
+                }, DRAWER_CLOSE_DELAY);
             }
         });
 
@@ -1453,6 +1460,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             tinyDB.putListString("working_dir_arraylist", working_dir_arraylist);
             setRecyclerViewHeight(workingDirListRecyclerView);
         }
+    }
+
+    private void setRecyclerViewHeight(RecyclerView v) {
+        int number_items = Math.min(5, v.getAdapter().getItemCount());
+        v.getLayoutParams().height = number_items * Global.FOUR_DP * 14;
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -1492,11 +1504,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     });
-
-    private void setRecyclerViewHeight(RecyclerView v) {
-        int number_items = Math.min(5, v.getAdapter().getItemCount());
-        v.getLayoutParams().height = number_items * Global.FOUR_DP * 14;
-    }
 
     public ArrayList<File> iterate_to_attach_file(IndexedLinkedHashMap<Integer, String> file_list) {
         ArrayList<File> file_list_excluding_dir = new ArrayList<>();
@@ -2148,7 +2155,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             if (id == R.id.toolbar_btn_1) {
                 finish();
             } else if (id == R.id.toolbar_btn_2) {
-                final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
+                //final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
+                final BlankFragment pbf = BlankFragment.newInstance();
                 pbf.show(fm, "");
                 drawerLayout.closeDrawer(drawer);
                 Handler h = new Handler();
@@ -2159,7 +2167,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                         preferencesDialog.show(fm, "preferences_dialog");
                         pbf.dismissAllowingStateLoss();
                     }
-                }, 500);
+                }, DRAWER_CLOSE_DELAY);
             }
         }
     }
@@ -2375,7 +2383,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 imageview.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View p) {
                         position[0] = getBindingAdapterPosition();
-                        final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
+                        //final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
+                        final BlankFragment pbf = BlankFragment.newInstance();
                         pbf.show(fm, "");
                         drawerLayout.closeDrawer(drawer);
 
@@ -2393,7 +2402,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                                 }
                                 pbf.dismissAllowingStateLoss();
                             }
-                        }, 500);
+                        }, DRAWER_CLOSE_DELAY);
                     }
                 });
             }
@@ -2444,7 +2453,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 v.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View p) {
                         position[0] = getBindingAdapterPosition();
-                        final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
+                        //final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
+                        final BlankFragment pbf = BlankFragment.newInstance();
                         pbf.show(fm, "");
                         drawerLayout.closeDrawer(drawer);
                         Handler h = new Handler();
@@ -2468,7 +2478,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                                 }
                                 pbf.dismissAllowingStateLoss();
                             }
-                        }, 500);
+                        }, DRAWER_CLOSE_DELAY);
                     }
                 });
             }
@@ -2519,7 +2529,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 v.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View p) {
                         position[0] = getBindingAdapterPosition();
-                        final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
+                        //final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
+                        final BlankFragment pbf = BlankFragment.newInstance();
                         pbf.show(fm, "");
                         drawerLayout.closeDrawer(drawer);
                         Handler h = new Handler();
@@ -2541,7 +2552,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                                 startActivity(intent);
                                 pbf.dismissAllowingStateLoss();
                             }
-                        }, 500);
+                        }, DRAWER_CLOSE_DELAY);
                     }
                 });
             }
@@ -2770,6 +2781,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     }
+
+
 
 
 }

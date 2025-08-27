@@ -661,11 +661,11 @@
                 android:layout_height="0dp"
                 android:layout_marginTop="@dimen/layout_margin"
                 android:background="@drawable/select_drawer_item"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@id/cloud_heading"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/network_recyclerview"
-                android:visibility="gone" />
+                app:layout_constraintTop_toBottomOf="@id/network_recyclerview" />
 
             <TextView
                 android:id="@+id/cloud_heading"
@@ -678,10 +678,10 @@
                 android:text="@string/cloud"
                 android:textColor="?attr/heading_text_color"
                 android:textSize="17sp"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@id/cloud_expand_indicator"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/cloud_layout_background"
-                android:visibility="gone" />
+                app:layout_constraintTop_toTopOf="@id/cloud_layout_background" />
 
             <ImageView
                 android:id="@+id/cloud_expand_indicator"
@@ -691,11 +691,11 @@
                 android:layout_marginEnd="10dp"
                 android:scaleType="fitXY"
                 android:src="@drawable/down_arrow_drawer_icon"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@id/cloud_heading"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/cloud_heading"
-                app:layout_constraintTop_toTopOf="@id/cloud_heading"
-                android:visibility="gone" />
+                app:layout_constraintTop_toTopOf="@id/cloud_heading" />
 
             <androidx.constraintlayout.widget.Group
                 android:id="@+id/cloud_layout_group"
@@ -713,10 +713,10 @@
                 android:paddingStart="@dimen/layout_margin"
                 android:paddingEnd="@dimen/layout_margin"
                 android:paddingBottom="@dimen/layout_margin"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cloud_layout_background"
-                android:visibility="gone" />
+                app:layout_constraintTop_toBottomOf="@id/cloud_layout_background" />
 
             <Space
                 android:layout_width="match_parent"

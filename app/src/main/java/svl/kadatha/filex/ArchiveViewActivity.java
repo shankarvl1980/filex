@@ -957,6 +957,29 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                 finish();
             }
         }
+    }
+
+    private class LocalBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ArchiveViewFragment archiveViewFragment = (ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);
+            String activity_name = intent.getStringExtra("activity_name");
+            String file_path = intent.getStringExtra("file_path");
+            FileObjectType fileObjectType = (FileObjectType) intent.getSerializableExtra("fileObjectType");
+            switch (intent.getAction()) {
+
+                case Global.LOCAL_BROADCAST_OTHER_ACTIVITY_DELETE_FILE_ACTION:
+                    if (archiveViewFragment != null) {
+                        archiveViewFragment.local_activity_delete = true;
+                    }
+                    break;
+                case Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION:
+                    if (archiveViewFragment != null) {
+                        archiveViewFragment.modification_observed = true;
+                    }
+                    break;
+            }
+        }
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -997,29 +1020,6 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
             }
         }
     });
-
-    private class LocalBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            ArchiveViewFragment archiveViewFragment = (ArchiveViewFragment) fm.findFragmentById(R.id.archive_detail_fragment);
-            String activity_name = intent.getStringExtra("activity_name");
-            String file_path = intent.getStringExtra("file_path");
-            FileObjectType fileObjectType = (FileObjectType) intent.getSerializableExtra("fileObjectType");
-            switch (intent.getAction()) {
-
-                case Global.LOCAL_BROADCAST_OTHER_ACTIVITY_DELETE_FILE_ACTION:
-                    if (archiveViewFragment != null) {
-                        archiveViewFragment.local_activity_delete = true;
-                    }
-                    break;
-                case Global.LOCAL_BROADCAST_MODIFICATION_OBSERVED_ACTION:
-                    if (archiveViewFragment != null) {
-                        archiveViewFragment.modification_observed = true;
-                    }
-                    break;
-            }
-        }
-    }
 
 
 

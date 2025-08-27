@@ -47,8 +47,8 @@
                     android:paddingHorizontal="@dimen/ten_dp"
                     android:paddingTop="@dimen/ten_dp"
                     android:text="@string/file_name"
-                    android:textSize="17sp"
                     android:textColor="?attr/recycler_second_text_color"
+                    android:textSize="17sp"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
@@ -64,8 +64,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:layout_marginStart="@dimen/divider_margin"
-                    android:layout_marginEnd="@dimen/divider_margin"
                     android:layout_marginTop="@dimen/layout_margin"
+                    android:layout_marginEnd="@dimen/divider_margin"
                     android:background="?attr/recycler_second_text_color"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/activity_copy_to_filename" />
@@ -77,9 +77,9 @@
                     android:paddingHorizontal="@dimen/ten_dp"
                     android:paddingTop="@dimen/ten_dp"
                     android:text="@string/destination_folder"
+                    android:textColor="?attr/recycler_second_text_color"
                     android:textSize="17sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:textColor="?attr/recycler_second_text_color"
                     app:layout_constraintTop_toBottomOf="@id/activity_copy_to_divider1" />
 
                 <TextView
@@ -89,8 +89,8 @@
                     android:layout_marginTop="@dimen/layout_margin"
                     android:paddingHorizontal="@dimen/ten_dp"
                     android:paddingTop="@dimen/ten_dp"
-                    android:textSize="13sp"
                     android:textColor="?attr/recycler_second_text_color"
+                    android:textSize="13sp"
                     app:layout_constraintStart_toEndOf="@id/activity_copy_to_destination_folder_label"
                     app:layout_constraintTop_toTopOf="@id/activity_copy_to_destination_folder_label" />
 

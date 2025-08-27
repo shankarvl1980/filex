@@ -1,21 +1,21 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="30dp"
     android:height="30dp"
-    android:viewportHeight="24"
     android:viewportWidth="24"
-    android:width="30dp">
+    android:viewportHeight="24">
 
     <path
         android:fillColor="?attr/toolbar_icon_color"
         android:pathData="m6.949,3.296c-2.002,0 -3.624,1.624 -3.624,3.626L3.325,17.074c0,2.002 1.622,3.626 3.624,3.626L17.095,20.7c2.002,0 3.624,-1.624 3.624,-3.626L20.718,6.922c0,-2.002 -1.622,-3.626 -3.624,-3.626zM6.949,4.747L17.095,4.747c1.199,0 2.174,0.976 2.174,2.176L19.269,17.074c0,1.199 -0.975,2.176 -2.174,2.176L6.949,19.249c-1.199,0 -2.174,-0.976 -2.174,-2.176L4.775,6.922c0,-1.199 0.975,-2.176 2.174,-2.176z"
-        android:strokeColor="?attr/toolbar_icon_color"
-        android:strokeWidth="0.565629" />
+        android:strokeWidth="0.565629"
+        android:strokeColor="?attr/toolbar_icon_color" />
 
     <path
         android:fillColor="?attr/toolbar_icon_color"
         android:pathData="M8.5,12L15.5,12"
+        android:strokeWidth="2.2"
         android:strokeColor="?attr/toolbar_icon_color"
-        android:strokeLineCap="square"
-        android:strokeWidth="2.2" />
+        android:strokeLineCap="square" />
 
     <path
         android:fillColor="?attr/toolbar_icon_color"

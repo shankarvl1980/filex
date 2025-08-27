@@ -95,8 +95,8 @@
                 android:layout_marginEnd="@dimen/ten_dp"
                 android:layout_marginBottom="15dp"
                 android:text="@string/anonymous_summary"
-                android:textSize="15sp"
                 android:textColor="?attr/recycler_second_text_color"
+                android:textSize="15sp"
                 app:layout_constraintTop_toBottomOf="@id/ftp_server_anonymous_check_box" />
 
             <View
@@ -126,14 +126,14 @@
                 android:id="@+id/ftp_server_port_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/layout_margin"
+                android:layout_marginTop="6dp"
                 android:paddingStart="@dimen/ten_dp"
                 android:paddingTop="8dp"
                 android:paddingEnd="@dimen/layout_margin"
                 android:paddingBottom="@dimen/layout_margin"
                 android:text="@string/port"
-                android:textSize="17sp"
                 android:textColor="?attr/recycler_second_text_color"
+                android:textSize="17sp"
                 app:layout_constraintEnd_toStartOf="@id/ftp_server_port"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
                 app:layout_constraintStart_toStartOf="parent"
@@ -157,14 +157,14 @@
                 android:id="@+id/ftp_server_user_name_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/layout_margin"
+                android:layout_marginTop="6dp"
                 android:paddingStart="@dimen/ten_dp"
                 android:paddingTop="@dimen/layout_margin"
                 android:paddingEnd="@dimen/layout_margin"
                 android:paddingBottom="@dimen/layout_margin"
                 android:text="@string/user_name"
-                android:textSize="17sp"
                 android:textColor="?attr/recycler_second_text_color"
+                android:textSize="17sp"
                 app:layout_constraintEnd_toStartOf="@id/ftp_server_user_name"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
                 app:layout_constraintStart_toStartOf="parent"
@@ -186,7 +186,7 @@
                 android:id="@+id/ftp_server_password_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/layout_margin"
+                android:layout_marginTop="6dp"
                 android:paddingStart="@dimen/ten_dp"
                 android:paddingTop="@dimen/layout_margin"
                 android:paddingEnd="@dimen/layout_margin"
@@ -194,29 +194,37 @@
                 android:text="@string/password"
                 android:textColor="?attr/recycler_second_text_color"
                 android:textSize="17sp"
-                app:layout_constraintEnd_toStartOf="@id/ftp_server_pword"
+                app:layout_constraintEnd_toStartOf="@id/ftp_server_pword_input_layout"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ftp_server_user_name_label" />
 
-            <EditText
-                android:id="@+id/ftp_server_pword"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/ftp_server_pword_input_layout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/ten_dp"
                 android:includeFontPadding="false"
-                android:inputType="textPassword"
                 app:layout_constraintBaseline_toBaselineOf="@id/ftp_server_password_label"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/ftp_server_password_label"
-                tools:ignore="LabelFor" />
+                app:passwordToggleEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/ftp_server_pword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
 
             <!-- Directory Input Group -->
             <TextView
                 android:id="@+id/ftp_server_chroot_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/layout_margin"
+                android:layout_marginTop="6dp"
                 android:paddingStart="@dimen/ten_dp"
                 android:paddingTop="@dimen/layout_margin"
                 android:paddingEnd="@dimen/layout_margin"

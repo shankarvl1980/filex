@@ -507,7 +507,7 @@
     <string name="use_ftps">Use FTPS</string>
     <string name="private_key">Private Key</string>
     <string name="private_key_path">Private Key Path</string>
-    <string name="private_key_passphrase">Private Key Passphrase:</string>
+    <string name="private_key_passphrase">Private Key Passphrase</string>
     <string name="known_hosts_path">Known Hosts Path</string>
     <string name="base_path">Base Path</string>
     <string name="use_https">Use HTTPS</string>

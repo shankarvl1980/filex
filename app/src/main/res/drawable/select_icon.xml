@@ -1,13 +1,13 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="30dp"
     android:height="30dp"
-    android:viewportHeight="24"
     android:viewportWidth="24"
-    android:width="30dp">
+    android:viewportHeight="24">
 
     <path
         android:fillColor="?attr/toolbar_icon_color"
         android:pathData="m6.92,3.324c-1.997,0 -3.616,1.622 -3.616,3.621L3.304,17.082c0,1.999 1.618,3.621 3.616,3.621L17.045,20.703c1.997,0 3.616,-1.622 3.616,-3.621L20.661,6.945c0,-1.999 -1.618,-3.621 -3.616,-3.621zM6.92,4.773L17.045,4.773c1.196,0 2.17,0.975 2.17,2.173L19.214,17.082c0,1.198 -0.973,2.173 -2.17,2.173L6.92,19.255c-1.196,0 -2.17,-0.975 -2.17,-2.173L4.751,6.945c0,-1.198 0.973,-2.173 2.17,-2.173z"
-        android:strokeColor="?attr/toolbar_icon_color"
-        android:strokeWidth="0.565629" />
+        android:strokeWidth="0.565629"
+        android:strokeColor="?attr/toolbar_icon_color" />
 
 </vector>

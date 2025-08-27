@@ -139,7 +139,6 @@ public class PreferencesDialog extends DialogFragment {
             }
         });
 
-
         SwitchCompat switch_show_file_path = v.findViewById(R.id.preferences_switch_show_file_path);
         switch_show_file_path.setChecked(Global.SHOW_FILE_PATH);
         switch_show_file_path.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -161,7 +160,6 @@ public class PreferencesDialog extends DialogFragment {
 
             }
         });
-
 
         SwitchCompat switch_show_usb = v.findViewById(R.id.preferences_switch_show_usb);
         switch_show_usb.setChecked(Global.RECOGNISE_USB);
