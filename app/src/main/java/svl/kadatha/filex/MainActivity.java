@@ -1465,6 +1465,18 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     private void setRecyclerViewHeight(RecyclerView v) {
         int number_items = Math.min(5, v.getAdapter().getItemCount());
         v.getLayoutParams().height = number_items * Global.FOUR_DP * 14;
+    }
+
+    public ArrayList<File> iterate_to_attach_file(IndexedLinkedHashMap<Integer, String> file_list) {
+        ArrayList<File> file_list_excluding_dir = new ArrayList<>();
+        int size = file_list.size();
+        for (int i = 0; i < size; ++i) {
+            File f = new File(file_list.getValueAtIndex(i));
+            if (!f.isDirectory()) {
+                file_list_excluding_dir.add(f);
+            }
+        }
+        return file_list_excluding_dir;
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -1504,18 +1516,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     });
-
-    public ArrayList<File> iterate_to_attach_file(IndexedLinkedHashMap<Integer, String> file_list) {
-        ArrayList<File> file_list_excluding_dir = new ArrayList<>();
-        int size = file_list.size();
-        for (int i = 0; i < size; ++i) {
-            File f = new File(file_list.getValueAtIndex(i));
-            if (!f.isDirectory()) {
-                file_list_excluding_dir.add(f);
-            }
-        }
-        return file_list_excluding_dir;
-    }
 
     public ArrayList<Uri> iterate_to_attach_usb_file(IndexedLinkedHashMap<Integer, String> file_list, DetailFragment df) {
         ArrayList<Uri> uri_list_excluding_dir = new ArrayList<>();

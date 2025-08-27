@@ -41,7 +41,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.WEBDAV_CACHE_DIR);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.SMB_CACHE_DIR);
 
-        CacheClearer.performIfDecided(getApplication(),tinyDB);
+        CacheClearer.performIfDecided(getApplication(), tinyDB);
     }
 
     public void cancel(boolean mayInterruptRunning) {
