@@ -15,7 +15,6 @@ import java.util.concurrent.Future;
 public class MainActivityViewModel extends AndroidViewModel {
 
     public final MutableLiveData<AsyncTaskStatus> isDeletionCompleted = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    private final Application application;
     private final TinyDB tinyDB;
     public boolean archive_view, working_dir_open, clean_storage_shown, library_or_search_shown, network_shown, cloud_shown;
     public String toolbar_shown = "bottom";
@@ -26,7 +25,6 @@ public class MainActivityViewModel extends AndroidViewModel {
 
     public MainActivityViewModel(@NonNull Application application) {
         super(application);
-        this.application = application;
         tinyDB = new TinyDB(application);
     }
 
