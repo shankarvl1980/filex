@@ -251,8 +251,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="yandex-your_client_id"
-                    android:host="callback" />
+                    android:host="callback"
+                    android:scheme="yandex-your_client_id" />
             </intent-filter>
         </activity>
 
@@ -266,8 +266,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="svl.kadatha.filex"
-                    android:host="oauth2redirect" />
+                    android:host="oauth2redirect"
+                    android:scheme="svl.kadatha.filex" />
             </intent-filter>
         </activity>
 

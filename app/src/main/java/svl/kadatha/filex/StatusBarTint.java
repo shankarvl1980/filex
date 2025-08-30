@@ -1,9 +1,7 @@
 package svl.kadatha.filex;
 
 import android.app.Activity;
-import android.os.Build;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -18,9 +16,12 @@ import androidx.core.view.WindowInsetsCompat;
 public final class StatusBarTint {
     private static final String SCRIM_TAG = "status_bar_scrim_view";
 
-    private StatusBarTint() {}
+    private StatusBarTint() {
+    }
 
-    /** Resolve color from attr, darken it a bit (e.g. 0.85f), then tint using a scrim. */
+    /**
+     * Resolve color from attr, darken it a bit (e.g. 0.85f), then tint using a scrim.
+     */
     public static void tintFromAttrWithScrim(@NonNull Activity activity,
                                              @AttrRes int colorAttr) {
         int base = resolveAttrColor(activity, colorAttr);
@@ -28,7 +29,9 @@ public final class StatusBarTint {
         tintWithScrim(activity, dark);
     }
 
-    /** Tint status bar area using a top overlay scrim. No icon changes. */
+    /**
+     * Tint status bar area using a top overlay scrim. No icon changes.
+     */
     public static void tintWithScrim(@NonNull Activity activity, @ColorInt int color) {
 
         Window window = activity.getWindow();
@@ -65,7 +68,9 @@ public final class StatusBarTint {
         ViewCompat.requestApplyInsets(scrim);
     }
 
-    /** Resolve a theme color attribute to a concrete color int. */
+    /**
+     * Resolve a theme color attribute to a concrete color int.
+     */
     @ColorInt
     public static int resolveAttrColor(@NonNull Activity activity, @AttrRes int attr) {
         TypedValue tv = new TypedValue();
@@ -74,7 +79,9 @@ public final class StatusBarTint {
         return (tv.resourceId != 0) ? activity.getColor(tv.resourceId) : tv.data;
     }
 
-    /** Darken a color by scaling its HSL lightness. */
+    /**
+     * Darken a color by scaling its HSL lightness.
+     */
     @ColorInt
     public static int darkenColor(@ColorInt int color, float factor) {
         float[] hsl = new float[3];

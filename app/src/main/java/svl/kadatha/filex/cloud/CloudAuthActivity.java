@@ -43,9 +43,9 @@ import svl.kadatha.filex.StatusBarTint;
 
 public class CloudAuthActivity extends BaseActivity {
 
+    private final List<CloudAccountPOJO> cloudAccountPOJO_selected_for_delete = new ArrayList<>();
     public boolean clear_cache;
     public CloudAccountViewModel viewModel;
-
     public ActivityResultLauncher<Intent> mediaFireAuthLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult o) {
@@ -54,11 +54,9 @@ public class CloudAuthActivity extends BaseActivity {
             }
         }
     });
-
     private FileObjectType fileObjectType;
     private Toolbar bottom_toolbar;
     private RecyclerView cloud_account_list_recyclerview;
-    private final List<CloudAccountPOJO> cloudAccountPOJO_selected_for_delete = new ArrayList<>();
     private boolean toolbar_visible = true;
     private int scroll_distance;
     private int num_all_network_account;

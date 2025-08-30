@@ -42,9 +42,9 @@ public class GoogleDriveAuthProvider implements CloudAuthProvider {
             "https://www.googleapis.com/auth/drive.appdata"
     };
     private final Activity activity;
+    private final AuthorizationService authService;
     private AuthCallback authCallback;
     private CloudAccountPOJO cloudAccount;
-    private final AuthorizationService authService;
     private AuthorizationRequest authRequest;
     private AuthState authState;
 

@@ -132,11 +132,6 @@
         <item name="android:buttonTint">@color/light_icon_color</item>
     </style>
 
-    <style name="MyLightEditText" parent="Widget.AppCompat.EditText">
-        <item name="android:textColor">@color/light_edit_text_color</item>
-        <item name="android:background">@color/light_dialog_background</item>
-    </style>
-
     <style name="MySwitchCompat" parent="Theme.AppCompat.DayNight">
         <item name="colorControlActivated">@color/light_drawer_icon_color</item>
         <item name="colorSwitchThumbNormal">@android:color/darker_gray</item>

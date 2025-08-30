@@ -67,9 +67,9 @@
                     android:layout_marginTop="@dimen/layout_margin"
                     android:layout_marginEnd="@dimen/divider_margin"
                     android:background="?attr/recycler_second_text_color"
+                    android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/activity_copy_to_filename"
-                    android:visibility="gone"/>
+                    app:layout_constraintTop_toBottomOf="@id/activity_copy_to_filename" />
 
                 <TextView
                     android:id="@+id/activity_copy_to_destination_folder_label"

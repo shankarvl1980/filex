@@ -5,9 +5,8 @@ import timber.log.Timber;
 
 public class UsbFileRootSingleton {
 
-    private static volatile UsbFileRootSingleton sInstance;
     private static final Object LOCK = new Object();
-
+    private static volatile UsbFileRootSingleton sInstance;
     private final MyStampedLock stampedLock = new MyStampedLock();
     private UsbFile usbFileRoot;
 

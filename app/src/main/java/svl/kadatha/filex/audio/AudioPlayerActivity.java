@@ -125,7 +125,7 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_player);
-        context=this;
+        context = this;
         StatusBarTint.tintFromAttrWithScrim(this, R.attr.toolbar_background);
         tinyDB = new TinyDB(context);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);

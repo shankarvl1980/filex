@@ -10,9 +10,9 @@ import svl.kadatha.filex.FileObjectType;
 
 public class DropboxAuthProvider implements CloudAuthProvider {
     private final Activity activity;
+    private final String app_key = "igtdjo14bfrwsck";
     private AuthCallback authCallback;
     private CloudAccountPOJO cloudAccount;
-    private final String app_key = "igtdjo14bfrwsck";
 
     public DropboxAuthProvider(Activity activity) {
         this.activity = activity;

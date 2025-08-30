@@ -82,6 +82,20 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
     private StorageAnalyserActivityViewModel viewModel;
     private PopupWindow listPopWindow;
 
+    // Helpers
+    static int resolveAttrColor(Context c, int attr) {
+        TypedValue tv = new TypedValue();
+        c.getTheme().resolveAttribute(attr, tv, true);
+        return tv.resourceId != 0 ? ContextCompat.getColor(c, tv.resourceId) : tv.data;
+    }
+
+    static int darken(int color) {
+        float[] hsv = new float[3];
+        Color.colorToHSV(color, hsv);
+        hsv[2] *= 0.85f; // 15% darker
+        return Color.HSVToColor(Color.alpha(color), hsv);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -392,18 +406,6 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
         });
     }
 
-    // Helpers
-    static int resolveAttrColor(Context c, int attr) {
-        TypedValue tv = new TypedValue();
-        c.getTheme().resolveAttribute(attr, tv, true);
-        return tv.resourceId != 0 ? ContextCompat.getColor(c, tv.resourceId) : tv.data;
-    }
-    static int darken(int color) {
-        float[] hsv = new float[3];
-        Color.colorToHSV(color, hsv);
-        hsv[2] *= 0.85f; // 15% darker
-        return Color.HSVToColor(Color.alpha(color), hsv);
-    }
     @Override
     protected void onStart() {
         super.onStart();
