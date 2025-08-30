@@ -5,12 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
@@ -114,6 +117,15 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
         fm = getSupportFragmentManager();
         pm = getPackageManager();
         setContentView(R.layout.activity_storage_analyser);
+        StatusBarTint.tintFromAttrWithScrim(this, R.attr.toolbar_background);
+        Window w = getWindow();
+        w.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        w.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+// Resolve your toolbar color from the current theme and darken it slightly
+        int toolbar = resolveAttrColor(this, R.attr.toolbar_background);
+        w.setStatusBarColor(darken(toolbar));
+
         ConstraintLayout root_layout = findViewById(R.id.storage_analyser_root_layout);
         ImageButton back_btn = findViewById(R.id.storage_analyser_back_btn);
         back_btn.setOnClickListener(new View.OnClickListener() {
@@ -167,7 +179,6 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
             }
         });
 
-
         all_select = findViewById(R.id.storage_analyser_all_select);
         all_select.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -204,7 +215,6 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
             }
         });
 
-
         int imageview_dimension;
         if (Global.RECYCLER_VIEW_FONT_SIZE_FACTOR == 0) {
             imageview_dimension = Global.IMAGEVIEW_DIMENSION_SMALL_LIST;
@@ -213,7 +223,6 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
         } else {
             imageview_dimension = Global.IMAGEVIEW_DIMENSION_MEDIUM_LIST;
         }
-
 
         LinearLayout size_description_layout = findViewById(R.id.storage_analyser_size_description);
         ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) size_description_layout.getLayoutParams();
@@ -383,6 +392,18 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
         });
     }
 
+    // Helpers
+    static int resolveAttrColor(Context c, int attr) {
+        TypedValue tv = new TypedValue();
+        c.getTheme().resolveAttribute(attr, tv, true);
+        return tv.resourceId != 0 ? ContextCompat.getColor(c, tv.resourceId) : tv.data;
+    }
+    static int darken(int color) {
+        float[] hsv = new float[3];
+        Color.colorToHSV(color, hsv);
+        hsv[2] *= 0.85f; // 15% darker
+        return Color.HSVToColor(Color.alpha(color), hsv);
+    }
     @Override
     protected void onStart() {
         super.onStart();

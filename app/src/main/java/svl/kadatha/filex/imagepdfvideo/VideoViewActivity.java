@@ -22,6 +22,7 @@ import svl.kadatha.filex.FileObjectType;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.R;
 import svl.kadatha.filex.RealPathUtil;
+import svl.kadatha.filex.StatusBarTint;
 import svl.kadatha.filex.TinyDB;
 
 public class VideoViewActivity extends BaseActivity {
@@ -42,7 +43,7 @@ public class VideoViewActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         Context context = this;
         setContentView(R.layout.activity_blank_view);
-
+        StatusBarTint.tintFromAttrWithScrim(this, R.attr.toolbar_background);
         root = findViewById(R.id.activity_blank_view_container);
 
         hideStatusBarKeepNavBar();

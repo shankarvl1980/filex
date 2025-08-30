@@ -191,6 +191,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         permissionUtil.check_permission();
         tinyDB = new TinyDB(context);
         setContentView(R.layout.main);
+        StatusBarTint.tintFromAttrWithScrim(this, R.attr.toolbar_background);
+
         viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
         fm = getSupportFragmentManager();
         pm = getPackageManager();

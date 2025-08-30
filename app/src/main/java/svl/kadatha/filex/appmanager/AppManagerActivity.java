@@ -32,6 +32,7 @@ import svl.kadatha.filex.BaseActivity;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.KeyBoardUtil;
 import svl.kadatha.filex.R;
+import svl.kadatha.filex.StatusBarTint;
 
 public class AppManagerActivity extends BaseActivity {
 
@@ -55,6 +56,7 @@ public class AppManagerActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_manager);
+        StatusBarTint.tintFromAttrWithScrim(this, R.attr.toolbar_background);
         context = this;
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         View containerLayout = findViewById(R.id.activity_app_manager_container_layout);

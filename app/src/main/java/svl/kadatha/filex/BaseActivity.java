@@ -8,6 +8,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
@@ -35,7 +36,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         Global.GET_STORAGE_DIR(context);
 
         switch (Global.THEME) {
-
             case "light":
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 break;
@@ -45,7 +45,5 @@ public abstract class BaseActivity extends AppCompatActivity {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.getDefaultNightMode());
                 break;
         }
-
     }
-
 }

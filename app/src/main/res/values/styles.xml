@@ -2,7 +2,7 @@
 
 <resources>
 
-    <style name="MyLightBaseTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="MyLightBaseTheme.Core" parent="Theme.AppCompat.DayNight.NoActionBar">
 
         <item name="android:textColor">@color/light_recycler_main_text_color</item>
         <item name="android:checkboxStyle">@style/MyLightCheckbox</item>
@@ -59,7 +59,15 @@
             @color/light_storage_analyser_item_background
         </item>
 
+        <!-- Explicitly set status bar color for API 21+ -->
+
+        <item name="android:statusBarColor">@color/light_status_bar</item>
+
+
     </style>
+
+    <!-- Default alias that most devices will use -->
+    <style name="MyLightBaseTheme" parent="MyLightBaseTheme.Core" />
 
     <style name="MyLightFullScreen" parent="@style/MyLightBaseTheme">
         <item name="windowNoTitle">true</item>

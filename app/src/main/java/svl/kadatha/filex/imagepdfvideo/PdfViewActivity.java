@@ -13,6 +13,7 @@ import svl.kadatha.filex.FileObjectType;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.R;
 import svl.kadatha.filex.RealPathUtil;
+import svl.kadatha.filex.StatusBarTint;
 
 public class PdfViewActivity extends BaseActivity {
 
@@ -24,6 +25,7 @@ public class PdfViewActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_blank_view);
+        StatusBarTint.tintFromAttrWithScrim(this, R.attr.toolbar_background);
         Intent intent = getIntent();
         on_intent(intent, savedInstanceState);
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {

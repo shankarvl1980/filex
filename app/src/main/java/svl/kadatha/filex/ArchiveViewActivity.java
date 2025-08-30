@@ -108,6 +108,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
         permissionUtil.check_permission();
         tinyDB = new TinyDB(context);
         setContentView(R.layout.activity_archive_viewer);
+        StatusBarTint.tintFromAttrWithScrim(this, R.attr.toolbar_background);
         ConstraintLayout root_layout = findViewById(R.id.archive_root_layout);
         viewModel = new ViewModelProvider(this).get(ArchiveViewerViewModel.class);
         fm = getSupportFragmentManager();

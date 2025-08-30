@@ -168,6 +168,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         fm = getSupportFragmentManager();
 
         setContentView(R.layout.activity_file_selector);
+        StatusBarTint.tintFromAttrWithScrim(this, R.attr.toolbar_background);
         file_number = findViewById(R.id.file_selector_file_number); //initiate here before adding fragment
 
         ImageButton sort_btn = findViewById(R.id.file_selector_sort_btn);
@@ -213,7 +214,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         });
 
         TextView heading = findViewById(R.id.file_selector_heading);
-        ImageButton directoryBtn = findViewById(R.id.file_selector_directory_btn);
 
         View.OnClickListener dialogListener = new View.OnClickListener() {
             @Override
@@ -224,7 +224,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         };
 
         heading.setOnClickListener(dialogListener);
-        directoryBtn.setOnClickListener(dialogListener);
 
         View containerLayout = findViewById(R.id.file_selector_container_layout);
         keyBoardUtil = new KeyBoardUtil(containerLayout);

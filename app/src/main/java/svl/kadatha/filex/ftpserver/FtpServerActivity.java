@@ -31,6 +31,7 @@ import svl.kadatha.filex.EquallyDistributedDialogButtonsLayout;
 import svl.kadatha.filex.FsNotification;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.R;
+import svl.kadatha.filex.StatusBarTint;
 import svl.kadatha.filex.YesOrNoAlertDialog;
 import svl.kadatha.filex.ftpserver.ftp.FsService;
 import svl.kadatha.filex.ftpserver.ftp.FsSettings;
@@ -83,7 +84,7 @@ public class FtpServerActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         this.context = this;
         setContentView(R.layout.activity_ftp_server);
-
+        StatusBarTint.tintFromAttrWithScrim(this, R.attr.toolbar_background);
         viewModel = new ViewModelProvider(this).get(FtpServerViewModel.class);
         TextView connection_status_tv = findViewById(R.id.ftp_server_connection_status);
         ftp_switch_label = findViewById(R.id.ftp_server_switch_label);

@@ -39,6 +39,7 @@ import svl.kadatha.filex.Global;
 import svl.kadatha.filex.IndexedLinkedHashMap;
 import svl.kadatha.filex.PermissionsUtil;
 import svl.kadatha.filex.R;
+import svl.kadatha.filex.StatusBarTint;
 
 public class CloudAuthActivity extends BaseActivity {
 
@@ -75,7 +76,7 @@ public class CloudAuthActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         context = this;
         setContentView(R.layout.activity_cloud_auth);
-
+        StatusBarTint.tintFromAttrWithScrim(this, R.attr.toolbar_background);
         EquallyDistributedButtonsWithTextLayout tb_layout = new EquallyDistributedButtonsWithTextLayout(context, 4, Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
         int[] bottom_drawables = {R.drawable.document_add_icon, R.drawable.delete_icon, R.drawable.connect_icon, R.drawable.edit_icon};
         String[] titles = new String[]{getString(R.string.new_), getString(R.string.delete), getString(R.string.disconnect), getString(R.string.edit)};

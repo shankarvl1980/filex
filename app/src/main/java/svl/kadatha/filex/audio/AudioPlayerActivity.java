@@ -44,6 +44,7 @@ import svl.kadatha.filex.Global;
 import svl.kadatha.filex.KeyBoardUtil;
 import svl.kadatha.filex.R;
 import svl.kadatha.filex.RealPathUtil;
+import svl.kadatha.filex.StatusBarTint;
 import svl.kadatha.filex.TinyDB;
 
 
@@ -124,7 +125,8 @@ public class AudioPlayerActivity extends BaseActivity implements AudioSelectList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_player);
-        context = this;
+        context=this;
+        StatusBarTint.tintFromAttrWithScrim(this, R.attr.toolbar_background);
         tinyDB = new TinyDB(context);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
