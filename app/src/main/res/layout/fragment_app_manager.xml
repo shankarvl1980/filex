@@ -9,6 +9,7 @@
         android:id="@+id/fragment_app_list_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
         android:clipToPadding="false"
         android:layoutAnimation="@anim/layout_animation_fall_down"
         android:paddingBottom="?attr/actionBarSize"
@@ -20,6 +21,7 @@
         android:layout_width="20dp"
         android:layout_height="match_parent"
         android:layout_gravity="end"
+        android:layout_marginTop="1dp"
         android:paddingBottom="?attr/actionBarSize" />
 
     <TextView

@@ -10,7 +10,7 @@
     <TextView
         android:id="@+id/ftp_server_heading"
         android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
+        android:layout_height="?attr/actionBarSize"
         android:background="?attr/dialog_title"
         android:gravity="center_vertical"
         android:paddingStart="@dimen/ten_dp"

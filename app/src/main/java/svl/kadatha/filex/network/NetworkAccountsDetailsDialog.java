@@ -132,7 +132,6 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
             }
         });
 
-
         Button scan_btn = v.findViewById(R.id.fragment_network_scan_btn);
         scan_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -394,7 +393,6 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
             }
         });
 
-
         getParentFragmentManager().setFragmentResultListener(NETWORK_ACCOUNT_RENAME_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
@@ -438,7 +436,6 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                 ((MainActivity) context).createFragmentTransaction(NetworkAccountDetailsViewModel.SMB_WORKING_DIR_PATH, FileObjectType.SMB_TYPE);
             }
         } else if (appCompatActivity instanceof FileSelectorActivity) {
-            ///((FileSelectorActivity)context).storageRecyclerAdapter.notifyDataSetChanged();
             if (((FileSelectorActivity) context).recentDialogListener != null) {
                 ((FileSelectorActivity) context).recentDialogListener.onMediaAttachedAndRemoved();
             }
@@ -551,7 +548,6 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                         }
                     }
                 });
-
 
                 view.setOnLongClickListener(new View.OnLongClickListener() {
                     public boolean onLongClick(View p) {

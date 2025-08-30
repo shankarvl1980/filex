@@ -178,7 +178,7 @@ public class PreferencesDialog extends DialogFragment {
 
         ViewGroup buttons_layout = v.findViewById(R.id.preferences_button_layout);
         buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context, 1, Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT));
-
+        buttons_layout.setBackgroundResource(R.drawable.button_border);
         Button cancel_btn = buttons_layout.findViewById(R.id.first_button);
         cancel_btn.setText(R.string.close);
         cancel_btn.setOnClickListener(new View.OnClickListener() {

@@ -38,6 +38,7 @@
         android:scrollbarThumbVertical="@drawable/scrollbar"
         android:scrollbars="vertical"
         android:scrollingCache="false"
+        android:layout_marginTop="1dp"
         app:layout_constraintBottom_toTopOf="@id/fragment_network_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

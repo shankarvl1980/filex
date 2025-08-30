@@ -163,6 +163,7 @@ public class FtpServerActivity extends BaseActivity {
 
         FrameLayout button_layout = findViewById(R.id.ftp_server_button_layout);
         button_layout.addView(new EquallyDistributedDialogButtonsLayout(context, 1, Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT));
+        button_layout.setBackgroundResource(R.drawable.button_border);
         Button close;
         close = button_layout.findViewById(R.id.first_button);
         close.setText(getString(R.string.close));
