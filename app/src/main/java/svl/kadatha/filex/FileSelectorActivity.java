@@ -168,7 +168,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         fm = getSupportFragmentManager();
 
         setContentView(R.layout.activity_file_selector);
-        StatusBarTint.tintFromAttrWithScrim(this, R.attr.toolbar_background);
         file_number = findViewById(R.id.file_selector_file_number); //initiate here before adding fragment
 
         ImageButton sort_btn = findViewById(R.id.file_selector_sort_btn);

@@ -130,7 +130,7 @@ public class TextEditorActivity extends BaseActivity implements TextEditorSettin
         } else {
             setContentView(R.layout.activity_text_editor);
         }
-        StatusBarTint.tintFromAttrWithScrim(this, R.attr.toolbar_background);
+
         viewModel = new ViewModelProvider(this).get(TextEditorViewModel.class);
         FILE_EDITOR_TEXT_SIZE = tinyDB.getFloat("file_editor_text_size");
         if (FILE_EDITOR_TEXT_SIZE <= 0 || FILE_EDITOR_TEXT_SIZE > TextEditorSettingsDialog.MAX_TEXT_SIZE) {

@@ -44,5 +44,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.getDefaultNightMode());
                 break;
         }
+        StatusBarTint.tintFromAttrWithScrim(this, R.attr.toolbar_background);
     }
 }

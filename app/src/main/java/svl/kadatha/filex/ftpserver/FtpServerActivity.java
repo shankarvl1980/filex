@@ -84,7 +84,6 @@ public class FtpServerActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         this.context = this;
         setContentView(R.layout.activity_ftp_server);
-        StatusBarTint.tintFromAttrWithScrim(this, R.attr.toolbar_background);
         viewModel = new ViewModelProvider(this).get(FtpServerViewModel.class);
         TextView connection_status_tv = findViewById(R.id.ftp_server_connection_status);
         ftp_switch_label = findViewById(R.id.ftp_server_switch_label);

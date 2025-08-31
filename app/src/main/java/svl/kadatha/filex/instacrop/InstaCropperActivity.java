@@ -120,7 +120,6 @@ public class InstaCropperActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_instacropper);
-        StatusBarTint.tintFromAttrWithScrim(this, R.attr.toolbar_background);
         Toolbar toolbar = findViewById(R.id.crop_toolbar);
         EquallyDistributedButtonsWithTextLayout tb_layout = new EquallyDistributedButtonsWithTextLayout(this, 2, Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
         int[] bottom_drawables = {R.drawable.wallpaper_icon, R.drawable.cancel_icon};

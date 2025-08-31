@@ -131,7 +131,6 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
         fm = getSupportFragmentManager();
         pm = getPackageManager();
         setContentView(R.layout.activity_storage_analyser);
-        StatusBarTint.tintFromAttrWithScrim(this, R.attr.toolbar_background);
         Window w = getWindow();
         w.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         w.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);

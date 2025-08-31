@@ -98,7 +98,6 @@ public class CopyToActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         context = this;
         setContentView(R.layout.activity_copy_to);
-        StatusBarTint.tintFromAttrWithScrim(this, R.attr.toolbar_background);
         setFinishOnTouchOutside(false);
         file_name_edit_text = findViewById(R.id.activity_copy_to_filename);
         destination_folder_edittext = findViewById(R.id.activity_copy_to_destination_folder);

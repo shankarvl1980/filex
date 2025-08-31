@@ -43,9 +43,7 @@ public class VideoViewActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         Context context = this;
         setContentView(R.layout.activity_blank_view);
-        StatusBarTint.tintFromAttrWithScrim(this, R.attr.toolbar_background);
         root = findViewById(R.id.activity_blank_view_container);
-
         hideStatusBarKeepNavBar();
         applyBottomInsetOnly();
         tinyDB = new TinyDB(context);

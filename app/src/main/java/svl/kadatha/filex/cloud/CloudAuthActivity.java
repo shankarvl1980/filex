@@ -74,7 +74,6 @@ public class CloudAuthActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         context = this;
         setContentView(R.layout.activity_cloud_auth);
-        StatusBarTint.tintFromAttrWithScrim(this, R.attr.toolbar_background);
         EquallyDistributedButtonsWithTextLayout tb_layout = new EquallyDistributedButtonsWithTextLayout(context, 4, Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
         int[] bottom_drawables = {R.drawable.document_add_icon, R.drawable.delete_icon, R.drawable.connect_icon, R.drawable.edit_icon};
         String[] titles = new String[]{getString(R.string.new_), getString(R.string.delete), getString(R.string.disconnect), getString(R.string.edit)};
