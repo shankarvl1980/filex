@@ -35,7 +35,7 @@ public abstract class DetailRecyclerViewAdapter extends RecyclerView.Adapter<Det
                 File f = new File(df.fileclickselected);
                 File parent_file = f.getParentFile();
                 if (parent_file != null) {
-                    df.detailFragmentListener.enableParentDirImageButton(true);
+                    df.detailFragmentListener.enableParentDirImageButton(parent_file.canRead());
                 } else {
                     df.detailFragmentListener.setCurrentDirText(context.getString(R.string.root_directory));
                     df.detailFragmentListener.enableParentDirImageButton(false);

@@ -741,7 +741,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
                         if (fileObjectType == FileObjectType.FILE_TYPE) {
                             String fp = file_path.toString();
                             File f = new File(fp);
-                            if (f.exists() && f.list() != null) {
+                            if (f.exists() && f.canRead()) {
                                 if (detailFragmentListener != null) {
                                     detailFragmentListener.createFragmentTransaction(fp, fileObjectType);
                                 }

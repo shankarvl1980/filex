@@ -1786,7 +1786,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 String parent_file_path = Global.getParentPath(df.fileclickselected);
                 if (df.fileObjectType == FileObjectType.FILE_TYPE) {
                     File parent_file = new File(parent_file_path);
-                    if (parent_file.list() != null) {
+                    if (parent_file.canRead()) {
                         createFragmentTransaction(parent_file.getAbsolutePath(), FileObjectType.FILE_TYPE);
                     }
                 } else if (df.fileObjectType == FileObjectType.USB_TYPE) {

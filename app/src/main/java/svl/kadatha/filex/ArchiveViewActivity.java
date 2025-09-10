@@ -867,7 +867,7 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
                 if (archiveViewFragment.fileObjectType == FileObjectType.FILE_TYPE) {
 
                     File parent_file = new File(parent_file_path);
-                    if (parent_file != null && parent_file.list() != null) {
+                    if (parent_file != null && parent_file.canRead()) {
                         createFragmentTransaction(parent_file.getAbsolutePath(), FileObjectType.FILE_TYPE);
                     }
                 }
@@ -1022,6 +1022,4 @@ public class ArchiveViewActivity extends BaseActivity implements DetailFragmentL
             }
         }
     });
-
-
 }

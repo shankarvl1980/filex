@@ -156,6 +156,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
 
         folder_empty = v.findViewById(R.id.fragment_archive_empty_folder);
         filepath_adapter = new FilePathRecyclerViewAdapter(fileclickselected);
+        detailFragmentListener.enableParentDirImageButton(filepath_adapter.filepath_string_array.length != 1);
         viewModel = new ViewModelProvider(this).get(FilePOJOViewModel.class);
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
         if (!repositoryClass.hashmap_file_pojo.containsKey(fileObjectType + fileclickselected)) {
@@ -452,7 +453,7 @@ public class ArchiveViewFragment extends Fragment implements FileModifyObserver.
                         if (fileObjectType == FileObjectType.FILE_TYPE) {
                             String fp = file_path.toString();
                             File f = new File(fp);
-                            if (f.exists() && f.list() != null) {
+                            if (f.exists() && f.canRead()) {
                                 detailFragmentListener.createFragmentTransaction(fp, fileObjectType);
                             }
                         }

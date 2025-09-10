@@ -188,7 +188,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                     String parent_file_path = Global.getParentPath(fileSelectorFragment.fileclickselected);
                     if (fileSelectorFragment.fileObjectType == FileObjectType.FILE_TYPE) {
                         File parent_file = new File(parent_file_path);
-                        if (parent_file.list() != null) {
+                        if (parent_file.canRead()) {
                             createFragmentTransaction(parent_file.getAbsolutePath(), FileObjectType.FILE_TYPE);
                         }
                     } else if (fileSelectorFragment.fileObjectType == FileObjectType.USB_TYPE) {
@@ -893,7 +893,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                     File f = new File(fileSelectorFragment.fileclickselected);
                     File parent_file = f.getParentFile();
                     if (parent_file != null) {
-                        fileSelectorFragment.detailFragmentListener.enableParentDirImageButton(true);
+                        fileSelectorFragment.detailFragmentListener.enableParentDirImageButton(parent_file.canRead());
                     } else {
                         fileSelectorFragment.detailFragmentListener.enableParentDirImageButton(false);
                     }
