@@ -86,7 +86,6 @@ public class RenameFileDialog extends DialogFragment {
         existing_file_path = Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path, existing_name);
         other_file_permission = Global.GET_OTHER_FILE_PERMISSION(existing_file_path);
 
-
         if (savedInstanceState != null) {
             new_file_path = savedInstanceState.getString("new_file_path");
             overwriting = savedInstanceState.getBoolean("overwriting");
@@ -252,7 +251,6 @@ public class RenameFileDialog extends DialogFragment {
                     Global.print(context, getString(R.string.avoid_name_involving_special_characters));
                     return;
                 }
-
 
                 if (!ArchiveDeletePasteServiceUtil.WHETHER_TO_START_SERVICE_ON_USB(fileObjectType, null)) {
                     Global.print(context, getString(R.string.wait_till_completion_on_going_operation_on_usb));
