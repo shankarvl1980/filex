@@ -9,7 +9,7 @@
     <color name="light_icon_color">#0488CA</color>
     <color name="light_toolbar_background">#10B3B8</color>
     <color name="light_recycler_main_text_color">#ff000000</color>
-    <color name="light_recycler_second_text_color">#6D6D6D</color>
+    <color name="light_recycler_second_text_color">#5F5F5F</color>
     <color name="light_heading_text_color">#ff292929</color>
     <color name="light_edit_text_color">@color/light_recycler_main_text_color</color>
     <color name="light_activity_background">#F4F4F4</color>
