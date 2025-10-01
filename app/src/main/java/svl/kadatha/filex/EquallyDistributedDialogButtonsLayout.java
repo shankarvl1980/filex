@@ -57,7 +57,7 @@ public class EquallyDistributedDialogButtonsLayout extends ViewGroup {
             dialog_width = screen_width;
         }
 
-        margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
+        margin = Dimens.px(4);//(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
         child_count = Math.min(number_of_buttons, getChildCount());
         int distance_between_buttons = (child_count - 1) * margin;
         int width_for_child = MeasureSpec.makeMeasureSpec((dialog_width - distance_between_buttons) / child_count, MeasureSpec.EXACTLY);

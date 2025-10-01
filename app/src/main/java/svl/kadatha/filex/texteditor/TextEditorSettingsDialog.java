@@ -59,7 +59,6 @@ public class TextEditorSettingsDialog extends DialogFragment {
         this.context = context;
         textEditorActivity = ((TextEditorActivity) context);
         eol_changeListener = (TextEditorActivity) context;
-
     }
 
     @Override
@@ -161,8 +160,6 @@ public class TextEditorSettingsDialog extends DialogFragment {
                     sample_edittext.setTextSize(selected_text_size);
                     enable_disable_btns();
                 }
-
-
             }
         }));
 
@@ -190,7 +187,6 @@ public class TextEditorSettingsDialog extends DialogFragment {
                     TextEditorActivity.NOT_WRAP = not_wrap;
                     textEditorActivity.tinyDB.putBoolean("file_editor_not_wrap", not_wrap);
                     textEditorActivity.recreate();
-
                 }
 
                 if (TextEditorActivity.FILE_EDITOR_TEXT_SIZE != selected_text_size) {

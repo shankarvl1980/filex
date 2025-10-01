@@ -218,7 +218,7 @@
             android:name=".CopyToActivity"
             android:exported="false"
             android:label="@string/copy_to"
-            android:theme="@style/MyLightDialog"></activity>
+            android:theme="@style/MyLightDialog" />
 
         <activity
             android:name=".ArchiveViewActivity"

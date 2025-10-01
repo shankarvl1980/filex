@@ -9,12 +9,16 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.RelativeSizeSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -50,7 +54,9 @@ public class CopyToActivity extends BaseActivity {
     private Button browse_button;
     private EditText destination_folder_edittext;
     private TextView destination_fileObject_text_view;
-    private String dest_folder;
+    private String dest_folder, modified_name = "";
+    private String ext = "";
+    private View divider1;
     private final ActivityResultLauncher<Intent> activityResultLauncher_file_select = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -100,6 +106,7 @@ public class CopyToActivity extends BaseActivity {
         setContentView(R.layout.activity_copy_to);
         setFinishOnTouchOutside(false);
         file_name_edit_text = findViewById(R.id.activity_copy_to_filename);
+        divider1 = findViewById(R.id.activity_copy_to_divider1);
         destination_folder_edittext = findViewById(R.id.activity_copy_to_destination_folder);
         destination_fileObject_text_view = findViewById(R.id.activity_copy_to_destination_file_object_type);
         browse_button = findViewById(R.id.activity_copy_to_browse_button);
@@ -114,6 +121,31 @@ public class CopyToActivity extends BaseActivity {
 
         progress_bar = findViewById(R.id.copy_to_progressbar);
         progress_bar.setVisibility(View.GONE);
+
+        CheckBox modify_ext_check_box = findViewById(R.id.activity_copy_to_modify_ext_check_box);
+        modify_ext_check_box.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                modified_name = file_name_edit_text.getText().toString().trim();
+                if (((CheckBox) view).isChecked() && !ext.isEmpty()) {
+                    //modify ext, hence, show extension
+                    viewModel.modify_ext = true;
+                    file_name_edit_text.setText(modified_name + ext);
+                } else {
+                    //do not modify, hence, remove extension
+                    viewModel.modify_ext = false;
+                    String new_ext;
+                    int idx = modified_name.lastIndexOf(".");
+                    if (idx > 0) {
+                        new_ext = modified_name.substring(idx);
+                        if (new_ext.equals(ext)) {
+                            modified_name = modified_name.substring(0, idx);
+                            file_name_edit_text.setText(modified_name);
+                        }
+                    }
+                }
+            }
+        });
 
         ViewGroup buttons_layout = findViewById(R.id.activity_copy_to_button_layout);
         buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(this, 2, Global.DIALOG_WIDTH, Global.DIALOG_WIDTH));
@@ -137,7 +169,7 @@ public class CopyToActivity extends BaseActivity {
                         launchService();
                     } else {
                         FileReplaceConfirmationDialog fileReplaceConfirmationDialog = FileReplaceConfirmationDialog.getInstance(fileDuplicationViewModel.source_folder, fileDuplicationViewModel.sourceFileObjectType,
-                                fileDuplicationViewModel.dest_folder, fileDuplicationViewModel.destFileObjectType, fileDuplicationViewModel.uri_name_list, data_list, file_name_edit_text.getText().toString().trim(), fileDuplicationViewModel.cut);
+                                fileDuplicationViewModel.dest_folder, fileDuplicationViewModel.destFileObjectType, fileDuplicationViewModel.uri_name_list, data_list, viewModel.modify_ext ? file_name_edit_text.getText().toString().trim() : file_name_edit_text.getText().toString().trim() + ext, fileDuplicationViewModel.cut);
                         fileReplaceConfirmationDialog.show(getSupportFragmentManager(), "paste_dialog");
                     }
                     fileDuplicationViewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
@@ -202,7 +234,7 @@ public class CopyToActivity extends BaseActivity {
                 }
 
                 progress_bar.setVisibility(View.VISIBLE);
-                fileDuplicationViewModel.checkForExistingFileWithSameNameUri("", FileObjectType.SEARCH_LIBRARY_TYPE, dest_folder, destFileObjectType, data_list, file_name_edit_text.getText().toString().trim(), false, false);
+                fileDuplicationViewModel.checkForExistingFileWithSameNameUri("", FileObjectType.SEARCH_LIBRARY_TYPE, dest_folder, destFileObjectType, data_list, viewModel.modify_ext ? file_name_edit_text.getText().toString().trim() : file_name_edit_text.getText().toString().trim() + ext, false, false);
             }
         });
 
@@ -225,6 +257,41 @@ public class CopyToActivity extends BaseActivity {
         }
         imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
+        if (ext != null && !ext.isEmpty()) {
+            modify_ext_check_box.setVisibility(View.VISIBLE);
+            String main = context.getString(R.string.modify_file_extension);
+            String suffix = " (" + ext + ")";
+
+            SpannableStringBuilder ssb = new SpannableStringBuilder(main).append(suffix);
+            int start = ssb.length() - suffix.length();
+
+            // current text size is in px; convert to sp
+            float currentPx = modify_ext_check_box.getTextSize();
+            float scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
+            float currentSp = currentPx / scaledDensity;
+
+            float scale = 13f / currentSp; // targetSP / currentSP
+
+            ssb.setSpan(new RelativeSizeSpan(scale), start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            modify_ext_check_box.setText(ssb);
+        } else {
+            modify_ext_check_box.setVisibility(View.GONE);
+            divider1.setVisibility(View.GONE);
+        }
+
+
+        if (!viewModel.modify_ext) {
+            int idx = modified_name.lastIndexOf(".");
+            if (idx > 0) {
+                String new_ext = modified_name.substring(idx);
+                if (new_ext.equals(ext)) {
+                    modified_name = modified_name.substring(0, idx);
+                }
+            }
+        }
+
+        file_name_edit_text.setText(modified_name);
         getSupportFragmentManager().setFragmentResultListener(DUPLICATE_FILE_NAMES_REQUEST_CODE, CopyToActivity.this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
@@ -271,7 +338,7 @@ public class CopyToActivity extends BaseActivity {
             Global.print(context, getString(R.string.maximum_3_services_processed));
             return;
         }
-        String file_name = file_name_edit_text.getText().toString().trim();
+        String file_name = viewModel.modify_ext ? file_name_edit_text.getText().toString().trim() : file_name_edit_text.getText().toString().trim() + ext;//modified_name;//file_name_edit_text.getText().toString().trim();
         Bundle bundle = new Bundle();
         bundle.putParcelable("uriDestNameMap", uriDestNameMap);
         bundle.putStringArrayList("overwritten_file_path_list", overwritten_file_path_list);
@@ -352,7 +419,14 @@ public class CopyToActivity extends BaseActivity {
                         if (file_name == null) {
                             file_name = getFileNameOfUri(context, data_list.get(0));
                         }
-                        file_name_edit_text.setText(file_name == null ? "" : file_name);
+
+                        if (file_name != null) {
+                            int idx = file_name.lastIndexOf(".");
+                            if (idx > 0) {
+                                ext = file_name.substring(idx);
+                            }
+                            modified_name = file_name;
+                        }
                     }
 
                     if (dest_folder == null || dest_folder.isEmpty()) {
@@ -364,6 +438,9 @@ public class CopyToActivity extends BaseActivity {
                         destination_fileObject_text_view.setText(Global.GET_FileObjectType(destFileObjectType));
                     }
                 }
+            } else {
+                modified_name = savedInstanceState.getString("modified_name");
+                ext = savedInstanceState.getString("ext");
             }
         }
     }
@@ -388,6 +465,7 @@ public class CopyToActivity extends BaseActivity {
         Global.WORKOUT_AVAILABLE_SPACE();
     }
 
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -410,6 +488,8 @@ public class CopyToActivity extends BaseActivity {
         outState.putString("dest_folder", dest_folder);
         outState.putSerializable("destFileObjectType", destFileObjectType);
         outState.putBoolean("clear_cache", clear_cache);
+        outState.putString("modified_name", file_name_edit_text.getText().toString().trim());
+        outState.putString("ext", ext);
     }
 
     @Override

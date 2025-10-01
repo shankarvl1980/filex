@@ -58,7 +58,7 @@ public class EquallyDistributedImageButtonsLayout extends ViewGroup {
             toolbar_width = screen_width;
         }
 
-        int icon_dimension = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 36, getResources().getDisplayMetrics());
+        int icon_dimension = Dimens.px(36);//int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 36, getResources().getDisplayMetrics());
 
         top_padding = (Global.ACTION_BAR_HEIGHT - icon_dimension) / 4;
 

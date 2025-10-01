@@ -16,14 +16,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-public class LineNumberedEditText extends LinearLayout {
+public class LineNumberedEditTextWrap extends BaseLineNumberedEditText {
     private static final int LINE_NUMBER_TEXT_SIZE = 10; // sp
-    private EditText editText;
+
     private LineNumberView lineNumberView;
     private int startingLineNumber = 1;
 
 
-    public LineNumberedEditText(Context context, AttributeSet attrs) {
+    public LineNumberedEditTextWrap(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
@@ -76,10 +76,6 @@ public class LineNumberedEditText extends LinearLayout {
         lineNumberView.updateLineNumbers();
     }
 
-    public EditText getEditText() {
-        return editText;
-    }
-
     public String getContent() {
         return editText.getText().toString();
     }
@@ -97,7 +93,7 @@ public class LineNumberedEditText extends LinearLayout {
         lineNumberView.updateLineNumbers();
     }
 
-    private int dpToPx(Context context, int dp) {
+    public int dpToPx(Context context, int dp) {
         return (int) (dp * context.getResources().getDisplayMetrics().density);
     }
 
@@ -117,26 +113,36 @@ public class LineNumberedEditText extends LinearLayout {
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
             Layout layout = editText.getLayout();
-            if (layout != null && lineStartIndexes != null) {
-                int scrollY = editText.getScrollY();
-                int firstVisibleLine = layout.getLineForVertical(scrollY);
-                int lastVisibleLine = layout.getLineForVertical(scrollY + getHeight()) + 1;
+            if (layout == null || lineStartIndexes == null) return;
 
-                for (int i = 0; i < lineStartIndexes.length; i++) {
-                    int lineStartIndex = lineStartIndexes[i];
-                    int layoutLine = layout.getLineForOffset(lineStartIndex);
+            int scrollY = editText.getScrollY();
+            int padTop  = editText.getTotalPaddingTop(); // aligns with EditText content area
 
-                    if (layoutLine >= firstVisibleLine && layoutLine <= lastVisibleLine) {
-                        int baseline = layout.getLineBaseline(layoutLine) - scrollY;
-                        int lineNumber = startingLineNumber + i;
-                        String lineNumberStr = String.valueOf(lineNumber);
+            int firstVisibleLine = layout.getLineForVertical(scrollY);
+            int lastVisibleLine  = layout.getLineForVertical(scrollY + getHeight());
 
-                        float y = baseline - paint.ascent();
-                        canvas.drawText(lineNumberStr, getWidth(), y, paint);
-                    }
-                }
+            float xRight = getWidth(); // or getWidth() - dpToPx(getContext(), 2) for a small right pad
+
+            for (int i = 0; i < lineStartIndexes.length; i++) {
+                int off = lineStartIndexes[i];
+                int layoutLine = layout.getLineForOffset(off);
+                if (layoutLine < firstVisibleLine || layoutLine > lastVisibleLine) continue;
+
+                // Baseline in layout (content) coordinates
+                int baselineContent = layout.getLineBaseline(layoutLine);
+
+                // Convert to this gutter view’s canvas coordinates
+                float y = baselineContent + padTop - scrollY;
+
+                canvas.drawText(
+                        String.valueOf(startingLineNumber + i),
+                        xRight,
+                        y,                 // ✅ pass baseline directly
+                        paint
+                );
             }
         }
+
 
         public void updateLineNumbers() {
             String text = editText.getText().toString();
@@ -171,9 +177,8 @@ public class LineNumberedEditText extends LinearLayout {
         }
 
         public void setStartingLineNumber(int startingLineNumber) {
-            LineNumberedEditText.this.startingLineNumber = startingLineNumber;
+            LineNumberedEditTextWrap.this.startingLineNumber = startingLineNumber;
             invalidate();
         }
     }
-
 }

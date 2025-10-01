@@ -57,7 +57,7 @@ public class EquallyDistributedButtonsWithTextLayout extends ViewGroup {
             toolbar_width = screen_width;
         }
 
-        int icon_dimension = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
+        int icon_dimension = Dimens.px(40);//(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
         toppadding = (Global.ACTION_BAR_HEIGHT - icon_dimension) / 4;
         child_count = Math.min(child_count, getChildCount());
     }

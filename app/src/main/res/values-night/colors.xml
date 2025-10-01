@@ -17,7 +17,7 @@
     <color name="light_drawer_title">#76C6BD</color>
     <color name="light_drawer_item_pressed">#ACF5EB</color>
     <color name="light_dialog_title">#739DB1</color>
-    <color name="light_dialog_background">#3A3A34</color>
+    <color name="light_dialog_background">#33332E</color>
     <color name="light_tab_select_text_color">@android:color/holo_blue_dark</color>
     <color name="light_item_select_text_color">@android:color/holo_blue_dark</color>
 

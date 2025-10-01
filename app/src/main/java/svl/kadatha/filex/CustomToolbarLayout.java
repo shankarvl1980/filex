@@ -59,7 +59,7 @@ public class CustomToolbarLayout extends ViewGroup {
             toolbar_width = screen_width;
         }
         viewCount = getChildCount();
-        int icon_dimension = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
+        int icon_dimension = Dimens.px(30);
         top_padding = (Global.ACTION_BAR_HEIGHT - icon_dimension) / 2;
         int w = toolbar_width / viewCount;
         params = new LinearLayout.LayoutParams(w, Global.ACTION_BAR_HEIGHT);

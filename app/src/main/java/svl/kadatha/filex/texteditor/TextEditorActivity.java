@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -54,6 +55,7 @@ import svl.kadatha.filex.BaseActivity;
 import svl.kadatha.filex.CopyToActivity;
 import svl.kadatha.filex.DeleteFileAlertDialogOtherActivity;
 import svl.kadatha.filex.DeleteFileOtherActivityViewModel;
+import svl.kadatha.filex.Dimens;
 import svl.kadatha.filex.EquallyDistributedButtonsWithTextLayout;
 import svl.kadatha.filex.FileIntentDispatch;
 import svl.kadatha.filex.FileObjectType;
@@ -88,7 +90,8 @@ public class TextEditorActivity extends BaseActivity implements TextEditorSettin
     public boolean clear_cache;
     public TextEditorViewModel viewModel;
     FileSaveServiceConnection serviceConnection;
-    LineNumberedEditText file_text_container_edittext;
+    BaseLineNumberedEditText file_text_container_edittext;
+
     TinyDB tinyDB;
     private List<FilePOJO> files_selected_for_delete;
     private String tree_uri_path = "";
@@ -127,9 +130,15 @@ public class TextEditorActivity extends BaseActivity implements TextEditorSettin
         NOT_WRAP = tinyDB.getBoolean("file_editor_not_wrap");
         if (NOT_WRAP) {
             setContentView(R.layout.activity_text_editor_horizontal_scroll);
+            file_text_container_edittext = findViewById(R.id.textfile_edittext_no_wrap);
         } else {
             setContentView(R.layout.activity_text_editor);
+            file_text_container_edittext = findViewById(R.id.textfile_edittext);
         }
+
+
+
+
 
         viewModel = new ViewModelProvider(this).get(TextEditorViewModel.class);
         FILE_EDITOR_TEXT_SIZE = tinyDB.getFloat("file_editor_text_size");
@@ -138,7 +147,7 @@ public class TextEditorActivity extends BaseActivity implements TextEditorSettin
             tinyDB.putFloat("file_editor_text_size", FILE_EDITOR_TEXT_SIZE);
         }
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        LINE_NUMBER_SIZE = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
+        LINE_NUMBER_SIZE = Dimens.px(10);//(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
 
         scrollview = findViewById(R.id.file_editor_scrollview);
         keyBoardUtil = new KeyBoardUtil(scrollview);
@@ -297,7 +306,7 @@ public class TextEditorActivity extends BaseActivity implements TextEditorSettin
         up_button.setOnClickListener(bottomToolbarListener);
         down_button.setOnClickListener(bottomToolbarListener);
 
-        file_text_container_edittext = findViewById(R.id.textfile_edittext);
+
         file_text_container_edittext.setTextSize(FILE_EDITOR_TEXT_SIZE);
 
         page_number = findViewById(R.id.file_editor_page_number);

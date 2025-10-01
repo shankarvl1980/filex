@@ -16,16 +16,11 @@
         android:scrollbarThumbVertical="@drawable/scrollbar"
         android:scrollbars="vertical">
 
-        <HorizontalScrollView
-            android:id="@+id/file_editor_hscroll"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true"
-            android:scrollbarThumbVertical="@drawable/scrollbar">
 
-            <svl.kadatha.filex.texteditor.LineNumberedEditText
-                android:id="@+id/textfile_edittext"
-                android:layout_width="wrap_content"
+
+            <svl.kadatha.filex.texteditor.LineNumberedEditTextNoWrap
+                android:id="@+id/textfile_edittext_no_wrap"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="?attr/activity_background"
                 android:fontFamily="monospace"
@@ -38,7 +33,7 @@
                 android:textColor="?attr/edit_text_color"
                 android:textIsSelectable="true" />
 
-        </HorizontalScrollView>
+
 
     </svl.kadatha.filex.ObservableScrollView>
 

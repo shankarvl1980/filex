@@ -16,7 +16,7 @@
         android:scrollbarThumbVertical="@drawable/scrollbar"
         android:scrollbars="vertical">
 
-        <svl.kadatha.filex.texteditor.LineNumberedEditText
+        <svl.kadatha.filex.texteditor.LineNumberedEditTextWrap
             android:id="@+id/textfile_edittext"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

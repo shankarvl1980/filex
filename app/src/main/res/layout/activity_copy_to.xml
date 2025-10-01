@@ -58,18 +58,30 @@
                     android:layout_marginHorizontal="@dimen/ten_dp"
                     android:textColor="?attr/edit_text_color"
                     app:layout_constraintTop_toBottomOf="@id/activity_copy_to_filename_label" />
+                <CheckBox
+                    android:id="@+id/activity_copy_to_modify_ext_check_box"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ten_dp"
+                    android:layout_marginEnd="@dimen/ten_dp"
+                    android:layout_marginBottom="@dimen/four_dp"
+                    android:text="@string/modify_file_extension"
+                    android:textSize="15sp"
+
+
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/activity_copy_to_filename" />
 
                 <View
                     android:id="@+id/activity_copy_to_divider1"
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:layout_marginStart="@dimen/divider_margin"
-                    android:layout_marginTop="@dimen/layout_margin"
+                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="@dimen/divider_margin"
                     android:background="?attr/recycler_second_text_color"
-                    android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/activity_copy_to_filename" />
+                    app:layout_constraintTop_toBottomOf="@id/activity_copy_to_modify_ext_check_box" />
 
                 <TextView
                     android:id="@+id/activity_copy_to_destination_folder_label"

@@ -3,6 +3,8 @@ package svl.kadatha.filex.pdfthumbnail;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
@@ -69,6 +71,9 @@ public class ThumbnailBuilder implements ModelLoader<String, Bitmap> {
                     if (pdfRenderer.getPageCount() != 0) {
                         PdfRenderer.Page page = pdfRenderer.openPage(0);
                         Bitmap output = Bitmap.createBitmap(page.getWidth(), page.getHeight(), Bitmap.Config.ARGB_8888);
+                        Canvas canvas = new Canvas(output);
+                        canvas.drawColor(Color.WHITE);
+                        canvas.drawBitmap(output, 0f, 0f, null);
                         page.render(output, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
                         page.close();
                         callback.onDataReady(output);

@@ -175,6 +175,7 @@ public class Global {
     public static int SIX_DP;
     public static int EIGHT_DP;
     public static int TEN_DP;
+    public static int ELEVEN_DP;
     public static int TWELVE_DP;
     public static int FOURTEEN_DP;
     public static int RECYCLERVIEW_ITEM_SPACING;
@@ -341,30 +342,26 @@ public class Global {
     }
 
     static void GET_IMAGE_VIEW_DIMENSIONS(Context context) {
+        Dimens.init(App.getAppContext());
         if (IMAGEVIEW_DIMENSION_SMALL_LIST == 0) {
-            DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-            //ONE_SP=TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,1,displayMetrics);
-            ONE_DP = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, displayMetrics);
-
-            TWO_DP = (int) (ONE_DP * 2);
-            FOUR_DP = (int) (ONE_DP * 4);//TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,4,displayMetrics);
-            FIVE_DP = (int) (ONE_DP * 5);//TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,5,displayMetrics);
-            SIX_DP = (int) (ONE_DP * 6);//TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,6,displayMetrics);
-            EIGHT_DP = (int) (ONE_DP * 8);//TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,8,displayMetrics);
-            TEN_DP = (int) (ONE_DP * 10);//TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,10,displayMetrics);
-            TWELVE_DP = (int) (ONE_DP * 12);//TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,12,displayMetrics);
-            FOURTEEN_DP = (int) (ONE_DP * 14);//TEN_DP+FOUR_DP;
-            THIRTY_SIX_DP = (int) (ONE_DP * 36);
-
+            TWO_DP    = Dimens.px(2);
+            FOUR_DP   = Dimens.px(4);
+            FIVE_DP   = Dimens.px(5);
+            SIX_DP    = Dimens.px(6);
+            EIGHT_DP  = Dimens.px(8);
+            TEN_DP    = Dimens.px(10);
+            ELEVEN_DP = Dimens.px(11);
+            TWELVE_DP = Dimens.px(12);
+            FOURTEEN_DP   = Dimens.px(14);
+            THIRTY_SIX_DP = Dimens.px(36);
+            BUTTON_HEIGHT = Dimens.px(48);
 
             int list_s = FIVE_DP;
             int list_g = IS_TABLET ? TWELVE_DP : TEN_DP;
 
-
             SELECTOR_ICON_DIMENSION = TEN_DP + TEN_DP + SIX_DP;
-            RECYCLERVIEW_ITEM_SPACING = IS_TABLET ? TEN_DP : FIVE_DP;
+            RECYCLERVIEW_ITEM_SPACING = IS_TABLET ? TWELVE_DP : EIGHT_DP;
             LIST_POPUP_WINDOW_DROP_DOWN_OFFSET = IS_TABLET ? TEN_DP : SIX_DP;
-
 
             IMAGEVIEW_DIMENSION_SMALL_LIST = list_s * IMAGE_VIEW_DIMENSION_MULTIPLIER_SMALL + FOUR_DP;
             IMAGEVIEW_DIMENSION_MEDIUM_LIST = list_s * IMAGE_VIEW_DIMENSION_MULTIPLIER_MEDIUM + FOUR_DP;
@@ -373,9 +370,7 @@ public class Global {
             IMAGEVIEW_DIMENSION_SMALL_GRID = list_g * IMAGE_VIEW_DIMENSION_MULTIPLIER_SMALL;
             IMAGEVIEW_DIMENSION_MEDIUM_GRID = list_g * IMAGE_VIEW_DIMENSION_MULTIPLIER_MEDIUM;
             IMAGEVIEW_DIMENSION_LARGE_GRID = list_g * IMAGE_VIEW_DIMENSION_MULTIPLIER_LARGE;
-
-            BUTTON_HEIGHT = (int) (ONE_DP * 48);
-
+            
             DIVIDERITEMDECORATION = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
         }
         GRID_COUNT_SMALL = WIDTH / (IMAGEVIEW_DIMENSION_SMALL_GRID + RECYCLERVIEW_ITEM_SPACING);
