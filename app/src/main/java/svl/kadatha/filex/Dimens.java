@@ -7,7 +7,8 @@ public final class Dimens {
     private static float density;       // dp → px
     private static float scaledDensity; // sp → px
 
-    private Dimens() {}
+    private Dimens() {
+    }
 
     public static void init(Context context) {
         // Use Application context to avoid leaking Activity

@@ -28,20 +28,26 @@ public abstract class BaseLineNumberedEditText extends LinearLayout {
         configureCommonEditText(context);
     }
 
-    /** Common EditText configuration shared by subclasses */
-    protected void configureCommonEditText(Context context) {
-
-    }
-
-    // ------------------- Public API (kept identical to your Activity’s expectations) -------------------
-
-    /** Keep the helper since you used it elsewhere */
+    /**
+     * Keep the helper since you used it elsewhere
+     */
     public static int spToPx(Context context, float sp) {
         return (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_SP, sp, context.getResources().getDisplayMetrics());
     }
 
-    /** Page-aware content setter. Subclasses are responsible for using startingLineNumber as needed. */
+    // ------------------- Public API (kept identical to your Activity’s expectations) -------------------
+
+    /**
+     * Common EditText configuration shared by subclasses
+     */
+    protected void configureCommonEditText(Context context) {
+
+    }
+
+    /**
+     * Page-aware content setter. Subclasses are responsible for using startingLineNumber as needed.
+     */
     public void setContent(String content, int pageNumber, int linesPerPage) {
 
     }
@@ -65,12 +71,16 @@ public abstract class BaseLineNumberedEditText extends LinearLayout {
 
     }
 
-    /** Subclasses override this to refresh line numbers / gutter width after text or numbering changes */
+    /**
+     * Subclasses override this to refresh line numbers / gutter width after text or numbering changes
+     */
     protected void onContentOrNumberingChanged() {
         // default no-op
     }
 
-    /** Utility */
+    /**
+     * Utility
+     */
     protected int dpToPx(Context context, int dp) {
         return Math.round(dp * context.getResources().getDisplayMetrics().density);
     }

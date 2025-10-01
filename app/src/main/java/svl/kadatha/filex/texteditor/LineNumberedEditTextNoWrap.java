@@ -12,24 +12,22 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
-import android.widget.LinearLayout;
 
 /**
  * Composite editor with a pinned line-number gutter on the left and an EditText on the right.
  * - Horizontal scrolling is INTERNAL: only the EditText scrolls horizontally; gutter stays pinned.
  * - Vertical scrolling is expected to be owned by an OUTER ScrollView (parent layout), so the
- *   inner EditText disables its own vertical scrollbar to avoid nested-Y scroll conflicts.
- *
+ * inner EditText disables its own vertical scrollbar to avoid nested-Y scroll conflicts.
+ * <p>
  * Public helpers expose wrapping toggle and horizontal scroll state for saving/restoring.
  */
 public class LineNumberedEditTextNoWrap extends BaseLineNumberedEditText {
     // --- Tunables ---
     private static final int LINE_NUMBER_TEXT_SIZE = 10; // sp  // size of line numbers
-      // editor text size
+    // editor text size
     private static final int GUTTER_RIGHT_PAD_DP = 4;      // pad inside gutter at right edge
     private static final int GUTTER_MIN_WIDTH_DP = 24;     // floor to avoid jittery narrow gutter
     private static final int GAP_BETWEEN_GUTTER_AND_TEXT_DP = 4; // tiny left gap before text
@@ -65,18 +63,24 @@ public class LineNumberedEditTextNoWrap extends BaseLineNumberedEditText {
         lineNumberView.updateLineNumbers();
     }
 
-    /** Returns the current editor text. */
+    /**
+     * Returns the current editor text.
+     */
     public String getContent() {
         Editable e = editText.getText();
         return e == null ? "" : e.toString();
     }
 
-    /** Access the inner EditText for advanced operations (selection, IME, etc.). */
+    /**
+     * Access the inner EditText for advanced operations (selection, IME, etc.).
+     */
     public EditText getEditText() {
         return editText;
     }
 
-    /** Enable/disable editing without breaking selection/clipboard behavior. */
+    /**
+     * Enable/disable editing without breaking selection/clipboard behavior.
+     */
     public void setEditable(boolean editable) {
         editText.setFocusable(editable);
         editText.setFocusableInTouchMode(editable);
@@ -85,7 +89,9 @@ public class LineNumberedEditTextNoWrap extends BaseLineNumberedEditText {
         editText.setShowSoftInputOnFocus(editable);
     }
 
-    /** Set editor text size in SP; gutter recomputes width accordingly. */
+    /**
+     * Set editor text size in SP; gutter recomputes width accordingly.
+     */
     public void setTextSize(float sizeSp) {
         editText.setTextSize(sizeSp);
         lineNumberView.requestLayout();
@@ -102,17 +108,23 @@ public class LineNumberedEditTextNoWrap extends BaseLineNumberedEditText {
         // When wrapping, content width becomes viewport width; HSView stops scrolling naturally.
     }
 
-    /** Current internal horizontal scroll X (for state save/restore). */
+    /**
+     * Current internal horizontal scroll X (for state save/restore).
+     */
     public int getHorizontalScrollX() {
         return hScroll.getScrollX();
     }
 
-    /** Jump to a specific horizontal position. */
+    /**
+     * Jump to a specific horizontal position.
+     */
     public void scrollToX(int x) {
         hScroll.scrollTo(Math.max(0, x), 0);
     }
 
-    /** Smoothly scroll to a specific horizontal position. */
+    /**
+     * Smoothly scroll to a specific horizontal position.
+     */
     public void smoothScrollToX(int x) {
         hScroll.smoothScrollTo(Math.max(0, x), 0);
     }
@@ -161,9 +173,16 @@ public class LineNumberedEditTextNoWrap extends BaseLineNumberedEditText {
 
 
         editText.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
-            @Override public void afterTextChanged(Editable s) {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
                 lineNumberView.updateLineNumbers();
             }
         });
@@ -214,10 +233,10 @@ public class LineNumberedEditTextNoWrap extends BaseLineNumberedEditText {
 
             // Map layout coordinates (content space) to this gutter view's canvas
             int scrollY = editText.getScrollY();
-            int padTop  = editText.getTotalPaddingTop();
+            int padTop = editText.getTotalPaddingTop();
 
             int firstVisibleLine = layout.getLineForVertical(scrollY);
-            int lastVisibleLine  = layout.getLineForVertical(scrollY + getHeight());
+            int lastVisibleLine = layout.getLineForVertical(scrollY + getHeight());
 
             float xRight = getWidth() - dpToPx(getContext(), GUTTER_RIGHT_PAD_DP);
 

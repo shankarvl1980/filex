@@ -19,7 +19,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
-import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -344,15 +343,15 @@ public class Global {
     static void GET_IMAGE_VIEW_DIMENSIONS(Context context) {
         Dimens.init(App.getAppContext());
         if (IMAGEVIEW_DIMENSION_SMALL_LIST == 0) {
-            TWO_DP    = Dimens.px(2);
-            FOUR_DP   = Dimens.px(4);
-            FIVE_DP   = Dimens.px(5);
-            SIX_DP    = Dimens.px(6);
-            EIGHT_DP  = Dimens.px(8);
-            TEN_DP    = Dimens.px(10);
+            TWO_DP = Dimens.px(2);
+            FOUR_DP = Dimens.px(4);
+            FIVE_DP = Dimens.px(5);
+            SIX_DP = Dimens.px(6);
+            EIGHT_DP = Dimens.px(8);
+            TEN_DP = Dimens.px(10);
             ELEVEN_DP = Dimens.px(11);
             TWELVE_DP = Dimens.px(12);
-            FOURTEEN_DP   = Dimens.px(14);
+            FOURTEEN_DP = Dimens.px(14);
             THIRTY_SIX_DP = Dimens.px(36);
             BUTTON_HEIGHT = Dimens.px(48);
 
@@ -370,7 +369,7 @@ public class Global {
             IMAGEVIEW_DIMENSION_SMALL_GRID = list_g * IMAGE_VIEW_DIMENSION_MULTIPLIER_SMALL;
             IMAGEVIEW_DIMENSION_MEDIUM_GRID = list_g * IMAGE_VIEW_DIMENSION_MULTIPLIER_MEDIUM;
             IMAGEVIEW_DIMENSION_LARGE_GRID = list_g * IMAGE_VIEW_DIMENSION_MULTIPLIER_LARGE;
-            
+
             DIVIDERITEMDECORATION = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
         }
         GRID_COUNT_SMALL = WIDTH / (IMAGEVIEW_DIMENSION_SMALL_GRID + RECYCLERVIEW_ITEM_SPACING);

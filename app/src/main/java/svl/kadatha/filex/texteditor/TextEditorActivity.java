@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.os.ParcelFileDescriptor;
-import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -70,7 +68,6 @@ import svl.kadatha.filex.RealPathUtil;
 import svl.kadatha.filex.RepeatListener;
 import svl.kadatha.filex.RepositoryClass;
 import svl.kadatha.filex.SAFPermissionHelperDialog;
-import svl.kadatha.filex.StatusBarTint;
 import svl.kadatha.filex.TinyDB;
 import svl.kadatha.filex.UriPOJO;
 
@@ -135,9 +132,6 @@ public class TextEditorActivity extends BaseActivity implements TextEditorSettin
             setContentView(R.layout.activity_text_editor);
             file_text_container_edittext = findViewById(R.id.textfile_edittext);
         }
-
-
-
 
 
         viewModel = new ViewModelProvider(this).get(TextEditorViewModel.class);

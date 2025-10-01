@@ -1495,6 +1495,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
         return uri_list_excluding_dir;
+    }
+
+    @Override
+    public void deleteDialogOKButtonClick() {
+        final DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
+        action_mode_finish(df);
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -1534,12 +1540,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     });
-
-    @Override
-    public void deleteDialogOKButtonClick() {
-        final DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-        action_mode_finish(df);
-    }
 
     @Override
     public void onScrollRecyclerView(boolean showToolBar) {

@@ -55,8 +55,6 @@ public class CopyToActivity extends BaseActivity {
     private EditText destination_folder_edittext;
     private TextView destination_fileObject_text_view;
     private String dest_folder, modified_name = "";
-    private String ext = "";
-    private View divider1;
     private final ActivityResultLauncher<Intent> activityResultLauncher_file_select = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -71,6 +69,8 @@ public class CopyToActivity extends BaseActivity {
             }
         }
     });
+    private String ext = "";
+    private View divider1;
     private ArrayList<Uri> data_list = new ArrayList<>();
     private Class emptyService;
     private Button ok_button;

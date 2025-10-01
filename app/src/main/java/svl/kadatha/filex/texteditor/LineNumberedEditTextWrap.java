@@ -14,7 +14,6 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 
 public class LineNumberedEditTextWrap extends BaseLineNumberedEditText {
     private static final int LINE_NUMBER_TEXT_SIZE = 10; // sp
@@ -116,10 +115,10 @@ public class LineNumberedEditTextWrap extends BaseLineNumberedEditText {
             if (layout == null || lineStartIndexes == null) return;
 
             int scrollY = editText.getScrollY();
-            int padTop  = editText.getTotalPaddingTop(); // aligns with EditText content area
+            int padTop = editText.getTotalPaddingTop(); // aligns with EditText content area
 
             int firstVisibleLine = layout.getLineForVertical(scrollY);
-            int lastVisibleLine  = layout.getLineForVertical(scrollY + getHeight());
+            int lastVisibleLine = layout.getLineForVertical(scrollY + getHeight());
 
             float xRight = getWidth(); // or getWidth() - dpToPx(getContext(), 2) for a small right pad
 

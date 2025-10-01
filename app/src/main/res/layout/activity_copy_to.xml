@@ -58,6 +58,7 @@
                     android:layout_marginHorizontal="@dimen/ten_dp"
                     android:textColor="?attr/edit_text_color"
                     app:layout_constraintTop_toBottomOf="@id/activity_copy_to_filename_label" />
+
                 <CheckBox
                     android:id="@+id/activity_copy_to_modify_ext_check_box"
                     android:layout_width="wrap_content"
