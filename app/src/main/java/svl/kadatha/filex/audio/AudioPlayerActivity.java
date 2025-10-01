@@ -44,7 +44,6 @@ import svl.kadatha.filex.Global;
 import svl.kadatha.filex.KeyBoardUtil;
 import svl.kadatha.filex.R;
 import svl.kadatha.filex.RealPathUtil;
-import svl.kadatha.filex.StatusBarTint;
 import svl.kadatha.filex.TinyDB;
 
 

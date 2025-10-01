@@ -68,8 +68,8 @@ dependencies {
 
     implementation 'com.google.android.material:material:1.13.0'
 
-    implementation 'com.github.bumptech.glide:glide:5.0.4'
-    annotationProcessor 'com.github.bumptech.glide:compiler:5.0.4'
+    implementation 'com.github.bumptech.glide:glide:5.0.5'
+    annotationProcessor 'com.github.bumptech.glide:compiler:5.0.5'
 
     implementation 'me.jahnen.libaums:core:0.10.0'
 
@@ -87,7 +87,7 @@ dependencies {
     implementation 'com.hierynomus:smbj:0.13.0'  //do not update
 
     implementation 'com.google.android.gms:play-services-auth:21.4.0'
-    implementation 'com.google.android.gms:play-services-base:18.7.2'
+    implementation 'com.google.android.gms:play-services-base:18.7.2' //do not update because higher version requires minsdk23
     implementation 'net.openid:appauth:0.11.1'
 
 //    implementation 'com.google.api-client:google-api-client-android:1.33.2'
@@ -99,7 +99,7 @@ dependencies {
     implementation 'com.dropbox.core:dropbox-android-sdk:7.0.0'
 
     implementation 'com.squareup.okhttp3:okhttp:5.1.0'
-    implementation 'com.google.code.gson:gson:2.13.1'
+    implementation 'com.google.code.gson:gson:2.13.2'
 
     //implementation 'com.microsoft.graph:microsoft-graph:5.45.0'
     //implementation 'com.microsoft.identity.client:msal:2.0.15'

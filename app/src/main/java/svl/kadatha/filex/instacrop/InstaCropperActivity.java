@@ -20,7 +20,6 @@ import svl.kadatha.filex.BaseActivity;
 import svl.kadatha.filex.EquallyDistributedButtonsWithTextLayout;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.R;
-import svl.kadatha.filex.StatusBarTint;
 
 /**
  * Created by Yashar on 3/11/2017.

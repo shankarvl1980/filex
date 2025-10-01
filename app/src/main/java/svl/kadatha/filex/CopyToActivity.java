@@ -70,7 +70,6 @@ public class CopyToActivity extends BaseActivity {
         }
     });
     private String ext = "";
-    private View divider1;
     private ArrayList<Uri> data_list = new ArrayList<>();
     private Class emptyService;
     private Button ok_button;
@@ -106,7 +105,7 @@ public class CopyToActivity extends BaseActivity {
         setContentView(R.layout.activity_copy_to);
         setFinishOnTouchOutside(false);
         file_name_edit_text = findViewById(R.id.activity_copy_to_filename);
-        divider1 = findViewById(R.id.activity_copy_to_divider1);
+        View divider1 = findViewById(R.id.activity_copy_to_divider1);
         destination_folder_edittext = findViewById(R.id.activity_copy_to_destination_folder);
         destination_fileObject_text_view = findViewById(R.id.activity_copy_to_destination_file_object_type);
         browse_button = findViewById(R.id.activity_copy_to_browse_button);

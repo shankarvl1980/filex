@@ -31,7 +31,6 @@ import svl.kadatha.filex.EquallyDistributedDialogButtonsLayout;
 import svl.kadatha.filex.FsNotification;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.R;
-import svl.kadatha.filex.StatusBarTint;
 import svl.kadatha.filex.YesOrNoAlertDialog;
 import svl.kadatha.filex.ftpserver.ftp.FsService;
 import svl.kadatha.filex.ftpserver.ftp.FsSettings;

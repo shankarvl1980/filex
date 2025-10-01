@@ -32,7 +32,6 @@ import svl.kadatha.filex.BaseActivity;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.KeyBoardUtil;
 import svl.kadatha.filex.R;
-import svl.kadatha.filex.StatusBarTint;
 
 public class AppManagerActivity extends BaseActivity {
 
