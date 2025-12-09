@@ -340,6 +340,17 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
             }
         });
 
+//        viewModel.getSubFileCountUpdate().observe(getViewLifecycleOwner(), pojo -> {
+//            try {
+//                int idx = filePOJO_list.indexOf(pojo);
+//                if (idx < 0 || idx >= adapter.getItemCount()) return;
+//                adapter.notifyItemChanged(idx);
+//            } catch (IndexOutOfBoundsException ignored) {
+//                // log and move on – indicates a data/adapter desync
+//            }
+//        });
+
+
         getParentFragmentManager().setFragmentResultListener(CANCEL_PROGRESS_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
@@ -460,6 +471,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
         }
 
         set_adapter();
+        //viewModel.ensureSubFileCount();
         progress_bar.setVisibility(View.GONE);
 
         if (TO_BE_MOVED_TO_FILE_POJO != null) {
@@ -576,6 +588,11 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
         filepath_recyclerview.setAdapter(filepath_adapter);
         filepath_recyclerview.scrollToPosition(filepath_adapter.getItemCount() - 1);
         recyclerView.setAdapter(adapter);
+        RecyclerView.ItemAnimator animator = recyclerView.getItemAnimator();
+        if (animator instanceof androidx.recyclerview.widget.SimpleItemAnimator) {
+            ((androidx.recyclerview.widget.SimpleItemAnimator) animator)
+                    .setSupportsChangeAnimations(false);
+        }
         if (file_list_size == 0) {
             recyclerView.setVisibility(View.GONE);
             folder_empty.setVisibility(View.VISIBLE);

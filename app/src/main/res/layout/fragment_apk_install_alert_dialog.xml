@@ -65,7 +65,6 @@
                     android:id="@+id/fragment_apk_install_apk_package_tv"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-
                     android:layout_marginEnd="@dimen/ten_dp"
                     android:textColor="?attr/recycler_second_text_color"
                     android:textSize="15sp"
@@ -77,6 +76,7 @@
                     android:id="@+id/fragment_apk_install_version_table_layout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/four_dp"
                     android:layout_marginEnd="@dimen/ten_dp"
                     android:shrinkColumns="2"
                     android:stretchColumns="2"

@@ -91,7 +91,7 @@
     <View
         android:id="@+id/analyser_item_separator"
         android:layout_width="match_parent"
-        android:layout_height="4dp"
+        android:layout_height="2dp"
         android:background="?attr/recycler_main_text_color"
         android:importantForAccessibility="no"
         android:visibility="gone" />

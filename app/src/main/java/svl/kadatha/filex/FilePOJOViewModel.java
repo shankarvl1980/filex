@@ -4,6 +4,8 @@ import android.app.Application;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
@@ -51,6 +53,8 @@ public class FilePOJOViewModel extends AndroidViewModel {
     private Future<?> future1, future2, future3, future4, future5, future6, future7, future8, future9, future10, future11;
     private String what_to_find = null;
     private String media_category = null;
+//    private final MutableLiveData<FilePOJO> subFileCountUpdate = new MutableLiveData<>();
+//    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     public FilePOJOViewModel(@NonNull Application application) {
         super(application);
@@ -141,6 +145,28 @@ public class FilePOJOViewModel extends AndroidViewModel {
             asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
         });
     }
+
+//    public MutableLiveData<FilePOJO> getSubFileCountUpdate() {
+//        return subFileCountUpdate;
+//    }
+//
+//    public synchronized void ensureSubFileCount() {
+//        ExecutorService executorService = MyExecutorService.getExecutorService();
+//        future7 = executorService.submit(() -> {
+//            for (int i = 0; i < filePOJOS.size(); i++) {
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+//                final FilePOJO pojo = filePOJOS.get(i);
+//                SubFileCountUtil.ensureSubFileCount(pojo, (updatedPojo, count) -> {
+//                    // ensure on main thread, and use setValue
+//                    mainHandler.post(() -> subFileCountUpdate.setValue(updatedPojo));
+//                });
+//            }
+//        });
+//    }
 
 
     public synchronized void fill_filePOJOs_size(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile) {
@@ -311,6 +337,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
             total_size_of_files[0] += size_of_files;
         }
     }
+
 
     public synchronized void getLibraryList(String media_category) {
         if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {

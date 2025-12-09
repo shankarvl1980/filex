@@ -158,7 +158,7 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout {
     protected void onLayout(boolean p1, int l, int t, int r, int b) {
         int x = Global.FOURTEEN_DP;
         int y = Global.RECYCLERVIEW_ITEM_SPACING;
-        int margin_offset_icon, max_height_second_line;
+        int margin_offset_icon, max_height_third_line;
 
         int d = (itemHeight - imageview_dimension) / 2;
 
@@ -193,36 +193,34 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout {
         v = filenametextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
-        y = (itemHeight - measuredHeight - filesubfilecounttextview.getMeasuredHeight() - filepathtextview.getMeasuredHeight()) / 2;
+        y = (itemHeight - measuredHeight - filesubfilecounttextview.getMeasuredHeight() - filepathtextview.getMeasuredHeight()-Global.FOUR_DP) / 2;
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
         y += measuredHeight;
 
+        v = filepathtextview;
+        measuredHeight = v.getMeasuredHeight();
+        measuredWidth = v.getMeasuredWidth();
+        v.layout(margin_offset_icon, y, margin_offset_icon + measuredWidth, y + measuredHeight);
+        y += measuredHeight+Global.FOUR_DP;
 
         v = filesubfilecounttextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
         x += measuredWidth;
-        max_height_second_line = measuredHeight;
+        max_height_third_line = measuredHeight;
 
         v = filemoddatetextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
         x = itemWidth - measuredWidth - Global.TEN_DP - Global.FOUR_DP;
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
-        max_height_second_line = Math.max(max_height_second_line, measuredHeight);
-
-        v = filepathtextview;
-        measuredHeight = v.getMeasuredHeight();
-        measuredWidth = v.getMeasuredWidth();
-        y += max_height_second_line;
-        v.layout(margin_offset_icon, y, margin_offset_icon + measuredWidth, y + measuredHeight);
-        y += measuredHeight;
+        max_height_third_line = Math.max(max_height_third_line, measuredHeight);
+        y += max_height_third_line+Global.FOUR_DP;
 
         v = item_separator;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
-        y += Global.RECYCLERVIEW_ITEM_SPACING;
         v.layout(Global.FOURTEEN_DP, y, measuredWidth - Global.FOURTEEN_DP, y + measuredHeight);
     }
 

@@ -482,7 +482,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 if (!f.exists()) {
                     Global.print(context, getString(R.string.directory_does_not_exist));
                 } else {
-                    drawer_storage_file_pojo_selected = new FilePOJO(FileObjectType.FILE_TYPE, f.getName(), null, f.getAbsolutePath(), true, 0L, null, 0L, null, R.drawable.folder_icon, null, 0, 0, 0, 0, 0L, null, 0, null, null);
+                    drawer_storage_file_pojo_selected = new FilePOJO(FileObjectType.FILE_TYPE, f.getName(), null, f.getAbsolutePath(), true, 0L, null, 0L, null, R.drawable.folder_icon, null, 0, 0, 0);
                 }
             }
         });
@@ -2319,7 +2319,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                                 name = "APK";
                                 break;
                         }
-                        drawer_storage_file_pojo_selected = new FilePOJO(FileObjectType.SEARCH_LIBRARY_TYPE, name, null, name, false, 0L, null, 0L, null, R.drawable.folder_icon, null, 0, 0, 0, 0, 0L, null, 0, null, null);
+                        drawer_storage_file_pojo_selected = new FilePOJO(FileObjectType.SEARCH_LIBRARY_TYPE, name, null, name, false, 0L, null, 0L, null, R.drawable.folder_icon, null, 0, 0, 0);
                         drawerLayout.closeDrawer(drawer);
                     }
                 });
@@ -2377,7 +2377,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                                 name = "Duplicate Files";
                                 break;
                         }
-                        drawer_storage_file_pojo_selected = new FilePOJO(FileObjectType.SEARCH_LIBRARY_TYPE, name, null, name, false, 0L, null, 0L, null, R.drawable.folder_icon, null, 0, 0, 0, 0, 0L, null, 0, null, null);
+                        drawer_storage_file_pojo_selected = new FilePOJO(FileObjectType.SEARCH_LIBRARY_TYPE, name, null, name, false, 0L, null, 0L, null, R.drawable.folder_icon, null, 0, 0, 0);
                         drawerLayout.closeDrawer(drawer);
                     }
                 });

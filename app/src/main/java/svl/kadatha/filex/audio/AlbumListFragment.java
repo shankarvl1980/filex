@@ -416,14 +416,14 @@ public class AlbumListFragment extends Fragment {
             measuredWidth = v.getMeasuredWidth();
             y = (itemHeight - measuredHeight - no_of_songs_textview.getMeasuredHeight() - artisttextview.getMeasuredHeight()) / 2;
             v.layout(x, y, x + measuredWidth, y + measuredHeight);
-            y += measuredHeight;
+            y += measuredHeight+Global.TWO_DP;
 
 
             v = no_of_songs_textview;
             measuredHeight = v.getMeasuredHeight();
             measuredWidth = v.getMeasuredWidth();
             v.layout(x, y, x + measuredWidth, y + measuredHeight);
-            y += measuredHeight;
+            y += measuredHeight+Global.TWO_DP;
 
             v = artisttextview;
             measuredHeight = v.getMeasuredHeight();

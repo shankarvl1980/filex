@@ -190,7 +190,7 @@ public class Global {
     static String THEME;
     static int BUTTON_HEIGHT;
     static float ONE_DP;
-    static int TWO_DP;
+    public static int TWO_DP;
     static int THIRTY_SIX_DP;
     static int SELECTOR_ICON_DIMENSION;
     static boolean BYTE_COUNT_BLOCK_1000;
@@ -359,7 +359,7 @@ public class Global {
             int list_g = IS_TABLET ? TWELVE_DP : TEN_DP;
 
             SELECTOR_ICON_DIMENSION = TEN_DP + TEN_DP + SIX_DP;
-            RECYCLERVIEW_ITEM_SPACING = IS_TABLET ? TWELVE_DP : EIGHT_DP;
+            RECYCLERVIEW_ITEM_SPACING = IS_TABLET ? FOURTEEN_DP : TWELVE_DP;
             LIST_POPUP_WINDOW_DROP_DOWN_OFFSET = IS_TABLET ? TEN_DP : SIX_DP;
 
             IMAGEVIEW_DIMENSION_SMALL_LIST = list_s * IMAGE_VIEW_DIMENSION_MULTIPLIER_SMALL + FOUR_DP;

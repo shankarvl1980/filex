@@ -116,7 +116,7 @@ public class MakeFilePOJOUtil {
         if (f.isHidden()) {
             alfa = Global.DISABLE_ALFA;
         }
-        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible, 0, 0L, null, 0, null, null);
+        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
     }
 
     public static FilePOJO MAKE_FilePOJO(File f, boolean extract_icon, FileObjectType fileObjectType) {
@@ -163,7 +163,7 @@ public class MakeFilePOJOUtil {
         if (f.isHidden()) {
             alfa = Global.DISABLE_ALFA;
         }
-        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible, 0, 0L, null, 0, null, null);
+        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
     }
 
     static FilePOJO MAKE_FilePOJO_ZIP(File f, boolean extract_icon, FileObjectType fileObjectType) {
@@ -216,7 +216,7 @@ public class MakeFilePOJOUtil {
         if (f.isHidden()) {
             alfa = Global.DISABLE_ALFA;
         }
-        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible, 0, 0L, null, 0, null, null);
+        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
     }
 
 
@@ -284,7 +284,7 @@ public class MakeFilePOJOUtil {
         if (name.startsWith(".")) {
             alfa = Global.DISABLE_ALFA;
         }
-        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible, 0, 0L, null, 0, null, null);
+        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -358,7 +358,7 @@ public class MakeFilePOJOUtil {
         if (name.startsWith(".")) {
             alfa = Global.DISABLE_ALFA;
         }
-        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible, 0, 0L, null, 0, null, null);
+        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
     }
 
     static FilePOJO MAKE_FilePOJO(UsbFile f, boolean extract_icon) {
@@ -412,7 +412,7 @@ public class MakeFilePOJOUtil {
             si = sub_file_count;
         }
 
-        return new FilePOJO(FileObjectType.USB_TYPE, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible, 0, 0L, null, 0, null, null);
+        return new FilePOJO(FileObjectType.USB_TYPE, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
     }
 
     static FilePOJO MAKE_FilePOJO(FTPFile f, boolean extract_icon, FileObjectType fileObjectType, String file_path, FTPClient ftpClient) {
@@ -473,7 +473,7 @@ public class MakeFilePOJOUtil {
             }
         }
 
-        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible, 0, 0L, null, 0, null, null);
+        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
     }
 
 
@@ -549,7 +549,7 @@ public class MakeFilePOJOUtil {
         if (name.startsWith(".")) {
             alfa = Global.DISABLE_ALFA;
         }
-        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible, 0, 0L, null, 0, null, null);
+        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
     }
 
     public static FilePOJO MAKE_FilePOJO(ChannelSftp.LsEntry entry, boolean extract_icon, FileObjectType fileObjectType, String file_path, ChannelSftp channelSftp) {
@@ -606,7 +606,7 @@ public class MakeFilePOJOUtil {
                 Timber.tag(TAG).e("Error listing SFTP directory contents: %s", e.getMessage());
             }
         }
-        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible, 0, 0L, null, 0, null, null);
+        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
     }
 
     static FilePOJO MAKE_FilePOJO(DavResource resource, boolean extract_icon, FileObjectType fileObjectType, String file_path, Sardine sardine) {
@@ -664,7 +664,7 @@ public class MakeFilePOJOUtil {
                 Timber.tag(TAG).e("Error listing WebDAV directory contents: %s", e.getMessage());
             }
         }
-        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible, 0, 0L, null, 0, null, null);
+        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
     }
 
     public static FilePOJO MAKE_FilePOJO(SmbFileInfo smbFileInfo, boolean extract_icon, FileObjectType fileObjectType) {
@@ -731,7 +731,7 @@ public class MakeFilePOJOUtil {
                 }
             }
         }
-        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible, 0, 0L, null, 0, null, null);
+        return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
     }
 
 
@@ -754,7 +754,7 @@ public class MakeFilePOJOUtil {
             filePOJO = MAKE_FilePOJO_ROOT(file_path, false, fileObjectType);
         } else if (fileObjectType == FileObjectType.FTP_TYPE) {
             if (file_path.equals(File.separator)) {
-                filePOJO = new FilePOJO(fileObjectType, File.separator, null, File.separator, true, 0L, null, 0L, null, R.drawable.folder_icon, null, Global.ENABLE_ALFA, View.INVISIBLE, View.INVISIBLE, 0, 0L, null, 0, null, null);
+                filePOJO = new FilePOJO(fileObjectType, File.separator, null, File.separator, true, 0L, null, 0L, null, R.drawable.folder_icon, null, Global.ENABLE_ALFA, View.INVISIBLE, View.INVISIBLE);
             } else {
                 FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO);
                 FTPClient ftpClient = null;
@@ -801,7 +801,7 @@ public class MakeFilePOJOUtil {
 
                 if (file_path.equals("/")) {
                     // Special case for root directory
-                    filePOJO = new FilePOJO(fileObjectType, "/", null, "/", true, 0L, null, 0L, null, R.drawable.folder_icon, null, Global.ENABLE_ALFA, View.INVISIBLE, View.INVISIBLE, 0, 0L, null, 0, null, null);
+                    filePOJO = new FilePOJO(fileObjectType, "/", null, "/", true, 0L, null, 0L, null, R.drawable.folder_icon, null, Global.ENABLE_ALFA, View.INVISIBLE, View.INVISIBLE);
                 } else if (new WebDavFileModel(file_path).exists()) {
                     // If it exists, get its properties
                     List<DavResource> resources = sardine.getResources(url);
@@ -827,7 +827,7 @@ public class MakeFilePOJOUtil {
 
                     // Check if the path is root
                     if (adjustedPath.isEmpty()) {
-                        filePOJO = new FilePOJO(fileObjectType, "/", null, "/", true, 0L, null, 0L, null, R.drawable.folder_icon, null, Global.ENABLE_ALFA, View.INVISIBLE, View.INVISIBLE, 0, 0L, null, 0, null, null);
+                        filePOJO = new FilePOJO(fileObjectType, "/", null, "/", true, 0L, null, 0L, null, R.drawable.folder_icon, null, Global.ENABLE_ALFA, View.INVISIBLE, View.INVISIBLE);
                     } else if (share.folderExists(adjustedPath) || share.fileExists(adjustedPath)) {
                         // Get file information
                         FileAllInformation fileInfo = share.getFileInformation(adjustedPath);
@@ -887,13 +887,7 @@ public class MakeFilePOJOUtil {
                             null,            // file_ext
                             Global.ENABLE_ALFA,
                             View.INVISIBLE,
-                            View.INVISIBLE,
-                            0,
-                            0L,
-                            null,
-                            0,
-                            null,
-                            null
+                            View.INVISIBLE
                     );
                 } else {
                     // For non-root paths, fetch metadata

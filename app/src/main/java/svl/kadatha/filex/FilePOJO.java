@@ -15,6 +15,7 @@ public class FilePOJO implements Parcelable {
             return new FilePOJO[size];
         }
     };
+
     private final String lower_name;
     private final String package_name;
     private FileObjectType fileObjectType;
@@ -37,9 +38,12 @@ public class FilePOJO implements Parcelable {
     private String totalSizePercentage;
     private String checksum;
     private boolean whetherExternal;
+    private boolean isSubFileCountLoading;  // NEW FIELD
 
     FilePOJO(FileObjectType fileObjectType, String n, String p_n, String p, boolean dir, long dl, String d, long sl, String s, int t,
-             String ext, float a, int play_o, int pdf_o, int tf, long tsl, String ts, double tspd, String tsp, String checksum) {
+             String ext, float a, int play_o, int pdf_o
+            //, int tf, long tsl, String ts, double tspd, String tsp, String checksum
+    ) {
         this.fileObjectType = fileObjectType;
         this.name = n;
         this.lower_name = n.toLowerCase();
@@ -55,12 +59,12 @@ public class FilePOJO implements Parcelable {
         this.alfa = a;
         this.play_overlay_visible = play_o;
         this.pdf_overlay_visible = pdf_o;
-        this.totalFiles = tf;
-        this.totalSizeLong = tsl;
-        this.totalSize = ts;
-        this.totalSizePercentageDouble = tspd;
-        this.totalSizePercentage = tsp;
-        this.checksum = checksum;
+//        this.totalFiles = tf;
+//        this.totalSizeLong = tsl;
+//        this.totalSize = ts;
+//        this.totalSizePercentageDouble = tspd;
+//        this.totalSizePercentage = tsp;
+//        this.checksum = checksum;
     }
 
     protected FilePOJO(Parcel in) {
@@ -91,6 +95,7 @@ public class FilePOJO implements Parcelable {
         totalSizePercentage = in.readString();
         checksum = in.readString();
         whetherExternal = in.readByte() != 0;
+        isSubFileCountLoading = in.readByte() != 0; // READ NEW FIELD
     }
 
     @Override
@@ -117,6 +122,7 @@ public class FilePOJO implements Parcelable {
         dest.writeString(totalSizePercentage);
         dest.writeString(checksum);
         dest.writeByte((byte) (whetherExternal ? 1 : 0));
+        dest.writeByte((byte) (isSubFileCountLoading ? 1 : 0)); // WRITE NEW FIELD
     }
 
     @Override
@@ -291,5 +297,14 @@ public class FilePOJO implements Parcelable {
 
     public void setWhetherExternal(boolean whetherExternal) {
         this.whetherExternal = whetherExternal;
+    }
+
+    // NEW GETTER + SETTER
+    public boolean isSubFileCountLoading() {
+        return isSubFileCountLoading;
+    }
+
+    public void setSubFileCountLoading(boolean subFileCountLoading) {
+        this.isSubFileCountLoading = subFileCountLoading;
     }
 }

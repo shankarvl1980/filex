@@ -123,7 +123,7 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
         measureChildWithMargins(file_select_indicator, widthMeasureSpec, 0, heightMeasureSpec, 0);
 
         measureChildWithMargins(filenametextview, widthMeasureSpec, usedWidth + Global.FOUR_DP + (Global.TEN_DP * 2), heightMeasureSpec, 0);
-        measureChildWithMargins(filepathtextview, widthMeasureSpec, usedWidth + Global.FOUR_DP + (Global.TEN_DP * 2), heightMeasureSpec, 0);
+        //measureChildWithMargins(filepathtextview, widthMeasureSpec, usedWidth + Global.FOUR_DP + (Global.TEN_DP * 2), heightMeasureSpec, 0);
         maxHeight += filenametextview.getMeasuredHeight();
 
 
@@ -146,7 +146,7 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
     protected void onLayout(boolean p1, int l, int t, int r, int b) {
         int x = Global.FOURTEEN_DP;
         int y = Global.RECYCLERVIEW_ITEM_SPACING;
-        int margin_offset_icon, max_height_second_line;
+        int margin_offset_icon, max_height_third_line;
 
         int d = (itemHeight - imageview_dimension) / 2;
 
@@ -181,29 +181,30 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
         v = filenametextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
-        y = (itemHeight - measuredHeight - filesubfilecounttextview.getMeasuredHeight()) / 2;
+        y = (itemHeight - measuredHeight - filesubfilecounttextview.getMeasuredHeight() - filepathtextview.getMeasuredHeight()-Global.FOUR_DP) / 2;
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
         y += measuredHeight;
 
+        v = filepathtextview;
+        measuredHeight = v.getMeasuredHeight();
+        measuredWidth = v.getMeasuredWidth();
+        v.layout(margin_offset_icon, y, margin_offset_icon + measuredWidth, y + measuredHeight);
+        y += measuredHeight+Global.FOUR_DP;
 
         v = filesubfilecounttextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
         x += measuredWidth;
-        max_height_second_line = measuredHeight;
+        max_height_third_line = measuredHeight;
 
         v = filemoddatetextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
         x = itemWidth - measuredWidth - Global.TEN_DP - Global.FOUR_DP;
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
-        max_height_second_line = Math.max(max_height_second_line, measuredHeight);
+        max_height_third_line = Math.max(max_height_third_line, measuredHeight)+Global.FOUR_DP;
 
-        v = filepathtextview;
-        measuredHeight = v.getMeasuredHeight();
-        measuredWidth = v.getMeasuredWidth();
-        v.layout(margin_offset_icon, y + max_height_second_line, margin_offset_icon + measuredWidth, y + max_height_second_line + measuredHeight);
     }
 
     @Override

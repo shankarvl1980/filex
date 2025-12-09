@@ -171,15 +171,14 @@ public class FileSelectorRecyclerViewLayoutGrid extends RecyclerViewLayout {
         v = pdf_overlay_imageview;
         v.layout(overlayX, overlayY, overlayX + overlayMeasuredWidth, overlayY + overlayMeasuredHeight);
 
-        y += fileMeasuredHeight;
-
+        y += fileMeasuredHeight+Global.TWO_DP;
 
         x = Global.FOUR_DP;
         v = filenametextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
-        y += measuredHeight;
+        y += measuredHeight+Global.TWO_DP;
 
 
         v = filesubfilecounttextview;

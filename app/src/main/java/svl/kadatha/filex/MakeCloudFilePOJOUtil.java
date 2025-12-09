@@ -45,13 +45,7 @@ public class MakeCloudFilePOJOUtil {
                     null,           // file_ext
                     Global.ENABLE_ALFA,
                     View.INVISIBLE,
-                    View.INVISIBLE,
-                    0,
-                    0L,
-                    null,
-                    0,
-                    null,
-                    null
+                    View.INVISIBLE
             );
         }
 
@@ -143,13 +137,7 @@ public class MakeCloudFilePOJOUtil {
                     file_ext,
                     alfa,
                     play_overlay_visible,
-                    pdf_overlay_visible,
-                    0,
-                    0L,
-                    null,
-                    0,
-                    null,
-                    null
+                    pdf_overlay_visible
             );
         }
     }
@@ -199,7 +187,7 @@ public class MakeCloudFilePOJOUtil {
             // si = "(" + count + ")";
         }
 
-        return new FilePOJO(fileObjectType, name, package_name, file_path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible, 0, 0L, null, 0, null, null);
+        return new FilePOJO(fileObjectType, name, package_name, file_path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
     }
 
     static FilePOJO MAKE_FilePOJO(YandexResource resource, boolean extract_icon,
@@ -277,13 +265,7 @@ public class MakeCloudFilePOJOUtil {
                 file_ext,
                 alfa,
                 play_overlay_visible,
-                pdf_overlay_visible,
-                0,     // Assume no special flags
-                0L,    // Assume no special date
-                null,  // No special associated object
-                0,     // Another reserved int field
-                null,  // Another reserved field
-                null   // Another reserved field
+                pdf_overlay_visible
         );
     }
 
