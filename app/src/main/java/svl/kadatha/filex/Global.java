@@ -182,6 +182,7 @@ public class Global {
     public static boolean IS_TABLET;
     public static DividerItemDecoration DIVIDERITEMDECORATION;
     public static boolean RECOGNISE_USB;
+    public static int TWO_DP;
     static String USB_STORAGE_PATH;
     static File USB_CACHE_DIR;
     static List<UriPOJO> URI_PERMISSION_LIST = new ArrayList<>();
@@ -190,7 +191,6 @@ public class Global {
     static String THEME;
     static int BUTTON_HEIGHT;
     static float ONE_DP;
-    public static int TWO_DP;
     static int THIRTY_SIX_DP;
     static int SELECTOR_ICON_DIMENSION;
     static boolean BYTE_COUNT_BLOCK_1000;

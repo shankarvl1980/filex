@@ -80,21 +80,76 @@ public class CopyToActivity extends BaseActivity {
     private ArrayList<String> overwritten_file_path_list;
     private ParcelableUriStringLinkedMap uriDestNameMap;
 
-    public static String getFileNameOfUri(Context context, Uri uri) {
+    public static String getFileNameOfUri(Context context, @NonNull Uri uri) {
+        String scheme = uri.getScheme();
+        if (scheme != null) {
+            scheme = scheme.toLowerCase();
+        }
+
         String result = null;
-        if (uri.getScheme().equals("content")) {
+
+        // ----- Case: content:// -----
+        if ("content".equals(scheme)) {
             try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
                 if (cursor != null && cursor.moveToFirst()) {
                     int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                    result = cursor.getString(index);
+                    if (index >= 0) {
+                        result = cursor.getString(index);
+                    }
                 }
-            } catch (Exception e) {
-                result = uri.getLastPathSegment();
+            } catch (Exception ignored) {
+            }
+            if (result != null && !result.isEmpty()) {
+                return result;
             }
         }
-        if (result == null) {
-            result = uri.getLastPathSegment();
+
+        // ----- Case: file:// -----
+        if ("file".equals(scheme)) {
+            String last = uri.getLastPathSegment();
+            if (last != null && !last.isEmpty()) {
+                return last;
+            }
         }
+
+        // ----- Case: http:// or https:// -----
+        if ("http".equals(scheme) || "https".equals(scheme)) {
+            String last = uri.getLastPathSegment();
+            if (last != null) {
+                // strip query junk if present
+                int qIdx = last.indexOf('?');
+                if (qIdx > 0) {
+                    last = last.substring(0, qIdx);
+                }
+                if (!last.isEmpty()) {
+                    result = last;
+                }
+            }
+
+            if (result == null) {
+                result = "download";
+            }
+
+            // Optional: try to infer extension from MIME type of the URI
+            String mimeType = context.getContentResolver().getType(uri);
+            if ((mimeType != null && !mimeType.isEmpty()) && !result.contains(".")) {
+                String ext = android.webkit.MimeTypeMap.getSingleton()
+                        .getExtensionFromMimeType(mimeType);
+                if (ext != null && !ext.isEmpty()) {
+                    result = result + "." + ext;
+                }
+            }
+            return result;
+        }
+
+        // ----- Fallback for unknown scheme or no scheme -----
+        String last = uri.getLastPathSegment();
+        if (last != null && !last.isEmpty()) {
+            result = last;
+        } else {
+            result = "file";
+        }
+
         return result;
     }
 

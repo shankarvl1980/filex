@@ -181,7 +181,7 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
         v = filenametextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
-        y = (itemHeight - measuredHeight - filesubfilecounttextview.getMeasuredHeight() - filepathtextview.getMeasuredHeight()-Global.FOUR_DP) / 2;
+        y = (itemHeight - measuredHeight - filesubfilecounttextview.getMeasuredHeight() - filepathtextview.getMeasuredHeight() - Global.FOUR_DP) / 2;
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
         y += measuredHeight;
 
@@ -189,7 +189,7 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
         v.layout(margin_offset_icon, y, margin_offset_icon + measuredWidth, y + measuredHeight);
-        y += measuredHeight+Global.FOUR_DP;
+        y += measuredHeight + Global.FOUR_DP;
 
         v = filesubfilecounttextview;
         measuredHeight = v.getMeasuredHeight();
@@ -203,7 +203,7 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
         measuredWidth = v.getMeasuredWidth();
         x = itemWidth - measuredWidth - Global.TEN_DP - Global.FOUR_DP;
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
-        max_height_third_line = Math.max(max_height_third_line, measuredHeight)+Global.FOUR_DP;
+        max_height_third_line = Math.max(max_height_third_line, measuredHeight) + Global.FOUR_DP;
 
     }
 

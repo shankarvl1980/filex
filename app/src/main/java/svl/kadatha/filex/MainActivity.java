@@ -1501,6 +1501,35 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     public void deleteDialogOKButtonClick() {
         final DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
         action_mode_finish(df);
+    }
+
+    @Override
+    public void onScrollRecyclerView(boolean showToolBar) {
+        if (showToolBar) {
+            switch (viewModel.toolbar_shown) {
+                case "bottom":
+                    bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+                    break;
+                case "action_mode":
+                    actionmode_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+                    break;
+                case "paste":
+                    paste_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+                    break;
+            }
+        } else {
+            switch (viewModel.toolbar_shown) {
+                case "bottom":
+                    bottom_toolbar.animate().translationY(bottom_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
+                    break;
+                case "action_mode":
+                    actionmode_toolbar.animate().translationY(actionmode_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
+                    break;
+                case "paste":
+                    paste_toolbar.animate().translationY(paste_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
+                    break;
+            }
+        }
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -1540,35 +1569,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     });
-
-    @Override
-    public void onScrollRecyclerView(boolean showToolBar) {
-        if (showToolBar) {
-            switch (viewModel.toolbar_shown) {
-                case "bottom":
-                    bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-                    break;
-                case "action_mode":
-                    actionmode_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-                    break;
-                case "paste":
-                    paste_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-                    break;
-            }
-        } else {
-            switch (viewModel.toolbar_shown) {
-                case "bottom":
-                    bottom_toolbar.animate().translationY(bottom_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
-                    break;
-                case "action_mode":
-                    actionmode_toolbar.animate().translationY(actionmode_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
-                    break;
-                case "paste":
-                    paste_toolbar.animate().translationY(paste_toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(1));
-                    break;
-            }
-        }
-    }
 
     @Override
     public void actionModeFinish(Fragment fragment, String fileclickeselected) {

@@ -42,7 +42,7 @@ public class FilePOJO implements Parcelable {
 
     FilePOJO(FileObjectType fileObjectType, String n, String p_n, String p, boolean dir, long dl, String d, long sl, String s, int t,
              String ext, float a, int play_o, int pdf_o
-            //, int tf, long tsl, String ts, double tspd, String tsp, String checksum
+             //, int tf, long tsl, String ts, double tspd, String tsp, String checksum
     ) {
         this.fileObjectType = fileObjectType;
         this.name = n;

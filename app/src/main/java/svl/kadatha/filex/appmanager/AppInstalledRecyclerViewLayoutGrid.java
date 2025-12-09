@@ -134,14 +134,14 @@ public class AppInstalledRecyclerViewLayoutGrid extends AppInstalledRecyclerView
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
-        y += measuredHeight+Global.TWO_DP;
+        y += measuredHeight + Global.TWO_DP;
 
         x = Global.FOUR_DP;
         v = appnametextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
-        y += measuredHeight+Global.TWO_DP;
+        y += measuredHeight + Global.TWO_DP;
 
         v = appsizetextview;
         measuredHeight = v.getMeasuredHeight();

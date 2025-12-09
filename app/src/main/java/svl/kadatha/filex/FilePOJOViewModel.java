@@ -4,8 +4,6 @@ import android.app.Application;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
 import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;

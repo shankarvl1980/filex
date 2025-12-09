@@ -19,8 +19,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Vector;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 import svl.kadatha.filex.network.FtpClientRepository;
@@ -34,10 +32,6 @@ import svl.kadatha.filex.usb.UsbFileRootSingleton;
 public final class SubFileCountUtil {
 
 
-    public interface Callback {
-        void onSubFileCountReady(FilePOJO pojo, int subFileCount);
-    }
-
     public static void ensureSubFileCount(FilePOJO pojo, Callback cb) {
         if (!pojo.getIsDirectory()) return;
 
@@ -46,7 +40,7 @@ public final class SubFileCountUtil {
         pojo.setSubFileCountLoading(true);
 
         int count = computeSubFileCountBlocking(pojo);
-        String si="("+count+")";
+        String si = "(" + count + ")";
         pojo.setSize(si);
         pojo.setSubFileCountLoading(false);
         cb.onSubFileCountReady(pojo, count);
@@ -113,8 +107,6 @@ public final class SubFileCountUtil {
         return list != null ? list.length : 0;
     }
 
-
-
     private static int countUsbChildren(String path) throws IOException {
         try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
             UsbFile usbRoot = access.getUsbFile();
@@ -179,6 +171,10 @@ public final class SubFileCountUtil {
         } finally {
             if (smbRepo != null && session != null) smbRepo.releaseSession(session);
         }
+    }
+
+    public interface Callback {
+        void onSubFileCountReady(FilePOJO pojo, int subFileCount);
     }
 }
 

@@ -102,7 +102,7 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
             // Set current_file_name for progress updates
             current_file_name = destFileName != null && !destFileName.isEmpty() ? destFileName : CopyToActivity.getFileNameOfUri(context, dataUri);
 
-            copy_result = FileUtil.CopyUriFileModel(dataUri, destFileModel, destFileName, counter_size_files);
+            copy_result = FileUtil.CopyAnyUriOrHttp(dataUri, destFileModel, destFileName, counter_size_files);
 
             if (copy_result) {
                 copied_files_name.add(destFileName);

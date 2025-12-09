@@ -15,6 +15,7 @@ import com.jcraft.jsch.ChannelSftp;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,6 +25,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
@@ -200,6 +203,34 @@ public final class FileUtil {
         return success;
     }
 
+    public static boolean CopyAnyUriOrHttp(
+            @NonNull Uri data,
+            @NonNull FileModel destFileModel,
+            @NonNull String fileName,
+            long[] bytesRead
+    ) {
+        if (bytesRead == null || bytesRead.length == 0) {
+            throw new IllegalArgumentException("bytesRead must be a long[1] array");
+        }
+
+        String scheme = data.getScheme();
+        if (scheme == null) {
+            return false;
+        }
+        scheme = scheme.toLowerCase();
+
+        if ("content".equals(scheme) || "file".equals(scheme)) {
+            // current local path
+            return CopyUriFileModel(data, destFileModel, fileName, bytesRead);
+        } else if ("http".equals(scheme) || "https".equals(scheme)) {
+            // new HTTP(S) download path
+            return CopyHttpUrlToFileModel(data, destFileModel, fileName, bytesRead);
+        } else {
+            // unknown / unsupported scheme at this layer
+            return false;
+        }
+    }
+
     public static boolean CopyUriFileModel(@NonNull Uri data, FileModel destFileModel, String file_name, long[] bytes_read) {
         InputStream inStream;
         OutputStream fileOutStream;
@@ -220,6 +251,49 @@ public final class FileUtil {
             return false;
         }
     }
+
+    public static boolean CopyHttpUrlToFileModel(
+            @NonNull Uri data,
+            @NonNull FileModel destFileModel,
+            String fileName,
+            long[] bytesRead
+    ) {
+        HttpURLConnection connection = null;
+
+        try {
+            URL url = new URL(data.toString());
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(15_000); // 15 seconds
+            connection.setReadTimeout(30_000);    // 30 seconds
+            connection.setInstanceFollowRedirects(true);
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode < 200 || responseCode >= 300) {
+                // not a successful response
+                return false;
+            }
+
+            InputStream inStream = new BufferedInputStream(connection.getInputStream());
+            OutputStream outStream = destFileModel.getChildOutputStream(fileName, 0);
+
+            // fromUsbFile = false (network)
+            bufferedCopy(inStream, outStream, false, bytesRead);
+
+            // FTP case: same behavior as CopyUriFileModel
+            if (outStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
+                ((FtpFileModel.FTPOutputStreamWrapper) outStream).completePendingCommand();
+            }
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        } finally {
+            if (connection != null) {
+                connection.disconnect();  // streams already closed by bufferedCopy
+            }
+        }
+    }
+
 
     @SuppressWarnings("null")
     public static boolean copy_File_File(@NonNull final File source, @NonNull final File target, boolean cut, long[] bytes_read) {

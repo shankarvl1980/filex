@@ -151,19 +151,19 @@ public class AudioListRecyclerViewItem extends ViewGroup {
         measuredWidth = v.getMeasuredWidth();
         y = (itemHeight - measuredHeight - albumtextview.getMeasuredHeight() - durationtextview.getMeasuredHeight() - artisttextview.getMeasuredHeight()) / 2;
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
-        y += measuredHeight+Global.TWO_DP;
+        y += measuredHeight + Global.TWO_DP;
 
         v = albumtextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
-        y += measuredHeight+Global.TWO_DP;
+        y += measuredHeight + Global.TWO_DP;
 
         v = durationtextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
-        y += measuredHeight+Global.TWO_DP;
+        y += measuredHeight + Global.TWO_DP;
 
         v = artisttextview;
         measuredHeight = v.getMeasuredHeight();

@@ -201,9 +201,9 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
         v = filenametextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
-        y = (itemHeight - measuredHeight - filesubfilecounttextview.getMeasuredHeight()-Global.FOUR_DP) / 2;
+        y = (itemHeight - measuredHeight - filesubfilecounttextview.getMeasuredHeight() - Global.FOUR_DP) / 2;
         v.layout(x, y, itemWidth - Global.TEN_DP, y + measuredHeight);
-        y += measuredHeight+Global.FOUR_DP;
+        y += measuredHeight + Global.FOUR_DP;
 
         // Layout filesizetextview
         v = filesizetextview;
@@ -225,7 +225,7 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
         measuredWidth = v.getMeasuredWidth();
         int endX = itemWidth - measuredWidth - Global.TEN_DP;
         v.layout(endX, y, endX + measuredWidth, y + measuredHeight);
-        y += measuredHeight+Global.FOUR_DP;
+        y += measuredHeight + Global.FOUR_DP;
 
         // Layout item_separator
         v = item_separator;

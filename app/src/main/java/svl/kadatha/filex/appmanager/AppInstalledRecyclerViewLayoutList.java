@@ -137,7 +137,7 @@ public class AppInstalledRecyclerViewLayoutList extends AppInstalledRecyclerView
         v = appnametextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
-        y = (itemHeight - measuredHeight - apppackagenametextview.getMeasuredHeight() - appversiontextview.getMeasuredHeight() - appsizetextview.getMeasuredHeight()-Global.FOUR_DP) / 2;
+        y = (itemHeight - measuredHeight - apppackagenametextview.getMeasuredHeight() - appversiontextview.getMeasuredHeight() - appsizetextview.getMeasuredHeight() - Global.FOUR_DP) / 2;
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
         y += measuredHeight;
 
@@ -146,13 +146,13 @@ public class AppInstalledRecyclerViewLayoutList extends AppInstalledRecyclerView
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
-        y += measuredHeight+Global.TWO_DP;
+        y += measuredHeight + Global.TWO_DP;
 
         v = appversiontextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
-        y += measuredHeight+Global.TWO_DP;
+        y += measuredHeight + Global.TWO_DP;
 
         v = appsizetextview;
         measuredHeight = v.getMeasuredHeight();
