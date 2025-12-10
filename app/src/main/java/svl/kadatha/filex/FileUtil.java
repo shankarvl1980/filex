@@ -219,15 +219,11 @@ public final class FileUtil {
         }
         scheme = scheme.toLowerCase();
 
-        if ("content".equals(scheme) || "file".equals(scheme)) {
-            // current local path
-            return CopyUriFileModel(data, destFileModel, fileName, bytesRead);
-        } else if ("http".equals(scheme) || "https".equals(scheme)) {
+        if ("http".equals(scheme) || "https".equals(scheme)) {
             // new HTTP(S) download path
             return CopyHttpUrlToFileModel(data, destFileModel, fileName, bytesRead);
         } else {
-            // unknown / unsupported scheme at this layer
-            return false;
+            return CopyUriFileModel(data, destFileModel, fileName, bytesRead);
         }
     }
 

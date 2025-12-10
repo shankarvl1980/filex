@@ -471,7 +471,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
         }
 
         set_adapter();
-        //viewModel.ensureSubFileCount();
         progress_bar.setVisibility(View.GONE);
 
         if (TO_BE_MOVED_TO_FILE_POJO != null) {

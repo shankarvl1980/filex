@@ -149,7 +149,6 @@ public class CopyToActivity extends BaseActivity {
         } else {
             result = "file";
         }
-
         return result;
     }
 

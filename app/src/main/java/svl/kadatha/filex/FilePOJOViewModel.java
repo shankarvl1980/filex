@@ -51,8 +51,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
     private Future<?> future1, future2, future3, future4, future5, future6, future7, future8, future9, future10, future11;
     private String what_to_find = null;
     private String media_category = null;
-//    private final MutableLiveData<FilePOJO> subFileCountUpdate = new MutableLiveData<>();
-//    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
 
     public FilePOJOViewModel(@NonNull Application application) {
         super(application);
