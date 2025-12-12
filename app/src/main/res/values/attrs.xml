@@ -41,7 +41,7 @@
     <attr name="water_color" format="reference" />
 
     <attr name="storage_analyser_item_background" format="reference" />
-
+    <attr name="size_percentage_foreground" format="reference"/>
 
     <declare-styleable name="TickSeekBar">
         <attr name="tickCount" format="integer" />

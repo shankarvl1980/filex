@@ -40,5 +40,6 @@
     <color name="light_water_color">#494848</color>
 
     <color name="light_storage_analyser_item_background">#80000000</color>
+    <color name="light_size_percentage_foreground">#1A5B7C</color>
 
 </resources>

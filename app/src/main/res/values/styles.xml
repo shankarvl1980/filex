@@ -62,6 +62,7 @@
         <!-- Explicitly set status bar color for API 21+ -->
 
         <item name="android:statusBarColor">@color/light_status_bar</item>
+        <item name="size_percentage_foreground">@color/light_size_percentage_foreground</item>
 
 
     </style>

@@ -386,7 +386,7 @@ public class AlbumListFragment extends Fragment {
             maxHeight += artisttextview.getMeasuredHeight();
 
             maxHeight = Math.max(iconheight, maxHeight);
-            maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2;
+            maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2+Global.TWO_DP;
             itemHeight = maxHeight;
             setMeasuredDimension(widthMeasureSpec, maxHeight);
 

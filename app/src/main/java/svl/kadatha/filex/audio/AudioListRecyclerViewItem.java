@@ -121,7 +121,7 @@ public class AudioListRecyclerViewItem extends ViewGroup {
         maxHeight += artisttextview.getMeasuredHeight();
 
         maxHeight = Math.max(iconheight, maxHeight);
-        maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2;
+        maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2+Global.FOUR_DP;
         itemHeight = maxHeight;
         setMeasuredDimension(widthMeasureSpec, maxHeight);
 
