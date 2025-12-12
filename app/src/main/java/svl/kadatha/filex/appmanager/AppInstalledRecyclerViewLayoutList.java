@@ -112,7 +112,7 @@ public class AppInstalledRecyclerViewLayoutList extends AppInstalledRecyclerView
 
         maxHeight = Math.max(icon_height, maxHeight);
 
-        maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2+Global.FOUR_DP; //providing top and bottom margin of six dp
+        maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2 + Global.FOUR_DP; //providing top and bottom margin of six dp
         itemHeight = maxHeight;
         setMeasuredDimension(widthMeasureSpec, maxHeight);
 

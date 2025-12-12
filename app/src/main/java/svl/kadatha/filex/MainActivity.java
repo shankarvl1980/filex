@@ -1530,6 +1530,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     break;
             }
         }
+    }
+
+    @Override
+    public void actionModeFinish(Fragment fragment, String fileclickeselected) {
+        if (fragment instanceof DetailFragment) {
+            action_mode_finish((DetailFragment) fragment);
+        }
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -1569,13 +1576,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     });
-
-    @Override
-    public void actionModeFinish(Fragment fragment, String fileclickeselected) {
-        if (fragment instanceof DetailFragment) {
-            action_mode_finish((DetailFragment) fragment);
-        }
-    }
 
     @Override
     public void onLongClickItem(int size) {

@@ -551,6 +551,7 @@ public class AllAudioListFragment extends Fragment {
     }
 
     public class AudioListRecyclerViewAdapter extends RecyclerView.Adapter<AudioListRecyclerViewAdapter.ViewHolder> implements Filterable {
+
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
             return new ViewHolder(new AudioListRecyclerViewItem(context, false));

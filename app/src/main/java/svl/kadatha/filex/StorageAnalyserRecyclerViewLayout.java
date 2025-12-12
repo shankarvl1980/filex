@@ -143,7 +143,7 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
 
         maxHeight = Math.max(iconheight, maxHeight);
 
-        maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2-Global.TWO_DP; //providing top and bottom margin of four dp
+        maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2 - Global.TWO_DP; //providing top and bottom margin of four dp
 
         itemHeight = maxHeight;
         setMeasuredDimension(widthMeasureSpec, maxHeight);

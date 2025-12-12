@@ -309,18 +309,6 @@ public class AlbumListFragment extends Fragment {
             init();
         }
 
-        AlbumListRecyclerViewItem(Context context, AttributeSet attr) {
-            super(context, attr);
-            this.context = context;
-            init();
-        }
-
-        AlbumListRecyclerViewItem(Context context, AttributeSet attr, int defStyle) {
-            super(context, attr, defStyle);
-            this.context = context;
-            init();
-        }
-
         private void init() {
 
             setBackground(ContextCompat.getDrawable(context, R.drawable.select_detail_recyclerview));
@@ -386,7 +374,7 @@ public class AlbumListFragment extends Fragment {
             maxHeight += artisttextview.getMeasuredHeight();
 
             maxHeight = Math.max(iconheight, maxHeight);
-            maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2+Global.TWO_DP;
+            maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2 + Global.TWO_DP;
             itemHeight = maxHeight;
             setMeasuredDimension(widthMeasureSpec, maxHeight);
 
