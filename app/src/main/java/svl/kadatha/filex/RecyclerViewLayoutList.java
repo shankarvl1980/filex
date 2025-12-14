@@ -25,6 +25,7 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout {
     private View item_separator;
     private int imageview_dimension;
     private int select_indicator_offset_linear;
+    private boolean isIconHeightMore;
 
     RecyclerViewLayoutList(Context context, boolean show_file_path) {
         super(context);
@@ -113,7 +114,7 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int iconheight;
+        int iconHeight;
         int maxHeight = 0;
         int usedWidth;
 
@@ -123,7 +124,7 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout {
         measureChildWithMargins(pdf_overlay_imageview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
 
         usedWidth += imageview_dimension;
-        iconheight = imageview_dimension;
+        iconHeight = imageview_dimension;
 
         measureChildWithMargins(file_select_indicator, widthMeasureSpec, 0, heightMeasureSpec, 0);
 
@@ -136,7 +137,6 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout {
             maxHeight += filepathtextview.getMeasuredHeight();
         }
 
-
         measureChildWithMargins(filesubfilecounttextview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
         usedWidth += filesubfilecounttextview.getMeasuredWidth() + Global.TEN_DP;
 
@@ -147,7 +147,8 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout {
         measureChildWithMargins(item_separator, widthMeasureSpec, 0, heightMeasureSpec, 0);
         maxHeight += item_separator.getMeasuredHeight();
 
-        maxHeight = Math.max(iconheight, maxHeight);
+        maxHeight = Math.max(iconHeight, maxHeight);
+        isIconHeightMore = (iconHeight == maxHeight);
 
         maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2;//providing top and bottom margin of six dp
         itemHeight = maxHeight;
@@ -157,10 +158,11 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout {
     @Override
     protected void onLayout(boolean p1, int l, int t, int r, int b) {
         int x = Global.FOURTEEN_DP;
-        int y = Global.RECYCLERVIEW_ITEM_SPACING;
-        int margin_offset_icon, max_height_third_line;
+        int y;
+        int margin_offset_icon, top_offset;
 
-        int d = (itemHeight - imageview_dimension) / 2;
+        top_offset = (itemHeight - filenametextview.getMeasuredHeight() - filesubfilecounttextview.getMeasuredHeight() - filepathtextview.getMeasuredHeight() - item_separator.getMeasuredHeight() - Global.FOUR_DP) / 2;
+        int d = isIconHeightMore ? (itemHeight - imageview_dimension) / 2 : top_offset + Global.SIX_DP;
 
         View v = fileimageview;
         int fileMeasuredWidth = v.getMeasuredWidth();
@@ -193,7 +195,7 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout {
         v = filenametextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
-        y = (itemHeight - measuredHeight - filesubfilecounttextview.getMeasuredHeight() - filepathtextview.getMeasuredHeight() - Global.FOUR_DP) / 2;
+        y = top_offset;
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
         y += measuredHeight;
 
@@ -208,20 +210,17 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout {
         measuredWidth = v.getMeasuredWidth();
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
         x += measuredWidth;
-        max_height_third_line = measuredHeight;
 
         v = filemoddatetextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
         x = itemWidth - measuredWidth - Global.TEN_DP - Global.FOUR_DP;
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
-        max_height_third_line = Math.max(max_height_third_line, measuredHeight);
-        y += max_height_third_line + Global.FOUR_DP;
 
         v = item_separator;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
-        v.layout(Global.FOURTEEN_DP, y, measuredWidth - Global.FOURTEEN_DP, y + measuredHeight);
+        v.layout(Global.FOURTEEN_DP, itemHeight - measuredHeight, measuredWidth - Global.FOURTEEN_DP, itemHeight);
     }
 
 

@@ -115,32 +115,31 @@ public class AppInstalledRecyclerViewLayoutList extends AppInstalledRecyclerView
         maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2 + Global.FOUR_DP; //providing top and bottom margin of six dp
         itemHeight = maxHeight;
         setMeasuredDimension(widthMeasureSpec, maxHeight);
-
     }
 
     @Override
     protected void onLayout(boolean p1, int l, int t, int r, int b) {
-        int x = 0, y = Global.RECYCLERVIEW_ITEM_SPACING;
+        int x = 0, y, top_offset;
 
         int measuredHeight;
         int measuredWidth;
         x = Global.FOURTEEN_DP;
-        int margin_offset_icon, max_height_second_line;
+        top_offset = (itemHeight - appnametextview.getMeasuredHeight() - apppackagenametextview.getMeasuredHeight() - appversiontextview.getMeasuredHeight() - appsizetextview.getMeasuredHeight() - Global.FOUR_DP) / 2;
+
         View v = appimageview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
-        int d = (itemHeight - imageview_dimension) / 2;
+
+        int d = top_offset + Global.SIX_DP;
         v.layout(x, d, x + measuredWidth, d + measuredHeight);
         x += measuredWidth + Global.TEN_DP;
-        margin_offset_icon = x;
 
         v = appnametextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
-        y = (itemHeight - measuredHeight - apppackagenametextview.getMeasuredHeight() - appversiontextview.getMeasuredHeight() - appsizetextview.getMeasuredHeight() - Global.FOUR_DP) / 2;
+        y = top_offset;
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
         y += measuredHeight;
-
 
         v = apppackagenametextview;
         measuredHeight = v.getMeasuredHeight();

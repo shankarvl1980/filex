@@ -97,15 +97,13 @@ public class AudioListRecyclerViewItem extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-
-        int iconheight, maxHeight = 0;
+        int iconHeight, maxHeight = 0;
         int usedWidth = Global.FOURTEEN_DP;
-
 
         measureChildWithMargins(audio_select_indicator, widthMeasureSpec, 0, heightMeasureSpec, 0);
         measureChildWithMargins(audioimageview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
         usedWidth += imageview_dimension;
-        iconheight = imageview_dimension;
+        iconHeight = imageview_dimension;
 
         measureChildWithMargins(titletextview, widthMeasureSpec, usedWidth + Global.FOUR_DP + (Global.TEN_DP * 2), heightMeasureSpec, 0);
         maxHeight += titletextview.getMeasuredHeight();
@@ -116,25 +114,25 @@ public class AudioListRecyclerViewItem extends ViewGroup {
         measureChildWithMargins(durationtextview, widthMeasureSpec, usedWidth + Global.FOUR_DP + (Global.TEN_DP * 2), heightMeasureSpec, 0);
         maxHeight += durationtextview.getMeasuredHeight();
 
-
         measureChildWithMargins(artisttextview, widthMeasureSpec, usedWidth + Global.FOUR_DP + (Global.TEN_DP * 2), heightMeasureSpec, 0);
         maxHeight += artisttextview.getMeasuredHeight();
 
-        maxHeight = Math.max(iconheight, maxHeight);
+        maxHeight = Math.max(iconHeight, maxHeight);
         maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2 + Global.FOUR_DP;
         itemHeight = maxHeight;
         setMeasuredDimension(widthMeasureSpec, maxHeight);
-
     }
 
     @Override
     protected void onLayout(boolean p1, int l, int t, int r, int b) {
-        int x = Global.FOURTEEN_DP, y = Global.RECYCLERVIEW_ITEM_SPACING;
+        int x = Global.FOURTEEN_DP, y, top_offset;
+        top_offset = (itemHeight - titletextview.getMeasuredHeight() - albumtextview.getMeasuredHeight() - durationtextview.getMeasuredHeight() - artisttextview.getMeasuredHeight() - Global.FOUR_DP) / 2;
 
         View v = audioimageview;
         int measuredHeight = v.getMeasuredHeight();
         int measuredWidth = v.getMeasuredWidth();
-        int d = (itemHeight - imageview_dimension) / 2;
+
+        int d = top_offset + Global.SIX_DP;
         v.layout(x, d, x + measuredWidth, d + measuredHeight);
         x += measuredWidth + Global.TEN_DP;
 
@@ -149,7 +147,7 @@ public class AudioListRecyclerViewItem extends ViewGroup {
         v = titletextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
-        y = (itemHeight - measuredHeight - albumtextview.getMeasuredHeight() - durationtextview.getMeasuredHeight() - artisttextview.getMeasuredHeight()) / 2;
+        y = top_offset;
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
         y += measuredHeight + Global.TWO_DP;
 

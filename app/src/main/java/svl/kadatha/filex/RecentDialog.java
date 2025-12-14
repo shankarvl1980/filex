@@ -363,6 +363,4 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
             }
         }
     });
-
-
 }

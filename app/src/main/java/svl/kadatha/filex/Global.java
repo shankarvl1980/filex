@@ -372,9 +372,10 @@ public class Global {
 
             DIVIDERITEMDECORATION = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
         }
-        GRID_COUNT_SMALL = WIDTH / (IMAGEVIEW_DIMENSION_SMALL_GRID + RECYCLERVIEW_ITEM_SPACING);
-        GRID_COUNT_MEDIUM = WIDTH / (IMAGEVIEW_DIMENSION_MEDIUM_GRID + RECYCLERVIEW_ITEM_SPACING);
-        GRID_COUNT_LARGE = WIDTH / (IMAGEVIEW_DIMENSION_LARGE_GRID + RECYCLERVIEW_ITEM_SPACING);
+        int additional_space_grid = IS_TABLET ? THIRTY_SIX_DP : 0;
+        GRID_COUNT_SMALL = WIDTH / (IMAGEVIEW_DIMENSION_SMALL_GRID + RECYCLERVIEW_ITEM_SPACING + additional_space_grid);
+        GRID_COUNT_MEDIUM = WIDTH / (IMAGEVIEW_DIMENSION_MEDIUM_GRID + RECYCLERVIEW_ITEM_SPACING + additional_space_grid);
+        GRID_COUNT_LARGE = WIDTH / (IMAGEVIEW_DIMENSION_LARGE_GRID + RECYCLERVIEW_ITEM_SPACING + additional_space_grid);
 
 
         //cache directory setting
@@ -1209,5 +1210,4 @@ public class Global {
         String parentPath = parentPathBuilder.toString();
         return path.startsWith("/") && !parentPath.startsWith("/") ? "/" + parentPath : parentPath;
     }
-
 }

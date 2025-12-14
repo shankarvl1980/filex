@@ -23,13 +23,13 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
     private TextView filenametextview, filesubfilecounttextview, filepermissionstextView, filemoddatetextview, filepathtextview;
     private int imageview_dimension;
     private int select_indicator_offset_linear;
+    private boolean isIconHeightMore;
 
     FileSelectorRecyclerViewLayoutList(Context context, boolean show_file_path) {
         super(context);
         this.context = context;
         init();
     }
-
 
     public static void setIcon(Context context, FilePOJO filePOJO, ImageView fileimageview, ImageView play_overlay_imageview, ImageView pdf_overlay_imageview) {
         play_overlay_imageview.setVisibility(filePOJO.getPlayOverlayVisibility());
@@ -135,6 +135,7 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
         maxHeight += filemoddatetextview.getMeasuredHeight();
 
         maxHeight = Math.max(iconheight, maxHeight);
+        isIconHeightMore = iconheight == maxHeight;
 
         maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2;//Global.FOUR_DP*2; ////providing top and bottom margin of six dp
         itemHeight = maxHeight;
@@ -145,10 +146,11 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
     @Override
     protected void onLayout(boolean p1, int l, int t, int r, int b) {
         int x = Global.FOURTEEN_DP;
-        int y = Global.RECYCLERVIEW_ITEM_SPACING;
-        int margin_offset_icon, max_height_third_line;
+        int y;
+        int margin_offset_icon, top_offset;
 
-        int d = (itemHeight - imageview_dimension) / 2;
+        top_offset = (itemHeight - filenametextview.getMeasuredHeight() - filesubfilecounttextview.getMeasuredHeight() - filepathtextview.getMeasuredHeight() - Global.FOUR_DP) / 2;
+        int d = isIconHeightMore ? (itemHeight - imageview_dimension) / 2 : top_offset + Global.SIX_DP;
 
         View v = fileimageview;
         int fileMeasuredWidth = v.getMeasuredWidth();
@@ -181,7 +183,7 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
         v = filenametextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
-        y = (itemHeight - measuredHeight - filesubfilecounttextview.getMeasuredHeight() - filepathtextview.getMeasuredHeight() - Global.FOUR_DP) / 2;
+        y = top_offset;
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
         y += measuredHeight;
 
@@ -196,15 +198,12 @@ public class FileSelectorRecyclerViewLayoutList extends RecyclerViewLayout {
         measuredWidth = v.getMeasuredWidth();
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
         x += measuredWidth;
-        max_height_third_line = measuredHeight;
 
         v = filemoddatetextview;
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
         x = itemWidth - measuredWidth - Global.TEN_DP - Global.FOUR_DP;
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
-        max_height_third_line = Math.max(max_height_third_line, measuredHeight) + Global.FOUR_DP;
-
     }
 
     @Override

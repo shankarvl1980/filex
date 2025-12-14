@@ -83,7 +83,6 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
             imageview_dimension = Global.IMAGEVIEW_DIMENSION_MEDIUM_LIST;
         }
 
-
         fileimageview.getLayoutParams().width = imageview_dimension;
         fileimageview.getLayoutParams().height = imageview_dimension;
 
@@ -127,7 +126,6 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
         measureChildWithMargins(itemlineforeground, widthMeasureSpec, usedWidth + Global.TEN_DP * 2, heightMeasureSpec, 0);
         maxHeight += filenametextview.getMeasuredHeight();
 
-
         measureChildWithMargins(filesizetextview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
         usedWidth += filesubfilecounttextview.getMeasuredWidth() + Global.TEN_DP;
 
@@ -150,13 +148,11 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
 
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) getLayoutParams();
         params.setMargins(0, Global.TWO_DP, 0, Global.TWO_DP);
-
     }
 
     @Override
     protected void onLayout(boolean p1, int l, int t, int r, int b) {
         int x = Global.FOURTEEN_DP, y = 0;
-
         int top_for_icon = (itemHeight - imageview_dimension) / 2;
 
         // Lay out the fileimageview first
@@ -225,7 +221,6 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
         measuredWidth = v.getMeasuredWidth();
         int endX = itemWidth - measuredWidth - Global.TEN_DP;
         v.layout(endX, y, endX + measuredWidth, y + measuredHeight);
-        y += measuredHeight + Global.FOUR_DP;
 
         // Layout item_separator
         v = item_separator;
@@ -300,7 +295,6 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
         } else {
             itemlineforeground.getBackground().setLevel((int) (filePOJO.getTotalSizePercentageDouble() * 100));
         }
-
     }
 
     public void set_selected(boolean item_selected) {
@@ -320,5 +314,4 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
         String path_category = filePOJO.getWhetherExternal() ? context.getString(R.string.sd_card) : context.getString(R.string.internal);
         filesizetextview.setText(filePOJO.getSize() + "   " + path_category);
     }
-
 }

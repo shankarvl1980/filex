@@ -141,7 +141,6 @@ public class AlbumListFragment extends Fragment {
                     scroll_distance += dy;
                 }
             }
-
         });
         empty_tv = v.findViewById(R.id.album_list_empty);
         progress_bar = v.findViewById(R.id.album_list_progressbar);
@@ -168,10 +167,8 @@ public class AlbumListFragment extends Fragment {
                     }
                     file_number_view.setText(audioListViewModel.album_pojo_selected_items.size() + "/" + album_list_size);
                 }
-
             }
         });
-
 
         audioListViewModel.isAudioFetchingFromAlbumFinished.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
             @Override
@@ -269,7 +266,6 @@ public class AlbumListFragment extends Fragment {
         if (activity instanceof AudioPlayerActivity) {
             ((AudioPlayerActivity) activity).removeSearchFilterListener(searchFilterListener);
         }
-
     }
 
     private void enable_disable_buttons(boolean enable) {
@@ -282,7 +278,6 @@ public class AlbumListFragment extends Fragment {
         }
         play_btn.setEnabled(enable);
         save_btn.setEnabled(enable);
-
     }
 
     public void clear_selection() {
@@ -310,7 +305,6 @@ public class AlbumListFragment extends Fragment {
         }
 
         private void init() {
-
             setBackground(ContextCompat.getDrawable(context, R.drawable.select_detail_recyclerview));
             View view = LayoutInflater.from(context).inflate(R.layout.audiolist_recyclerview_layout, this, true);
             albumimageview = view.findViewById(R.id.audio_image);
@@ -353,15 +347,13 @@ public class AlbumListFragment extends Fragment {
 
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-
-            int iconheight, maxHeight = 0;
+            int iconHeight, maxHeight = 0;
             int usedWidth = Global.FOURTEEN_DP;
 
             measureChildWithMargins(album_select_indicator, widthMeasureSpec, 0, heightMeasureSpec, 0);
             measureChildWithMargins(albumimageview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
             usedWidth += imageview_dimension;
-            iconheight = imageview_dimension;
-
+            iconHeight = imageview_dimension;
 
             measureChildWithMargins(albumtextview, widthMeasureSpec, usedWidth + Global.FOUR_DP + (Global.TEN_DP * 2), heightMeasureSpec, 0);
             maxHeight += albumtextview.getMeasuredHeight();
@@ -369,25 +361,24 @@ public class AlbumListFragment extends Fragment {
             measureChildWithMargins(no_of_songs_textview, widthMeasureSpec, usedWidth + Global.FOUR_DP + (Global.TEN_DP * 2), heightMeasureSpec, 0);
             maxHeight += no_of_songs_textview.getMeasuredHeight();
 
-
             measureChildWithMargins(artisttextview, widthMeasureSpec, usedWidth + Global.FOUR_DP + (Global.TEN_DP * 2), heightMeasureSpec, 0);
             maxHeight += artisttextview.getMeasuredHeight();
 
-            maxHeight = Math.max(iconheight, maxHeight);
-            maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2 + Global.TWO_DP;
+            maxHeight = Math.max(iconHeight, maxHeight);
+            maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2 + Global.FOUR_DP;
             itemHeight = maxHeight;
             setMeasuredDimension(widthMeasureSpec, maxHeight);
-
         }
 
         @Override
         protected void onLayout(boolean p1, int l, int t, int r, int b) {
-            int x = Global.FOURTEEN_DP, y = Global.RECYCLERVIEW_ITEM_SPACING;
+            int x = Global.FOURTEEN_DP, y, top_offset;
+            top_offset = (itemHeight - albumtextview.getMeasuredHeight() - no_of_songs_textview.getMeasuredHeight() - artisttextview.getMeasuredHeight() - Global.FOUR_DP) / 2;
 
             View v = albumimageview;
             int measuredHeight = v.getMeasuredHeight();
             int measuredWidth = v.getMeasuredWidth();
-            int d = (itemHeight - imageview_dimension) / 2;
+            int d = top_offset + Global.SIX_DP;
             v.layout(x, d, x + measuredWidth, d + measuredHeight);
             x += measuredWidth + Global.TEN_DP;
 
@@ -402,10 +393,9 @@ public class AlbumListFragment extends Fragment {
             v = albumtextview;
             measuredHeight = v.getMeasuredHeight();
             measuredWidth = v.getMeasuredWidth();
-            y = (itemHeight - measuredHeight - no_of_songs_textview.getMeasuredHeight() - artisttextview.getMeasuredHeight()) / 2;
+            y = top_offset;
             v.layout(x, y, x + measuredWidth, y + measuredHeight);
             y += measuredHeight + Global.TWO_DP;
-
 
             v = no_of_songs_textview;
             measuredHeight = v.getMeasuredHeight();
@@ -417,7 +407,6 @@ public class AlbumListFragment extends Fragment {
             measuredHeight = v.getMeasuredHeight();
             measuredWidth = v.getMeasuredWidth();
             v.layout(x, y, x + measuredWidth, y + measuredHeight);
-
         }
 
 
@@ -453,7 +442,6 @@ public class AlbumListFragment extends Fragment {
             return generateDefaultLayoutParams();
         }
 
-
         public void setData(String album_id, String album, String duration, String artist, boolean item_selected) {
             GlideApp.with(context).load(Global.GET_ALBUM_ART_URI(album_id)).placeholder(R.drawable.audio_album_icon).error(R.drawable.audio_album_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(albumimageview);
             albumtextview.setText(album);
@@ -465,7 +453,6 @@ public class AlbumListFragment extends Fragment {
         public void set_selected(boolean item_selected) {
             album_select_indicator.setVisibility(item_selected ? View.VISIBLE : View.INVISIBLE);
         }
-
     }
 
     private class ToolbarClickListener implements View.OnClickListener {
@@ -533,9 +520,7 @@ public class AlbumListFragment extends Fragment {
                 }
                 file_number_view.setText(s + "/" + album_list_size);
             }
-
         }
-
     }
 
     private class AlbumListRecyclerViewAdapter extends RecyclerView.Adapter<AlbumListRecyclerViewAdapter.ViewHolder> implements Filterable {
@@ -554,7 +539,6 @@ public class AlbumListFragment extends Fragment {
             boolean item_selected = audioListViewModel.album_pojo_selected_items.containsKey(p2);
             p1.view.setData(album_id, album_name, no_of_songs, artist, item_selected);
             p1.view.setSelected(item_selected);
-
         }
 
         @Override
@@ -592,7 +576,6 @@ public class AlbumListFragment extends Fragment {
                         notifyDataSetChanged();
                     }
                     file_number_view.setText(audioListViewModel.album_pojo_selected_items.size() + "/" + album_list_size);
-
                 }
             };
         }
@@ -618,7 +601,6 @@ public class AlbumListFragment extends Fragment {
                     AlbumPOJO album = album_list.get(pos);
                     AlbumDetailsDialog albumDetailsDialog = AlbumDetailsDialog.getInstance(AUDIO_SELECT_REQUEST_CODE, album.getId(), album.getAlbumName());
                     albumDetailsDialog.show(getParentFragmentManager(), "");
-
                 }
             }
 
@@ -629,10 +611,8 @@ public class AlbumListFragment extends Fragment {
                 return true;
             }
 
-
             private void onLongClickProcedure(View v, int size) {
                 pos = getBindingAdapterPosition();
-
                 if (audioListViewModel.album_pojo_selected_items.containsKey(pos)) {
                     audioListViewModel.album_pojo_selected_items.remove(pos);
                     v.setSelected(false);
@@ -673,5 +653,4 @@ public class AlbumListFragment extends Fragment {
             }
         }
     }
-
 }
