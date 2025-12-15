@@ -34,7 +34,6 @@ public class AppInstalledRecyclerViewLayoutGrid extends AppInstalledRecyclerView
         init();
     }
 
-
     private void init() {
         View view = LayoutInflater.from(context).inflate(R.layout.app_manager_recycler_layout, this, true);
         appimageview = view.findViewById(R.id.app_manager_app_image);
@@ -63,7 +62,6 @@ public class AppInstalledRecyclerViewLayoutGrid extends AppInstalledRecyclerView
             first_line_font_size = Global.FONT_SIZE_SMALL_FIRST_LINE;
             second_line_font_size = Global.FONT_SIZE_SMALL_DETAILS_LINE;
             imageview_dimension = Global.IMAGEVIEW_DIMENSION_MEDIUM_GRID;
-
         }
 
         appnametextview.setMaxLines(2);
@@ -82,13 +80,10 @@ public class AppInstalledRecyclerViewLayoutGrid extends AppInstalledRecyclerView
         appsizetextview.setTextSize(second_line_font_size);
         appdatetextview.setTextSize(second_line_font_size);
 
-
         if (Global.ORIENTATION == Configuration.ORIENTATION_LANDSCAPE) {
             itemWidth = Global.SCREEN_HEIGHT;
-
         } else {
             itemWidth = Global.SCREEN_WIDTH;
-
         }
 
         //select_indicator_offset_linear=Global.TEN_DP*4; //around 40 dp which is about 1 & half of select indicator icon;
@@ -96,7 +91,6 @@ public class AppInstalledRecyclerViewLayoutGrid extends AppInstalledRecyclerView
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int iconheight;
         int maxHeight = 0;
         int usedWidth;
 
@@ -112,16 +106,14 @@ public class AppInstalledRecyclerViewLayoutGrid extends AppInstalledRecyclerView
         measureChildWithMargins(appsizetextview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
         maxHeight += appsizetextview.getMeasuredHeight();
 
-        maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2; //providing top and bottom margin of six dp
+        maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2+Global.TWELVE_DP; //providing top and bottom margin of six dp
         itemHeight = maxHeight;
         setMeasuredDimension(widthMeasureSpec, maxHeight);
-
     }
 
     @Override
     protected void onLayout(boolean p1, int l, int t, int r, int b) {
-        int x = 0, y = Global.RECYCLERVIEW_ITEM_SPACING;
-
+        int x = 0, y = Global.RECYCLERVIEW_ITEM_SPACING+Global.SIX_DP;
         int measuredHeight;
         int measuredWidth;
         int grid_count = Global.GRID_COUNT;
@@ -147,7 +139,6 @@ public class AppInstalledRecyclerViewLayoutGrid extends AppInstalledRecyclerView
         measuredHeight = v.getMeasuredHeight();
         measuredWidth = v.getMeasuredWidth();
         v.layout(x, y, x + measuredWidth, y + measuredHeight);
-
     }
 
     @Override
@@ -192,5 +183,4 @@ public class AppInstalledRecyclerViewLayoutGrid extends AppInstalledRecyclerView
         appsizetextview.setText(appPOJO.getSize());
         appdatetextview.setText(appPOJO.getDate());
     }
-
 }

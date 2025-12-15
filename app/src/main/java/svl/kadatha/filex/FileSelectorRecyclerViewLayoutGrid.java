@@ -30,25 +30,6 @@ public class FileSelectorRecyclerViewLayoutGrid extends RecyclerViewLayout {
         init();
     }
 
-
-    public static void setIcon(Context context, FilePOJO filePOJO, ImageView fileimageview, ImageView play_overlay_imageview, ImageView pdf_overlay_imageview) {
-        play_overlay_imageview.setVisibility(filePOJO.getPlayOverlayVisibility());
-        pdf_overlay_imageview.setVisibility(filePOJO.getPdfOverlayVisibility());
-        if (filePOJO.getType() == 0) {
-            GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath() + File.separator + filePOJO.getPackage_name() + ".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(fileimageview);
-        } else if (filePOJO.getType() < 0) {
-            if (filePOJO.getType() == -3) {
-                GlideApp.with(context).load(filePOJO.getPath()).signature(new ObjectKey(filePOJO.getDateLong())).placeholder(R.drawable.pdf_file_icon).error(R.drawable.pdf_file_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(fileimageview);
-            } else {
-                GlideApp.with(context).load(filePOJO.getPath()).signature(new ObjectKey(filePOJO.getDateLong())).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(fileimageview);
-            }
-        } else {
-            GlideApp.with(context).clear(fileimageview);
-            fileimageview.setImageDrawable(ContextCompat.getDrawable(context, filePOJO.getType()));
-        }
-    }
-
-
     private void init() {
         View view = LayoutInflater.from(context).inflate(R.layout.filedetail_recyclerview_layout, this, true);
         fileimageview = view.findViewById(R.id.image_file);
@@ -117,7 +98,6 @@ public class FileSelectorRecyclerViewLayoutGrid extends RecyclerViewLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int iconheight;
         int maxHeight = 0;
         int usedWidth;
 
@@ -135,7 +115,7 @@ public class FileSelectorRecyclerViewLayoutGrid extends RecyclerViewLayout {
         measureChildWithMargins(filesubfilecounttextview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
         maxHeight += filesubfilecounttextview.getMeasuredHeight();
 
-        maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2;//Global.FOUR_DP*2; ////providing top and bottom margin of six dp
+        maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2+Global.TWELVE_DP;//Global.FOUR_DP*2; ////providing top and bottom margin of six dp
         itemHeight = maxHeight;
         setMeasuredDimension(widthMeasureSpec, maxHeight);
 
@@ -143,7 +123,7 @@ public class FileSelectorRecyclerViewLayoutGrid extends RecyclerViewLayout {
 
     @Override
     protected void onLayout(boolean p1, int l, int t, int r, int b) {
-        int x = 0, y = Global.RECYCLERVIEW_ITEM_SPACING;
+        int x = 0, y = Global.RECYCLERVIEW_ITEM_SPACING+Global.SIX_DP;
 
         int grid_width = (itemWidth - (Global.RECYCLERVIEW_ITEM_SPACING * 2)) / FileSelectorActivity.GRID_COUNT; //Deducting twenty dp because, recyclerview is added start and end padding of ten dp
         x += (grid_width - imageview_dimension) / 2;
