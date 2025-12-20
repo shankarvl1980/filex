@@ -341,7 +341,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
         }
     }
 
-
     public synchronized void getLibraryList(String media_category) {
         if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
             return;
