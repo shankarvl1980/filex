@@ -769,7 +769,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         int[] network_icon_image_array = {R.drawable.network_icon, R.drawable.network_icon, R.drawable.network_icon, R.drawable.network_icon};
         networkRecyclerView.setAdapter(new NetworkRecyclerAdapter(network_types, network_icon_image_array));
 
-
         cloud_layout_group = findViewById(R.id.cloud_layout_group);
         View cloud_heading_layout = findViewById(R.id.cloud_layout_background);
         cloud_heading_layout.setOnClickListener(new View.OnClickListener() {
@@ -1721,6 +1720,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             // Set chunk size, etc.
             int chunk = usbCurrentFs.getChunkSize();
             FileUtil.USB_CHUNK_SIZE = (chunk > 0) ? chunk : FileUtil.BUFFER_SIZE;
+            usb_heading.setVisibility(USB_ATTACHED ? View.VISIBLE : View.GONE);
         } catch (Exception e) {
             // Handle exception
         }
