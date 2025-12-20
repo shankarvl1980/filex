@@ -340,15 +340,15 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
             }
         });
 
-//        viewModel.getSubFileCountUpdate().observe(getViewLifecycleOwner(), pojo -> {
-//            try {
-//                int idx = filePOJO_list.indexOf(pojo);
-//                if (idx < 0 || idx >= adapter.getItemCount()) return;
-//                adapter.notifyItemChanged(idx);
-//            } catch (IndexOutOfBoundsException ignored) {
-//                // log and move on – indicates a data/adapter desync
-//            }
-//        });
+        viewModel.subFileCountUpdate.observe(getViewLifecycleOwner(), pojo -> {
+            try {
+                int idx = filePOJO_list.indexOf(pojo);
+                if (idx < 0 || idx >= adapter.getItemCount()) return;
+                adapter.notifyItemChanged(idx);
+            } catch (IndexOutOfBoundsException ignored) {
+                // log and move on – indicates a data/adapter desync
+            }
+        });
 
 
         getParentFragmentManager().setFragmentResultListener(CANCEL_PROGRESS_REQUEST_CODE, this, new FragmentResultListener() {
@@ -472,6 +472,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
 
         set_adapter();
         progress_bar.setVisibility(View.GONE);
+        //viewModel.ensureSubFileCount();
 
         if (TO_BE_MOVED_TO_FILE_POJO != null) {
             int idx = filePOJO_list.indexOf(TO_BE_MOVED_TO_FILE_POJO);

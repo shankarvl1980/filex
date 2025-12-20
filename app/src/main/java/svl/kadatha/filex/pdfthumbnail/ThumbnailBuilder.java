@@ -61,7 +61,6 @@ public class ThumbnailBuilder implements ModelLoader<String, Bitmap> {
         @Override
         public void loadData(@NonNull Priority priority, @NonNull DataCallback<? super Bitmap> callback) {
             try {
-
                 File thumbnail = new File(Global.PDF_CACHE_DIR, Uri.parse(input).getLastPathSegment() + ".png");
                 // check if file is already exist then there is no need to re create it
                 if (!thumbnail.exists()) {
@@ -92,25 +91,21 @@ public class ThumbnailBuilder implements ModelLoader<String, Bitmap> {
             } catch (Exception e) {
                 callback.onLoadFailed(e);
             }
-
         }
 
         @Override
         public void cleanup() {
             // empty
-
         }
 
         @Override
         public void cancel() {
             // empty
-
         }
 
         @NonNull
         @Override
         public Class<Bitmap> getDataClass() {
-            // output data class
             return Bitmap.class;
         }
 

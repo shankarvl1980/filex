@@ -377,7 +377,6 @@ public class Global {
         GRID_COUNT_MEDIUM = WIDTH / (IMAGEVIEW_DIMENSION_MEDIUM_GRID + RECYCLERVIEW_ITEM_SPACING + additional_space_grid);
         GRID_COUNT_LARGE = WIDTH / (IMAGEVIEW_DIMENSION_LARGE_GRID + RECYCLERVIEW_ITEM_SPACING + additional_space_grid);
 
-
         //cache directory setting
         ARCHIVE_EXTRACT_DIR = new File(context.getFilesDir(), "Archive");
         USB_CACHE_DIR = context.getExternalFilesDir(".usb_cache");
@@ -448,17 +447,19 @@ public class Global {
 
         //
         FileSelectorActivity.FILE_GRID_LAYOUT = tinyDB.getBoolean("file_selector_file_grid_layout");
-        //
 
+        //
         AppManagerActivity.FILE_GRID_LAYOUT = tinyDB.getBoolean("app_manager_file_grid_layout");
+
         //
         DETAILED_SEARCH_LIBRARY = tinyDB.getBoolean("detailed_search_library");
-        //
 
+        //
         SHOW_FILE_PATH = tinyDB.getBoolean("show_file_path");
 
         //
         RECOGNISE_USB = tinyDB.getBoolean("recognise_usb");
+
         //
         RECYCLER_VIEW_FONT_SIZE_FACTOR = tinyDB.getInt("recycler_view_font_size_factor");
         FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR = tinyDB.getInt("file_selector_recycler_view_font_size_factor");
@@ -471,8 +472,8 @@ public class Global {
             tinyDB.putInt("file_selector_recycler_view_font_size_factor", FileSelectorActivity.RECYCLER_VIEW_FONT_SIZE_FACTOR);
             tinyDB.putBoolean("image_video_grid_layout", IMAGE_VIDEO_GRID_LAYOUT);
         }
-        //
 
+        //
         if (RECYCLER_VIEW_FONT_SIZE_FACTOR != 0 && RECYCLER_VIEW_FONT_SIZE_FACTOR != 1 && RECYCLER_VIEW_FONT_SIZE_FACTOR != 2) {
             RECYCLER_VIEW_FONT_SIZE_FACTOR = 1;
         }

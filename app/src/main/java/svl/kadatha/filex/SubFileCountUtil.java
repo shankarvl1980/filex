@@ -36,13 +36,13 @@ public final class SubFileCountUtil {
         if (!pojo.getIsDirectory()) return;
 
         // If you added dedicated fields:
-        if (pojo.getSize() != null || pojo.isSubFileCountLoading()) return;
-        pojo.setSubFileCountLoading(true);
+        if (pojo.getSize() != null) return;
+        //pojo.setSubFileCountLoading(true);
 
         int count = computeSubFileCountBlocking(pojo);
         String si = "(" + count + ")";
         pojo.setSize(si);
-        pojo.setSubFileCountLoading(false);
+        //pojo.setSubFileCountLoading(false);
         cb.onSubFileCountReady(pojo, count);
     }
 

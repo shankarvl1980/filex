@@ -1,6 +1,7 @@
 package svl.kadatha.filex;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.DialogFragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class PreferencesDialog extends DialogFragment {
     public static String THEME;
@@ -46,7 +48,6 @@ public class PreferencesDialog extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         final View v = inflater.inflate(R.layout.fragment_preferences, container, false);
         RadioButton light_rb = v.findViewById(R.id.preferences_rb_light);
         light_rb.setOnClickListener(new View.OnClickListener() {
@@ -156,8 +157,6 @@ public class PreferencesDialog extends DialogFragment {
                         }
                     }
                 }, 500);
-
-
             }
         });
 
@@ -171,6 +170,9 @@ public class PreferencesDialog extends DialogFragment {
                     public void run() {
                         Global.RECOGNISE_USB = b;
                         tinyDB.putBoolean("recognise_usb", Global.RECOGNISE_USB);
+                        if(Global.RECOGNISE_USB){
+                            Global.LOCAL_BROADCAST("svl.kadatha.filex.ACTION_USB_RECOGNITION_ENABLED",LocalBroadcastManager.getInstance(context),null);
+                        }
                     }
                 }, 500);
             }

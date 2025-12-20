@@ -160,12 +160,12 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     });
     private ListPopupWindowPOJO extract_listPopupWindowPOJO, open_listPopupWindowPOJO;
     private ListPopupWindowPOJO.PopupWindowAdapter popupWindowAdapter;
-    private Group library_layout_group, clean_storage_layout_group, network_layout_group, cloud_layout_group;
+    private Group usb_eject_layout_group,library_layout_group, clean_storage_layout_group, network_layout_group, cloud_layout_group;
     private Handler h;
     private NestedScrollView nestedScrollView;
     private RepositoryClass repositoryClass;
     private NetworkStateReceiver networkStateReceiver;
-
+    private Group usb_heading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -445,14 +445,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         storageRecyclerAdapter = new StorageRecyclerAdapter(repositoryClass.storage_dir);
         storageDirListRecyclerView.setAdapter(storageRecyclerAdapter);
 
-        Group usb_heading = findViewById(R.id.usb_background);
+        usb_heading = findViewById(R.id.usb_background);
         usb_heading.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Global.LOCAL_BROADCAST(UsbDocumentProvider.ACTION_USB_EJECT,LocalBroadcastManager.getInstance(context),null);
             }
         });
-        //usb_heading.setVisibility(USB_ATTACHED ? View.VISIBLE : View.GONE);
+        usb_heading.setVisibility(USB_ATTACHED ? View.VISIBLE : View.GONE);
         View working_dir_heading_layout = findViewById(R.id.working_dir_layout_background);
         working_dir_heading_layout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -1691,14 +1691,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     }
 
     private void setupDevice() {
-        boolean usb_path_added = false;
+
         if (UsbDocumentProvider.USB_MASS_STORAGE_DEVICES.isEmpty()) {
             return;
         }
 
         UsbMassStorageDevice device = UsbDocumentProvider.USB_MASS_STORAGE_DEVICES.get(0);
         try {
-            device.init();
             if (device.getPartitions().isEmpty()) {
                 Global.print(this, getString(R.string.error_setting_up_device));
                 return;
@@ -1711,15 +1710,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             UsbFileRootSingleton.getInstance().setUsbFileRoot(usbFileRoot);
 
             // Set chunk size, etc.
-            FileUtil.USB_CHUNK_SIZE = usbCurrentFs.getChunkSize();
-            if (FileUtil.USB_CHUNK_SIZE == 0) {
-                FileUtil.USB_CHUNK_SIZE = FileUtil.BUFFER_SIZE;
-            }
-        } catch (IOException e) {
+            int chunk = usbCurrentFs.getChunkSize();
+            FileUtil.USB_CHUNK_SIZE = (chunk > 0) ? chunk : FileUtil.BUFFER_SIZE;
+        } catch (Exception e) {
             // Handle exception
         }
 
         // The rest of your existing code
+        boolean usb_path_added = false;
         for (FilePOJO filePOJO : repositoryClass.storage_dir) {
             if (filePOJO.getFileObjectType() == FileObjectType.USB_TYPE
                     && filePOJO.getPath().equals(Global.USB_STORAGE_PATH)) {
@@ -2574,7 +2572,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
                     // Clear the singleton so no one can use the old reference
                     UsbFileRootSingleton.getInstance().clearUsbFileRoot();
-
+                    usb_heading.setVisibility(View.GONE);
                     // The rest of your existing teardown code remains:
                     Iterator<FilePOJO> iterator = repositoryClass.storage_dir.iterator();
                     while (iterator.hasNext()) {

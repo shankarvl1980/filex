@@ -49,6 +49,8 @@ import timber.log.Timber;
 
 public class FilePOJOUtil {
     private static final String TAG = "Ftp-FilePOJOUtil";
+    private static final Object file_pojo_lock=new Object();
+    private static final Object audio_pojo_lock=new Object();
 
     public static void REMOVE_FROM_HASHMAP_FILE_POJO_ON_REMOVAL_SEARCH_LIBRARY(String filePOJOHashmapKeyPath, final List<String> deleted_files_path_list, FileObjectType fileObjectType) {
         final int size = deleted_files_path_list.size();
@@ -69,7 +71,6 @@ public class FilePOJOUtil {
 
             REMOVE_FROM_HASHMAP_FILE_POJO(parent_folder, Collections.singletonList(deleted_file_name), fileObjectType);
             REMOVE_FROM_AUDIO_CACHE(fileObjectType, deleted_file_path);
-
         }
         repositoryClass.hashmap_file_pojo.put(FileObjectType.SEARCH_LIBRARY_TYPE + filePOJOHashmapKeyPath, filePOJOs);
         repositoryClass.hashmap_file_pojo_filtered.put(FileObjectType.SEARCH_LIBRARY_TYPE + filePOJOHashmapKeyPath, filePOJOs_filtered);
@@ -134,24 +135,28 @@ public class FilePOJOUtil {
 
     private static FilePOJO remove_from_FilePOJO(String name, List<FilePOJO> list) {
         FilePOJO deleted_filePOJO = null;
-        Iterator<FilePOJO> iterator = list.iterator();
-        while (iterator.hasNext()) {
-            FilePOJO filePOJO = iterator.next();
-            if (filePOJO.getName().equals(name)) {
-                deleted_filePOJO = filePOJO;
-                iterator.remove();
-                return deleted_filePOJO;
+        synchronized (file_pojo_lock){
+            Iterator<FilePOJO> iterator = list.iterator();
+            while (iterator.hasNext()) {
+                FilePOJO filePOJO = iterator.next();
+                if (filePOJO.getName().equals(name)) {
+                    deleted_filePOJO = filePOJO;
+                    iterator.remove();
+                    return deleted_filePOJO;
+                }
             }
         }
         return deleted_filePOJO;
     }
 
     private static void remove_from_FilePOJO_comparing_file_path(String file_path, List<FilePOJO> list) {
-        Iterator<FilePOJO> iterator = list.iterator();
-        while (iterator.hasNext()) {
-            if (iterator.next().getPath().equals(file_path)) {
-                iterator.remove();
-                break;
+        synchronized (file_pojo_lock){
+            Iterator<FilePOJO> iterator = list.iterator();
+            while (iterator.hasNext()) {
+                if (iterator.next().getPath().equals(file_path)) {
+                    iterator.remove();
+                    break;
+                }
             }
         }
     }
@@ -163,16 +168,18 @@ public class FilePOJOUtil {
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
         List<FilePOJO> filePOJOs = repositoryClass.hashmap_file_pojo.get(FileObjectType.SEARCH_LIBRARY_TYPE + media_category);
         List<FilePOJO> filePOJOs_filtered = repositoryClass.hashmap_file_pojo_filtered.get(FileObjectType.SEARCH_LIBRARY_TYPE + media_category);
-        if (filePOJOs != null) {
-            Iterator<FilePOJO> iterator = filePOJOs.iterator();
-            while (iterator.hasNext()) {
-                FilePOJO filePOJO = iterator.next();
-                if (file_path.equals(filePOJO.getPath())) {
-                    if (filePOJOs_filtered != null) {
-                        filePOJOs_filtered.remove(filePOJO);
+        synchronized (file_pojo_lock){
+            if (filePOJOs != null) {
+                Iterator<FilePOJO> iterator = filePOJOs.iterator();
+                while (iterator.hasNext()) {
+                    FilePOJO filePOJO = iterator.next();
+                    if (file_path.equals(filePOJO.getPath())) {
+                        if (filePOJOs_filtered != null) {
+                            filePOJOs_filtered.remove(filePOJO);
+                        }
+                        iterator.remove();
+                        return true;
                     }
-                    iterator.remove();
-                    return true;
                 }
             }
         }
@@ -185,13 +192,15 @@ public class FilePOJOUtil {
         }
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
         List<AudioPOJO> audioPOJOS = repositoryClass.audio_pojo_hashmap.get("audio");
-        if (audioPOJOS != null) {
-            Iterator<AudioPOJO> iterator = audioPOJOS.iterator();
-            while (iterator.hasNext()) {
-                AudioPOJO audioPOJO = iterator.next();
-                if (audioPOJO.getData().equals(file_path_to_be_removed)) {
-                    iterator.remove();
-                    break;
+        synchronized (audio_pojo_lock){
+            if (audioPOJOS != null) {
+                Iterator<AudioPOJO> iterator = audioPOJOS.iterator();
+                while (iterator.hasNext()) {
+                    AudioPOJO audioPOJO = iterator.next();
+                    if (audioPOJO.getData().equals(file_path_to_be_removed)) {
+                        iterator.remove();
+                        break;
+                    }
                 }
             }
         }
@@ -236,13 +245,16 @@ public class FilePOJOUtil {
 
             size = added_file_name_list.size();
             String file_path;
+
             for (int i = 0; i < size; ++i) {
                 file_path = Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder, added_file_name_list.get(i));
                 filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(fileObjectType, file_path);
-                if (filePOJO != null) {
-                    filePOJOs.add(filePOJO);
-                    if (filePOJO.getAlfa() == Global.ENABLE_ALFA) {
-                        filePOJOs_filtered.add(filePOJO);
+                synchronized (file_pojo_lock){
+                    if (filePOJO != null) {
+                        filePOJOs.add(filePOJO);
+                        if (filePOJO.getAlfa() == Global.ENABLE_ALFA) {
+                            filePOJOs_filtered.add(filePOJO);
+                        }
                     }
                 }
             }
@@ -286,10 +298,12 @@ public class FilePOJOUtil {
             if (filePOJO == null) {
                 filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(fileObjectType, file_path);
             }
-            if (filePOJO != null) {
-                filePOJOs.add(filePOJO);
-                if (filePOJO.getAlfa() == Global.ENABLE_ALFA) {
-                    filePOJOs_filtered.add(filePOJO);
+            synchronized (file_pojo_lock){
+                if (filePOJO != null) {
+                    filePOJOs.add(filePOJO);
+                    if (filePOJO.getAlfa() == Global.ENABLE_ALFA) {
+                        filePOJOs_filtered.add(filePOJO);
+                    }
                 }
             }
         }
@@ -316,12 +330,15 @@ public class FilePOJOUtil {
         if (filePOJO == null) {
             filePOJO = removed_filePOJO;
         }
-        if (filePOJO != null) {
-            filePOJOs.add(filePOJO);
-            if (filePOJO.getAlfa() == Global.ENABLE_ALFA) {
-                filePOJOs_filtered.add(filePOJO);
+        synchronized (file_pojo_lock){
+            if (filePOJO != null) {
+                filePOJOs.add(filePOJO);
+                if (filePOJO.getAlfa() == Global.ENABLE_ALFA) {
+                    filePOJOs_filtered.add(filePOJO);
+                }
             }
         }
+
         repositoryClass.hashmap_file_pojo.put(fileObjectType + parent_path_to_dest_folder, filePOJOs);
         repositoryClass.hashmap_file_pojo_filtered.put(fileObjectType + parent_path_to_dest_folder, filePOJOs_filtered);
     }
@@ -343,20 +360,25 @@ public class FilePOJOUtil {
     private static void REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL__(String file_path, FileObjectType fileObjectType) {
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
         Iterator<Map.Entry<String, List<FilePOJO>>> iterator = repositoryClass.hashmap_file_pojo.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, List<FilePOJO>> entry = iterator.next();
-            if (Global.IS_CHILD_FILE(entry.getKey(), fileObjectType + file_path)) {
-                iterator.remove();
+        synchronized (file_pojo_lock){
+            while (iterator.hasNext()) {
+                Map.Entry<String, List<FilePOJO>> entry = iterator.next();
+                if (Global.IS_CHILD_FILE(entry.getKey(), fileObjectType + file_path)) {
+                    iterator.remove();
+                }
             }
         }
 
         iterator = repositoryClass.hashmap_file_pojo_filtered.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, List<FilePOJO>> entry = iterator.next();
-            if (Global.IS_CHILD_FILE(entry.getKey(), fileObjectType + file_path)) {
-                iterator.remove();
+        synchronized (file_pojo_lock){
+            while (iterator.hasNext()) {
+                Map.Entry<String, List<FilePOJO>> entry = iterator.next();
+                if (Global.IS_CHILD_FILE(entry.getKey(), fileObjectType + file_path)) {
+                    iterator.remove();
+                }
             }
         }
+
         repositoryClass.hashmap_internal_directory_size.remove(file_path);
         repositoryClass.hashmap_external_directory_size.remove(file_path);
     }
@@ -365,16 +387,18 @@ public class FilePOJOUtil {
         String parent_file_path = new File(file_path).getParent();
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
         if (parent_file_path != null) {
-            for (Map.Entry<String, List<FilePOJO>> entry : repositoryClass.hashmap_file_pojo.entrySet()) {
-                if (Global.IS_CHILD_FILE(fileObjectType + file_path, entry.getKey())) {
-                    List<FilePOJO> filePOJOS = entry.getValue();
-                    if (filePOJOS != null) {
-                        for (FilePOJO filePOJO : filePOJOS) {
-                            filePOJO.setTotalFiles(0);
-                            filePOJO.setTotalSizeLong(0L);
-                            filePOJO.setTotalSize(null);
-                            filePOJO.setTotalSizePercentageDouble(0);
-                            filePOJO.setTotalSizePercentage(null);
+            synchronized (file_pojo_lock){
+                for (Map.Entry<String, List<FilePOJO>> entry : repositoryClass.hashmap_file_pojo.entrySet()) {
+                    if (Global.IS_CHILD_FILE(fileObjectType + file_path, entry.getKey())) {
+                        List<FilePOJO> filePOJOS = entry.getValue();
+                        if (filePOJOS != null) {
+                            for (FilePOJO filePOJO : filePOJOS) {
+                                filePOJO.setTotalFiles(0);
+                                filePOJO.setTotalSizeLong(0L);
+                                filePOJO.setTotalSize(null);
+                                filePOJO.setTotalSizePercentageDouble(0);
+                                filePOJO.setTotalSizePercentage(null);
+                            }
                         }
                     }
                 }

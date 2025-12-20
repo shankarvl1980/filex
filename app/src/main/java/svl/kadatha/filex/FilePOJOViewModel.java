@@ -4,6 +4,8 @@ import android.app.Application;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
@@ -51,7 +53,8 @@ public class FilePOJOViewModel extends AndroidViewModel {
     private Future<?> future1, future2, future3, future4, future5, future6, future7, future8, future9, future10, future11;
     private String what_to_find = null;
     private String media_category = null;
-
+    public final MutableLiveData<FilePOJO> subFileCountUpdate = new MutableLiveData<>();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     public FilePOJOViewModel(@NonNull Application application) {
         super(application);
@@ -105,7 +108,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
         return isCancelled;
     }
 
-
     public synchronized void populateFilePOJO(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile, boolean archive_view, boolean fill_file_size_also) {
         if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
             return;
@@ -143,27 +145,31 @@ public class FilePOJOViewModel extends AndroidViewModel {
         });
     }
 
-//    public MutableLiveData<FilePOJO> getSubFileCountUpdate() {
-//        return subFileCountUpdate;
-//    }
-//
-//    public synchronized void ensureSubFileCount() {
-//        ExecutorService executorService = MyExecutorService.getExecutorService();
-//        future7 = executorService.submit(() -> {
-//            for (int i = 0; i < filePOJOS.size(); i++) {
-//                try {
-//                    Thread.sleep(1000);
-//                } catch (InterruptedException e) {
-//                    throw new RuntimeException(e);
-//                }
-//                final FilePOJO pojo = filePOJOS.get(i);
-//                SubFileCountUtil.ensureSubFileCount(pojo, (updatedPojo, count) -> {
-//                    // ensure on main thread, and use setValue
-//                    mainHandler.post(() -> subFileCountUpdate.setValue(updatedPojo));
-//                });
-//            }
-//        });
-//    }
+    public synchronized void ensureSubFileCount() {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future7 = executorService.submit(() -> {
+            while (true) {                 // retry loop
+                try {
+                    int size=filePOJOS.size();
+                    for (int i = 0; i < size; i++) {   // starts at i=0 every retry
+//                        try {
+//                            Thread.sleep(1000);
+//                        } catch (InterruptedException e) {
+//                            throw new RuntimeException(e);
+//                        }
+                        final FilePOJO pojo = filePOJOS.get(i);
+                        SubFileCountUtil.ensureSubFileCount(pojo, (updatedPojo, count) -> {
+                            // ensure on main thread, and use setValue
+                            mainHandler.post(() -> subFileCountUpdate.setValue(updatedPojo));
+                        });
+                    }
+                    break;                      // only exit if whole read completes
+                } catch (Exception e) {
+                    // do nothing -> loop repeats -> starts again from i=0
+                }
+            }
+        });
+    }
 
 
     public synchronized void fill_filePOJOs_size(FileObjectType fileObjectType, String fileclickselected, UsbFile currentUsbFile) {

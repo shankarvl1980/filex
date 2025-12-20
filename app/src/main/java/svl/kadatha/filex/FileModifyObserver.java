@@ -56,5 +56,4 @@ public class FileModifyObserver extends FileObserver {
     interface FileObserverListener {
         void onFileModified();
     }
-
 }
