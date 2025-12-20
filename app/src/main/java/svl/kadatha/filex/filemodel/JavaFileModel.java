@@ -106,17 +106,35 @@ public class JavaFileModel implements FileModel {
 
     @Override
     public boolean rename(String new_name, boolean overwrite) {
-
         if (writeable) {
-            File targetFile = new File(getParentPath(), new_name);
-            if (file.renameTo(targetFile)) {
-                return true;
-            }
+            final File src = this.file;
+            final File parent = src.getParentFile();
+            if (parent == null) return false;
 
-            if (targetFile.exists()) {
+            final File target = new File(parent, new_name);
+
+            // Same exact path string => nothing to do
+            if (src.getAbsolutePath().equals(target.getAbsolutePath())) return true;
+
+            // If direct rename works, done
+            if (src.renameTo(target)) return true;
+
+            // If target exists AND it's NOT just a case-change of the same name, then fail
+            // (Because that means a real conflict)
+            if (target.exists() && !src.getName().equalsIgnoreCase(new_name)) {
                 return false;
             }
 
+            // Case-only rename workaround: src -> temp -> target
+            final File tmp = new File(parent,
+                    src.getName() + ".~casefix." + android.os.Process.myPid() + "." + System.nanoTime());
+
+            if (!src.renameTo(tmp)) return false;
+
+            if (tmp.renameTo(target)) return true;
+
+            // rollback
+            tmp.renameTo(src);
             return false;
         } else {
             if (overwrite) {
@@ -127,7 +145,6 @@ public class JavaFileModel implements FileModel {
                         return renameSAFFile(App.getAppContext(), path, new_name, uri, uri_path);
                     }
                 }
-
             } else {
                 return renameSAFFile(App.getAppContext(), path, new_name, uri, uri_path);
             }
@@ -142,7 +159,6 @@ public class JavaFileModel implements FileModel {
         } else {
             return FileUtil.deleteSAFDirectory(App.getAppContext(), path, uri, uri_path);
         }
-
     }
 
     @Override

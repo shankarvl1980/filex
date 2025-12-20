@@ -73,13 +73,7 @@ public class UsbFileModel implements FileModel {
             return false;
         }
         try {
-//            if (!usbFile.isDirectory() && usbFile.getLength() == 0) {
-//                boolean madeNonZero = make_UsbFile_non_zero_length(usbFile.getAbsolutePath());
-//                if (madeNonZero) {
-//                    usbFile.delete();
-//                    return true;
-//                }
-//            } else
+
             {
                 usbFile.delete();
                 return true;
@@ -260,7 +254,6 @@ public class UsbFileModel implements FileModel {
 
         // Wrap in a locked stream that calls readAccess.close() in its close()
         return new LockedUsbInputStream(rawStream, readAccess);
-
     }
 
 

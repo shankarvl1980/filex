@@ -37,6 +37,7 @@ import me.jahnen.libaums.core.fs.UsbFile;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FtpFileModel;
 import svl.kadatha.filex.filemodel.UsbFileModel;
+import timber.log.Timber;
 
 /**
  * Utility class for helping parsing file systems.
@@ -151,17 +152,20 @@ public final class FileUtil {
     }
 
     public static boolean copy_File_FileModel(@NonNull final File sourceFile, @NonNull final FileModel destFileModel, String child_name, boolean cut, long[] bytes_read) {
-        FileInputStream fileInputStream;
-        OutputStream outputStream;
-        boolean success = false;
+        if (bytes_read != null && bytes_read.length > 0) bytes_read[0] = 0;
+
+        FileInputStream fileInputStream = null;
+        OutputStream outputStream = null;
+        boolean bufferedCopyStarted = false;
 
         try {
             fileInputStream = new FileInputStream(sourceFile);
             outputStream = destFileModel.getChildOutputStream(child_name, 0);
+            if (outputStream == null) return false;
 
+            bufferedCopyStarted = true;
             bufferedCopy(fileInputStream, outputStream, false, bytes_read);
 
-            // Ensure FTP transfer is completed if it's an FTP output stream
             if (outputStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
                 ((FtpFileModel.FTPOutputStreamWrapper) outputStream).completePendingCommand();
             }
@@ -170,26 +174,40 @@ public final class FileUtil {
                 sourceFile.delete();
             }
 
-            success = true;
+            return true;
+
         } catch (Exception e) {
+            return false;
+
+        } finally {
+            // Only close here if bufferedCopy() never ran (so it couldn't close them)
+            if (!bufferedCopyStarted) {
+                try { if (fileInputStream != null) fileInputStream.close(); } catch (Exception ignored) {}
+                try { if (outputStream != null) outputStream.close(); } catch (Exception ignored) {}
+            }
         }
-        return success;
     }
 
 
     public static boolean copy_FileModel_FileModel(@NonNull final FileModel sourceFileModel, @NonNull final FileModel destFileModel, String child_name, boolean cut, long[] bytes_read) {
-        InputStream inputStream;
-        OutputStream outputStream;
-        boolean success = false;
+        if (bytes_read != null && bytes_read.length > 0) bytes_read[0] = 0;
+
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        boolean bufferedCopyStarted = false;
 
         try {
             inputStream = sourceFileModel.getInputStream();
+            if (inputStream == null) return false;
+
             outputStream = destFileModel.getChildOutputStream(child_name, 0);
+            if (outputStream == null) return false;
 
             boolean fromUsbFile = sourceFileModel instanceof UsbFileModel;
+
+            bufferedCopyStarted = true;
             bufferedCopy(inputStream, outputStream, fromUsbFile, bytes_read);
 
-            // Ensure FTP transfer is completed if it's an FTP output stream
             if (outputStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
                 ((FtpFileModel.FTPOutputStreamWrapper) outputStream).completePendingCommand();
             }
@@ -197,18 +215,106 @@ public final class FileUtil {
             if (cut) {
                 sourceFileModel.delete();
             }
-            success = true;
+
+            return true;
+
         } catch (Exception e) {
+            return false;
+
+        } finally {
+            if (!bufferedCopyStarted) {
+                try { if (inputStream != null) inputStream.close(); } catch (Exception ignored) {}
+                try { if (outputStream != null) outputStream.close(); } catch (Exception ignored) {}
+            }
         }
-        return success;
     }
 
-    public static boolean CopyAnyUriOrHttp(
-            @NonNull Uri data,
-            @NonNull FileModel destFileModel,
-            @NonNull String fileName,
-            long[] bytesRead
-    ) {
+
+    public static boolean CopyUriFileModel(@NonNull Uri data, @NonNull FileModel destFileModel, String file_name, long[] bytes_read) {
+        if (bytes_read != null && bytes_read.length > 0) bytes_read[0] = 0;
+
+        InputStream inStream = null;
+        OutputStream fileOutStream = null;
+        boolean bufferedCopyStarted = false;
+
+        try {
+            inStream = App.getAppContext().getContentResolver().openInputStream(data);
+            if (inStream == null) return false;
+
+            fileOutStream = destFileModel.getChildOutputStream(file_name, 0);
+            if (fileOutStream == null) return false;
+
+            bufferedCopyStarted = true;
+            bufferedCopy(inStream, fileOutStream, false, bytes_read);
+
+            if (fileOutStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
+                ((FtpFileModel.FTPOutputStreamWrapper) fileOutStream).completePendingCommand();
+            }
+
+            return true;
+
+        } catch (Exception e) {
+            return false;
+
+        } finally {
+            if (!bufferedCopyStarted) {
+                try { if (inStream != null) inStream.close(); } catch (Exception ignored) {}
+                try { if (fileOutStream != null) fileOutStream.close(); } catch (Exception ignored) {}
+            }
+        }
+    }
+
+
+    public static boolean CopyHttpUrlToFileModel(@NonNull Uri data, @NonNull FileModel destFileModel, String fileName, long[] bytesRead) {
+        if (bytesRead != null && bytesRead.length > 0) bytesRead[0] = 0;
+
+        HttpURLConnection connection = null;
+        InputStream inStream = null;
+        OutputStream outStream = null;
+        boolean bufferedCopyStarted = false;
+
+        try {
+            URL url = new URL(data.toString());
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(15_000);
+            connection.setReadTimeout(30_000);
+            connection.setInstanceFollowRedirects(true);
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode < 200 || responseCode >= 300) {
+                return false;
+            }
+
+            inStream = new BufferedInputStream(connection.getInputStream());
+            outStream = destFileModel.getChildOutputStream(fileName, 0);
+            if (outStream == null) return false;
+
+            bufferedCopyStarted = true;
+            bufferedCopy(inStream, outStream, false, bytesRead);
+
+            if (outStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
+                ((FtpFileModel.FTPOutputStreamWrapper) outStream).completePendingCommand();
+            }
+
+            return true;
+
+        } catch (Exception e) {
+            return false;
+
+        } finally {
+            // close streams ONLY if bufferedCopy never ran
+            if (!bufferedCopyStarted) {
+                try { if (inStream != null) inStream.close(); } catch (Exception ignored) {}
+                try { if (outStream != null) outStream.close(); } catch (Exception ignored) {}
+            }
+
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
+    }
+
+    public static boolean CopyAnyUriOrHttp(@NonNull Uri data, @NonNull FileModel destFileModel, @NonNull String fileName, long[] bytesRead) {
         if (bytesRead == null || bytesRead.length == 0) {
             throw new IllegalArgumentException("bytesRead must be a long[1] array");
         }
@@ -224,69 +330,6 @@ public final class FileUtil {
             return CopyHttpUrlToFileModel(data, destFileModel, fileName, bytesRead);
         } else {
             return CopyUriFileModel(data, destFileModel, fileName, bytesRead);
-        }
-    }
-
-    public static boolean CopyUriFileModel(@NonNull Uri data, FileModel destFileModel, String file_name, long[] bytes_read) {
-        InputStream inStream;
-        OutputStream fileOutStream;
-
-        try {
-            inStream = App.getAppContext().getContentResolver().openInputStream(data);
-            fileOutStream = destFileModel.getChildOutputStream(file_name, 0);
-
-            bufferedCopy(inStream, fileOutStream, false, bytes_read);
-
-            // Ensure FTP transfer is completed if it's an FTP output stream
-            if (fileOutStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
-                ((FtpFileModel.FTPOutputStreamWrapper) fileOutStream).completePendingCommand();
-            }
-
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public static boolean CopyHttpUrlToFileModel(
-            @NonNull Uri data,
-            @NonNull FileModel destFileModel,
-            String fileName,
-            long[] bytesRead
-    ) {
-        HttpURLConnection connection = null;
-
-        try {
-            URL url = new URL(data.toString());
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setConnectTimeout(15_000); // 15 seconds
-            connection.setReadTimeout(30_000);    // 30 seconds
-            connection.setInstanceFollowRedirects(true);
-
-            int responseCode = connection.getResponseCode();
-            if (responseCode < 200 || responseCode >= 300) {
-                // not a successful response
-                return false;
-            }
-
-            InputStream inStream = new BufferedInputStream(connection.getInputStream());
-            OutputStream outStream = destFileModel.getChildOutputStream(fileName, 0);
-
-            // fromUsbFile = false (network)
-            bufferedCopy(inStream, outStream, false, bytesRead);
-
-            // FTP case: same behavior as CopyUriFileModel
-            if (outStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
-                ((FtpFileModel.FTPOutputStreamWrapper) outStream).completePendingCommand();
-            }
-
-            return true;
-        } catch (Exception e) {
-            return false;
-        } finally {
-            if (connection != null) {
-                connection.disconnect();  // streams already closed by bufferedCopy
-            }
         }
     }
 
@@ -412,14 +455,12 @@ public final class FileUtil {
         }
     }
 
-
     private static boolean deleteNativeFile(@NonNull final File file) {
         if (file.delete()) {
             return true;
         }
         return !file.exists();
     }
-
 
     private static boolean deleteSAFFile(Context context, String target_file_path, Uri tree_uri, String tree_uri_path) {
         // Try with Storage Access Framework.
@@ -775,6 +816,7 @@ public final class FileUtil {
                 bytes_read[0] += count;
             }
             out.flush();
+            Timber.tag(Global.TAG).d("SMB session released in bufferedcopymethod");
         } catch (IOException e) {
             throw e;
         }

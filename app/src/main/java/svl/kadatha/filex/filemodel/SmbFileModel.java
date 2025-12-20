@@ -271,13 +271,13 @@ public class SmbFileModel implements FileModel {
             InputStream inputStream = file.getInputStream();
             Timber.tag(TAG).d("Successfully retrieved InputStream for path: %s", path);
             return new SMBInputStreamWrapper(inputStream, file, share, session, smbClientRepository);
-        } catch (IOException | SMBRuntimeException e) {
+        } catch (Exception e) {
             Timber.tag(TAG).e("Failed to get InputStream: %s", e.getMessage());
-            return null;
-        } finally {
             if (session != null) {
+                Timber.tag(Global.TAG).d("SMB session released in getInputStream()");
                 smbClientRepository.releaseSession(session);
             }
+            return null;
         }
     }
 
@@ -304,11 +304,11 @@ public class SmbFileModel implements FileModel {
             return new SMBOutputStreamWrapper(outputStream, file, share, session, smbClientRepository);
         } catch (IOException | SMBRuntimeException e) {
             Timber.tag(TAG).e("Failed to get OutputStream: %s", e.getMessage());
-            return null;
-        } finally {
             if (session != null) {
+                Timber.tag(Global.TAG).d("SMB session released in getOutputStream()");
                 smbClientRepository.releaseSession(session);
             }
+            return null;
         }
     }
 
