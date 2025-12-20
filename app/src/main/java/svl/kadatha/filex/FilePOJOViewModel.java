@@ -37,6 +37,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import timber.log.Timber;
 
 public class FilePOJOViewModel extends AndroidViewModel {
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
@@ -158,8 +159,8 @@ public class FilePOJOViewModel extends AndroidViewModel {
 //                            throw new RuntimeException(e);
 //                        }
                         final FilePOJO pojo = filePOJOS.get(i);
+                        if (!pojo.getIsDirectory()) continue;
                         SubFileCountUtil.ensureSubFileCount(pojo, (updatedPojo, count) -> {
-                            // ensure on main thread, and use setValue
                             mainHandler.post(() -> subFileCountUpdate.setValue(updatedPojo));
                         });
                     }

@@ -106,7 +106,6 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
             }
         }
 
-
         if (fileObjectType == FileObjectType.USB_TYPE) {
             try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
                 UsbFile usbFileRoot = access.getUsbFile();
@@ -172,6 +171,16 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
             }
         });
 
+        viewModel.subFileCountUpdate.observe(getViewLifecycleOwner(), pojo -> {
+            try {
+                int idx = filePOJO_list.indexOf(pojo);
+                if (idx < 0 || idx >= adapter.getItemCount()) return;
+                adapter.notifyItemChanged(idx);
+            } catch (IndexOutOfBoundsException ignored) {
+                // log and move on – indicates a data/adapter desync
+            }
+        });
+
         getParentFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
@@ -220,7 +229,6 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
             detailFragmentListener.setFileNumberView(viewModel.mselecteditems.size() + "/" + file_list_size);
         }
 
-
         Collections.sort(filePOJO_list, FileComparator.FilePOJOComparate(FileSelectorActivity.SORT, false));
         if (FileSelectorActivity.FILE_GRID_LAYOUT) {
             adapter = new FileSelectorActivity.FileSelectorAdapterGrid(context, this, action_sought_request_code);
@@ -230,6 +238,7 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 
         set_adapter();
         progress_bar.setVisibility(View.GONE);
+        viewModel.ensureSubFileCount();
     }
 
 
@@ -237,7 +246,6 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
     public void onStop() {
         super.onStop();
         fileModifyObserver.startWatching();
-
     }
 
     @Override
@@ -255,6 +263,11 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
 
     private void set_adapter() {
         recycler_view.setAdapter(adapter);
+        RecyclerView.ItemAnimator animator = recycler_view.getItemAnimator();
+        if (animator instanceof androidx.recyclerview.widget.SimpleItemAnimator) {
+            ((androidx.recyclerview.widget.SimpleItemAnimator) animator)
+                    .setSupportsChangeAnimations(false);
+        }
         if (file_list_size == 0) {
             recycler_view.setVisibility(View.GONE);
             folder_empty_textview.setVisibility(View.VISIBLE);

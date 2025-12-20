@@ -106,7 +106,6 @@
         android:background="?attr/dialog_recyclerview_background"
         android:choiceMode="singleChoice"
         android:clipToPadding="false"
-        android:layoutAnimation="@anim/layout_animation_fall_down"
         android:paddingBottom="?attr/actionBarSize"
         android:scrollbarThumbVertical="@drawable/scrollbar"
         android:scrollbars="vertical"

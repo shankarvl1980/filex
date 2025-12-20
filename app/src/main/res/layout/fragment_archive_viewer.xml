@@ -17,7 +17,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:layoutAnimation="@anim/layout_animation_fall_down"
         android:paddingTop="36sp"
         android:paddingBottom="100dp"
         android:scrollbarThumbVertical="@drawable/scrollbar"

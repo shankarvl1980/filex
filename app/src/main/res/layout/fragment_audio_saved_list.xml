@@ -9,7 +9,6 @@
         android:layout_height="match_parent"
         android:background="?attr/dialog_background"
         android:clipToPadding="false"
-        android:layoutAnimation="@anim/layout_animation_fall_down"
         android:padding="@dimen/layout_margin"
         android:paddingBottom="?attr/actionBarSize"
         android:scrollbarThumbVertical="@drawable/scrollbar"

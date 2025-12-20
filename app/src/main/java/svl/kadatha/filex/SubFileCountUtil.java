@@ -28,21 +28,18 @@ import svl.kadatha.filex.network.SmbClientRepository;
 import svl.kadatha.filex.network.WebDavClientRepository;
 import svl.kadatha.filex.usb.ReadAccess;
 import svl.kadatha.filex.usb.UsbFileRootSingleton;
+import timber.log.Timber;
 
 public final class SubFileCountUtil {
-
-
+    
     public static void ensureSubFileCount(FilePOJO pojo, Callback cb) {
         if (!pojo.getIsDirectory()) return;
 
         // If you added dedicated fields:
-        if (pojo.getSize() != null) return;
-        //pojo.setSubFileCountLoading(true);
-
+        if (pojo.getSize() != null && !pojo.getSize().isEmpty()) return;
         int count = computeSubFileCountBlocking(pojo);
         String si = "(" + count + ")";
         pojo.setSize(si);
-        //pojo.setSubFileCountLoading(false);
         cb.onSubFileCountReady(pojo, count);
     }
 

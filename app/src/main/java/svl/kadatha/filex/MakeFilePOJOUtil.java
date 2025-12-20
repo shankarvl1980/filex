@@ -7,6 +7,7 @@ import android.view.View;
 
 import androidx.annotation.RequiresApi;
 
+import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.Metadata;
 import com.google.gson.Gson;
@@ -126,7 +127,7 @@ public class MakeFilePOJOUtil {
         long dateLong = f.lastModified();
         String date = Global.SDF.format(dateLong);
         long sizeLong = 0L;
-        String si;
+        String si = "";
         String file_ext = "";
         int play_overlay_visible = View.INVISIBLE;
         int pdf_overlay_visible = View.INVISIBLE;
@@ -152,12 +153,12 @@ public class MakeFilePOJOUtil {
             sizeLong = f.length();
             si = FileUtil.humanReadableByteCount(sizeLong);
         } else {
-            String sub_file_count = null;
-            String[] file_list;
-            if ((file_list = f.list(Global.File_NAME_FILTER)) != null) {
-                sub_file_count = "(" + file_list.length + ")";
-            }
-            si = sub_file_count;
+//            String sub_file_count = null;
+//            String[] file_list;
+//            if ((file_list = f.list(Global.File_NAME_FILTER)) != null) {
+//                sub_file_count = "(" + file_list.length + ")";
+//            }
+//            si = sub_file_count;
         }
 
         if (f.isHidden()) {
@@ -173,7 +174,7 @@ public class MakeFilePOJOUtil {
         long dateLong = f.lastModified();
         String date = Global.SDF.format(dateLong);
         long sizeLong = 0L;
-        String si;
+        String si = "";
         String file_ext = "";
         int play_overlay_visible = View.INVISIBLE;
         int pdf_overlay_visible = View.INVISIBLE;
@@ -205,12 +206,12 @@ public class MakeFilePOJOUtil {
             }
             si = FileUtil.humanReadableByteCount(sizeLong);
         } else {
-            String sub_file_count = null;
-            String[] file_list;
-            if ((file_list = f.list(Global.File_NAME_FILTER)) != null) {
-                sub_file_count = "(" + file_list.length + ")";
-            }
-            si = sub_file_count;
+//            String sub_file_count = null;
+//            String[] file_list;
+//            if ((file_list = f.list(Global.File_NAME_FILTER)) != null) {
+//                sub_file_count = "(" + file_list.length + ")";
+//            }
+//            si = sub_file_count;
         }
 
         if (f.isHidden()) {
@@ -244,7 +245,7 @@ public class MakeFilePOJOUtil {
         }
 
         String date = Global.SDF.format(dateLong);
-        String si;
+        String si = "";
         String file_ext = "";
         int play_overlay_visible = View.INVISIBLE;
         int pdf_overlay_visible = View.INVISIBLE;
@@ -268,17 +269,17 @@ public class MakeFilePOJOUtil {
             }
             si = FileUtil.humanReadableByteCount(sizeLong);
         } else {
-            String sub_file_count = null;
-            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(path), Global.GET_NIO_FILE_NAME_FILTER())) {
-                int count = 0;
-                for (Path pa : directoryStream) {
-                    ++count;
-                }
-                sub_file_count = "(" + count + ")";
-            } catch (IOException e) {
-
-            }
-            si = sub_file_count;
+//            String sub_file_count;
+//            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(path), Global.GET_NIO_FILE_NAME_FILTER())) {
+//                int count = 0;
+//                for (Path pa : directoryStream) {
+//                    ++count;
+//                }
+//                sub_file_count = "(" + count + ")";
+//            } catch (IOException e) {
+//
+//            }
+//            si = sub_file_count;
         }
 
         if (name.startsWith(".")) {
@@ -311,7 +312,7 @@ public class MakeFilePOJOUtil {
         }
 
         String date = Global.SDF.format(dateLong);
-        String si;
+        String si = "";
         String file_ext = "";
         int play_overlay_visible = View.INVISIBLE;
         int pdf_overlay_visible = View.INVISIBLE;
@@ -342,17 +343,17 @@ public class MakeFilePOJOUtil {
             }
             si = FileUtil.humanReadableByteCount(sizeLong);
         } else {
-            String sub_file_count = null;
-            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(path), Global.GET_NIO_FILE_NAME_FILTER())) {
-                int count = 0;
-                for (Path pa : directoryStream) {
-                    ++count;
-                }
-                sub_file_count = "(" + count + ")";
-            } catch (IOException e) {
-
-            }
-            si = sub_file_count;
+//            String sub_file_count = null;
+//            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(path), Global.GET_NIO_FILE_NAME_FILTER())) {
+//                int count = 0;
+//                for (Path pa : directoryStream) {
+//                    ++count;
+//                }
+//                sub_file_count = "(" + count + ")";
+//            } catch (IOException e) {
+//
+//            }
+//            si = sub_file_count;
         }
 
         if (name.startsWith(".")) {
@@ -375,7 +376,7 @@ public class MakeFilePOJOUtil {
         }
 
         long sizeLong = 0L;
-        String si;
+        String si = "";
         String file_ext = "";
         int play_overlay_visible = View.INVISIBLE;
         int pdf_overlay_visible = View.INVISIBLE;
@@ -400,16 +401,16 @@ public class MakeFilePOJOUtil {
             sizeLong = f.getLength();
             si = FileUtil.humanReadableByteCount(sizeLong);
         } else {
-            String sub_file_count = null;
-            String[] file_list;
-            try {
-                file_list = f.list();
-                sub_file_count = "(" + file_list.length + ")";
-
-            } catch (IOException e) {
-
-            }
-            si = sub_file_count;
+//            String sub_file_count = null;
+//            String[] file_list;
+//            try {
+//                file_list = f.list();
+//                sub_file_count = "(" + file_list.length + ")";
+//
+//            } catch (IOException e) {
+//
+//            }
+//            si = sub_file_count;
         }
 
         return new FilePOJO(FileObjectType.USB_TYPE, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
@@ -461,16 +462,16 @@ public class MakeFilePOJOUtil {
             sizeLong = f.getSize();
             si = FileUtil.humanReadableByteCount(sizeLong);
         } else {
-            String sub_file_count = null;
-            String[] file_list;
-            try {
-                if ((file_list = ftpClient.listNames(file_path)) != null) {
-                    sub_file_count = "(" + file_list.length + ")";
-                }
-                si = sub_file_count;
-            } catch (IOException e) {
-                Timber.tag(TAG).e("Error listing FTP directory contents: %s", e.getMessage());
-            }
+//            String sub_file_count = null;
+//            String[] file_list;
+//            try {
+//                if ((file_list = ftpClient.listNames(file_path)) != null) {
+//                    sub_file_count = "(" + file_list.length + ")";
+//                }
+//                si = sub_file_count;
+//            } catch (IOException e) {
+//                Timber.tag(TAG).e("Error listing FTP directory contents: %s", e.getMessage());
+//            }
         }
 
         return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
@@ -513,7 +514,7 @@ public class MakeFilePOJOUtil {
 
         String date = Global.SDF.format(dateLong);
         String path = name; // 'stat' outputs the full path in %n
-        String si;
+        String si = "";
 
         String file_ext = "";
         int play_overlay_visible = View.INVISIBLE;
@@ -538,12 +539,12 @@ public class MakeFilePOJOUtil {
             }
             si = FileUtil.humanReadableByteCount(sizeLong);
         } else {
-            String sub_file_count = null;
-            String[] file_list;
-            if ((file_list = RootUtils.listFilesInDirectory(file_path)) != null) {
-                sub_file_count = "(" + file_list.length + ")";
-            }
-            si = sub_file_count;
+//            String sub_file_count = null;
+//            String[] file_list;
+//            if ((file_list = RootUtils.listFilesInDirectory(file_path)) != null) {
+//                sub_file_count = "(" + file_list.length + ")";
+//            }
+//            si = sub_file_count;
         }
 
         if (name.startsWith(".")) {
@@ -595,16 +596,16 @@ public class MakeFilePOJOUtil {
             sizeLong = attrs.getSize();
             si = FileUtil.humanReadableByteCount(sizeLong);
         } else {
-            String sub_file_count = null;
-            try {
-                Vector<ChannelSftp.LsEntry> entries = channelSftp.ls(file_path);
-                if (entries != null) {
-                    sub_file_count = "(" + entries.size() + ")";
-                }
-                si = sub_file_count;
-            } catch (SftpException e) {
-                Timber.tag(TAG).e("Error listing SFTP directory contents: %s", e.getMessage());
-            }
+//            String sub_file_count = null;
+//            try {
+//                Vector<ChannelSftp.LsEntry> entries = channelSftp.ls(file_path);
+//                if (entries != null) {
+//                    sub_file_count = "(" + entries.size() + ")";
+//                }
+//                si = sub_file_count;
+//            } catch (SftpException e) {
+//                Timber.tag(TAG).e("Error listing SFTP directory contents: %s", e.getMessage());
+//            }
         }
         return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
     }
@@ -652,17 +653,17 @@ public class MakeFilePOJOUtil {
             sizeLong = resource.getContentLength();
             si = FileUtil.humanReadableByteCount(sizeLong);
         } else {
-            String sub_file_count = null;
-            try {
-                List<DavResource> resources = sardine.list(resource.getHref().toString());
-                if (resources != null) {
-                    // Subtract 1 to exclude the current directory itself
-                    sub_file_count = "(" + (resources.size() - 1) + ")";
-                }
-                si = sub_file_count;
-            } catch (IOException e) {
-                Timber.tag(TAG).e("Error listing WebDAV directory contents: %s", e.getMessage());
-            }
+//            String sub_file_count = null;
+//            try {
+//                List<DavResource> resources = sardine.list(resource.getHref().toString());
+//                if (resources != null) {
+//                    // Subtract 1 to exclude the current directory itself
+//                    sub_file_count = "(" + (resources.size() - 1) + ")";
+//                }
+//                si = sub_file_count;
+//            } catch (IOException e) {
+//                Timber.tag(TAG).e("Error listing WebDAV directory contents: %s", e.getMessage());
+//            }
         }
         return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
     }
@@ -676,7 +677,7 @@ public class MakeFilePOJOUtil {
         String date = Global.SDF.format(new Date(dateLong));
 
         long sizeLong = 0L;
-        String si;
+        String si = "";
 
         String file_ext = "";
         int play_overlay_visible = View.INVISIBLE;
@@ -702,34 +703,34 @@ public class MakeFilePOJOUtil {
             sizeLong = smbFileInfo.getFileSize();
             si = FileUtil.humanReadableByteCount(sizeLong);
         } else {
-            String sub_file_count;
-            SmbClientRepository smbClientRepository = null;
-            Session session = null;
-            String shareName;
-            try {
-                smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
-                session = smbClientRepository.getSession();
-                shareName = smbClientRepository.getShareName();
-                try (DiskShare share = (DiskShare) session.connectShare(shareName)) {
-                    // Adjust fileclickselected to remove leading "/" if necessary
-                    String adjustedPath = path.startsWith("/") ? path.substring(1) : path;
-
-                    // List files in the directory
-                    List<FileIdBothDirectoryInformation> fileList = share.list(adjustedPath);
-                    sub_file_count = "(" + (fileList.size() - 2) + ")";
-                    si = sub_file_count;
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } finally {
-                if (smbClientRepository != null && session != null) {
-                    smbClientRepository.releaseSession(session);
-                    Timber.tag(TAG).d("SMB session released");
-                }
-            }
+//            String sub_file_count;
+//            SmbClientRepository smbClientRepository = null;
+//            Session session = null;
+//            String shareName;
+//            try {
+//                smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+//                session = smbClientRepository.getSession();
+//                shareName = smbClientRepository.getShareName();
+//                try (DiskShare share = (DiskShare) session.connectShare(shareName)) {
+//                    // Adjust fileclickselected to remove leading "/" if necessary
+//                    String adjustedPath = path.startsWith("/") ? path.substring(1) : path;
+//
+//                    // List files in the directory
+//                    List<FileIdBothDirectoryInformation> fileList = share.list(adjustedPath);
+//                    sub_file_count = "(" + (fileList.size() - 2) + ")";
+//                    si = sub_file_count;
+//                } catch (IOException e) {
+//                    throw new RuntimeException(e);
+//                }
+//
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            } finally {
+//                if (smbClientRepository != null && session != null) {
+//                    smbClientRepository.releaseSession(session);
+//                    Timber.tag(TAG).d("SMB session released");
+//                }
+//            }
         }
         return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
     }
@@ -868,27 +869,12 @@ public class MakeFilePOJOUtil {
             try {
                 String accessToken = CloudAccountViewModel.DROP_BOX_ACCESS_TOKEN;
                 // Get Dropbox client
-                DbxClientV2 dbxClient = new DbxClientV2(new com.dropbox.core.DbxRequestConfig("YourAppName"), accessToken);
+                DbxClientV2 dbxClient = new DbxClientV2(new DbxRequestConfig("YourAppName"), accessToken);
 
                 if (file_path.equals("/")) {
                     // Treat root as empty string in Dropbox
                     // Create a FilePOJO representing the root directory
-                    filePOJO = new FilePOJO(
-                            fileObjectType,
-                            "/",             // name
-                            null,            // package_name
-                            "/",             // path
-                            true,            // isDirectory
-                            0L,              // dateLong
-                            null,            // date
-                            0L,              // sizeLong
-                            null,            // si
-                            R.drawable.folder_icon, // type (folder)
-                            null,            // file_ext
-                            Global.ENABLE_ALFA,
-                            View.INVISIBLE,
-                            View.INVISIBLE
-                    );
+                    filePOJO = new FilePOJO(fileObjectType,"/",null,"/",true,0L,null,0L,null,R.drawable.folder_icon,null,Global.ENABLE_ALFA,View.INVISIBLE,View.INVISIBLE);
                 } else {
                     // For non-root paths, fetch metadata
                     Metadata metadata = dbxClient.files().getMetadata(file_path);

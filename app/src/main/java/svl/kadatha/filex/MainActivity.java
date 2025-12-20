@@ -449,7 +449,17 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         usb_heading.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                final BlankFragment pbf = BlankFragment.newInstance();
+                pbf.show(fm, "");
+                //drawerLayout.closeDrawer(drawer);
                 Global.LOCAL_BROADCAST(UsbDocumentProvider.ACTION_USB_EJECT,LocalBroadcastManager.getInstance(context),null);
+                Handler h = new Handler();
+                h.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        pbf.dismissAllowingStateLoss();
+                    }
+                }, DRAWER_CLOSE_DELAY);
             }
         });
         usb_heading.setVisibility(USB_ATTACHED ? View.VISIBLE : View.GONE);
@@ -540,7 +550,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         library_scan_heading_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
                 final BlankFragment pbf = BlankFragment.newInstance();
                 pbf.show(fm, "");
                 drawerLayout.closeDrawer(drawer);

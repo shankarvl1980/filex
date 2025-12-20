@@ -34,7 +34,6 @@
         android:background="?attr/dialog_recyclerview_background"
         android:clipToPadding="false"
         android:fadeScrollbars="true"
-        android:layoutAnimation="@anim/layout_animation_fall_down"
         android:paddingBottom="100dp"
         android:scrollbarThumbVertical="@drawable/scrollbar"
         android:scrollbars="vertical"

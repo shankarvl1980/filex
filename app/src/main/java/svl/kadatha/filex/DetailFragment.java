@@ -350,7 +350,6 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
             }
         });
 
-
         getParentFragmentManager().setFragmentResultListener(CANCEL_PROGRESS_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
@@ -593,6 +592,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
             ((androidx.recyclerview.widget.SimpleItemAnimator) animator)
                     .setSupportsChangeAnimations(false);
         }
+
         if (file_list_size == 0) {
             recyclerView.setVisibility(View.GONE);
             folder_empty.setVisibility(View.VISIBLE);
