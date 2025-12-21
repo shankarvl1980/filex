@@ -445,7 +445,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         storageDirListRecyclerView.setAdapter(storageRecyclerAdapter);
 
         usb_eject_layout_group = findViewById(R.id.usb_group);
-        usb_eject_layout_group.setOnClickListener(new View.OnClickListener() {
+        View usb_background=findViewById(R.id.usb_background);
+        usb_background.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final BlankFragment pbf = BlankFragment.newInstance();
@@ -1698,7 +1699,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     }
 
     private void setupDevice() {
-
         if (UsbDocumentProvider.USB_MASS_STORAGE_DEVICES.isEmpty()) {
             return;
         }
@@ -1719,7 +1719,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             // Set chunk size, etc.
             int chunk = usbCurrentFs.getChunkSize();
             FileUtil.USB_CHUNK_SIZE = (chunk > 0) ? chunk : FileUtil.BUFFER_SIZE;
-            usb_eject_layout_group.setVisibility(USB_ATTACHED ? View.VISIBLE : View.GONE);
+            usb_eject_layout_group.setVisibility(View.VISIBLE);
         } catch (Exception e) {
             // Handle exception
         }
@@ -2163,7 +2163,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             if (id == R.id.toolbar_btn_1) {
                 finish();
             } else if (id == R.id.toolbar_btn_2) {
-                //final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
                 final BlankFragment pbf = BlankFragment.newInstance();
                 pbf.show(fm, "");
                 drawerLayout.closeDrawer(drawer);
@@ -2537,7 +2536,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 v.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View p) {
                         position[0] = getBindingAdapterPosition();
-                        //final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
                         final BlankFragment pbf = BlankFragment.newInstance();
                         pbf.show(fm, "");
                         drawerLayout.closeDrawer(drawer);

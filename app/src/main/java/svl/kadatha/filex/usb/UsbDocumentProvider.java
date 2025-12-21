@@ -54,16 +54,12 @@ public class UsbDocumentProvider extends DocumentsProvider {
     private BroadcastReceiver usbPermissionReceiver;
     private BroadcastReceiver usbAttachedReceiver;
     private BroadcastReceiver usbDetachedReceiver;
-    private static final String ACTION_USB_RECOGNITION_ENABLED =
-            "svl.kadatha.filex.ACTION_USB_RECOGNITION_ENABLED";
-
+    public static final String ACTION_USB_RECOGNITION_ENABLED = "svl.kadatha.filex.ACTION_USB_RECOGNITION_ENABLED";
     private boolean enableReceiverRegistered = false;
     private boolean receiversRegistered = false;
     public static final String ACTION_USB_EJECT = "svl.kadatha.filex.ACTION_USB_EJECT";
     private BroadcastReceiver ejectReceiver;
     private boolean ejectReceiverRegistered = false;
-
-
 
 
     /**
@@ -149,7 +145,6 @@ public class UsbDocumentProvider extends DocumentsProvider {
                 @Override
                 public void onReceive(Context c, Intent i) {
                     Global.RECOGNISE_USB = true;
-
                     if (!receiversRegistered) {
                         initReceivers();
                         registerReceivers(c);
@@ -158,9 +153,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
                     rescanConnectedDevices(c);
                 }
             };
-            localBroadcastManager.registerReceiver(
-                    enableReceiver, new IntentFilter(ACTION_USB_RECOGNITION_ENABLED)
-            );
+            localBroadcastManager.registerReceiver(enableReceiver, new IntentFilter(ACTION_USB_RECOGNITION_ENABLED));
             enableReceiverRegistered = true;
         }
 
@@ -177,9 +170,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
                     ejectCurrentDevice();
                 }
             };
-            localBroadcastManager.registerReceiver(
-                    ejectReceiver, new IntentFilter(ACTION_USB_EJECT)
-            );
+            localBroadcastManager.registerReceiver(ejectReceiver, new IntentFilter(ACTION_USB_EJECT));
             ejectReceiverRegistered = true;
         }
 
@@ -203,7 +194,6 @@ public class UsbDocumentProvider extends DocumentsProvider {
             public void onReceive(Context context, Intent intent) {
                 UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                 if (device == null) return;
-
                 if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                     discoverDevice(device);
                 } else {
@@ -321,15 +311,19 @@ public class UsbDocumentProvider extends DocumentsProvider {
                 Intent intent = new Intent(USB_ATTACH_BROADCAST);
                 intent.putExtra(USB_ATTACHED, true);
                 localBroadcastManager.sendBroadcast(intent);
-
             } else {
-                int flags = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                        ? PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
-                        : PendingIntent.FLAG_UPDATE_CURRENT;
+                Intent permIntent = new Intent(ACTION_USB_PERMISSION);
+                permIntent.setPackage(context.getPackageName()); // keeps it inside your app (recommended)
 
-                PendingIntent permissionIntent = PendingIntent.getBroadcast(
-                        context, 0, new Intent(ACTION_USB_PERMISSION), flags
-                );
+                int flags;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    // MUST be mutable so the system can add EXTRA_DEVICE / EXTRA_PERMISSION_GRANTED
+                    flags = PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT;
+                } else {
+                    flags = PendingIntent.FLAG_UPDATE_CURRENT;
+                }
+
+                PendingIntent permissionIntent = PendingIntent.getBroadcast(context, 0, permIntent, flags);
                 usbManager.requestPermission(device, permissionIntent);
             }
         }
@@ -344,6 +338,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
                 break;
             }
         }
+
         if (mounted == null) return;
 
         // Reuse your existing cleanup path

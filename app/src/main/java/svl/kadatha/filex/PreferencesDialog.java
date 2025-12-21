@@ -21,6 +21,8 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import svl.kadatha.filex.usb.UsbDocumentProvider;
+
 public class PreferencesDialog extends DialogFragment {
     public static String THEME;
     DetailFragment df;
@@ -171,7 +173,7 @@ public class PreferencesDialog extends DialogFragment {
                         Global.RECOGNISE_USB = b;
                         tinyDB.putBoolean("recognise_usb", Global.RECOGNISE_USB);
                         if(Global.RECOGNISE_USB){
-                            Global.LOCAL_BROADCAST("svl.kadatha.filex.ACTION_USB_RECOGNITION_ENABLED",LocalBroadcastManager.getInstance(context),null);
+                            Global.LOCAL_BROADCAST(UsbDocumentProvider.ACTION_USB_RECOGNITION_ENABLED,LocalBroadcastManager.getInstance(context),null);
                         }
                     }
                 }, 500);
