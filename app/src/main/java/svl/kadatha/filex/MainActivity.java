@@ -165,7 +165,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     private NestedScrollView nestedScrollView;
     private RepositoryClass repositoryClass;
     private NetworkStateReceiver networkStateReceiver;
-    private Group usb_heading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -445,8 +444,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         storageRecyclerAdapter = new StorageRecyclerAdapter(repositoryClass.storage_dir);
         storageDirListRecyclerView.setAdapter(storageRecyclerAdapter);
 
-        usb_heading = findViewById(R.id.usb_background);
-        usb_heading.setOnClickListener(new View.OnClickListener() {
+        usb_eject_layout_group = findViewById(R.id.usb_group);
+        usb_eject_layout_group.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final BlankFragment pbf = BlankFragment.newInstance();
@@ -462,7 +461,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 }, DRAWER_CLOSE_DELAY);
             }
         });
-        usb_heading.setVisibility(USB_ATTACHED ? View.VISIBLE : View.GONE);
+        usb_eject_layout_group.setVisibility(USB_ATTACHED ? View.VISIBLE : View.GONE);
         View working_dir_heading_layout = findViewById(R.id.working_dir_layout_background);
         working_dir_heading_layout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -1720,7 +1719,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             // Set chunk size, etc.
             int chunk = usbCurrentFs.getChunkSize();
             FileUtil.USB_CHUNK_SIZE = (chunk > 0) ? chunk : FileUtil.BUFFER_SIZE;
-            usb_heading.setVisibility(USB_ATTACHED ? View.VISIBLE : View.GONE);
+            usb_eject_layout_group.setVisibility(USB_ATTACHED ? View.VISIBLE : View.GONE);
         } catch (Exception e) {
             // Handle exception
         }
@@ -2581,7 +2580,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
                     // Clear the singleton so no one can use the old reference
                     UsbFileRootSingleton.getInstance().clearUsbFileRoot();
-                    usb_heading.setVisibility(View.GONE);
+                    usb_eject_layout_group.setVisibility(View.GONE);
                     // The rest of your existing teardown code remains:
                     Iterator<FilePOJO> iterator = repositoryClass.storage_dir.iterator();
                     while (iterator.hasNext()) {

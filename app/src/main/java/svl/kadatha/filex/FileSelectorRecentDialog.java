@@ -10,6 +10,9 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -182,7 +185,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
     }
 
     private void discoverDevice() {
-
         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
         int pending_intent_flag = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT : PendingIntent.FLAG_UPDATE_CURRENT;
         for (UsbDevice device : usbManager.getDeviceList().values()) {
@@ -200,16 +202,77 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
     private class RecentRecyclerAdapter extends RecyclerView.Adapter<RecentRecyclerAdapter.ViewHolder> {
         final boolean storage_dir;
         LinkedList<FilePOJO> dir_linkedlist;
+        private static final int VT_CENTER = 0;       // existing centered layout
+        private static final int VT_TOP = 1;  // new top layout
+        private final int iconHeightPx;
 
         RecentRecyclerAdapter(LinkedList<FilePOJO> dir_linkedlist, boolean storage_dir) {
             this.dir_linkedlist = dir_linkedlist;
             this.storage_dir = storage_dir;
+            iconHeightPx = Global.THIRTY_FOUR_DP;
         }
 
         @Override
-        public RecentRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
-            View itemview = LayoutInflater.from(context).inflate(R.layout.storage_dir_recyclerview_layout, p1, false);
-            return new ViewHolder(itemview);
+        public int getItemViewType(int position) {
+            // Storage dir must always be centered (your requirement)
+            if (storage_dir) return VT_CENTER;
+
+            FilePOJO filePOJO = dir_linkedlist.get(position);
+            if (filePOJO == null) return VT_CENTER;
+
+            // Build the same display text you set in onBind (IMPORTANT!)
+            String displayText;
+            switch (filePOJO.getFileObjectType()) {
+                case USB_TYPE:  displayText = DetailFragment.USB_FILE_PREFIX + filePOJO.getPath(); break;
+                case FTP_TYPE:  displayText = DetailFragment.FTP_FILE_PREFIX + filePOJO.getPath(); break;
+                case SFTP_TYPE: displayText = DetailFragment.SFTP_FILE_PREFIX + filePOJO.getPath(); break;
+                case WEBDAV_TYPE: displayText = DetailFragment.WEBDAV_FILE_PREFIX + filePOJO.getPath(); break;
+                case SMB_TYPE:  displayText = DetailFragment.SMB_FILE_PREFIX + filePOJO.getPath(); break;
+                default:        displayText = filePOJO.getPath(); break;
+            }
+
+            // We need available text width. Use a conservative approximation from RecyclerView width.
+            // This works well in practice and avoids measuring in onBind.
+            int rvWidth = recent_recyclerview.getWidth(); // keep a reference to recyclerView in adapter or pass it
+            if (rvWidth <= 0) return VT_CENTER; // first layout pass fallback
+
+            int horizontalPadding = 2 * Global.FOUR_DP;
+            int iconAndMargins = iconHeightPx + (2 * Global.FOUR_DP);
+            int availableTextWidth = rvWidth - horizontalPadding - iconAndMargins;
+
+            if (availableTextWidth <= 0) return VT_CENTER;
+
+            int textHeight = measureTextHeightPx(displayText, availableTextWidth);
+
+            // If text is taller than icon => top align
+            return (textHeight > iconHeightPx) ? VT_TOP : VT_CENTER;
+        }
+
+        private int measureTextHeightPx(CharSequence text, int widthPx) {
+            TextPaint paint = new TextPaint();
+            paint.setAntiAlias(true);
+
+            // Match your TextView text size: 17sp
+            float textSizePx = 17f * context.getResources().getDisplayMetrics().scaledDensity;
+            paint.setTextSize(textSizePx);
+
+            StaticLayout layout;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                layout = StaticLayout.Builder.obtain(text, 0, text.length(), paint, widthPx)
+                        .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+                        .setIncludePad(false)
+                        .build();
+            } else {
+                layout = new StaticLayout(text, paint, widthPx, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+            }
+            return layout.getHeight();
+        }
+
+        @Override
+        public RecentRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            int layout = (viewType == VT_TOP) ? R.layout.storage_dir_recyclerview_layout_top : R.layout.storage_dir_recyclerview_layout;
+            View itemview = LayoutInflater.from(context).inflate(layout, parent, false);
+            return new RecentRecyclerAdapter.ViewHolder(itemview);
         }
 
         @Override
@@ -294,7 +357,6 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
                 textView_recent_dir = view.findViewById(R.id.text_storage_dir_name);
 
                 this.view.setOnClickListener(new View.OnClickListener() {
-
                     public void onClick(View p) {
                         pos = getBindingAdapterPosition();
                         final FilePOJO filePOJO = dir_linkedlist.get(pos);

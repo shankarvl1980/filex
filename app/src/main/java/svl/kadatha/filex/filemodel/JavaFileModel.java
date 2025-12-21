@@ -17,6 +17,7 @@ import java.io.OutputStream;
 import svl.kadatha.filex.App;
 import svl.kadatha.filex.FileUtil;
 import svl.kadatha.filex.Global;
+import timber.log.Timber;
 
 @SuppressWarnings("IOStreamConstructor")
 public class JavaFileModel implements FileModel {
@@ -44,7 +45,7 @@ public class JavaFileModel implements FileModel {
         Uri uri = FileUtil.getDocumentUri(target_file_path, tree_uri, tree_uri_path);
         try {
             uri = DocumentsContract.renameDocument(context.getContentResolver(), uri, new_name);
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
 
         }
         return uri != null;
@@ -53,7 +54,6 @@ public class JavaFileModel implements FileModel {
     private static boolean mkdirSAF(Context context, String target_file_path, String name, Uri tree_uri, String tree_uri_path) {
         Uri uri = FileUtil.createDocumentUri(context, target_file_path, name, true, tree_uri, tree_uri_path);
         return uri != null;
-
     }
 
     private static boolean mkdirsSAFFile(Context context, String parentFilePath, @NonNull String path, Uri treeUri, String treeUriPath) {
@@ -107,34 +107,27 @@ public class JavaFileModel implements FileModel {
     @Override
     public boolean rename(String new_name, boolean overwrite) {
         if (writeable) {
-            final File src = this.file;
-            final File parent = src.getParentFile();
+            final File parent = file.getParentFile();
             if (parent == null) return false;
 
             final File target = new File(parent, new_name);
 
             // Same exact path string => nothing to do
-            if (src.getAbsolutePath().equals(target.getAbsolutePath())) return true;
+            if (file.getAbsolutePath().equals(target.getAbsolutePath())) return true;
 
             // If direct rename works, done
-            if (src.renameTo(target)) return true;
-
-            // If target exists AND it's NOT just a case-change of the same name, then fail
-            // (Because that means a real conflict)
-            if (target.exists() && !src.getName().equalsIgnoreCase(new_name)) {
-                return false;
-            }
+            if (file.renameTo(target)) return true;
 
             // Case-only rename workaround: src -> temp -> target
             final File tmp = new File(parent,
-                    src.getName() + ".~casefix." + android.os.Process.myPid() + "." + System.nanoTime());
-
-            if (!src.renameTo(tmp)) return false;
+                    file.getName() + ".~casefix." + android.os.Process.myPid() + "." + System.nanoTime());
+            Timber.tag(Global.TAG).d(tmp.getName());
+            if (!file.renameTo(tmp)) return false;
 
             if (tmp.renameTo(target)) return true;
 
             // rollback
-            tmp.renameTo(src);
+            tmp.renameTo(file);
             return false;
         } else {
             if (overwrite) {

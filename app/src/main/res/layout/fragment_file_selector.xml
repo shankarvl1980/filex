@@ -12,7 +12,7 @@
         android:maxLines="1"
         android:paddingHorizontal="@dimen/ten_dp"
         android:paddingTop="@dimen/layout_margin"
-        android:textColor="?attr/toolbar_text_color"
+        android:textColor="?attr/recycler_second_text_color"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText

@@ -241,12 +241,7 @@ public class RenameFileDialog extends DialogFragment {
                     dismissAllowingStateLoss();
                     return;
                 }
-                if (new_name.equalsIgnoreCase(existing_name)) {
-                    imm.hideSoftInputFromWindow(new_file_name_edittext.getWindowToken(), 0);
-                    dismissAllowingStateLoss();
-                    Global.print(context, getString(R.string.could_not_be_renamed));
-                    return;
-                }
+
                 if (CheckString.whetherStringContainsSpecialCharacters(new_name)) {
                     Global.print(context, getString(R.string.avoid_name_involving_special_characters));
                     return;

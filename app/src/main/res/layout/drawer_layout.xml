@@ -36,16 +36,25 @@
                 />
 
             <androidx.constraintlayout.widget.Group
+                android:id="@+id/usb_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/layout_margin"
+                app:constraint_referenced_ids="usb_background,usb_heading,eject_usb_image_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/drawer_recyclerview" />
+            <View
                 android:id="@+id/usb_background"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginTop="@dimen/layout_margin"
                 android:background="?attr/drawer_title"
-                android:visibility="gone"
                 app:constraint_referenced_ids="usb_heading,eject_usb_image_view"
-                app:layout_constraintBottom_toBottomOf="@id/usb_heading"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/usb_heading"
                 app:layout_constraintTop_toBottomOf="@id/drawer_recyclerview" />
 
             <TextView
@@ -85,7 +94,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/working_dir_heading"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/usb_background" />
+                app:layout_constraintTop_toBottomOf="@id/usb_heading" />
 
             <TextView
                 android:id="@+id/working_dir_heading"
