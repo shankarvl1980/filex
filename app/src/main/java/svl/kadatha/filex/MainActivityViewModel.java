@@ -19,7 +19,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     public boolean archive_view, working_dir_open, clean_storage_shown, library_or_search_shown, network_shown, cloud_shown;
     public String toolbar_shown = "bottom";
     public Intent send_intent;
-    private boolean isCancelled,show_usb_eject;
+    private boolean isCancelled, show_usb_eject;
     private Future<?> future1, future2, future3, future4, future5, future6, future7, future8, future9, future10;
 
 

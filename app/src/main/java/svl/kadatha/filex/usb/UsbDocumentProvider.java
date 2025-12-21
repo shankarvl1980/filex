@@ -48,20 +48,11 @@ public class UsbDocumentProvider extends DocumentsProvider {
      */
     public static final String ACTION_USB_PERMISSION = "svl.kadatha.filex.USB_PERMISSION";
     public static final String USB_ATTACH_BROADCAST = "svl.kadatha.filex.USB";
+    public static final String ACTION_USB_RECOGNITION_ENABLED = "svl.kadatha.filex.ACTION_USB_RECOGNITION_ENABLED";
+    public static final String ACTION_USB_EJECT = "svl.kadatha.filex.ACTION_USB_EJECT";
     private static final String TAG = UsbDocumentProvider.class.getSimpleName();
     private static final String DIRECTORY_SEPARATOR = "/";
     private static final String ROOT_SEPARATOR = ":";
-    private BroadcastReceiver usbPermissionReceiver;
-    private BroadcastReceiver usbAttachedReceiver;
-    private BroadcastReceiver usbDetachedReceiver;
-    public static final String ACTION_USB_RECOGNITION_ENABLED = "svl.kadatha.filex.ACTION_USB_RECOGNITION_ENABLED";
-    private boolean enableReceiverRegistered = false;
-    private boolean receiversRegistered = false;
-    public static final String ACTION_USB_EJECT = "svl.kadatha.filex.ACTION_USB_EJECT";
-    private BroadcastReceiver ejectReceiver;
-    private boolean ejectReceiverRegistered = false;
-
-
     /**
      * Default root projection: everything but Root.COLUMN_MIME_TYPES
      */
@@ -84,9 +75,15 @@ public class UsbDocumentProvider extends DocumentsProvider {
             DocumentsContract.Document.COLUMN_SIZE,
             DocumentsContract.Document.COLUMN_LAST_MODIFIED};
     public static ArrayList<UsbMassStorageDevice> USB_MASS_STORAGE_DEVICES;
-
     private final Map<String, UsbPartition> mRoots = new HashMap<>();
     private final LruCache<String, UsbFile> mFileCache = new LruCache<>(100);
+    private BroadcastReceiver usbPermissionReceiver;
+    private BroadcastReceiver usbAttachedReceiver;
+    private BroadcastReceiver usbDetachedReceiver;
+    private boolean enableReceiverRegistered = false;
+    private boolean receiversRegistered = false;
+    private BroadcastReceiver ejectReceiver;
+    private boolean ejectReceiverRegistered = false;
     private LocalBroadcastManager localBroadcastManager;
 
     private static String[] resolveRootProjection(String[] projection) {
@@ -166,7 +163,8 @@ public class UsbDocumentProvider extends DocumentsProvider {
         // Eject receiver is useful only when feature is ON (or you can keep it always)
         if (!ejectReceiverRegistered) {
             ejectReceiver = new BroadcastReceiver() {
-                @Override public void onReceive(Context c, Intent i) {
+                @Override
+                public void onReceive(Context c, Intent i) {
                     ejectCurrentDevice();
                 }
             };

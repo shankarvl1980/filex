@@ -15,7 +15,7 @@ import com.bumptech.glide.signature.ObjectKey;
 
 import java.io.File;
 
-public class StorageLibraryRecyclerViewLayoutList extends ViewGroup{
+public class StorageLibraryRecyclerViewLayoutList extends ViewGroup {
     private final Context context;
     public int itemWidth, itemHeight;
     private ImageView fileimageview, play_overlay_imageview, pdf_overlay_imageview;
@@ -26,7 +26,7 @@ public class StorageLibraryRecyclerViewLayoutList extends ViewGroup{
     StorageLibraryRecyclerViewLayoutList(Context context, int itemWidth) {
         super(context);
         this.context = context;
-        this.itemWidth=itemWidth;
+        this.itemWidth = itemWidth;
         init();
     }
 
@@ -36,14 +36,14 @@ public class StorageLibraryRecyclerViewLayoutList extends ViewGroup{
         play_overlay_imageview = view.findViewById(R.id.play_overlay_image_storage_dir);
         pdf_overlay_imageview = view.findViewById(R.id.pdf_overlay_image_storage_dir);
         filenametextview = view.findViewById(R.id.text_storage_dir_name);
-        
+
         int overlay_image_dimension;
-        imageview_dimension=fileimageview.getWidth();
-        
+        imageview_dimension = fileimageview.getWidth();
+
         overlay_image_dimension = imageview_dimension / 2 - Global.TWO_DP;
 
         setBackground(ContextCompat.getDrawable(context, R.drawable.select_detail_recyclerview));
-        
+
         play_overlay_imageview.getLayoutParams().width = overlay_image_dimension;
         play_overlay_imageview.getLayoutParams().height = overlay_image_dimension;
 
@@ -104,7 +104,7 @@ public class StorageLibraryRecyclerViewLayoutList extends ViewGroup{
         v.layout(overlayX, overlayY, overlayX + overlayMeasuredWidth, overlayY + overlayMeasuredHeight);
 
         x += fileMeasuredWidth + Global.TEN_DP;
-        
+
         v = filenametextview;
         y = top_offset;
         v.layout(x, y, x + v.getMeasuredWidth(), y + v.getMeasuredHeight());

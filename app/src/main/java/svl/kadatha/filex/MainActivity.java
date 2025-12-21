@@ -160,7 +160,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     });
     private ListPopupWindowPOJO extract_listPopupWindowPOJO, open_listPopupWindowPOJO;
     private ListPopupWindowPOJO.PopupWindowAdapter popupWindowAdapter;
-    private Group usb_eject_layout_group,library_layout_group, clean_storage_layout_group, network_layout_group, cloud_layout_group;
+    private Group usb_eject_layout_group, library_layout_group, clean_storage_layout_group, network_layout_group, cloud_layout_group;
     private Handler h;
     private NestedScrollView nestedScrollView;
     private RepositoryClass repositoryClass;
@@ -445,14 +445,14 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         storageDirListRecyclerView.setAdapter(storageRecyclerAdapter);
 
         usb_eject_layout_group = findViewById(R.id.usb_group);
-        View usb_background=findViewById(R.id.usb_background);
+        View usb_background = findViewById(R.id.usb_background);
         usb_background.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final BlankFragment pbf = BlankFragment.newInstance();
                 pbf.show(fm, "");
                 //drawerLayout.closeDrawer(drawer);
-                Global.LOCAL_BROADCAST(UsbDocumentProvider.ACTION_USB_EJECT,LocalBroadcastManager.getInstance(context),null);
+                Global.LOCAL_BROADCAST(UsbDocumentProvider.ACTION_USB_EJECT, LocalBroadcastManager.getInstance(context), null);
                 Handler h = new Handler();
                 h.postDelayed(new Runnable() {
                     @Override
@@ -1590,6 +1590,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         if (size == 0) {
             DeselectAllAndAdjustToolbars(df);
         }
+    }
+
+    @Override
+    public void setFileNumberView(String file_number_string) {
+        file_number_view.setText(file_number_string);
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -1629,11 +1634,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     });
-
-    @Override
-    public void setFileNumberView(String file_number_string) {
-        file_number_view.setText(file_number_string);
-    }
 
     private void MoveToCopyToProcedure(DetailFragment df, boolean cut) {
         clear_cache = false;

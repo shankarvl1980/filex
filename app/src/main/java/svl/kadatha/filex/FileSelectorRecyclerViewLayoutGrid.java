@@ -115,7 +115,7 @@ public class FileSelectorRecyclerViewLayoutGrid extends RecyclerViewLayout {
         measureChildWithMargins(filesubfilecounttextview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
         maxHeight += filesubfilecounttextview.getMeasuredHeight();
 
-        maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2+Global.TWELVE_DP;//Global.FOUR_DP*2; ////providing top and bottom margin of six dp
+        maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2 + Global.TWELVE_DP;//Global.FOUR_DP*2; ////providing top and bottom margin of six dp
         itemHeight = maxHeight;
         setMeasuredDimension(widthMeasureSpec, maxHeight);
 
@@ -123,7 +123,7 @@ public class FileSelectorRecyclerViewLayoutGrid extends RecyclerViewLayout {
 
     @Override
     protected void onLayout(boolean p1, int l, int t, int r, int b) {
-        int x = 0, y = Global.RECYCLERVIEW_ITEM_SPACING+Global.SIX_DP;
+        int x = 0, y = Global.RECYCLERVIEW_ITEM_SPACING + Global.SIX_DP;
 
         int grid_width = (itemWidth - (Global.RECYCLERVIEW_ITEM_SPACING * 2)) / FileSelectorActivity.GRID_COUNT; //Deducting twenty dp because, recyclerview is added start and end padding of ten dp
         x += (grid_width - imageview_dimension) / 2;

@@ -182,8 +182,14 @@ public final class FileUtil {
         } finally {
             // Only close here if bufferedCopy() never ran (so it couldn't close them)
             if (!bufferedCopyStarted) {
-                try { if (fileInputStream != null) fileInputStream.close(); } catch (Exception ignored) {}
-                try { if (outputStream != null) outputStream.close(); } catch (Exception ignored) {}
+                try {
+                    if (fileInputStream != null) fileInputStream.close();
+                } catch (Exception ignored) {
+                }
+                try {
+                    if (outputStream != null) outputStream.close();
+                } catch (Exception ignored) {
+                }
             }
         }
     }
@@ -223,8 +229,14 @@ public final class FileUtil {
 
         } finally {
             if (!bufferedCopyStarted) {
-                try { if (inputStream != null) inputStream.close(); } catch (Exception ignored) {}
-                try { if (outputStream != null) outputStream.close(); } catch (Exception ignored) {}
+                try {
+                    if (inputStream != null) inputStream.close();
+                } catch (Exception ignored) {
+                }
+                try {
+                    if (outputStream != null) outputStream.close();
+                } catch (Exception ignored) {
+                }
             }
         }
     }
@@ -258,8 +270,14 @@ public final class FileUtil {
 
         } finally {
             if (!bufferedCopyStarted) {
-                try { if (inStream != null) inStream.close(); } catch (Exception ignored) {}
-                try { if (fileOutStream != null) fileOutStream.close(); } catch (Exception ignored) {}
+                try {
+                    if (inStream != null) inStream.close();
+                } catch (Exception ignored) {
+                }
+                try {
+                    if (fileOutStream != null) fileOutStream.close();
+                } catch (Exception ignored) {
+                }
             }
         }
     }
@@ -304,8 +322,14 @@ public final class FileUtil {
         } finally {
             // close streams ONLY if bufferedCopy never ran
             if (!bufferedCopyStarted) {
-                try { if (inStream != null) inStream.close(); } catch (Exception ignored) {}
-                try { if (outStream != null) outStream.close(); } catch (Exception ignored) {}
+                try {
+                    if (inStream != null) inStream.close();
+                } catch (Exception ignored) {
+                }
+                try {
+                    if (outStream != null) outStream.close();
+                } catch (Exception ignored) {
+                }
             }
 
             if (connection != null) {

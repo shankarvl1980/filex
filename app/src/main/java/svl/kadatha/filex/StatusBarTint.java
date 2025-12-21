@@ -9,6 +9,7 @@ import android.view.Window;
 import androidx.annotation.AttrRes;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -76,7 +77,11 @@ public final class StatusBarTint {
         TypedValue tv = new TypedValue();
         boolean ok = activity.getTheme().resolveAttribute(attr, tv, true);
         if (!ok) return 0;
-        return (tv.resourceId != 0) ? activity.getColor(tv.resourceId) : tv.data;
+        if (tv.resourceId != 0) {
+            // Works on minSdk 21 (and below)
+            return ContextCompat.getColor(activity, tv.resourceId);
+        }
+        return tv.data;
     }
 
     /**

@@ -1,7 +1,6 @@
 package svl.kadatha.filex;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -172,8 +171,8 @@ public class PreferencesDialog extends DialogFragment {
                     public void run() {
                         Global.RECOGNISE_USB = b;
                         tinyDB.putBoolean("recognise_usb", Global.RECOGNISE_USB);
-                        if(Global.RECOGNISE_USB){
-                            Global.LOCAL_BROADCAST(UsbDocumentProvider.ACTION_USB_RECOGNITION_ENABLED,LocalBroadcastManager.getInstance(context),null);
+                        if (Global.RECOGNISE_USB) {
+                            Global.LOCAL_BROADCAST(UsbDocumentProvider.ACTION_USB_RECOGNITION_ENABLED, LocalBroadcastManager.getInstance(context), null);
                         }
                     }
                 }, 500);

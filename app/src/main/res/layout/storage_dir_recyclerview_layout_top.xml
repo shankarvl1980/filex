@@ -10,40 +10,40 @@
 
     <ImageView
         android:id="@+id/image_storage_dir"
-        android:layout_marginTop="8dp"
         android:layout_width="34dp"
         android:layout_height="34dp"
         android:layout_marginStart="@dimen/layout_margin"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="@dimen/layout_margin"
         android:scaleType="centerCrop"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/text_storage_dir_name"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/text_storage_dir_name" />
 
     <ImageView
         android:id="@+id/play_overlay_image_storage_dir"
-        android:layout_marginTop="8dp"
         android:layout_width="34dp"
         android:layout_height="34dp"
+        android:layout_marginTop="8dp"
         android:background="@null"
         android:padding="5dp"
         android:src="@drawable/play_overlay_icon"
         android:visibility="invisible"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/text_storage_dir_name"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/text_storage_dir_name" />
 
     <ImageView
         android:id="@+id/pdf_overlay_image_storage_dir"
-        android:layout_marginTop="8dp"
         android:layout_width="34dp"
         android:layout_height="34dp"
+        android:layout_marginTop="8dp"
         android:background="@null"
         android:padding="5dp"
         android:src="@drawable/pdf"
         android:visibility="invisible"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/text_storage_dir_name"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/text_storage_dir_name" />
 
     <TextView
@@ -55,9 +55,9 @@
         android:minHeight="40dp"
         android:textColor="?attr/recycler_second_text_color"
         android:textSize="17sp"
-        app:layout_constraintStart_toEndOf="@id/image_storage_dir"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/image_storage_dir"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

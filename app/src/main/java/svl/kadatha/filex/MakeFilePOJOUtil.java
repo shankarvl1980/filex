@@ -13,13 +13,11 @@ import com.dropbox.core.v2.files.Metadata;
 import com.google.gson.Gson;
 import com.hierynomus.msfscc.FileAttributes;
 import com.hierynomus.msfscc.fileinformation.FileAllInformation;
-import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
 import com.hierynomus.smbj.common.SMBRuntimeException;
 import com.hierynomus.smbj.session.Session;
 import com.hierynomus.smbj.share.DiskShare;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpATTRS;
-import com.jcraft.jsch.SftpException;
 import com.thegrizzlylabs.sardineandroid.DavResource;
 import com.thegrizzlylabs.sardineandroid.Sardine;
 
@@ -28,17 +26,14 @@ import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -874,7 +869,7 @@ public class MakeFilePOJOUtil {
                 if (file_path.equals("/")) {
                     // Treat root as empty string in Dropbox
                     // Create a FilePOJO representing the root directory
-                    filePOJO = new FilePOJO(fileObjectType,"/",null,"/",true,0L,null,0L,null,R.drawable.folder_icon,null,Global.ENABLE_ALFA,View.INVISIBLE,View.INVISIBLE);
+                    filePOJO = new FilePOJO(fileObjectType, "/", null, "/", true, 0L, null, 0L, null, R.drawable.folder_icon, null, Global.ENABLE_ALFA, View.INVISIBLE, View.INVISIBLE);
                 } else {
                     // For non-root paths, fetch metadata
                     Metadata metadata = dbxClient.files().getMetadata(file_path);

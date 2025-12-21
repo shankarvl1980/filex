@@ -117,14 +117,14 @@ public class RecyclerViewLayoutGrid extends RecyclerViewLayout {
         //measureChildWithMargins(item_separator,widthMeasureSpec,0,heightMeasureSpec,0);
         //maxHeight+=item_separator.getMeasuredHeight();
 
-        maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2+Global.TWELVE_DP;//providing top and bottom margin of six dp
+        maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2 + Global.TWELVE_DP;//providing top and bottom margin of six dp
         itemHeight = maxHeight;
         setMeasuredDimension(widthMeasureSpec, maxHeight);
     }
 
     @Override
     protected void onLayout(boolean p1, int l, int t, int r, int b) {
-        int x = 0, y = Global.RECYCLERVIEW_ITEM_SPACING+Global.SIX_DP;
+        int x = 0, y = Global.RECYCLERVIEW_ITEM_SPACING + Global.SIX_DP;
 
         int grid_width = (itemWidth - (Global.RECYCLERVIEW_ITEM_SPACING * 2)) / Global.GRID_COUNT; // Deducting padding
         x += (grid_width - imageview_dimension) / 2;

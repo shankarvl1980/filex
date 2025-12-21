@@ -37,12 +37,13 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import me.jahnen.libaums.core.fs.UsbFile;
-import timber.log.Timber;
 
 public class FilePOJOViewModel extends AndroidViewModel {
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<FilePOJO> subFileCountUpdate = new MutableLiveData<>();
     final List<FilePOJO> path = new ArrayList<>();
     private final Application application;
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
     public List<FilePOJO> filePOJOS, filePOJOS_filtered;
     public IndexedLinkedHashMap<Integer, String> mselecteditems = new IndexedLinkedHashMap<>();
     public String file_type = "f";
@@ -54,8 +55,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
     private Future<?> future1, future2, future3, future4, future5, future6, future7, future8, future9, future10, future11;
     private String what_to_find = null;
     private String media_category = null;
-    public final MutableLiveData<FilePOJO> subFileCountUpdate = new MutableLiveData<>();
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     public FilePOJOViewModel(@NonNull Application application) {
         super(application);
@@ -151,7 +150,7 @@ public class FilePOJOViewModel extends AndroidViewModel {
         future7 = executorService.submit(() -> {
             while (true) {                 // retry loop
                 try {
-                    int size=filePOJOS.size();
+                    int size = filePOJOS.size();
                     for (int i = 0; i < size; i++) {   // starts at i=0 every retry
 //                        try {
 //                            Thread.sleep(1000);

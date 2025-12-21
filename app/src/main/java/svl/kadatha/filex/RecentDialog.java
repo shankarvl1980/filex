@@ -229,11 +229,11 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
     }
 
     private class RecentRecyclerAdapter extends RecyclerView.Adapter<RecentRecyclerAdapter.ViewHolder> {
-        final boolean storage_dir;
-        LinkedList<FilePOJO> dir_linkedlist;
         private static final int VT_CENTER = 0;       // existing centered layout
         private static final int VT_TOP = 1;  // new top layout
+        final boolean storage_dir;
         private final int iconHeightPx;
+        LinkedList<FilePOJO> dir_linkedlist;
 
         RecentRecyclerAdapter(LinkedList<FilePOJO> dir_linkedlist, boolean storage_dir) {
             this.dir_linkedlist = dir_linkedlist;
@@ -252,12 +252,24 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
             // Build the same display text you set in onBind (IMPORTANT!)
             String displayText;
             switch (filePOJO.getFileObjectType()) {
-                case USB_TYPE:  displayText = DetailFragment.USB_FILE_PREFIX + filePOJO.getPath(); break;
-                case FTP_TYPE:  displayText = DetailFragment.FTP_FILE_PREFIX + filePOJO.getPath(); break;
-                case SFTP_TYPE: displayText = DetailFragment.SFTP_FILE_PREFIX + filePOJO.getPath(); break;
-                case WEBDAV_TYPE: displayText = DetailFragment.WEBDAV_FILE_PREFIX + filePOJO.getPath(); break;
-                case SMB_TYPE:  displayText = DetailFragment.SMB_FILE_PREFIX + filePOJO.getPath(); break;
-                default:        displayText = filePOJO.getPath(); break;
+                case USB_TYPE:
+                    displayText = DetailFragment.USB_FILE_PREFIX + filePOJO.getPath();
+                    break;
+                case FTP_TYPE:
+                    displayText = DetailFragment.FTP_FILE_PREFIX + filePOJO.getPath();
+                    break;
+                case SFTP_TYPE:
+                    displayText = DetailFragment.SFTP_FILE_PREFIX + filePOJO.getPath();
+                    break;
+                case WEBDAV_TYPE:
+                    displayText = DetailFragment.WEBDAV_FILE_PREFIX + filePOJO.getPath();
+                    break;
+                case SMB_TYPE:
+                    displayText = DetailFragment.SMB_FILE_PREFIX + filePOJO.getPath();
+                    break;
+                default:
+                    displayText = filePOJO.getPath();
+                    break;
             }
 
             // We need available text width. Use a conservative approximation from RecyclerView width.

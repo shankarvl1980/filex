@@ -106,14 +106,14 @@ public class AppInstalledRecyclerViewLayoutGrid extends AppInstalledRecyclerView
         measureChildWithMargins(appsizetextview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
         maxHeight += appsizetextview.getMeasuredHeight();
 
-        maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2+Global.TWELVE_DP; //providing top and bottom margin of six dp
+        maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2 + Global.TWELVE_DP; //providing top and bottom margin of six dp
         itemHeight = maxHeight;
         setMeasuredDimension(widthMeasureSpec, maxHeight);
     }
 
     @Override
     protected void onLayout(boolean p1, int l, int t, int r, int b) {
-        int x = 0, y = Global.RECYCLERVIEW_ITEM_SPACING+Global.SIX_DP;
+        int x = 0, y = Global.RECYCLERVIEW_ITEM_SPACING + Global.SIX_DP;
         int measuredHeight;
         int measuredWidth;
         int grid_count = Global.GRID_COUNT;
