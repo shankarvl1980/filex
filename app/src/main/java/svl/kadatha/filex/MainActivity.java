@@ -836,7 +836,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         });
 
-        discoverDevice();
+        setupUsbDevice();
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -1595,6 +1595,25 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     @Override
     public void setFileNumberView(String file_number_string) {
         file_number_view.setText(file_number_string);
+    }
+
+    private void MoveToCopyToProcedure(DetailFragment df, boolean cut) {
+        clear_cache = false;
+        Bundle bundle = new Bundle();
+        ArrayList<String> files_selected_array = new ArrayList<>();
+        int size = df.viewModel.mselecteditems.size();
+        for (int i = 0; i < size; ++i) {
+            files_selected_array.add(df.viewModel.mselecteditems.getValueAtIndex(i));
+        }
+        bundle.putString("source_folder", df.fileclickselected);
+        bundle.putStringArrayList("files_selected_array", files_selected_array);
+        bundle.putSerializable("sourceFileObjectType", df.fileObjectType);
+        bundle.putBoolean("cut", cut);
+
+        Intent intent = new Intent(context, FileSelectorActivity.class);
+        intent.putExtra("bundle", bundle);
+        intent.putExtra(FileSelectorActivity.ACTION_SOUGHT, FileSelectorActivity.MOVE_COPY_REQUEST_CODE);
+        activityResultLauncher_file_select.launch(intent);
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -1635,25 +1654,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         }
     });
 
-    private void MoveToCopyToProcedure(DetailFragment df, boolean cut) {
-        clear_cache = false;
-        Bundle bundle = new Bundle();
-        ArrayList<String> files_selected_array = new ArrayList<>();
-        int size = df.viewModel.mselecteditems.size();
-        for (int i = 0; i < size; ++i) {
-            files_selected_array.add(df.viewModel.mselecteditems.getValueAtIndex(i));
-        }
-        bundle.putString("source_folder", df.fileclickselected);
-        bundle.putStringArrayList("files_selected_array", files_selected_array);
-        bundle.putSerializable("sourceFileObjectType", df.fileObjectType);
-        bundle.putBoolean("cut", cut);
-
-        Intent intent = new Intent(context, FileSelectorActivity.class);
-        intent.putExtra("bundle", bundle);
-        intent.putExtra(FileSelectorActivity.ACTION_SOUGHT, FileSelectorActivity.MOVE_COPY_REQUEST_CODE);
-        activityResultLauncher_file_select.launch(intent);
-    }
-
     private void paste_pastecancel_view_procedure(DetailFragment df) {
         DetailFragment.FILE_SELECTED_FOR_CUT_COPY = new ArrayList<>();
         DetailFragment.CUT_SELECTED = false;
@@ -1672,6 +1672,16 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             case "android.intent.action.MEDIA_MOUNTED":
                 repositoryClass.storage_dir.clear();
                 repositoryClass.storage_dir.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
+                if (USB_ATTACHED && usbCurrentFs != null) {
+                    try {
+                        UsbFile root = usbCurrentFs.getRootDirectory();
+                        if (root != null) {
+                            Global.USB_STORAGE_PATH = root.getAbsolutePath();
+                            repositoryClass.storage_dir.add(MakeFilePOJOUtil.MAKE_FilePOJO(root, false));
+                        }
+                    } catch (Exception ignored) {
+                    }
+                }
                 Global.WORKOUT_AVAILABLE_SPACE();
                 storageRecyclerAdapter.notifyDataSetChanged();
                 if (recentDialogListener != null) {
@@ -1684,6 +1694,16 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             case "android.intent.action.MEDIA_BAD_REMOVAL":
                 repositoryClass.storage_dir.clear();
                 repositoryClass.storage_dir.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
+                if (USB_ATTACHED && usbCurrentFs != null) {
+                    try {
+                        UsbFile root = usbCurrentFs.getRootDirectory();
+                        if (root != null) {
+                            Global.USB_STORAGE_PATH = root.getAbsolutePath();
+                            repositoryClass.storage_dir.add(MakeFilePOJOUtil.MAKE_FilePOJO(root, false));
+                        }
+                    } catch (Exception ignored) {
+                    }
+                }
                 Global.WORKOUT_AVAILABLE_SPACE();
                 storageRecyclerAdapter.notifyDataSetChanged();
                 FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(repositoryClass.external_storage_path_list, FileObjectType.FILE_TYPE);
@@ -1698,7 +1718,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         }
     }
 
-    private void setupDevice() {
+    private void setupUsbDevice() {
         if (UsbDocumentProvider.USB_MASS_STORAGE_DEVICES.isEmpty()) {
             return;
         }
@@ -1707,6 +1727,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         try {
             if (device.getPartitions().isEmpty()) {
                 Global.print(this, getString(R.string.error_setting_up_device));
+                usb_eject_layout_group.setVisibility(View.GONE);
                 return;
             }
             // Save the file system
@@ -1736,17 +1757,13 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
         if (!usb_path_added) {
             Global.USB_STORAGE_PATH = usbCurrentFs.getRootDirectory().getAbsolutePath();
+            repositoryClass.storage_dir.clear();
+            repositoryClass.storage_dir.addAll(new ArrayList<>(StorageUtil.getSdCardPaths(context, true)));
             repositoryClass.storage_dir.add(
                     MakeFilePOJOUtil.MAKE_FilePOJO(usbCurrentFs.getRootDirectory(), false)
             );
             Global.WORKOUT_AVAILABLE_SPACE();
             storageRecyclerAdapter.notifyDataSetChanged();
-        }
-    }
-
-    private void discoverDevice() {
-        if (!UsbDocumentProvider.USB_MASS_STORAGE_DEVICES.isEmpty()) {
-            setupDevice();
         }
     }
 
@@ -2208,7 +2225,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sdcard_icon));
                 }
                 p1.textView_storage_dir.setText(filePOJO.getName());
-
             } else if (fileObjectType == FileObjectType.USB_TYPE) {
                 p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.usb_icon));
                 p1.textView_storage_dir.setText(DetailFragment.USB_FILE_PREFIX + filePOJO.getName());
@@ -2572,7 +2588,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             if (UsbDocumentProvider.USB_ATTACH_BROADCAST.equals(action)) {
                 USB_ATTACHED = intent.getBooleanExtra(UsbDocumentProvider.USB_ATTACHED, false);
                 if (USB_ATTACHED) {
-                    setupDevice();
+                    setupUsbDevice();
                 } else {
                     usbCurrentFs = null;
 

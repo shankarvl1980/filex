@@ -48,7 +48,7 @@ public class FileSelectorActivityViewModel extends AndroidViewModel {
         return isCancelled;
     }
 
-    public void populateUri(Context context, FileSelectorFragment fileSelectorFragment) {
+    public void populateUri(Context context, FileSelectorFragment fileSelectorFragment, FileObjectType fileObjectType) {
         if (populateUriAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
             return;
         }
@@ -58,23 +58,35 @@ public class FileSelectorActivityViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 uri_list = new ArrayList<>();
-                int size = fileSelectorFragment.viewModel.mselecteditems.size();
-                for (int i = 0; i < size; ++i) {
-                    String file_path = fileSelectorFragment.viewModel.mselecteditems.getValueAtIndex(i);
-                    File file = new File(file_path);
-                    uri_list.add(FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", file));
+                if (fileObjectType.equals(FileObjectType.FILE_TYPE)) {
+                    int size = fileSelectorFragment.viewModel.mselecteditems.size();
+                    for (int i = 0; i < size; ++i) {
+                        String file_path = fileSelectorFragment.viewModel.mselecteditems.getValueAtIndex(i);
+                        File file = new File(file_path);
+                        uri_list.add(FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", file));
+                    }
+                } else {
+                    populateUriFromCachedFiles(context, fileSelectorFragment, fileObjectType);
                 }
-
                 clipData = new ClipData(
                         new ClipDescription("Selected Files", new String[]{"*/*"}),
                         new ClipData.Item(uri_list.get(0))
                 );
-
+                int size = uri_list.size();
                 for (int i = 1; i < size; i++) {
                     clipData.addItem(new ClipData.Item(uri_list.get(i)));
                 }
                 populateUriAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
+    }
+
+    private void populateUriFromCachedFiles(Context context, FileSelectorFragment fileSelectorFragment, FileObjectType fileObjectType) {
+        String file_path = fileSelectorFragment.viewModel.mselecteditems.getValueAtIndex(0);
+        File cache_file = Global.COPY_TO_CACHE(file_path, fileObjectType);
+        uri_list.add(FileProvider.getUriForFile(context, Global.FILEX_PACKAGE + ".provider", cache_file));
+        if (fileSelectorFragment.viewModel.mselecteditems.size() > 1) {
+            Global.print_background_thread(context, context.getString(R.string.first_selected_file_is_sent));
+        }
     }
 }

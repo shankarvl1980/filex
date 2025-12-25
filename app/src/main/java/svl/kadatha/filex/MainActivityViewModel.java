@@ -33,11 +33,14 @@ public class MainActivityViewModel extends AndroidViewModel {
         super.onCleared();
         cancel(true);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
+        Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ROOT_CACHE_DIR);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.USB_CACHE_DIR);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.FTP_CACHE_DIR);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.SFTP_CACHE_DIR);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.WEBDAV_CACHE_DIR);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.SMB_CACHE_DIR);
+
+        Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.CLOUD_CACHE_DIR);
 
         CacheClearer.performIfDecided(getApplication(), tinyDB);
     }

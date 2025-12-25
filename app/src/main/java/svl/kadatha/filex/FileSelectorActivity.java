@@ -409,19 +409,17 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                             return;
                         }
 
-                        if (fileSelectorFragment.fileObjectType != FileObjectType.FILE_TYPE) {
-                            Global.print(context, context.getString(R.string.not_supported));
-                            return;
+                        if (Global.whether_file_cached(fileSelectorFragment.fileObjectType)) {
+                            if (fileSelectorFragment.filePOJO_list.get(fileSelectorFragment.viewModel.mselecteditems.getKeyAtIndex(0)).getSizeLong() > Global.CACHE_FILE_MAX_LIMIT) {
+                                Global.print(context, context.getString(R.string.file_is_large_copy_to_device_storage));
+                                return;
+                            }
                         }
 
                         if (((FileSelectorActivity) activity).action_sought_request_code == FileSelectorActivity.PICK_FILE_REQUEST_CODE) {
-                            if (Global.whether_file_cached(fileSelectorFragment.fileObjectType)) {
-                                Global.print(context, context.getString(R.string.not_supported));
-                            } else {
-                                fileSelectorActivityViewModel.populateUriAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
-                                fileSelectorFragment.progress_bar.setVisibility(View.VISIBLE);
-                                fileSelectorActivityViewModel.populateUri(context, fileSelectorFragment);
-                            }
+                            fileSelectorActivityViewModel.populateUriAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+                            fileSelectorFragment.progress_bar.setVisibility(View.VISIBLE);
+                            fileSelectorActivityViewModel.populateUri(context, fileSelectorFragment, fileSelectorFragment.fileObjectType);
                         } else if (((FileSelectorActivity) activity).action_sought_request_code == FileSelectorActivity.FILE_PATH_REQUEST_CODE) {
                             Intent intent = new Intent();
                             intent.putExtra("filepathclickselected", fileSelectorFragment.viewModel.mselecteditems.getValueAtIndex(0));
@@ -1029,7 +1027,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     }
 
     public static class FileSelectorAdapterGrid extends FileSelectorAdapter {
-
         FileSelectorAdapterGrid(Context context, FileSelectorFragment fileSelectorFragment, int action_sought_request_code) {
             super(context, fileSelectorFragment, action_sought_request_code == PICK_FILE_REQUEST_CODE || action_sought_request_code == FILE_PATH_REQUEST_CODE);
         }
@@ -1041,7 +1038,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     }
 
     public static class FileSelectorAdapterList extends FileSelectorAdapter {
-
         FileSelectorAdapterList(Context context, FileSelectorFragment fileSelectorFragment, int action_sought_request_code) {
             super(context, fileSelectorFragment, action_sought_request_code == PICK_FILE_REQUEST_CODE || action_sought_request_code == FILE_PATH_REQUEST_CODE);
         }
@@ -1071,7 +1067,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 case Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION:
                     break;
                 case Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT:
-
                     if (bundle != null) {
                         FileObjectType fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
                         if (fileSelectorFragment != null && fileObjectType != null && fileObjectType == fileSelectorFragment.fileObjectType) {
@@ -1147,7 +1142,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                         }
                         if (fileSelectorFragment != null && fileSelectorFragment.fileObjectType == destFileObjectType) {
                             String tag = fileSelectorFragment.getTag();
-
                             if (Global.IS_CHILD_FILE(tag, parent_dest_folder)) {
                                 fileSelectorFragment.clearSelectionAndNotifyDataSetChanged();
                             }
@@ -1264,6 +1258,4 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         }
     });
-
-
 }

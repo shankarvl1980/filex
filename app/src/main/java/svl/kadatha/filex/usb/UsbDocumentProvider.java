@@ -141,7 +141,6 @@ public class UsbDocumentProvider extends DocumentsProvider {
             BroadcastReceiver enableReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context c, Intent i) {
-                    Global.RECOGNISE_USB = true;
                     if (!receiversRegistered) {
                         initReceivers();
                         registerReceivers(c);

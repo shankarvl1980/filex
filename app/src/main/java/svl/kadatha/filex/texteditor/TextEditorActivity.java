@@ -225,8 +225,8 @@ public class TextEditorActivity extends BaseActivity implements TextEditorSettin
                         ArrayList<Uri> uri_list = new ArrayList<>();
                         uri_list.add(src_uri);
                         FileIntentDispatch.sendUri(context, uri_list);
-
                         break;
+
                     case 2:
                         Uri copy_uri;
                         if (viewModel.fromThirdPartyApp) {
@@ -251,6 +251,7 @@ public class TextEditorActivity extends BaseActivity implements TextEditorSettin
                             Global.print(context, getString(R.string.could_not_perform_action));
                         }
                         break;
+
                     case 3:
                         if (viewModel.fromArchive || viewModel.fromThirdPartyApp || Global.whether_file_cached(viewModel.fileObjectType)) {
                             Global.print(context, getString(R.string.not_able_to_process));
@@ -260,10 +261,12 @@ public class TextEditorActivity extends BaseActivity implements TextEditorSettin
                         PropertiesDialog propertiesDialog = PropertiesDialog.getInstance(files_selected_array, viewModel.fileObjectType);
                         propertiesDialog.show(fm, "properties_dialog");
                         break;
+
                     case 4:
                         textEditorSettingsDialog = TextEditorSettingsDialog.getInstance(viewModel.eol);
                         textEditorSettingsDialog.show(fm, "file_editor_overflow");
                         break;
+
                     default:
                         break;
                 }

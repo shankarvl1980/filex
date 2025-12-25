@@ -132,7 +132,7 @@ public class Global {
             new MimePOJO("Video", "video/*", VIDEO_REGEX),
             new MimePOJO("PDF", "application/pdf", PDF_REGEX)));
     static final LinkedHashMap<String, SpacePOJO> SPACE_ARRAY = new LinkedHashMap<>();
-    static final long CACHE_FILE_MAX_LIMIT = 1024 * 1024 * 20;
+    static final long CACHE_FILE_MAX_LIMIT = 1024 * 1024 * 30;
     static final FilenameFilter File_NAME_FILTER = new FilenameFilter() {
         @Override
         public boolean accept(File file, String s) {
@@ -1149,39 +1149,67 @@ public class Global {
     }
 
     public static File COPY_TO_CACHE(String file_path, FileObjectType fileObjectType) {
-        File cache_file = null;
-        switch (fileObjectType) {
-            case USB_TYPE:
-                cache_file = new File(USB_CACHE_DIR, file_path);
-                break;
-            case FTP_TYPE:
-                cache_file = new File(FTP_CACHE_DIR, file_path);
-                break;
-            case SFTP_TYPE:
-                cache_file = new File(SFTP_CACHE_DIR, file_path);
-                break;
-            case WEBDAV_TYPE:
-                cache_file = new File(WEBDAV_CACHE_DIR, file_path);
-                break;
-            case SMB_TYPE:
-                cache_file = new File(SMB_CACHE_DIR, file_path);
-                break;
-            case ROOT_TYPE:
-                cache_file = new File(ROOT_CACHE_DIR, file_path);
-                break;
-        }
+        if (file_path == null || fileObjectType == null) return null;
 
+        FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(fileObjectType, file_path);
+        long expectedSize = filePOJO != null ? filePOJO.getSizeLong() : -1L;
+
+        File cache_file;
+
+        // 1) Resolve cache location
         if (CLOUD_FILE_OBJECT_TYPES.contains(fileObjectType)) {
             cache_file = new File(CLOUD_CACHE_DIR, file_path);
+        } else {
+            switch (fileObjectType) {
+                case USB_TYPE:
+                    cache_file = new File(USB_CACHE_DIR, file_path);
+                    break;
+                case FTP_TYPE:
+                    cache_file = new File(FTP_CACHE_DIR, file_path);
+                    break;
+                case SFTP_TYPE:
+                    cache_file = new File(SFTP_CACHE_DIR, file_path);
+                    break;
+                case WEBDAV_TYPE:
+                    cache_file = new File(WEBDAV_CACHE_DIR, file_path);
+                    break;
+                case SMB_TYPE:
+                    cache_file = new File(SMB_CACHE_DIR, file_path);
+                    break;
+                case ROOT_TYPE:
+                    cache_file = new File(ROOT_CACHE_DIR, file_path);
+                    break;
+                default:
+                    return null;
+            }
         }
 
-        long[] bytes_read = new long[1];
+        // 2) Cache hit
+        if (cache_file.exists() && cache_file.isFile() && cache_file.length() > 0L) {
+            if (expectedSize <= 0L || expectedSize == cache_file.length()) {
+                return cache_file;
+            }
+            // size mismatch => corrupt/partial cache
+            //noinspection ResultOfMethodCallIgnored
+            cache_file.delete();
+        }
+
+        // 3) Ensure parent exists
         File parent_file = cache_file.getParentFile();
-        if (parent_file != null) {
-            FileUtil.mkdirsNative(parent_file);
-            FileModel source_file_model = FileModelFactory.getFileModel(file_path, fileObjectType, null, null);
-            FileModel dest_file_model = FileModelFactory.getFileModel(parent_file.getPath(), FileObjectType.FILE_TYPE, null, null);
-            FileUtil.copy_FileModel_FileModel(source_file_model, dest_file_model, cache_file.getName(), false, bytes_read);
+        if (parent_file == null) return null;
+        FileUtil.mkdirsNative(parent_file);
+
+        // 4) Copy (existing logic)
+        long[] bytes_read = new long[1];
+        FileModel source_file_model = FileModelFactory.getFileModel(file_path, fileObjectType, null, null);
+        FileModel dest_file_model = FileModelFactory.getFileModel(parent_file.getPath(), FileObjectType.FILE_TYPE, null, null);
+        FileUtil.copy_FileModel_FileModel(source_file_model, dest_file_model, cache_file.getName(), false, bytes_read);
+
+        // 5) Validate result
+        if (!cache_file.exists() || !cache_file.isFile() || cache_file.length() == 0L) {
+            //noinspection ResultOfMethodCallIgnored
+            cache_file.delete();
+            return null;
         }
         return cache_file;
     }

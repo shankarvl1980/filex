@@ -213,7 +213,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
     }
 
     private void discoverDevice() {
-
         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
         int pending_intent_flag = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT : PendingIntent.FLAG_UPDATE_CURRENT;
         for (UsbDevice device : usbManager.getDeviceList().values()) {
@@ -336,7 +335,6 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
                         p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sdcard_icon));
                     }
                     p1.textView_recent_dir.setText(filePOJO.getName() + space);
-
                 } else if (fileObjectType == FileObjectType.USB_TYPE) {
                     p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.usb_icon));
                     p1.textView_recent_dir.setText(DetailFragment.USB_FILE_PREFIX + filePOJO.getName() + space);

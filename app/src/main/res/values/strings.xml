@@ -529,5 +529,6 @@
     <string name="cloud_accounts">Cloud Accounts</string>
     <string name="cloud">Cloud</string>
     <string name="modify_file_extension">Modify file extension</string>
+    <string name="first_selected_file_is_sent">First selected file is sent</string>
 
 </resources>
