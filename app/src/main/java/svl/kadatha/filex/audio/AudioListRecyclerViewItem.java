@@ -47,7 +47,6 @@ public class AudioListRecyclerViewItem extends ViewGroup {
     }
 
     private void init() {
-
         setBackground(ContextCompat.getDrawable(context, R.drawable.select_detail_recyclerview));
         View view = LayoutInflater.from(context).inflate(R.layout.audiolist_recyclerview_layout, this, true);
         audioimageview = view.findViewById(R.id.audio_image);
@@ -204,7 +203,6 @@ public class AudioListRecyclerViewItem extends ViewGroup {
     protected LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
         return generateDefaultLayoutParams();
     }
-
 
     public void setData(String album_id, String title, String album, String duration, String artist, boolean item_selected) {
         GlideApp.with(context).load(Global.GET_ALBUM_ART_URI(album_id)).placeholder(R.drawable.audio_file_icon).error(R.drawable.audio_file_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(audioimageview);

@@ -34,25 +34,6 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout {
         init();
     }
 
-
-    public static void setIcon(Context context, FilePOJO filePOJO, ImageView fileimageview, ImageView play_overlay_fileimageview, ImageView pdf_overlay_fileimageview) {
-        play_overlay_fileimageview.setVisibility(filePOJO.getPlayOverlayVisibility());
-        pdf_overlay_fileimageview.setVisibility(filePOJO.getPdfOverlayVisibility());
-        if (filePOJO.getType() == 0) {
-            GlideApp.with(context).load(Global.APK_ICON_DIR.getAbsolutePath() + File.separator + filePOJO.getPackage_name() + ".png").placeholder(R.drawable.apk_file_icon).error(R.drawable.apk_file_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(fileimageview);
-        } else if (filePOJO.getType() < 0) {
-            if (filePOJO.getType() == -3) {
-                GlideApp.with(context).load(filePOJO.getPath()).signature(new ObjectKey(filePOJO.getDateLong())).placeholder(R.drawable.pdf_file_icon).error(R.drawable.pdf_file_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(fileimageview);
-            } else {
-                GlideApp.with(context).load(filePOJO.getPath()).signature(new ObjectKey(filePOJO.getDateLong())).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(fileimageview);
-            }
-        } else {
-            GlideApp.with(context).clear(fileimageview);
-            fileimageview.setImageDrawable(ContextCompat.getDrawable(context, filePOJO.getType()));
-        }
-    }
-
-
     private void init() {
         View view = LayoutInflater.from(context).inflate(R.layout.filedetail_recyclerview_layout, this, true);
         fileimageview = view.findViewById(R.id.image_file);
@@ -147,8 +128,8 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout {
         measureChildWithMargins(item_separator, widthMeasureSpec, 0, heightMeasureSpec, 0);
         maxHeight += item_separator.getMeasuredHeight();
 
+        isIconHeightMore = (iconHeight > maxHeight);
         maxHeight = Math.max(iconHeight, maxHeight);
-        isIconHeightMore = (iconHeight == maxHeight);
 
         maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2;//providing top and bottom margin of six dp
         itemHeight = maxHeight;
@@ -269,7 +250,6 @@ public class RecyclerViewLayoutList extends RecyclerViewLayout {
             } else {
                 GlideApp.with(context).load(filePOJO.getPath()).signature(new ObjectKey(filePOJO.getDateLong())).placeholder(R.drawable.picture_icon).error(R.drawable.picture_icon).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).dontAnimate().into(fileimageview);
             }
-
         } else {
             GlideApp.with(context).clear(fileimageview);
             fileimageview.setImageDrawable(ContextCompat.getDrawable(context, filePOJO.getType()));

@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -122,7 +123,6 @@ public class LibraryAlbumSelectDialog extends DialogFragment {
             this.fromSDCard = fromSDCard;
         }
 
-
         public String getPath() {
             return path;
         }
@@ -140,22 +140,13 @@ public class LibraryAlbumSelectDialog extends DialogFragment {
 
         @Override
         public LibraryRecyclerViewAdapter.VH onCreateViewHolder(ViewGroup p1, int p2) {
-            View v = LayoutInflater.from(context).inflate(R.layout.album_recyclerview_layout, p1, false);
-            return new VH(v);
+            return new VH(new LibraryAlbumRecyclerViewLayout(context));
         }
 
         @Override
         public void onBindViewHolder(LibraryRecyclerViewAdapter.VH p1, int p2) {
-            if (viewModel.libraryDirPOJOS.get(p2).getPath().equals("All")) {
-                p1.album_dir_image.setImageDrawable(null);
-            } else if (viewModel.libraryDirPOJOS.get(p2).isFromSDCard()) {
-                p1.album_dir_image.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sdcard_icon));
-            } else {
-                p1.album_dir_image.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.device_icon));
-            }
-
-            p1.album_name_tv.setText(viewModel.libraryDirPOJOS.get(p2).getName());
-            p1.album_path_tv.setText(viewModel.libraryDirPOJOS.get(p2).getPath());
+            LibraryAlbumSelectDialog.LibraryDirPOJO libraryDirPOJO = viewModel.libraryDirPOJOS.get(p2);
+            p1.v.setData(libraryDirPOJO);
         }
 
         @Override
@@ -163,14 +154,13 @@ public class LibraryAlbumSelectDialog extends DialogFragment {
             return viewModel.libraryDirPOJOS.size();
         }
 
-
         private class VH extends RecyclerView.ViewHolder {
-            final View v;
+            final LibraryAlbumRecyclerViewLayout v;
             final ImageView album_dir_image;
             final TextView album_name_tv, album_path_tv;
             int pos;
 
-            VH(View vi) {
+            VH(LibraryAlbumRecyclerViewLayout vi) {
                 super(vi);
                 v = vi;
                 album_dir_image = v.findViewById(R.id.album_image_dir);
@@ -194,7 +184,138 @@ public class LibraryAlbumSelectDialog extends DialogFragment {
                 });
             }
         }
-
     }
 
+    public static class LibraryAlbumRecyclerViewLayout extends ViewGroup {
+        private final Context context;
+        public int itemWidth, itemHeight;
+        private ImageView imageView;
+        private TextView albumNameTextView, pathTextView;
+        private int imageview_dimension;
+        private boolean isIconHeightMore;
+
+        LibraryAlbumRecyclerViewLayout(Context context) {
+            super(context);
+            this.context = context;
+            init();
+        }
+
+        private void init() {
+            View view = LayoutInflater.from(context).inflate(R.layout.album_recyclerview_layout, this, true);
+            albumNameTextView = view.findViewById(R.id.album_name);
+            pathTextView = view.findViewById(R.id.album_path);
+            imageView = view.findViewById(R.id.album_image_dir);
+
+            setBackground(ContextCompat.getDrawable(context, R.drawable.select_detail_recyclerview));
+            imageview_dimension = Global.THIRTY_DP;
+            imageView.getLayoutParams().width = imageview_dimension;
+            imageView.getLayoutParams().height = imageview_dimension;
+
+            itemWidth = Global.DIALOG_WIDTH;
+            int pad = getResources().getDimensionPixelSize(R.dimen.layout_margin);
+            setPaddingRelative(pad, 0, pad, 0);
+            setBackground(ContextCompat.getDrawable(context, R.drawable.select_drawer_storage_list));
+        }
+
+        @Override
+        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            int iconHeight;
+            int maxHeight = 0;
+            int usedWidth;
+
+            usedWidth = Global.FOUR_DP;
+            measureChildWithMargins(imageView, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
+
+            usedWidth += imageview_dimension;
+            iconHeight = imageview_dimension;
+
+
+            measureChildWithMargins(albumNameTextView, widthMeasureSpec, usedWidth + (Global.EIGHT_DP * 2), heightMeasureSpec, 0);
+            measureChildWithMargins(pathTextView, widthMeasureSpec, usedWidth + (Global.EIGHT_DP * 2), heightMeasureSpec, 0);
+            maxHeight += albumNameTextView.getMeasuredHeight();
+            maxHeight += pathTextView.getMeasuredHeight();
+
+            isIconHeightMore = (iconHeight * 2 > maxHeight);
+            maxHeight = Math.max(iconHeight, maxHeight);
+
+            maxHeight += Global.EIGHT_DP;
+            itemHeight = maxHeight;
+            setMeasuredDimension(widthMeasureSpec, maxHeight);
+        }
+
+        @Override
+        protected void onLayout(boolean p1, int l, int t, int r, int b) {
+            int x = Global.EIGHT_DP;
+            int y;
+            int margin_offset_icon, top_offset;
+
+            top_offset = (itemHeight - albumNameTextView.getMeasuredHeight() - pathTextView.getMeasuredHeight()) / 2;
+            int d = isIconHeightMore ? (itemHeight - imageview_dimension) / 2 : top_offset + Global.SIX_DP;
+
+            View v = imageView;
+            int imageMeasuredWidth = v.getMeasuredWidth();
+            int imageMeasuredHeight = v.getMeasuredHeight();
+            margin_offset_icon = itemWidth - imageMeasuredWidth - Global.EIGHT_DP - Global.EIGHT_DP;
+            v.layout(margin_offset_icon, d, margin_offset_icon + imageMeasuredWidth, d + imageMeasuredHeight);
+
+            // Then lay out the overlay_fileimageview at the bottom-right corner of fileimageview
+
+            v = albumNameTextView;
+            int measuredHeight = v.getMeasuredHeight();
+            int measuredWidth = v.getMeasuredWidth();
+            y = top_offset;
+            v.layout(x, y, x + measuredWidth, y + measuredHeight);
+            y += measuredHeight;
+
+            v = pathTextView;
+            measuredHeight = v.getMeasuredHeight();
+            measuredWidth = v.getMeasuredWidth();
+            v.layout(x, y, x + measuredWidth, y + measuredHeight);
+        }
+
+        @Override
+        protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {
+            return p instanceof MarginLayoutParams;
+        }
+
+        /**
+         * @return A set of default layout parameters when given a child with no layout parameters.
+         */
+        @Override
+        protected LayoutParams generateDefaultLayoutParams() {
+            return new MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        }
+
+        /**
+         * @return A set of layout parameters created from attributes passed in XML.
+         */
+        @Override
+        public LayoutParams generateLayoutParams(AttributeSet attrs) {
+            return new MarginLayoutParams(context, attrs);
+        }
+
+        /**
+         * Called when {@link #checkLayoutParams(LayoutParams)} fails.
+         *
+         * @return A set of valid layout parameters for this ViewGroup that copies appropriate/valid
+         * attributes from the supplied, not-so-good-parameters.
+         */
+        @Override
+        protected LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
+            return generateDefaultLayoutParams();
+        }
+
+        public void setData(LibraryDirPOJO libraryDirPOJO) {
+            if (libraryDirPOJO.getPath().equals("All")) {
+                imageView.setImageDrawable(null);
+            } else if (libraryDirPOJO.isFromSDCard()) {
+                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sdcard_icon));
+            } else {
+                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.device_icon));
+            }
+
+            albumNameTextView.setText(libraryDirPOJO.getName());
+            pathTextView.setText(libraryDirPOJO.getPath());
+        }
+    }
 }

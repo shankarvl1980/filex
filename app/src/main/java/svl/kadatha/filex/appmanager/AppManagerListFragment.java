@@ -555,7 +555,7 @@ public class AppManagerListFragment extends Fragment {
         private final long sizeLong;
         private final String size;
         private final long dateLong;
-        private final String date;
+        private String date;
         private final String version;
 
         public AppPOJO(String app_name, String app_package, String app_path, long app_size_long, long app_date_long, String version) {
@@ -566,7 +566,11 @@ public class AppManagerListFragment extends Fragment {
             this.sizeLong = app_size_long;
             this.size = FileUtil.humanReadableByteCount(app_size_long);
             this.dateLong = app_date_long;
-            this.date = Global.SDF.format(dateLong);
+            try {
+                this.date = Global.SDF.format(dateLong);
+            } catch (Exception ignored) {
+
+            }
             this.version = version;
         }
 

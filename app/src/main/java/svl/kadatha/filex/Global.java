@@ -175,8 +175,8 @@ public class Global {
     public static int EIGHT_DP;
     public static int TEN_DP;
     public static int ELEVEN_DP;
-    public static int TWELVE_DP;
-    public static int FOURTEEN_DP, THIRTY_FOUR_DP;
+    public static int TWELVE_DP,FORTY_DP;
+    public static int FOURTEEN_DP, THIRTY_DP,THIRTY_FOUR_DP;
     public static int RECYCLERVIEW_ITEM_SPACING;
     public static int LIST_POPUP_WINDOW_DROP_DOWN_OFFSET;
     public static boolean IS_TABLET;
@@ -352,8 +352,10 @@ public class Global {
             ELEVEN_DP = Dimens.px(11);
             TWELVE_DP = Dimens.px(12);
             FOURTEEN_DP = Dimens.px(14);
+            THIRTY_DP=Dimens.px(30);
             THIRTY_FOUR_DP = Dimens.px(34);
             THIRTY_SIX_DP = Dimens.px(36);
+            FORTY_DP=Dimens.px(40);
             BUTTON_HEIGHT = Dimens.px(48);
 
             int list_s = FIVE_DP;

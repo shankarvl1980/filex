@@ -13,9 +13,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.text.Layout;
-import android.text.StaticLayout;
-import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -226,93 +223,31 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
             }
         }
     }
+    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (result.getResultCode() == Activity.RESULT_OK) {
+                if (clicked_filepojo != null) {
+                    file_open_intent_dispatch(clicked_filepojo.getPath(), clicked_filepojo.getFileObjectType(), clicked_filepojo.getName(), clicked_filepojo.getSizeLong());
+                }
+                clicked_filepojo = null;
+            } else {
+                Global.print(context, getString(R.string.permission_not_granted));
+            }
+        }
+    });
 
     private class RecentRecyclerAdapter extends RecyclerView.Adapter<RecentRecyclerAdapter.ViewHolder> {
-        private static final int VT_CENTER = 0;       // existing centered layout
-        private static final int VT_TOP = 1;  // new top layout
         final boolean storage_dir;
-        private final int iconHeightPx;
         LinkedList<FilePOJO> dir_linkedlist;
-
         RecentRecyclerAdapter(LinkedList<FilePOJO> dir_linkedlist, boolean storage_dir) {
             this.dir_linkedlist = dir_linkedlist;
             this.storage_dir = storage_dir;
-            iconHeightPx = Global.THIRTY_FOUR_DP;
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            // Storage dir must always be centered (your requirement)
-            if (storage_dir) return VT_CENTER;
-
-            FilePOJO filePOJO = dir_linkedlist.get(position);
-            if (filePOJO == null) return VT_CENTER;
-
-            // Build the same display text you set in onBind (IMPORTANT!)
-            String displayText;
-            switch (filePOJO.getFileObjectType()) {
-                case USB_TYPE:
-                    displayText = DetailFragment.USB_FILE_PREFIX + filePOJO.getPath();
-                    break;
-                case FTP_TYPE:
-                    displayText = DetailFragment.FTP_FILE_PREFIX + filePOJO.getPath();
-                    break;
-                case SFTP_TYPE:
-                    displayText = DetailFragment.SFTP_FILE_PREFIX + filePOJO.getPath();
-                    break;
-                case WEBDAV_TYPE:
-                    displayText = DetailFragment.WEBDAV_FILE_PREFIX + filePOJO.getPath();
-                    break;
-                case SMB_TYPE:
-                    displayText = DetailFragment.SMB_FILE_PREFIX + filePOJO.getPath();
-                    break;
-                default:
-                    displayText = filePOJO.getPath();
-                    break;
-            }
-
-            // We need available text width. Use a conservative approximation from RecyclerView width.
-            // This works well in practice and avoids measuring in onBind.
-            int rvWidth = recent_recyclerview.getWidth(); // keep a reference to recyclerView in adapter or pass it
-            if (rvWidth <= 0) return VT_CENTER; // first layout pass fallback
-
-            int horizontalPadding = 2 * Global.FOUR_DP;
-            int iconAndMargins = iconHeightPx + (2 * Global.FOUR_DP);
-            int availableTextWidth = rvWidth - horizontalPadding - iconAndMargins;
-
-            if (availableTextWidth <= 0) return VT_CENTER;
-
-            int textHeight = measureTextHeightPx(displayText, availableTextWidth);
-
-            // If text is taller than icon => top align
-            return (textHeight > iconHeightPx) ? VT_TOP : VT_CENTER;
-        }
-
-        private int measureTextHeightPx(CharSequence text, int widthPx) {
-            TextPaint paint = new TextPaint();
-            paint.setAntiAlias(true);
-
-            // Match your TextView text size: 17sp
-            float textSizePx = 17f * context.getResources().getDisplayMetrics().scaledDensity;
-            paint.setTextSize(textSizePx);
-
-            StaticLayout layout;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                layout = StaticLayout.Builder.obtain(text, 0, text.length(), paint, widthPx)
-                        .setAlignment(Layout.Alignment.ALIGN_NORMAL)
-                        .setIncludePad(false)
-                        .build();
-            } else {
-                layout = new StaticLayout(text, paint, widthPx, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
-            }
-            return layout.getHeight();
         }
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            int layout = (viewType == VT_TOP) ? R.layout.storage_dir_recyclerview_layout_top : R.layout.storage_dir_recyclerview_layout;
-            View itemview = LayoutInflater.from(context).inflate(layout, parent, false);
-            return new ViewHolder(itemview);
+            return new ViewHolder(new RecentRecyclerViewLayoutList(context, Global.DIALOG_WIDTH));
         }
 
         @Override
@@ -357,20 +292,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
                     p1.textView_recent_dir.setText(DetailFragment.SMB_FILE_PREFIX + filePOJO.getName() + space);
                 }
             } else {
-                RecyclerViewLayoutList.setIcon(context, filePOJO, p1.fileimageview, p1.play_overlay_imageview, p1.pdf_overlay_imageview);
-                if (filePOJO.getFileObjectType() == FileObjectType.USB_TYPE) {
-                    p1.textView_recent_dir.setText(DetailFragment.USB_FILE_PREFIX + filePOJO.getPath());
-                } else if (filePOJO.getFileObjectType() == FileObjectType.FTP_TYPE) {
-                    p1.textView_recent_dir.setText(DetailFragment.FTP_FILE_PREFIX + filePOJO.getPath());
-                } else if (filePOJO.getFileObjectType() == FileObjectType.SFTP_TYPE) {
-                    p1.textView_recent_dir.setText(DetailFragment.SFTP_FILE_PREFIX + filePOJO.getPath());
-                } else if (filePOJO.getFileObjectType() == FileObjectType.WEBDAV_TYPE) {
-                    p1.textView_recent_dir.setText(DetailFragment.WEBDAV_FILE_PREFIX + filePOJO.getPath());
-                } else if (filePOJO.getFileObjectType() == FileObjectType.SMB_TYPE) {
-                    p1.textView_recent_dir.setText(DetailFragment.SMB_FILE_PREFIX + filePOJO.getPath());
-                } else {
-                    p1.textView_recent_dir.setText(filePOJO.getPath());
-                }
+                    p1.view.setData(filePOJO);
             }
         }
 
@@ -378,26 +300,25 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
         public int getItemCount() {
             return dir_linkedlist.size();
         }
-
         public void clear_recents() {
             dir_linkedlist = new LinkedList<>();
             notifyDataSetChanged();
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
-            final View view;
+            final RecentRecyclerViewLayoutList view;
             final ImageView fileimageview;
             final ImageView play_overlay_imageview, pdf_overlay_imageview;
             final TextView textView_recent_dir;
             int pos;
 
-            ViewHolder(View view) {
+            ViewHolder(RecentRecyclerViewLayoutList view) {
                 super(view);
                 this.view = view;
-                fileimageview = view.findViewById(R.id.image_storage_dir);
-                play_overlay_imageview = view.findViewById(R.id.play_overlay_image_storage_dir);
-                pdf_overlay_imageview = view.findViewById(R.id.pdf_overlay_image_storage_dir);
-                textView_recent_dir = view.findViewById(R.id.text_storage_dir_name);
+                fileimageview = view.findViewById(R.id.recent_image_storage_dir);
+                play_overlay_imageview = view.findViewById(R.id.recent_play_overlay_image_storage_dir);
+                pdf_overlay_imageview = view.findViewById(R.id.recent_pdf_overlay_image_storage_dir);
+                textView_recent_dir = view.findViewById(R.id.recent_text_storage_dir_name);
 
                 this.view.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View p) {
@@ -423,18 +344,4 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
             }
         }
     }
-
-    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            if (result.getResultCode() == Activity.RESULT_OK) {
-                if (clicked_filepojo != null) {
-                    file_open_intent_dispatch(clicked_filepojo.getPath(), clicked_filepojo.getFileObjectType(), clicked_filepojo.getName(), clicked_filepojo.getSizeLong());
-                }
-                clicked_filepojo = null;
-            } else {
-                Global.print(context, getString(R.string.permission_not_granted));
-            }
-        }
-    });
 }
