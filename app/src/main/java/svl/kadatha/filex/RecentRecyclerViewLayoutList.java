@@ -78,7 +78,7 @@ public class RecentRecyclerViewLayoutList extends ViewGroup {
         maxHeight = Math.max(iconHeight, maxHeight);
         maxHeight = Math.max(maxHeight,Global.FORTY_DP);
 
-        maxHeight += Global.EIGHT_DP;
+        maxHeight += Global.TEN_DP;
         itemHeight = maxHeight;
         setMeasuredDimension(widthMeasureSpec, maxHeight);
     }

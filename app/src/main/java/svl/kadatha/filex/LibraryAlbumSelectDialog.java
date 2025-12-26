@@ -238,7 +238,7 @@ public class LibraryAlbumSelectDialog extends DialogFragment {
             isIconHeightMore = (iconHeight * 2 > maxHeight);
             maxHeight = Math.max(iconHeight, maxHeight);
 
-            maxHeight += Global.EIGHT_DP;
+            maxHeight += Global.TEN_DP;
             itemHeight = maxHeight;
             setMeasuredDimension(widthMeasureSpec, maxHeight);
         }
