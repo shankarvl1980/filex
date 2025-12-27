@@ -23,8 +23,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 35
 
-        versionCode 20001
-        versionName "2.00.01"
+        versionCode 20101
+        versionName "2.01.01"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release_config
