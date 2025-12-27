@@ -23,8 +23,7 @@ public final class StatusBarTint {
     /**
      * Resolve color from attr, darken it a bit (e.g. 0.85f), then tint using a scrim.
      */
-    public static void tintFromAttrWithScrim(@NonNull Activity activity,
-                                             @AttrRes int colorAttr) {
+    public static void tintFromAttrWithScrim(@NonNull Activity activity, @AttrRes int colorAttr) {
         int base = resolveAttrColor(activity, colorAttr);
         int dark = darkenColor(base, 0.8f);
         tintWithScrim(activity, dark);

@@ -29,8 +29,8 @@
     <color name="light_seek_bar_progress">@color/light_icon_color</color>
     <color name="light_seek_bar_thumb">@color/light_icon_color</color>
     <color name="light_toolbar_seek_bar_thumb">@color/light_toolbar_icon_color</color>
-    <color name="light_select_detail_recyclerview_pressed">#80959292</color>
-    <color name="light_select_drawer_recyclerview_pressed">#E6423E3E</color>
+    <color name="light_select_icon_pressed">#E6858282</color>
+    <color name="light_select_recyclerview_item_pressed">#E6403E3E</color>
     <color name="light_select_dialog_button_pressed">#77776C</color>
     <color name="light_select_rectangle_shape">@android:color/background_light</color>
     <color name="light_select_indicator_border_color">@color/light_icon_color</color>

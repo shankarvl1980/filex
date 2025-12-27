@@ -26,7 +26,6 @@
         android:layout_height="wrap_content"
         android:background="?attr/dialog_background"
         android:choiceMode="singleChoice"
-        android:clipToPadding="false"
         android:padding="@dimen/layout_margin"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"

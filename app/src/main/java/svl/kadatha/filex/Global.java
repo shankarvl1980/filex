@@ -190,7 +190,7 @@ public class Global {
     static String STORAGE_ANALYSER_SORT;
     static String THEME;
     static int BUTTON_HEIGHT;
-    static float ONE_DP;
+    static int ONE_DP;
     static int THIRTY_SIX_DP;
     static int SELECTOR_ICON_DIMENSION;
     static boolean BYTE_COUNT_BLOCK_1000;
@@ -343,6 +343,7 @@ public class Global {
     static void GET_IMAGE_VIEW_DIMENSIONS(Context context) {
         Dimens.init(App.getAppContext());
         if (IMAGEVIEW_DIMENSION_SMALL_LIST == 0) {
+            ONE_DP=Dimens.px(1);
             TWO_DP = Dimens.px(2);
             FOUR_DP = Dimens.px(4);
             FIVE_DP = Dimens.px(5);

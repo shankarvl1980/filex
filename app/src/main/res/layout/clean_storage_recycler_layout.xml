@@ -8,6 +8,7 @@
 
     <TextView
         android:id="@+id/clean_storage_text_label"
+        android:background="@drawable/select_drawer_storage_list"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/layout_margin"
@@ -17,9 +18,7 @@
         android:textColor="?attr/recycler_second_text_color"
         android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="parent"
-
         app:layout_constraintEnd_toStartOf="@id/clean_storage_label_image"
-
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

@@ -41,11 +41,11 @@
         <item name="select_color_picture_recyclerview">
             @color/light_select_color_picture_recyclerview
         </item>
-        <item name="select_detail_recyclerview_pressed">
-            @color/light_select_detail_recyclerview_pressed
+        <item name="select_icon_pressed">
+            @color/light_select_icon_pressed
         </item>
-        <item name="select_drawer_recyclerview_pressed">
-            @color/light_select_drawer_recyclerview_pressed
+        <item name="select_recyclerview_item_pressed">
+            @color/light_select_recyclerview_item_pressed
         </item>
         <item name="select_dialog_button_pressed">@color/light_select_dialog_button_pressed</item>
         <item name="select_rectangle_shape">@color/light_select_rectangle_shape</item>

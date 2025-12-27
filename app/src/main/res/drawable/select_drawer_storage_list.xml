@@ -3,10 +3,10 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:state_pressed="true">
-        <color android:color="?attr/select_drawer_recyclerview_pressed" />
+        <color android:color="?attr/select_recyclerview_item_pressed" />
     </item>
     <item android:state_selected="true">
-        <color android:color="?attr/select_drawer_recyclerview_pressed" />
+        <color android:color="?attr/select_recyclerview_item_pressed" />
     </item>
     <item>
         <color android:color="?attr/dialog_recyclerview_background" />

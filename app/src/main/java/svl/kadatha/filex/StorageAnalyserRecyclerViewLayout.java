@@ -49,9 +49,7 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
 
 
     private void init() {
-
         View view = LayoutInflater.from(context).inflate(R.layout.storage_analyser_recyclerview_layout, this, true);
-
         fileimageview = view.findViewById(R.id.analyser_image_file);
         play_overlay_imageview = view.findViewById(R.id.analyser_play_overlay_image_file);
         pdf_overlay_imageview = view.findViewById(R.id.analyser_pdf_overlay_image_file);
@@ -108,7 +106,7 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
-        int iconheight, maxHeight = 0;
+        int iconHeight, maxHeight = 0;
         int usedWidth;
 
         usedWidth = Global.FOURTEEN_DP;
@@ -117,7 +115,7 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
         measureChildWithMargins(pdf_overlay_imageview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
 
         usedWidth += imageview_dimension;
-        iconheight = imageview_dimension;
+        iconHeight = imageview_dimension;
 
         measureChildWithMargins(file_select_indicator, widthMeasureSpec, 0, heightMeasureSpec, 0);
 
@@ -139,9 +137,9 @@ public class StorageAnalyserRecyclerViewLayout extends ViewGroup {
         measureChildWithMargins(item_separator, widthMeasureSpec, Global.TEN_DP * 2, heightMeasureSpec, 0);
         maxHeight += item_separator.getMeasuredHeight();
 
-        maxHeight = Math.max(iconheight, maxHeight);
+        maxHeight = Math.max(iconHeight, maxHeight);
 
-        maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2 - Global.TWO_DP; //providing top and bottom margin of four dp
+        maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2 - Global.FOUR_DP; //providing top and bottom margin of four dp
 
         itemHeight = maxHeight;
         setMeasuredDimension(widthMeasureSpec, maxHeight);

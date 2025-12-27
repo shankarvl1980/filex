@@ -246,8 +246,6 @@
                 android:paddingStart="@dimen/layout_margin"
                 android:paddingEnd="@dimen/layout_margin"
                 android:paddingBottom="@dimen/layout_margin"
-
-
                 app:layout_constraintEnd_toStartOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/library_layout_background" />
@@ -462,11 +460,9 @@
                 android:paddingEnd="@dimen/layout_margin"
                 android:paddingBottom="@dimen/layout_margin"
 
-
                 app:layout_constraintEnd_toStartOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/clean_storage_layout_background" />
-
 
             <View
                 android:id="@+id/app_manager_label_background"

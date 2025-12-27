@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-
     <item android:state_pressed="true">
-        <color android:color="?attr/select_detail_recyclerview_pressed" />
+        <color android:color="?attr/select_recyclerview_item_pressed" />
     </item>
     <item android:state_selected="true">
-        <color android:color="?attr/select_detail_recyclerview_pressed" />
+        <color android:color="?attr/select_recyclerview_item_pressed" />
     </item>
-
-
 </selector>

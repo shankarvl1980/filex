@@ -1,6 +1,7 @@
 package svl.kadatha.filex;
 
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -423,81 +424,135 @@ public class CopyToActivity extends BaseActivity {
 
     @SuppressWarnings("RedundantThrows")
     private void on_intent(Intent intent, Bundle savedInstanceState) throws Exception {
-        if (intent != null) {
-            Bundle bundle = intent.getExtras();
-            dest_folder = intent.getStringExtra("dest_folder");
-            String action = intent.getAction();
-            String file_name = intent.getStringExtra("file_name");
+        if (intent == null) return;
+        String action = intent.getAction();
+        String file_name = intent.getStringExtra("file_name");
+        dest_folder = intent.getStringExtra("dest_folder");
 
-            Object extraStream = bundle.get(Intent.EXTRA_STREAM);
-            data_list = new ArrayList<>();
+        data_list = new ArrayList<>();
 
-            if (Intent.ACTION_SEND_MULTIPLE.equals(action)) {
-                if (extraStream instanceof ArrayList) {
-                    ArrayList<?> tempList = (ArrayList<?>) extraStream;
-                    boolean allElementsAreUri = true;
+        // ---------- 1) Normal attachment share path ----------
+        if (Intent.ACTION_SEND_MULTIPLE.equals(action)) {
+            ArrayList<Uri> list = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+            if (list != null && !list.isEmpty()) {
+                data_list.addAll(list);
+                file_name_edit_text.setEnabled(false);
+                file_name_edit_text.setAlpha(Global.DISABLE_ALFA);
+            }
+        } else if (Intent.ACTION_SEND.equals(action)) {
+            Uri stream = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+            if (stream != null) {
+                data_list.add(stream);
+            }
+        }
 
-                    for (Object element : tempList) {
-                        if (element instanceof Uri) {
-                            data_list.add((Uri) element);
-                        } else {
-                            allElementsAreUri = false;
-                            break;
-                        }
+        // ---------- 2) Fallback: try ClipData (some apps put URIs here) ----------
+        if (data_list.isEmpty()) {
+            ClipData clipData = intent.getClipData();
+            if (clipData != null) {
+                for (int i = 0; i < clipData.getItemCount(); i++) {
+                    ClipData.Item item = clipData.getItemAt(i);
+                    Uri u = item.getUri();
+                    if (u != null) {
+                        data_list.add(u);
                     }
-
-                    if (!allElementsAreUri) {
-                        // Handle the error
-                        throw new IllegalArgumentException("One or more items in the EXTRA_STREAM are not Uri instances.");
-                    }
-
-                    file_name_edit_text.setEnabled(false);
-                    file_name_edit_text.setAlpha(Global.DISABLE_ALFA);
-                } else {
-                    // Handle the case where EXTRA_STREAM is not an ArrayList
-                    throw new IllegalArgumentException("Expected an ArrayList<Uri> for ACTION_SEND_MULTIPLE.");
-                }
-            } else if (Intent.ACTION_SEND.equals(action)) {
-                if (extraStream instanceof Uri) {
-                    data_list.add((Uri) extraStream);
-                } else {
-                    // Handle the error
-                    throw new IllegalArgumentException("Expected a Uri for ACTION_SEND.");
                 }
             }
+        }
 
-            if (savedInstanceState == null) {
-                if (!data_list.isEmpty()) {
-                    if (data_list.size() == 1) {
-                        if (file_name == null) {
-                            file_name = getFileNameOfUri(context, data_list.get(0));
-                        }
+        // ---------- 3) Fallback: shared LINK (EXTRA_TEXT) ----------
+        if (data_list.isEmpty()) {
+            CharSequence text = intent.getCharSequenceExtra(Intent.EXTRA_TEXT);
+            if (text != null) {
+                String s = text.toString().trim();
 
-                        if (file_name != null) {
-                            int idx = file_name.lastIndexOf(".");
-                            if (idx > 0) {
-                                ext = file_name.substring(idx);
-                            }
-                            modified_name = file_name;
-                        }
-                    }
+                // Pull first http(s) URL from the text
+                String url = extractFirstHttpUrl(s);
+                if (url != null) {
+                    Uri u = Uri.parse(url);
+                    data_list.add(u);
 
-                    if (dest_folder == null || dest_folder.isEmpty()) {
-                        browse_button.callOnClick();
-                    } else {
-                        dest_folder = intent.getStringExtra("dest_folder");
-                        destFileObjectType = (FileObjectType) intent.getSerializableExtra("destFileObjectType");
-                        destination_folder_edittext.setText(dest_folder);
-                        destination_fileObject_text_view.setText(Global.GET_FileObjectType(destFileObjectType));
+                    // If caller didn't give a file name, guess one
+                    if (file_name == null || file_name.trim().isEmpty()) {
+                        file_name = guessFileNameFromUrl(url);
                     }
                 }
-            } else {
-                modified_name = savedInstanceState.getString("modified_name");
-                ext = savedInstanceState.getString("ext");
             }
+        }
+
+        // ---------- 4) Fallback: ACTION_VIEW data ----------
+        if (data_list.isEmpty()) {
+            Uri data = intent.getData();
+            if (data != null) {
+                data_list.add(data);
+            }
+        }
+
+        // If still empty -> nothing usable came in
+        if (data_list.isEmpty()) {
+            return;
+        }
+        if (savedInstanceState == null) {
+            if (!data_list.isEmpty()) {
+                if (data_list.size() == 1) {
+                    if (file_name == null) {
+                        file_name = getFileNameOfUri(context, data_list.get(0));
+                    }
+
+                    if (file_name != null) {
+                        int idx = file_name.lastIndexOf(".");
+                        if (idx > 0) {
+                            ext = file_name.substring(idx);
+                        }
+                        modified_name = file_name;
+                    }
+                }
+
+                if (dest_folder == null || dest_folder.isEmpty()) {
+                    browse_button.callOnClick();
+                } else {
+                    dest_folder = intent.getStringExtra("dest_folder");
+                    destFileObjectType = (FileObjectType) intent.getSerializableExtra("destFileObjectType");
+                    destination_folder_edittext.setText(dest_folder);
+                    destination_fileObject_text_view.setText(Global.GET_FileObjectType(destFileObjectType));
+                }
+            }
+        } else {
+            modified_name = savedInstanceState.getString("modified_name");
+            ext = savedInstanceState.getString("ext");
         }
     }
 
+    private static String extractFirstHttpUrl(String text) {
+        if (text == null) return null;
+        // simple, fast URL sniff (good enough for share text)
+        java.util.regex.Matcher m = java.util.regex.Pattern
+                .compile("(https?://\\S+)")
+                .matcher(text);
+        if (m.find()) {
+            // Trim trailing punctuation that often gets included
+            String url = m.group(1);
+            while (url.endsWith(")") || url.endsWith(",") || url.endsWith(".") || url.endsWith(";")) {
+                url = url.substring(0, url.length() - 1);
+            }
+            return url;
+        }
+        return null;
+    }
+
+    private static String guessFileNameFromUrl(String url) {
+        try {
+            Uri u = Uri.parse(url);
+            String last = u.getLastPathSegment();
+            if (last == null || last.trim().isEmpty()) return "download";
+            // strip query-like junk if present in segment
+            int q = last.indexOf("?");
+            if (q >= 0) last = last.substring(0, q);
+            return last;
+        } catch (Exception e) {
+            return "download";
+        }
+    }
 
     @Override
     protected void onResume() {

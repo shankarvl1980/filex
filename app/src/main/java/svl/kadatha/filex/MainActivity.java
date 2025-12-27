@@ -2476,7 +2476,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                 v.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View p) {
                         position[0] = getBindingAdapterPosition();
-                        //final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
                         final BlankFragment pbf = BlankFragment.newInstance();
                         pbf.show(fm, "");
                         drawerLayout.closeDrawer(drawer);
