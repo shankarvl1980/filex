@@ -153,6 +153,37 @@ public class CopyToActivity extends BaseActivity {
         return result;
     }
 
+    private static String extractFirstHttpUrl(String text) {
+        if (text == null) return null;
+        // simple, fast URL sniff (good enough for share text)
+        java.util.regex.Matcher m = java.util.regex.Pattern
+                .compile("(https?://\\S+)")
+                .matcher(text);
+        if (m.find()) {
+            // Trim trailing punctuation that often gets included
+            String url = m.group(1);
+            while (url.endsWith(")") || url.endsWith(",") || url.endsWith(".") || url.endsWith(";")) {
+                url = url.substring(0, url.length() - 1);
+            }
+            return url;
+        }
+        return null;
+    }
+
+    private static String guessFileNameFromUrl(String url) {
+        try {
+            Uri u = Uri.parse(url);
+            String last = u.getLastPathSegment();
+            if (last == null || last.trim().isEmpty()) return "download";
+            // strip query-like junk if present in segment
+            int q = last.indexOf("?");
+            if (q >= 0) last = last.substring(0, q);
+            return last;
+        } catch (Exception e) {
+            return "download";
+        }
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -520,37 +551,6 @@ public class CopyToActivity extends BaseActivity {
         } else {
             modified_name = savedInstanceState.getString("modified_name");
             ext = savedInstanceState.getString("ext");
-        }
-    }
-
-    private static String extractFirstHttpUrl(String text) {
-        if (text == null) return null;
-        // simple, fast URL sniff (good enough for share text)
-        java.util.regex.Matcher m = java.util.regex.Pattern
-                .compile("(https?://\\S+)")
-                .matcher(text);
-        if (m.find()) {
-            // Trim trailing punctuation that often gets included
-            String url = m.group(1);
-            while (url.endsWith(")") || url.endsWith(",") || url.endsWith(".") || url.endsWith(";")) {
-                url = url.substring(0, url.length() - 1);
-            }
-            return url;
-        }
-        return null;
-    }
-
-    private static String guessFileNameFromUrl(String url) {
-        try {
-            Uri u = Uri.parse(url);
-            String last = u.getLastPathSegment();
-            if (last == null || last.trim().isEmpty()) return "download";
-            // strip query-like junk if present in segment
-            int q = last.indexOf("?");
-            if (q >= 0) last = last.substring(0, q);
-            return last;
-        } catch (Exception e) {
-            return "download";
         }
     }
 

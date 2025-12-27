@@ -32,7 +32,7 @@
         android:gravity="center_vertical"
         android:minHeight="40dp"
         android:textColor="?attr/recycler_second_text_color"
-        android:textSize="17sp"/>
+        android:textSize="17sp" />
 
 </merge>
 

@@ -223,23 +223,11 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
             }
         }
     }
-    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            if (result.getResultCode() == Activity.RESULT_OK) {
-                if (clicked_filepojo != null) {
-                    file_open_intent_dispatch(clicked_filepojo.getPath(), clicked_filepojo.getFileObjectType(), clicked_filepojo.getName(), clicked_filepojo.getSizeLong());
-                }
-                clicked_filepojo = null;
-            } else {
-                Global.print(context, getString(R.string.permission_not_granted));
-            }
-        }
-    });
 
     private class RecentRecyclerAdapter extends RecyclerView.Adapter<RecentRecyclerAdapter.ViewHolder> {
         final boolean storage_dir;
         LinkedList<FilePOJO> dir_linkedlist;
+
         RecentRecyclerAdapter(LinkedList<FilePOJO> dir_linkedlist, boolean storage_dir) {
             this.dir_linkedlist = dir_linkedlist;
             this.storage_dir = storage_dir;
@@ -292,7 +280,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
                     p1.textView_recent_dir.setText(DetailFragment.SMB_FILE_PREFIX + filePOJO.getName() + space);
                 }
             } else {
-                    p1.view.setData(filePOJO);
+                p1.view.setData(filePOJO);
             }
         }
 
@@ -300,6 +288,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
         public int getItemCount() {
             return dir_linkedlist.size();
         }
+
         public void clear_recents() {
             dir_linkedlist = new LinkedList<>();
             notifyDataSetChanged();
@@ -343,5 +332,19 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
                 });
             }
         }
-    }
+    }    private final ActivityResultLauncher<Intent> activityResultLauncher_unknown_package_install_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (result.getResultCode() == Activity.RESULT_OK) {
+                if (clicked_filepojo != null) {
+                    file_open_intent_dispatch(clicked_filepojo.getPath(), clicked_filepojo.getFileObjectType(), clicked_filepojo.getName(), clicked_filepojo.getSizeLong());
+                }
+                clicked_filepojo = null;
+            } else {
+                Global.print(context, getString(R.string.permission_not_granted));
+            }
+        }
+    });
+
+
 }

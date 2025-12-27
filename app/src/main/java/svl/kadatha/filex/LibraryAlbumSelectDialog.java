@@ -136,56 +136,6 @@ public class LibraryAlbumSelectDialog extends DialogFragment {
         }
     }
 
-    private class LibraryRecyclerViewAdapter extends RecyclerView.Adapter<LibraryRecyclerViewAdapter.VH> {
-
-        @Override
-        public LibraryRecyclerViewAdapter.VH onCreateViewHolder(ViewGroup p1, int p2) {
-            return new VH(new LibraryAlbumRecyclerViewLayout(context));
-        }
-
-        @Override
-        public void onBindViewHolder(LibraryRecyclerViewAdapter.VH p1, int p2) {
-            LibraryAlbumSelectDialog.LibraryDirPOJO libraryDirPOJO = viewModel.libraryDirPOJOS.get(p2);
-            p1.v.setData(libraryDirPOJO);
-        }
-
-        @Override
-        public int getItemCount() {
-            return viewModel.libraryDirPOJOS.size();
-        }
-
-        private class VH extends RecyclerView.ViewHolder {
-            final LibraryAlbumRecyclerViewLayout v;
-            final ImageView album_dir_image;
-            final TextView album_name_tv, album_path_tv;
-            int pos;
-
-            VH(LibraryAlbumRecyclerViewLayout vi) {
-                super(vi);
-                v = vi;
-                album_dir_image = v.findViewById(R.id.album_image_dir);
-                album_name_tv = v.findViewById(R.id.album_name);
-                album_path_tv = v.findViewById(R.id.album_path);
-
-                vi.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View p1) {
-                        pos = getBindingAdapterPosition();
-                        String parent_file_path = null;
-                        if (pos != 0) {
-                            parent_file_path = viewModel.libraryDirPOJOS.get(pos).getPath();
-                            bundle.putString("parent_file_name", new File(parent_file_path).getName());
-                        }
-
-
-                        bundle.putString("parent_file_path", parent_file_path);
-                        getParentFragmentManager().setFragmentResult(request_code, bundle);
-                        dismissAllowingStateLoss();
-                    }
-                });
-            }
-        }
-    }
-
     public static class LibraryAlbumRecyclerViewLayout extends ViewGroup {
         private final Context context;
         public int itemWidth, itemHeight;
@@ -316,6 +266,56 @@ public class LibraryAlbumSelectDialog extends DialogFragment {
 
             albumNameTextView.setText(libraryDirPOJO.getName());
             pathTextView.setText(libraryDirPOJO.getPath());
+        }
+    }
+
+    private class LibraryRecyclerViewAdapter extends RecyclerView.Adapter<LibraryRecyclerViewAdapter.VH> {
+
+        @Override
+        public LibraryRecyclerViewAdapter.VH onCreateViewHolder(ViewGroup p1, int p2) {
+            return new VH(new LibraryAlbumRecyclerViewLayout(context));
+        }
+
+        @Override
+        public void onBindViewHolder(LibraryRecyclerViewAdapter.VH p1, int p2) {
+            LibraryAlbumSelectDialog.LibraryDirPOJO libraryDirPOJO = viewModel.libraryDirPOJOS.get(p2);
+            p1.v.setData(libraryDirPOJO);
+        }
+
+        @Override
+        public int getItemCount() {
+            return viewModel.libraryDirPOJOS.size();
+        }
+
+        private class VH extends RecyclerView.ViewHolder {
+            final LibraryAlbumRecyclerViewLayout v;
+            final ImageView album_dir_image;
+            final TextView album_name_tv, album_path_tv;
+            int pos;
+
+            VH(LibraryAlbumRecyclerViewLayout vi) {
+                super(vi);
+                v = vi;
+                album_dir_image = v.findViewById(R.id.album_image_dir);
+                album_name_tv = v.findViewById(R.id.album_name);
+                album_path_tv = v.findViewById(R.id.album_path);
+
+                vi.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View p1) {
+                        pos = getBindingAdapterPosition();
+                        String parent_file_path = null;
+                        if (pos != 0) {
+                            parent_file_path = viewModel.libraryDirPOJOS.get(pos).getPath();
+                            bundle.putString("parent_file_name", new File(parent_file_path).getName());
+                        }
+
+
+                        bundle.putString("parent_file_path", parent_file_path);
+                        getParentFragmentManager().setFragmentResult(request_code, bundle);
+                        dismissAllowingStateLoss();
+                    }
+                });
+            }
         }
     }
 }

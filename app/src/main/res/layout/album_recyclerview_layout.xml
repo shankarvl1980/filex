@@ -10,8 +10,7 @@
         android:layout_height="wrap_content"
         android:paddingHorizontal="@dimen/layout_margin"
         android:textColor="?attr/recycler_main_text_color"
-        android:textSize="17sp"
-         />
+        android:textSize="17sp" />
 
     <TextView
         android:id="@+id/album_path"
@@ -19,14 +18,12 @@
         android:layout_height="wrap_content"
         android:paddingHorizontal="@dimen/layout_margin"
         android:textColor="?attr/recycler_second_text_color"
-        android:textSize="15sp"
-         />
+        android:textSize="15sp" />
 
     <ImageView
         android:id="@+id/album_image_dir"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:scaleType="centerCrop"
-         />
+        android:scaleType="centerCrop" />
 
 </merge>

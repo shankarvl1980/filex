@@ -12,7 +12,6 @@ import android.os.ParcelFileDescriptor;
 
 import androidx.activity.result.ActivityResult;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
@@ -211,7 +210,6 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
         hasWallPaperSet.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future2 = executorService.submit(new Runnable() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void run() {
                 Uri uri = result.getData().getData();

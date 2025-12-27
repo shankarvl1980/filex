@@ -82,7 +82,6 @@ public class UsbDocumentProvider extends DocumentsProvider {
     private BroadcastReceiver usbDetachedReceiver;
     private boolean enableReceiverRegistered = false;
     private boolean receiversRegistered = false;
-    private BroadcastReceiver ejectReceiver;
     private boolean ejectReceiverRegistered = false;
     private LocalBroadcastManager localBroadcastManager;
 
@@ -161,7 +160,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
 
         // Eject receiver is useful only when feature is ON (or you can keep it always)
         if (!ejectReceiverRegistered) {
-            ejectReceiver = new BroadcastReceiver() {
+            BroadcastReceiver ejectReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context c, Intent i) {
                     ejectCurrentDevice();

@@ -193,6 +193,7 @@ public final class FileUtil {
             }
         }
     }
+
     public static boolean copy_FileModel_FileModel(@NonNull final FileModel sourceFileModel, @NonNull final FileModel destFileModel, String child_name, boolean cut, long[] bytes_read) {
         if (bytes_read != null && bytes_read.length > 0) bytes_read[0] = 0;
 
@@ -278,6 +279,7 @@ public final class FileUtil {
             }
         }
     }
+
     public static boolean CopyHttpUrlToFileModel(@NonNull Uri data, @NonNull FileModel destFileModel, String fileName, long[] bytesRead) {
         if (bytesRead != null && bytesRead.length > 0) bytesRead[0] = 0;
 

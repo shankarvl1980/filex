@@ -555,8 +555,8 @@ public class AppManagerListFragment extends Fragment {
         private final long sizeLong;
         private final String size;
         private final long dateLong;
-        private String date;
         private final String version;
+        private String date;
 
         public AppPOJO(String app_name, String app_package, String app_path, long app_size_long, long app_date_long, String version) {
             this.name = app_name;

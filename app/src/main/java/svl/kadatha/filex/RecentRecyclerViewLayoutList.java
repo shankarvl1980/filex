@@ -16,8 +16,9 @@ import com.bumptech.glide.signature.ObjectKey;
 import java.io.File;
 
 public class RecentRecyclerViewLayoutList extends ViewGroup {
+    public final int itemWidth;
     private final Context context;
-    public int itemWidth, itemHeight;
+    public int itemHeight;
     public ImageView fileimageview, play_overlay_imageview, pdf_overlay_imageview;
     public TextView filenametextview;
     private int imageview_dimension;
@@ -66,17 +67,17 @@ public class RecentRecyclerViewLayoutList extends ViewGroup {
         measureChildWithMargins(play_overlay_imageview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
         measureChildWithMargins(pdf_overlay_imageview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
 
-        usedWidth += imageview_dimension+Global.FOUR_DP;
+        usedWidth += imageview_dimension + Global.FOUR_DP;
         iconHeight = Global.THIRTY_FOUR_DP;
 
         measureChildWithMargins(filenametextview, widthMeasureSpec, usedWidth + (Global.FOUR_DP * 2), heightMeasureSpec, 0);
         maxHeight += filenametextview.getMeasuredHeight();
 
-        if(iconHeight*2>maxHeight){
-            isIconHeightMore=true;
+        if (iconHeight * 2 > maxHeight) {
+            isIconHeightMore = true;
         }
         maxHeight = Math.max(iconHeight, maxHeight);
-        maxHeight = Math.max(maxHeight,Global.FORTY_DP);
+        maxHeight = Math.max(maxHeight, Global.FORTY_DP);
 
         maxHeight += Global.TEN_DP;
         itemHeight = maxHeight;
@@ -90,7 +91,7 @@ public class RecentRecyclerViewLayoutList extends ViewGroup {
         int top_offset;
 
         top_offset = (itemHeight - filenametextview.getMeasuredHeight()) / 2;
-        int d = isIconHeightMore ? (itemHeight - imageview_dimension) / 2 : top_offset+Global.EIGHT_DP;
+        int d = isIconHeightMore ? (itemHeight - imageview_dimension) / 2 : top_offset + Global.EIGHT_DP;
 
         View v = fileimageview;
         int fileMeasuredWidth = v.getMeasuredWidth();
@@ -108,7 +109,7 @@ public class RecentRecyclerViewLayoutList extends ViewGroup {
         v = pdf_overlay_imageview;
         v.layout(overlayX, overlayY, overlayX + overlayMeasuredWidth, overlayY + overlayMeasuredHeight);
 
-        x += fileMeasuredWidth +Global.TEN_DP;
+        x += fileMeasuredWidth + Global.TEN_DP;
 
         v = filenametextview;
         y = top_offset;
@@ -188,8 +189,8 @@ public class RecentRecyclerViewLayoutList extends ViewGroup {
         filenametextview.setText(displayText);
     }
 
-    public void setData(int drawable, String text){
-        fileimageview.setImageDrawable(ContextCompat.getDrawable(context,drawable));
+    public void setData(int drawable, String text) {
+        fileimageview.setImageDrawable(ContextCompat.getDrawable(context, drawable));
         filenametextview.setText(text);
     }
 }

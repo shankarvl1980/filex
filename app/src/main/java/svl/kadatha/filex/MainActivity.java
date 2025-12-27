@@ -1614,6 +1614,18 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         intent.putExtra("bundle", bundle);
         intent.putExtra(FileSelectorActivity.ACTION_SOUGHT, FileSelectorActivity.MOVE_COPY_REQUEST_CODE);
         activityResultLauncher_file_select.launch(intent);
+    }
+
+    private void paste_pastecancel_view_procedure(DetailFragment df) {
+        DetailFragment.FILE_SELECTED_FOR_CUT_COPY = new ArrayList<>();
+        DetailFragment.CUT_SELECTED = false;
+        DetailFragment.COPY_SELECTED = false;
+        bottom_toolbar.setVisibility(View.VISIBLE);
+        bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+        paste_toolbar.setVisibility(View.GONE);
+        actionmode_toolbar.setVisibility(View.GONE);
+        viewModel.toolbar_shown = "bottom";
+        df.is_toolbar_visible = true;
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -1653,18 +1665,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     });
-
-    private void paste_pastecancel_view_procedure(DetailFragment df) {
-        DetailFragment.FILE_SELECTED_FOR_CUT_COPY = new ArrayList<>();
-        DetailFragment.CUT_SELECTED = false;
-        DetailFragment.COPY_SELECTED = false;
-        bottom_toolbar.setVisibility(View.VISIBLE);
-        bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-        paste_toolbar.setVisibility(View.GONE);
-        actionmode_toolbar.setVisibility(View.GONE);
-        viewModel.toolbar_shown = "bottom";
-        df.is_toolbar_visible = true;
-    }
 
     @Override
     public void onMediaMount(String action) {
