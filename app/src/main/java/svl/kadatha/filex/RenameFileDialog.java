@@ -180,19 +180,24 @@ public class RenameFileDialog extends DialogFragment {
             }
         });
 
-
         if (modified_name == null || modified_name.isEmpty()) {
             modified_name = existing_name;
+
             if (!viewModel.modify_ext) {
-                int idx = modified_name.lastIndexOf(".");
-                if (idx > 0) {
+                int idx = modified_name.lastIndexOf('.');
+
+                // dot must exist AND must not be the last character
+                if (idx > 0 && idx < modified_name.length() - 1) {
+
                     String new_ext = modified_name.substring(idx + 1);
+
                     if (new_ext.equals(ext)) {
                         modified_name = modified_name.substring(0, idx);
                     }
                 }
             }
         }
+
 
         new_file_name_edittext.setText(modified_name);//new_file_name_edittext.setText(existing_name);
         int l = modified_name.lastIndexOf(".");

@@ -65,7 +65,7 @@ public class FileTypeSelectDialog extends DialogFragment {
         file_size = bundle.getLong("file_size");
 
         mimePOJOList = new ArrayList<>(Global.SUPPORTED_MIME_POJOS);
-        mimePOJOList.add(new MimePOJO("Other", "*/*", ""));
+        mimePOJOList.add(new MimePOJO("Other", "*/*", Global.OTHER_EXT_SET));
     }
 
     @Override

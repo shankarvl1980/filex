@@ -366,7 +366,7 @@ ImageViewFragment extends Fragment {
             }
         }
 
-        viewModel.getAlbumFromCurrentFolder(Global.IMAGE_REGEX, false);
+        viewModel.getAlbumFromCurrentFolder(Global.IMAGE_EXT_SET, false);
         viewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
             @Override
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -111,7 +112,7 @@ public class AudioPlayViewModel extends AndroidViewModel {
                             int idx = filePOJO.getName().lastIndexOf(".");
                             if (idx > 0) {
                                 file_ext = filePOJO.getName().substring(idx + 1);
-                                if (file_ext.matches(Global.AUDIO_REGEX)) {
+                                if (Global.AUDIO_EXT_SET.contains(file_ext.toLowerCase(Locale.ROOT))) {
                                     AudioPOJO audio = AudioPlayerActivity.getAudioPojo(App.getAppContext(), filePOJO.getPath(), fileObjectType);
                                     if (audio != null) {
                                         AudioPlayerService.AUDIO_QUEUED_ARRAY.add(audio);

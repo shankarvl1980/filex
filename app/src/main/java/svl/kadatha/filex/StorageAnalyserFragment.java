@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 
 import me.jahnen.libaums.core.fs.UsbFile;
@@ -309,8 +310,7 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
             FileTypeSelectDialog fileTypeSelectFragment = FileTypeSelectDialog.getInstance(file_path, fileObjectType, tree_uri, tree_uri_path, select_app, file_size);
             fileTypeSelectFragment.show(getParentFragmentManager(), "");
         } else {
-            if (file_ext.matches("(?i)apk")) {
-
+            if (Global.APK_EXT_SET.contains(file_ext.toLowerCase(Locale.ROOT))) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     if (!context.getPackageManager().canRequestPackageInstalls()) {
                         Intent unknown_package_install_intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);

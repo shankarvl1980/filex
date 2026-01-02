@@ -233,7 +233,7 @@ public class VideoViewContainerFragment extends Fragment implements VideoViewAct
             }
         }
 
-        viewModel.getAlbumFromCurrentFolder(Global.VIDEO_REGEX, true);
+        viewModel.getAlbumFromCurrentFolder(Global.VIDEO_EXT_SET, true);
         viewModel.asyncTaskStatus.observe(getViewLifecycleOwner(), new Observer<AsyncTaskStatus>() {
             @Override
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {

@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class StorageUtil {
     static List<File> STORAGE_DIR;
@@ -176,9 +177,10 @@ public class StorageUtil {
             int idx = name.lastIndexOf(".");
             if (idx > 0) {
                 file_ext = name.substring(idx + 1);
-                if (file_ext.matches(Global.VIDEO_REGEX)) {
+                String lower_file_ext=file_ext.toLowerCase(Locale.ROOT);
+                if (Global.VIDEO_EXT_SET.contains(lower_file_ext)) {
                     play_overlay_visible = View.VISIBLE;
-                } else if (file_ext.matches(Global.PDF_REGEX)) {
+                } else if (Global.PDF_EXT_SET.contains(lower_file_ext)) {
                     pdf_overlay_visible = View.VISIBLE;
                 }
             }

@@ -48,6 +48,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.ExecutorService;
@@ -79,10 +80,7 @@ public class Global {
     static public final String TAG = "shankar";
     public static final List<FileObjectType> NETWORK_FILE_OBJECT_TYPES = Arrays.asList(FileObjectType.FTP_TYPE, FileObjectType.SFTP_TYPE, FileObjectType.WEBDAV_TYPE, FileObjectType.SMB_TYPE);
     public static final List<FileObjectType> CLOUD_FILE_OBJECT_TYPES = Arrays.asList(FileObjectType.GOOGLE_DRIVE_TYPE, FileObjectType.ONE_DRIVE_TYPE, FileObjectType.DROP_BOX_TYPE, FileObjectType.MEDIA_FIRE_TYPE, FileObjectType.BOX_TYPE, FileObjectType.NEXT_CLOUD_TYPE, FileObjectType.YANDEX_TYPE);
-    public static final List<String> APK_ICON_PACKAGE_NAME_LIST = new ArrayList<>();
-    public static final String IMAGE_REGEX = "(?i)png|jpg|jpeg|svg|gif|tif|webp|avif";
-    public static final String AUDIO_REGEX = "(?i)mp3|ogg|wav|aac|wma|opus|m4r|m4a|awb";
-    public static final String VIDEO_REGEX = "(?i)3gp|mp4|avi|mov|flv|wmv|webm";
+
     public static final float DISABLE_ALFA = (float) 0.4;
     public static final float ENABLE_ALFA = (float) 1.0;
     public static final int FONT_SIZE_SMALL_FIRST_LINE = 15;
@@ -95,42 +93,106 @@ public class Global {
     public static final int IMAGE_VIEW_DIMENSION_MULTIPLIER_MEDIUM = 9;
     public static final int IMAGE_VIEW_DIMENSION_MULTIPLIER_LARGE = 10;
     static final HashMap<String, List<LibraryAlbumSelectDialog.LibraryDirPOJO>> LIBRARY_FILTER_HASHMAP = new HashMap<>();
-    static final String TEXT_REGEX = "(?i)txt|json|java|xml|cpp|c|h|log|html|htm";
-    static final String RTF_REGEX = "(?i)rtf";
-    static final String ZIP_REGEX = "(?i)zip|rar|jar|7z";
-    static final String UNIX_ARCHIVE_REGEX = "(?i)tar|gzip|gz";
-    static final String GZIP_REGEX = "(?i)gzip|gz";
-    static final String APK_REGEX = "(?i)apk";
-    static final String PDF_REGEX = "(?i)pdf";
-    static final String DOC_REGEX = "(?i)doc|docx";
-    static final String XLS_REGEX = "(?i)xls|xlsx";
-    static final String PPT_REGEX = "(?i)ppt|pptx";
-    static final String DB_REGEX = "(?i)db";
+//    public static final String IMAGE_REGEX = "(?i)png|jpg|jpeg|svg|gif|tif|webp|avif";
+//    public static final String AUDIO_REGEX = "(?i)mp3|ogg|wav|aac|wma|opus|m4r|m4a|awb";
+//    public static final String VIDEO_REGEX = "(?i)3gp|mp4|avi|mov|flv|wmv|webm";
+//    static final String TEXT_REGEX = "(?i)txt|json|java|xml|cpp|c|h|log|html|htm";
+//    static final String RTF_REGEX = "(?i)rtf";
+//    static final String ZIP_REGEX = "(?i)zip|rar|jar|7z";
+//    static final String UNIX_ARCHIVE_REGEX = "(?i)tar|gzip|gz";
+//    static final String GZIP_REGEX = "(?i)gzip|gz";
+//    static final String APK_REGEX = "(?i)apk";
+//    static final String PDF_REGEX = "(?i)pdf";
+//    static final String DOC_REGEX = "(?i)doc|docx";
+//    static final String XLS_REGEX = "(?i)xls|xlsx";
+//    static final String PPT_REGEX = "(?i)ppt|pptx";
+//    static final String DB_REGEX = "(?i)db";
+
+
+    public static final Set<String> IMAGE_EXT_SET = Set.of(
+            "png", "jpg", "jpeg", "svg", "gif", "tif", "webp", "avif"
+    );
+
+    public static final Set<String> AUDIO_EXT_SET = Set.of(
+            "mp3", "ogg", "wav", "aac", "wma", "opus", "m4r", "m4a", "awb"
+    );
+
+    public static final Set<String> VIDEO_EXT_SET = Set.of(
+            "3gp", "mp4", "avi", "mov", "flv", "wmv", "webm"
+    );
+
+    public static final Set<String> TEXT_EXT_SET = Set.of(
+            "txt", "json", "java", "xml", "cpp", "c", "h", "log", "html", "htm"
+    );
+
+    public static final Set<String> RTF_EXT_SET = Set.of(
+            "rtf"
+    );
+
+    public static final Set<String> ZIP_EXT_SET = Set.of(
+            "zip", "rar", "jar", "7z"
+    );
+
+    public static final Set<String> UNIX_ARCHIVE_EXT_SET = Set.of(
+            "tar", "gzip", "gz"
+    );
+
+    public static final Set<String> GZIP_EXT_SET = Set.of(
+            "gzip", "gz"
+    );
+
+    public static final Set<String> APK_EXT_SET = Set.of(
+            "apk"
+    );
+
+    public static final Set<String> PDF_EXT_SET = Set.of(
+            "pdf"
+    );
+
+    public static final Set<String> DOC_EXT_SET = Set.of(
+            "doc", "docx"
+    );
+
+    public static final Set<String> XLS_EXT_SET = Set.of(
+            "xls", "xlsx"
+    );
+
+    public static final Set<String> PPT_EXT_SET = Set.of(
+            "ppt", "pptx"
+    );
+
+    public static final Set<String> DB_EXT_SET = Set.of(
+            "db"
+    );
+
+    public static final Set<String> OTHER_EXT_SET = Set.of("");
+
+
     static final Set<String> SORT_CODE_SET = new HashSet<>(Arrays.asList("d_name_asc", "d_name_desc", "d_date_asc", "d_date_desc", "d_size_asc", "d_size_desc",
             "f_name_asc", "f_name_desc", "f_date_asc", "f_date_desc", "f_size_asc", "f_size_desc"));
     static final Set<String> THEME_CODE_SET = new HashSet<>(Arrays.asList("system", "light", "dark"));
     static final List<MimePOJO> SUPPORTED_MIME_POJOS = new ArrayList<>(Arrays.asList(
-            new MimePOJO("Text", "text/*", TEXT_REGEX),
-            new MimePOJO("Image", "image/*", IMAGE_REGEX),
-            new MimePOJO("Audio", "audio/*", AUDIO_REGEX),
-            new MimePOJO("Video", "video/*", VIDEO_REGEX),
-            new MimePOJO("PDF", "application/pdf", PDF_REGEX)));
+            new MimePOJO("Text", "text/*", TEXT_EXT_SET),
+            new MimePOJO("Image", "image/*", IMAGE_EXT_SET),
+            new MimePOJO("Audio", "audio/*", AUDIO_EXT_SET),
+            new MimePOJO("Video", "video/*", VIDEO_EXT_SET),
+            new MimePOJO("PDF", "application/pdf", PDF_EXT_SET)));
     static final List<MimePOJO> MIME_POJOS = new ArrayList<>(Arrays.asList(
-            new MimePOJO("MS Word", "application/msword", DOC_REGEX),
-            new MimePOJO("MS Excel", "application/vnd.ms-excel", XLS_REGEX),
-            new MimePOJO("MS PowerPoint", "application/vnd.ms-powerpoint", PPT_REGEX),
-            new MimePOJO("DB", "application/vnd.sqlite3", DB_REGEX),
-            new MimePOJO("Zip", "application/zip", ZIP_REGEX),
-            new MimePOJO("GZip", "application/gzip", GZIP_REGEX),
-            new MimePOJO("RTF", "application/rtf", RTF_REGEX),
-            new MimePOJO("APK", "application/vnd.android.package-archive", APK_REGEX),
+            new MimePOJO("MS Word", "application/msword", DOC_EXT_SET),
+            new MimePOJO("MS Excel", "application/vnd.ms-excel", XLS_EXT_SET),
+            new MimePOJO("MS PowerPoint", "application/vnd.ms-powerpoint", PPT_EXT_SET),
+            new MimePOJO("DB", "application/vnd.sqlite3", DB_EXT_SET),
+            new MimePOJO("Zip", "application/zip", ZIP_EXT_SET),
+            new MimePOJO("GZip", "application/gzip", GZIP_EXT_SET),
+            new MimePOJO("RTF", "application/rtf", RTF_EXT_SET),
+            new MimePOJO("APK", "application/vnd.android.package-archive", APK_EXT_SET),
 
             //same as supported mimepojos above
-            new MimePOJO("Text", "text/*", TEXT_REGEX),
-            new MimePOJO("Image", "image/*", IMAGE_REGEX),
-            new MimePOJO("Audio", "audio/*", AUDIO_REGEX),
-            new MimePOJO("Video", "video/*", VIDEO_REGEX),
-            new MimePOJO("PDF", "application/pdf", PDF_REGEX)));
+            new MimePOJO("Text", "text/*", TEXT_EXT_SET),
+            new MimePOJO("Image", "image/*", IMAGE_EXT_SET),
+            new MimePOJO("Audio", "audio/*", AUDIO_EXT_SET),
+            new MimePOJO("Video", "video/*", VIDEO_EXT_SET),
+            new MimePOJO("PDF", "application/pdf", PDF_EXT_SET)));
     static final LinkedHashMap<String, SpacePOJO> SPACE_ARRAY = new LinkedHashMap<>();
     static final long CACHE_FILE_MAX_LIMIT = 1024 * 1024 * 30;
     static final FilenameFilter File_NAME_FILTER = new FilenameFilter() {
@@ -197,8 +259,7 @@ public class Global {
     static boolean FILE_GRID_LAYOUT;
     static boolean IMAGE_VIDEO_GRID_LAYOUT;
     static boolean SHOW_FILE_PATH;
-    static boolean WHETHER_TO_CLEAR_CACHE_TODAY;
-    static int SIZE_APK_ICON_LIST, CURRENT_MONTH;
+    static int SIZE_APK_ICON_LIST;
 
     static void GET_URI_PERMISSIONS_LIST(Context context) {
         URI_PERMISSION_LIST = new ArrayList<>();
@@ -393,8 +454,7 @@ public class Global {
         CLOUD_CACHE_DIR = context.getExternalFilesDir(".cloud_cache");
         APK_ICON_DIR = context.getExternalFilesDir(".apk_icons");
         PDF_CACHE_DIR = context.getExternalFilesDir(".pdf_cache_dir");
-        APK_ICON_PACKAGE_NAME_LIST.addAll(Arrays.asList(APK_ICON_DIR.list()));
-        SIZE_APK_ICON_LIST = APK_ICON_PACKAGE_NAME_LIST.size();
+        SIZE_APK_ICON_LIST = Objects.requireNonNull(APK_ICON_DIR.list()).length;
         ARCHIVE_CACHE_DIR_LENGTH = ARCHIVE_EXTRACT_DIR.getAbsolutePath().length();
     }
 
@@ -728,90 +788,6 @@ public class Global {
         }
         return normalizedPath.toString();
     }
-
-//    private static boolean isSameFileSystem(NetworkAccountsDetailsDialog.NetworkAccountPOJO source,
-//                                            FileObjectType sourceFileObjectType,
-//                                            NetworkAccountsDetailsDialog.NetworkAccountPOJO dest,
-//                                            FileObjectType destFileObjectType) {
-//        if (source == null || dest == null) {
-//            // Cannot proceed without both accounts; but to avoid unnecessary copying, assume same filesystem
-//            return true;
-//        }
-//
-//        // Extract hostnames
-//        String host1 = extractHost(source.host);
-//        String host2 = extractHost(dest.host);
-//
-//        if (host1 != null && host2 != null) {
-//            // Resolve hostnames to IP addresses
-//            try {
-//                InetAddress[] addresses1 = InetAddress.getAllByName(host1);
-//                InetAddress[] addresses2 = InetAddress.getAllByName(host2);
-//                boolean sameHost = false;
-//                for (InetAddress addr1 : addresses1) {
-//                    for (InetAddress addr2 : addresses2) {
-//                        if (addr1.equals(addr2)) {
-//                            sameHost = true;
-//                            break;
-//                        }
-//                    }
-//                    if (sameHost) {
-//                        break;
-//                    }
-//                }
-//                if (!sameHost) {
-//                    // Hosts are different; file systems are different
-//                    return false; // Only return false when certain
-//                }
-//            } catch (UnknownHostException e) {
-//                // Cannot resolve hostnames; assume they might be the same to avoid unnecessary copying
-//                // Do not return false here
-//            }
-//        } else {
-//            // Host information is incomplete; assume hosts might be the same
-//            // Do not return false here
-//        }
-//
-//        // At this point, hosts are the same or unresolved
-//
-//        // Optionally compare usernames
-//        if (source.user_name != null && dest.user_name != null && !source.user_name.equals(dest.user_name)) {
-//            // Different usernames may point to different areas; but to avoid unnecessary copying, proceed
-//        }
-//
-//        // Proceed with cautious protocol-specific comparisons
-//
-//        // SMB-specific comparisons
-//        if (sourceFileObjectType == FileObjectType.SMB_TYPE && destFileObjectType == FileObjectType.SMB_TYPE) {
-//            if (source.shareName != null && dest.shareName != null && !source.shareName.equals(dest.shareName)) {
-//                // Different share names might still access the same file system
-//                // Proceed cautiously and do not return false
-//            }
-//            // Additional SMB-specific checks can be added here if necessary
-//        }
-//
-//        // WebDAV-specific comparisons
-//        if (sourceFileObjectType == FileObjectType.WEBDAV_TYPE && destFileObjectType == FileObjectType.WEBDAV_TYPE) {
-//            if (source.basePath != null && dest.basePath != null) {
-//                String normalizedSourceBasePath = normalizePath(source.basePath);
-//                String normalizedDestBasePath = normalizePath(dest.basePath);
-//                // Instead of returning false, check if one base path is a subpath of the other
-//                // or proceed cautiously without returning false
-//            }
-//            if (source.useHTTPS != dest.useHTTPS) {
-//                // Different protocols may still access the same file system
-//                // Do not return false solely based on protocol differences
-//            }
-//            // Additional WebDAV-specific checks can be added here if necessary
-//        }
-//
-//        // Other protocol-specific comparisons can be added here if applicable
-//
-//        // Since we have not found definitive evidence that the file systems are different,
-//        // we return true to avoid unnecessary copying
-//        return true;
-//    }
-
 
     private static String extractHost(String host) {
         if (host == null) {

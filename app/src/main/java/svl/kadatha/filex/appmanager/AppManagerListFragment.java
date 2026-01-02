@@ -145,32 +145,32 @@ public class AppManagerListFragment extends Fragment {
     });
 
     public static void extract_icon(String file_with_package_name, PackageManager packageManager, PackageInfo packageInfo) {
-        if (!Global.APK_ICON_PACKAGE_NAME_LIST.contains(file_with_package_name)) {
-            Drawable APKicon = packageInfo.applicationInfo.loadIcon(packageManager);
-            Bitmap bitmap;
-            if (APKicon instanceof BitmapDrawable) {
-                bitmap = ((BitmapDrawable) APKicon).getBitmap();
-            } else {
-                bitmap = Bitmap.createBitmap(APKicon.getIntrinsicWidth(), APKicon.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-                Canvas canvas = new Canvas(bitmap);
-                APKicon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-                APKicon.draw(canvas);
-            }
+        File f = new File(Global.APK_ICON_DIR, file_with_package_name);
+        if (f.exists()) return;
 
-            File f = new File(Global.APK_ICON_DIR, file_with_package_name);
-            FileOutputStream fileOutputStream = null;
-            try {
-                fileOutputStream = new FileOutputStream(f);
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
-                fileOutputStream.close();
-                Global.APK_ICON_PACKAGE_NAME_LIST.add(file_with_package_name);
-            } catch (IOException e) {
-                if (fileOutputStream != null) {
-                    try {
-                        fileOutputStream.close();
-                    } catch (IOException ioException) {
+        Drawable APKIcon = packageInfo.applicationInfo.loadIcon(packageManager);
+        Bitmap bitmap;
+        if (APKIcon instanceof BitmapDrawable) {
+            bitmap = ((BitmapDrawable) APKIcon).getBitmap();
+        } else {
+            bitmap = Bitmap.createBitmap(APKIcon.getIntrinsicWidth(), APKIcon.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            APKIcon.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            APKIcon.draw(canvas);
+        }
 
-                    }
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream(f);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+            fileOutputStream.close();
+            //Global.APK_ICON_PACKAGE_NAME_LIST.add(file_with_package_name);
+        } catch (IOException e) {
+            if (fileOutputStream != null) {
+                try {
+                    fileOutputStream.close();
+                } catch (IOException ioException) {
+
                 }
             }
         }

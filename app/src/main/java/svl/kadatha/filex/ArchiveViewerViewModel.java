@@ -65,14 +65,6 @@ public class ArchiveViewerViewModel extends AndroidViewModel {
         cancel(true);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.ARCHIVE_EXTRACT_DIR);
         FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(Global.ARCHIVE_EXTRACT_DIR.getAbsolutePath()), FileObjectType.FILE_TYPE);
-        if (Global.WHETHER_TO_CLEAR_CACHE_TODAY) {
-            Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(getApplication().getCacheDir());
-            if (Global.SIZE_APK_ICON_LIST > 800) {
-                Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.APK_ICON_DIR);
-            }
-            tinyDB.putInt("cache_cleared_month", Global.CURRENT_MONTH);
-            Global.print(getApplication(), "cleared cache");
-        }
     }
 
     public void cancel(boolean mayInterruptRunning) {

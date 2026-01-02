@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -110,7 +112,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
     }
 
 
-    public synchronized void getAlbumFromCurrentFolder(String regex, boolean whetherVideo) {
+    public synchronized void getAlbumFromCurrentFolder(Set<String> ext_set, boolean whetherVideo) {
         if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
             return;
         }
@@ -162,7 +164,7 @@ public class FilteredFilePOJOViewModel extends AndroidViewModel {
                             int idx = filePOJO.getName().lastIndexOf(".");
                             if (idx > 0) {
                                 file_ext = filePOJO.getName().substring(idx + 1);
-                                if (file_ext.matches(regex)) {
+                                if (ext_set.contains(file_ext.toLowerCase(Locale.ROOT))) {
                                     if (whetherVideo) {
                                         video_list.put(filePOJO, 0);
                                     } else {

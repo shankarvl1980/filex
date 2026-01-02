@@ -33,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -147,13 +148,6 @@ public class MakeFilePOJOUtil {
 
             sizeLong = f.length();
             si = FileUtil.humanReadableByteCount(sizeLong);
-        } else {
-//            String sub_file_count = null;
-//            String[] file_list;
-//            if ((file_list = f.list(Global.File_NAME_FILTER)) != null) {
-//                sub_file_count = "(" + file_list.length + ")";
-//            }
-//            si = sub_file_count;
         }
 
         if (f.isHidden()) {
@@ -200,13 +194,6 @@ public class MakeFilePOJOUtil {
 
             }
             si = FileUtil.humanReadableByteCount(sizeLong);
-        } else {
-//            String sub_file_count = null;
-//            String[] file_list;
-//            if ((file_list = f.list(Global.File_NAME_FILTER)) != null) {
-//                sub_file_count = "(" + file_list.length + ")";
-//            }
-//            si = sub_file_count;
         }
 
         if (f.isHidden()) {
@@ -263,18 +250,6 @@ public class MakeFilePOJOUtil {
                 }
             }
             si = FileUtil.humanReadableByteCount(sizeLong);
-        } else {
-//            String sub_file_count;
-//            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(path), Global.GET_NIO_FILE_NAME_FILTER())) {
-//                int count = 0;
-//                for (Path pa : directoryStream) {
-//                    ++count;
-//                }
-//                sub_file_count = "(" + count + ")";
-//            } catch (IOException e) {
-//
-//            }
-//            si = sub_file_count;
         }
 
         if (name.startsWith(".")) {
@@ -337,18 +312,6 @@ public class MakeFilePOJOUtil {
             } catch (IOException e) {
             }
             si = FileUtil.humanReadableByteCount(sizeLong);
-        } else {
-//            String sub_file_count = null;
-//            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(path), Global.GET_NIO_FILE_NAME_FILTER())) {
-//                int count = 0;
-//                for (Path pa : directoryStream) {
-//                    ++count;
-//                }
-//                sub_file_count = "(" + count + ")";
-//            } catch (IOException e) {
-//
-//            }
-//            si = sub_file_count;
         }
 
         if (name.startsWith(".")) {
@@ -395,17 +358,6 @@ public class MakeFilePOJOUtil {
             }
             sizeLong = f.getLength();
             si = FileUtil.humanReadableByteCount(sizeLong);
-        } else {
-//            String sub_file_count = null;
-//            String[] file_list;
-//            try {
-//                file_list = f.list();
-//                sub_file_count = "(" + file_list.length + ")";
-//
-//            } catch (IOException e) {
-//
-//            }
-//            si = sub_file_count;
         }
 
         return new FilePOJO(FileObjectType.USB_TYPE, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
@@ -456,17 +408,6 @@ public class MakeFilePOJOUtil {
             }
             sizeLong = f.getSize();
             si = FileUtil.humanReadableByteCount(sizeLong);
-        } else {
-//            String sub_file_count = null;
-//            String[] file_list;
-//            try {
-//                if ((file_list = ftpClient.listNames(file_path)) != null) {
-//                    sub_file_count = "(" + file_list.length + ")";
-//                }
-//                si = sub_file_count;
-//            } catch (IOException e) {
-//                Timber.tag(TAG).e("Error listing FTP directory contents: %s", e.getMessage());
-//            }
         }
 
         return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
@@ -533,13 +474,6 @@ public class MakeFilePOJOUtil {
                 }
             }
             si = FileUtil.humanReadableByteCount(sizeLong);
-        } else {
-//            String sub_file_count = null;
-//            String[] file_list;
-//            if ((file_list = RootUtils.listFilesInDirectory(file_path)) != null) {
-//                sub_file_count = "(" + file_list.length + ")";
-//            }
-//            si = sub_file_count;
         }
 
         if (name.startsWith(".")) {
@@ -590,17 +524,6 @@ public class MakeFilePOJOUtil {
             }
             sizeLong = attrs.getSize();
             si = FileUtil.humanReadableByteCount(sizeLong);
-        } else {
-//            String sub_file_count = null;
-//            try {
-//                Vector<ChannelSftp.LsEntry> entries = channelSftp.ls(file_path);
-//                if (entries != null) {
-//                    sub_file_count = "(" + entries.size() + ")";
-//                }
-//                si = sub_file_count;
-//            } catch (SftpException e) {
-//                Timber.tag(TAG).e("Error listing SFTP directory contents: %s", e.getMessage());
-//            }
         }
         return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
     }
@@ -647,18 +570,6 @@ public class MakeFilePOJOUtil {
             }
             sizeLong = resource.getContentLength();
             si = FileUtil.humanReadableByteCount(sizeLong);
-        } else {
-//            String sub_file_count = null;
-//            try {
-//                List<DavResource> resources = sardine.list(resource.getHref().toString());
-//                if (resources != null) {
-//                    // Subtract 1 to exclude the current directory itself
-//                    sub_file_count = "(" + (resources.size() - 1) + ")";
-//                }
-//                si = sub_file_count;
-//            } catch (IOException e) {
-//                Timber.tag(TAG).e("Error listing WebDAV directory contents: %s", e.getMessage());
-//            }
         }
         return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
     }
@@ -697,35 +608,6 @@ public class MakeFilePOJOUtil {
             }
             sizeLong = smbFileInfo.getFileSize();
             si = FileUtil.humanReadableByteCount(sizeLong);
-        } else {
-//            String sub_file_count;
-//            SmbClientRepository smbClientRepository = null;
-//            Session session = null;
-//            String shareName;
-//            try {
-//                smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
-//                session = smbClientRepository.getSession();
-//                shareName = smbClientRepository.getShareName();
-//                try (DiskShare share = (DiskShare) session.connectShare(shareName)) {
-//                    // Adjust fileclickselected to remove leading "/" if necessary
-//                    String adjustedPath = path.startsWith("/") ? path.substring(1) : path;
-//
-//                    // List files in the directory
-//                    List<FileIdBothDirectoryInformation> fileList = share.list(adjustedPath);
-//                    sub_file_count = "(" + (fileList.size() - 2) + ")";
-//                    si = sub_file_count;
-//                } catch (IOException e) {
-//                    throw new RuntimeException(e);
-//                }
-//
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            } finally {
-//                if (smbClientRepository != null && session != null) {
-//                    smbClientRepository.releaseSession(session);
-//                    Timber.tag(TAG).d("SMB session released");
-//                }
-//            }
         }
         return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
     }
@@ -922,7 +804,7 @@ public class MakeFilePOJOUtil {
         if (packageManager == null) {
             return null;
         }
-        if (file_ext.matches(Global.APK_REGEX)) {
+        if (Global.APK_EXT_SET.contains(file_ext.toLowerCase(Locale.ROOT))) {
             PackageInfo PI = packageManager.getPackageArchiveInfo(file_path, 0);
             if (PI == null) {
                 return null;
@@ -938,32 +820,52 @@ public class MakeFilePOJOUtil {
     }
 
 
-    static int GET_FILE_TYPE(boolean isDirectory, String file_ext) {
+    static int GET_FILE_TYPE(boolean isDirectory, String file_extension) {
         if (isDirectory) {
             return R.drawable.folder_icon;
-        } else if (file_ext.matches(Global.AUDIO_REGEX)) {
-            return R.drawable.audio_file_icon;
-        } else if (file_ext.matches(Global.PDF_REGEX)) {
-            return -3;//R.drawable.pdf_file_icon;
-        } else if (file_ext.matches(Global.APK_REGEX)) {
-            return 0;
-        } else if (file_ext.matches(Global.ZIP_REGEX) || file_ext.matches(Global.UNIX_ARCHIVE_REGEX)) {
-            return R.drawable.archive_file_icon;
-        } else if (file_ext.matches(Global.IMAGE_REGEX)) {
-            return -1;
-        } else if (file_ext.matches(Global.VIDEO_REGEX)) {
-            return -2;
-        } else if (file_ext.matches(Global.TEXT_REGEX) || file_ext.matches(Global.RTF_REGEX)) {
-            return R.drawable.text_file_icon;
-        } else if (file_ext.matches(Global.DOC_REGEX)) {
-            return R.drawable.word_file_icon;
-        } else if (file_ext.matches(Global.XLS_REGEX)) {
-            return R.drawable.xls_file_icon;
-        } else if (file_ext.matches(Global.PPT_REGEX)) {
-            return R.drawable.ppt_file_icon;
-        } else {
+        }
+
+        if (file_extension == null || file_extension.isEmpty()) {
             return R.drawable.unknown_file_icon;
         }
+
+        // normalize ONCE
+        String file_ext = file_extension.toLowerCase(Locale.ROOT);
+
+        if (Global.AUDIO_EXT_SET.contains(file_ext)) {
+            return R.drawable.audio_file_icon;
+
+        } else if (Global.PDF_EXT_SET.contains(file_ext)) {
+            return -3; // R.drawable.pdf_file_icon
+
+        } else if (Global.APK_EXT_SET.contains(file_ext)) {
+            return 0;
+
+        } else if (Global.ZIP_EXT_SET.contains(file_ext)
+                || Global.UNIX_ARCHIVE_EXT_SET.contains(file_ext)) {
+            return R.drawable.archive_file_icon;
+
+        } else if (Global.IMAGE_EXT_SET.contains(file_ext)) {
+            return -1;
+
+        } else if (Global.VIDEO_EXT_SET.contains(file_ext)) {
+            return -2;
+
+        } else if (Global.TEXT_EXT_SET.contains(file_ext)
+                || Global.RTF_EXT_SET.contains(file_ext)) {
+            return R.drawable.text_file_icon;
+
+        } else if (Global.DOC_EXT_SET.contains(file_ext)) {
+            return R.drawable.word_file_icon;
+
+        } else if (Global.XLS_EXT_SET.contains(file_ext)) {
+            return R.drawable.xls_file_icon;
+
+        } else if (Global.PPT_EXT_SET.contains(file_ext)) {
+            return R.drawable.ppt_file_icon;
+        }
+
+        return R.drawable.unknown_file_icon;
     }
 
     public static Set<FileAttributes> parseAttributes(long fileAttributesLong) {

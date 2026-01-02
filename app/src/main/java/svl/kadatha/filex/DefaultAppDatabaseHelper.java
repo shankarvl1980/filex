@@ -55,7 +55,8 @@ public class DefaultAppDatabaseHelper extends SQLiteOpenHelper {
                                 String app_component_name = cursor.getString(4);
 
                                 String file_with_package_name = app_package_name + ".png";
-                                if (!Global.APK_ICON_PACKAGE_NAME_LIST.contains(file_with_package_name)) {
+                                File f = new File(Global.APK_ICON_DIR, file_with_package_name);
+                                if (!f.exists()) {
                                     Drawable APKicon = packageManager.getApplicationIcon(app_package_name);
                                     Bitmap bitmap;
                                     if (APKicon instanceof BitmapDrawable) {
@@ -67,13 +68,11 @@ public class DefaultAppDatabaseHelper extends SQLiteOpenHelper {
                                         APKicon.draw(canvas);
                                     }
 
-                                    File f = new File(Global.APK_ICON_DIR, file_with_package_name);
                                     FileOutputStream fileOutputStream = null;
                                     try {
                                         fileOutputStream = new FileOutputStream(f);
                                         bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
                                         fileOutputStream.close();
-                                        Global.APK_ICON_PACKAGE_NAME_LIST.add(file_with_package_name);
                                     } catch (IOException e) {
                                         if (fileOutputStream != null) {
                                             try {

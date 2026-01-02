@@ -14,6 +14,7 @@ import androidx.core.content.FileProvider;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import svl.kadatha.filex.appmanager.AppManagerActivity;
 import svl.kadatha.filex.instacrop.InstaCropperActivity;
@@ -153,7 +154,7 @@ public class FileIntentDispatch {
                                              boolean fromArchive, @NonNull Uri uri) {
         if (mime_type == null || mime_type.isEmpty()) {
             for (MimePOJO mimePOJO : Global.MIME_POJOS) {
-                if (file_extn.matches(mimePOJO.getRegex())) {
+                if (mimePOJO.getExtSet().contains(file_extn.toLowerCase(Locale.ROOT))) {
                     mime_type = mimePOJO.getMime_type();
                     break;
                 }

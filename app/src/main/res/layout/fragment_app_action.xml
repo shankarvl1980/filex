@@ -45,7 +45,6 @@
                     android:layout_height="@dimen/image_preview_dimen"
                     android:layout_margin="10dp"
                     android:importantForAccessibility="no"
-                    app:layout_constraintBottom_toBottomOf="@id/fragment_app_action_app_size"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/fragment_app_action_app_name" />
 
@@ -112,7 +111,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/layout_margin"
                     android:choiceMode="singleChoice"
-                    android:clipToPadding="false"
                     android:padding="@dimen/layout_margin"
                     android:scrollbarThumbVertical="@drawable/scrollbar"
                     android:scrollbars="vertical"

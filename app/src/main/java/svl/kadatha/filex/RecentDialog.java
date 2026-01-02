@@ -35,6 +35,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
 import java.util.LinkedList;
+import java.util.Locale;
 
 import me.jahnen.libaums.core.UsbMassStorageDevice;
 import svl.kadatha.filex.usb.UsbDocumentProvider;
@@ -166,7 +167,7 @@ public class RecentDialog extends DialogFragment implements MainActivity.RecentD
             FileTypeSelectDialog fileTypeSelectFragment = FileTypeSelectDialog.getInstance(file_path, fileObjectType, tree_uri, tree_uri_path, false, file_size);
             fileTypeSelectFragment.show(getParentFragmentManager(), "");
         } else {
-            if (file_ext.matches("(?i)apk")) {
+            if (Global.APK_EXT_SET.contains(file_ext.toLowerCase(Locale.ROOT))) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     if (!getActivity().getPackageManager().canRequestPackageInstalls()) {
                         Intent unknown_package_install_intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);

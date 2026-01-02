@@ -37,6 +37,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
@@ -519,7 +520,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
             FileTypeSelectDialog fileTypeSelectDialog = FileTypeSelectDialog.getInstance(file_path, fileObjectType, tree_uri, tree_uri_path, select_app, file_size);
             fileTypeSelectDialog.show(getParentFragmentManager(), "");
         } else {
-            if (file_ext.matches("(?i)apk")) {
+            if (Global.APK_EXT_SET.contains(file_ext.toLowerCase(Locale.ROOT))) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     if (!context.getPackageManager().canRequestPackageInstalls()) {
                         Intent unknown_package_install_intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
