@@ -16,12 +16,11 @@ android {
         }
     }
     compileSdkVersion 36
-    buildToolsVersion "35.0.0"
 
     defaultConfig {
         applicationId "svl.kadatha.filex"
         minSdkVersion 21
-        targetSdkVersion 35
+        targetSdkVersion 36
 
         versionCode 20101
         versionName "2.01.01"
@@ -48,8 +47,8 @@ android {
     namespace 'svl.kadatha.filex'
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
         coreLibraryDesugaringEnabled true
     }
 }

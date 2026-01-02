@@ -47,7 +47,8 @@ public class ThumbnailBuilder implements ModelLoader<String, Bitmap> {
     @Override
     public boolean handles(@NonNull String input) {
         // handles only pdf file
-        return true;
+        String p = input.toLowerCase();
+        return p.endsWith(".pdf");
     }
 
 
@@ -65,25 +66,29 @@ public class ThumbnailBuilder implements ModelLoader<String, Bitmap> {
                 // check if file is already exist then there is no need to re create it
                 if (!thumbnail.exists()) {
                     File file = new File(input);
-                    ParcelFileDescriptor parcelFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
-                    PdfRenderer pdfRenderer = new PdfRenderer(parcelFileDescriptor);
-                    if (pdfRenderer.getPageCount() != 0) {
-                        PdfRenderer.Page page = pdfRenderer.openPage(0);
-                        Bitmap output = Bitmap.createBitmap(page.getWidth(), page.getHeight(), Bitmap.Config.ARGB_8888);
-                        Canvas canvas = new Canvas(output);
-                        canvas.drawColor(Color.WHITE);
-                        canvas.drawBitmap(output, 0f, 0f, null);
-                        page.render(output, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
-                        page.close();
-                        callback.onDataReady(output);
-                        // now saving thumbnail on local disc
-                        FileOutputStream fileOutputStream = new FileOutputStream(thumbnail);
-                        output.compress(Bitmap.CompressFormat.PNG, 80, fileOutputStream);
-                        fileOutputStream.flush();
-                        fileOutputStream.close();
+                    try (ParcelFileDescriptor pfd = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)) {
+                        try (PdfRenderer renderer = new PdfRenderer(pfd)) {
+                            if (renderer.getPageCount() <= 0) {
+                                callback.onLoadFailed(new IllegalStateException("Empty PDF"));
+                                return;
+                            }
+                            PdfRenderer.Page page = renderer.openPage(0);
+                            Bitmap output = Bitmap.createBitmap(page.getWidth(), page.getHeight(), Bitmap.Config.ARGB_8888);
+                            Canvas canvas = new Canvas(output);
+                            canvas.drawColor(Color.WHITE);
+                            page.render(output, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+                            page.close();
+
+                            callback.onDataReady(output);
+
+                            // Save thumbnail
+                            try (FileOutputStream fos = new FileOutputStream(thumbnail)) {
+                                output.compress(Bitmap.CompressFormat.PNG, 80, fos);
+                            }
+                        }
+                    } catch (Exception e) {
+                        callback.onLoadFailed(e);
                     }
-                    pdfRenderer.close();
-                    parcelFileDescriptor.close();
                 } else {
                     callback.onDataReady(BitmapFactory.decodeFile(thumbnail.getAbsolutePath()));
                 }
