@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -235,7 +236,8 @@ public class AudioPlayerService extends Service {
         }
 
         public void onLooperPreparation() {
-            handler = new Handler(getLooper(), new Handler.Callback() {
+            Looper looper = getLooper(); // blocks until ready
+            handler = new Handler(looper, new Handler.Callback() {
                 @Override
                 public boolean handleMessage(@NonNull Message message) {
                     switch (message.what) {
