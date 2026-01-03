@@ -56,13 +56,18 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
 
     @Override
     protected Boolean doInBackground(Void... params) {
-        OutputStream outStream;
-        FileModel destFileModel = FileModelFactory.getFileModel(dest_folder, destFileObjectType, source_uri, source_uri_path);
-        outStream = destFileModel.getChildOutputStream(zip_file_name, 0);
+        OutputStream outStream = null;
+        ZipOutputStream zipOutputStream = null;
 
-        if (outStream != null) {
+        try {
+            FileModel destFileModel = FileModelFactory.getFileModel(
+                    dest_folder, destFileObjectType, source_uri, source_uri_path);
+
+            outStream = destFileModel.getChildOutputStream(zip_file_name, 0);
+            if (outStream == null) return false;
+
             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outStream);
-            ZipOutputStream zipOutputStream = new ZipOutputStream(bufferedOutputStream);
+            zipOutputStream = new ZipOutputStream(bufferedOutputStream);
 
             if (sourceFileObjectType == FileObjectType.FILE_TYPE || sourceFileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
                 int size = files_selected_array.size();
@@ -73,92 +78,78 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
                     String path = files_selected_array.get(i);
                     List<File> file_array = new ArrayList<>();
                     Iterate.populate(new File(path), file_array, false);
-                    try {
-                        put_zip_entry_file_type(path, file_array, zipOutputStream);
-                    } catch (IOException e) {
-                        return false;
-                    }
+
+                    put_zip_entry_file_type(path, file_array, zipOutputStream);
                 }
 
-                try {
-                    filePOJO = FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder, Collections.singletonList(zip_file_name), destFileObjectType, Collections.singletonList(Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder, zip_file_name)));
-                    return true;
-                } catch (Exception ignored) {
-                } finally {
-                    try {
-                        zipOutputStream.closeEntry();
-                        zipOutputStream.close();
-                        if (outStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
-                            ((FtpFileModel.FTPOutputStreamWrapper) outStream).completePendingCommand();
-                        }
-                    } catch (Exception e) {
-                        // ignore exception
-                    }
-                }
             } else {
                 List<FileModel> fileModels = new ArrayList<>();
                 FileModel[] sourceFileModels = FileModelFactory.getFileModelArray(files_selected_array, sourceFileObjectType, source_uri, source_uri_path);
                 Iterate.populate(sourceFileModels, fileModels, false);
 
                 int lengthParentPath = 0;
-                try {
-                    if (!zip_file_path.isEmpty()) {
-                        lengthParentPath = new File(zip_file_path).getParent().length();
-                    }
-                    int size1 = fileModels.size();
-                    for (int i = 0; i < size1; ++i) {
-                        if (isCancelled()) {
-                            return false;
-                        }
-                        FileModel fileModel = fileModels.get(i);
-                        counter_no_files++;
-                        current_file_name = fileModel.getName();
-                        processed_file_name = current_file_name;
-                        publishProgress(null);
-                        String zip_entry_path;
-                        if (lengthParentPath == 1) {
-                            zip_entry_path = fileModel.getPath().substring(lengthParentPath);
-                        } else {
-                            zip_entry_path = (lengthParentPath != 0) ? fileModel.getPath().substring(lengthParentPath + 1) : fileModel.getPath().substring(fileModel.getParentPath().length() + 1);
-                        }
+                if (!zip_file_path.isEmpty()) {
+                    lengthParentPath = new File(zip_file_path).getParent().length();
+                }
 
-                        ZipEntry zipEntry;
-                        if (fileModel.isDirectory()) {
-                            zipEntry = new ZipEntry(zip_entry_path + File.separator);
-                            zipOutputStream.putNextEntry(zipEntry);
-                        } else {
-                            zipEntry = new ZipEntry(zip_entry_path);
-                            zipOutputStream.putNextEntry(zipEntry);
-                            try (BufferedInputStream bufferedInputStream = new BufferedInputStream(fileModel.getInputStream())) {
-                                byte[] b = new byte[8192];
-                                int bytesread;
-                                while ((bytesread = bufferedInputStream.read(b)) != -1) {
-                                    zipOutputStream.write(b, 0, bytesread);
-                                    counter_size_files += bytesread;
-                                    publishProgress(null);
-                                }
+                int size1 = fileModels.size();
+                for (int i = 0; i < size1; ++i) {
+                    if (isCancelled()) {
+                        return false;
+                    }
+                    FileModel fileModel = fileModels.get(i);
+                    counter_no_files++;
+                    current_file_name = fileModel.getName();
+                    processed_file_name = current_file_name;
+                    publishProgress(null);
+                    String zip_entry_path;
+                    if (lengthParentPath == 1) {
+                        zip_entry_path = fileModel.getPath().substring(lengthParentPath);
+                    } else {
+                        zip_entry_path = (lengthParentPath != 0)
+                                ? fileModel.getPath().substring(lengthParentPath + 1)
+                                : fileModel.getPath().substring(fileModel.getParentPath().length() + 1);
+                    }
+
+                    if (fileModel.isDirectory()) {
+                        zipOutputStream.putNextEntry(new ZipEntry(zip_entry_path + "/"));
+                        zipOutputStream.closeEntry();
+                    } else {
+                        zipOutputStream.putNextEntry(new ZipEntry(zip_entry_path));
+                        try (BufferedInputStream in = new BufferedInputStream(fileModel.getInputStream())) {
+                            byte[] b = new byte[8192];
+                            int bytesread;
+                            while ((bytesread = in.read(b)) != -1) {
+                                zipOutputStream.write(b, 0, bytesread);
+                                counter_size_files += bytesread;
+                                publishProgress(null);
                             }
                         }
-                    }
-
-                    filePOJO = FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder, Collections.singletonList(zip_file_name), destFileObjectType, Collections.singletonList(Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder, zip_file_name)));
-                    return true;
-                } catch (Exception e) {
-                    return false;
-                } finally {
-                    try {
                         zipOutputStream.closeEntry();
-                        zipOutputStream.close();
-                        if (outStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
-                            ((FtpFileModel.FTPOutputStreamWrapper) outStream).completePendingCommand();
-                        }
-                    } catch (Exception e) {
-                        // ignore exception
                     }
                 }
             }
+
+            // Finalize zip structure before closing underlying stream
+            zipOutputStream.finish();
+            zipOutputStream.close();
+            zipOutputStream = null;
+
+            // FTP needs explicit commit confirmation
+            if (outStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
+                ((FtpFileModel.FTPOutputStreamWrapper) outStream).completePendingCommand();
+            }
+
+            // Only now the file should exist server-side
+            filePOJO = FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(dest_folder, Collections.singletonList(zip_file_name), destFileObjectType, Collections.singletonList(Global.CONCATENATE_PARENT_CHILD_PATH(dest_folder, zip_file_name)));
+            return true;
+        } catch (Exception e) {
+            return false;
+
+        } finally {
+            try { if (zipOutputStream != null) zipOutputStream.close(); } catch (Exception ignored) {}
+            try { if (outStream != null) outStream.close(); } catch (Exception ignored) {}
         }
-        return false;
     }
 
 
@@ -189,47 +180,64 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
     }
 
 
-    private void put_zip_entry_file_type(String file_path, List<File> file_array, ZipOutputStream zipOutputStream) throws IOException {
+    private void put_zip_entry_file_type(String file_path,
+                                         List<File> file_array,
+                                         ZipOutputStream zipOutputStream) throws IOException {
+
         int lengthParentPath = 0;
         if (!file_path.isEmpty()) {
-            lengthParentPath = new File(file_path).getParent().length(); //should be calculated for each file separately in library_search
-
+            lengthParentPath = new File(file_path).getParent().length();
         }
+
         int size1 = file_array.size();
         for (int i = 0; i < size1; ++i) {
+
             if (isCancelled()) {
-                return;
+                throw new IOException("Cancelled");
             }
+
             File file = file_array.get(i);
             counter_no_files++;
             current_file_name = file.getName();
             processed_file_name = current_file_name;
             publishProgress(null);
+            String canonical = file.getCanonicalPath();
             String zip_entry_path;
+
             if (lengthParentPath == 1) {
-                zip_entry_path = file.getCanonicalPath().substring(lengthParentPath);
+                zip_entry_path = canonical.substring(lengthParentPath);
             } else {
-                zip_entry_path = (lengthParentPath != 0) ? file.getCanonicalPath().substring(lengthParentPath + 1) : file.getCanonicalPath().substring(file.getParentFile().getCanonicalPath().length() + 1);
+                zip_entry_path = (lengthParentPath != 0)
+                        ? canonical.substring(lengthParentPath + 1)
+                        : canonical.substring(file.getParentFile().getCanonicalPath().length() + 1);
             }
 
-            ZipEntry zipEntry;
-            if (file.isDirectory()) {
-                zipEntry = new ZipEntry(zip_entry_path + "/");
-                zipOutputStream.putNextEntry(zipEntry);
-            } else {
-                zipEntry = new ZipEntry(zip_entry_path);
-                zipOutputStream.putNextEntry(zipEntry);
-                try (BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(file))) {
-                    byte[] b = new byte[8192];
-                    int bytesread;
-                    while ((bytesread = bufferedInputStream.read(b)) != -1) {
-                        zipOutputStream.write(b, 0, bytesread);
-                        counter_size_files += bytesread;
-                        publishProgress(null);
+            // ZIP spec wants "/" separators, not File.separator (Windows issues)
+            zip_entry_path = zip_entry_path.replace('\\', '/');
+
+            zipOutputStream.putNextEntry(new ZipEntry(file.isDirectory()
+                    ? (zip_entry_path.endsWith("/") ? zip_entry_path : zip_entry_path + "/")
+                    : zip_entry_path));
+
+            try {
+                if (!file.isDirectory()) {
+                    try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
+                        byte[] b = new byte[8192];
+                        int bytesread;
+                        while ((bytesread = in.read(b)) != -1) {
+                            if (isCancelled()) throw new IOException("Cancelled");
+                            zipOutputStream.write(b, 0, bytesread);
+                            counter_size_files += bytesread;
+                            publishProgress(null);
+                        }
                     }
                 }
+            } finally {
+                // always close the entry you opened
+                zipOutputStream.closeEntry();
             }
         }
     }
+
 }
 

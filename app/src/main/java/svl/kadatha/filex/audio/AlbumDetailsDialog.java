@@ -414,25 +414,6 @@ public class AlbumDetailsDialog extends DialogFragment {
         all_select_btn.setImageResource(R.drawable.select_icon);
     }
 
-    private void enable_disable_buttons(boolean enable) {
-        if (enable) {
-            delete_btn.setAlpha(Global.ENABLE_ALFA);
-            play_btn.setAlpha(Global.ENABLE_ALFA);
-            add_list_btn.setAlpha(Global.ENABLE_ALFA);
-            overflow_btn.setAlpha(Global.ENABLE_ALFA);
-        } else {
-            delete_btn.setAlpha(Global.DISABLE_ALFA);
-            play_btn.setAlpha(Global.DISABLE_ALFA);
-            add_list_btn.setAlpha(Global.DISABLE_ALFA);
-            overflow_btn.setAlpha(Global.DISABLE_ALFA);
-        }
-        delete_btn.setEnabled(enable);
-        play_btn.setEnabled(enable);
-        add_list_btn.setEnabled(enable);
-        overflow_btn.setEnabled(enable);
-
-    }
-
     private void set_visibility_searchbar(boolean visible) {
         search_toolbar_visible = visible;
         if (search_toolbar_visible) {

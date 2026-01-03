@@ -114,9 +114,6 @@ public class RecyclerViewLayoutGrid extends RecyclerViewLayout {
         measureChildWithMargins(filesubfilecounttextview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
         maxHeight += filesubfilecounttextview.getMeasuredHeight();
 
-        //measureChildWithMargins(item_separator,widthMeasureSpec,0,heightMeasureSpec,0);
-        //maxHeight+=item_separator.getMeasuredHeight();
-
         maxHeight += Global.RECYCLERVIEW_ITEM_SPACING * 2 + Global.TWELVE_DP;//providing top and bottom margin of six dp
         itemHeight = maxHeight;
         setMeasuredDimension(widthMeasureSpec, maxHeight);

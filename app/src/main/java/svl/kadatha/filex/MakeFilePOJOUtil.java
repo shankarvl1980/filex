@@ -58,7 +58,7 @@ import timber.log.Timber;
 
 public class MakeFilePOJOUtil {
     static final SimpleDateFormat SDF_FTP = new SimpleDateFormat("yyyyMMddHHmmss");
-    private static final String TAG = "Ftp-MakeFilePOJOUtil";
+    private static final String TAG = "MakeFilePOJOUtil";
 
     public static FilePOJO MAKE_FilePOJO(FileModel f, boolean extract_icon, FileObjectType fileObjectType) {
         String name = f.getName();
@@ -796,6 +796,7 @@ public class MakeFilePOJOUtil {
                 Timber.tag(TAG).e("Error creating FilePOJO for Yandex file: %s", e.getMessage());
             }
         }
+        SubFileCountUtil.ensureSubFileCount(filePOJO,null);
         return filePOJO;
     }
 

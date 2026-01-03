@@ -32,6 +32,7 @@ import svl.kadatha.filex.usb.UsbFileRootSingleton;
 public final class SubFileCountUtil {
 
     public static void ensureSubFileCount(FilePOJO pojo, Callback cb) {
+        if(pojo==null)return;
         if (!pojo.getIsDirectory()) return;
 
         // If you added dedicated fields:
@@ -39,7 +40,9 @@ public final class SubFileCountUtil {
         int count = computeSubFileCountBlocking(pojo);
         String si = "(" + count + ")";
         pojo.setSize(si);
-        cb.onSubFileCountReady(pojo, count);
+        if(cb!=null){
+            cb.onSubFileCountReady(pojo, count);
+        }
     }
 
     private static int computeSubFileCountBlocking(FilePOJO pojo) {

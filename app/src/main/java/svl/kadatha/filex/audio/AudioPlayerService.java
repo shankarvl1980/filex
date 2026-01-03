@@ -76,8 +76,7 @@ public class AudioPlayerService extends Service {
     public AudioPlayerServiceHandlerThread audioPlayerServiceHandlerThread;
     private Binder binder = new AudioBinder();
     private Context context;
-    private boolean isReadPermissionGranted;
-    private boolean ongoingcall = false;
+    private boolean onGoingCall = false;
     private NotificationPanel nPanel;
     private MediaPlayerServicePrepareListener mediaPlayerServicePrepareListener;
     private AudioPlayerServiceBroadCastListener audioPlayerServiceBroadCastListener;
@@ -96,7 +95,6 @@ public class AudioPlayerService extends Service {
         handler_broadcast = new Handler();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             audioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).setOnAudioFocusChangeListener(audioPlayerServiceHandlerThread).build();
-
         }
         mediaSession = new MediaSessionCompat(this, "AudioPlayerService");
         mediaSession.setCallback(new MediaSessionCallback());
@@ -106,7 +104,9 @@ public class AudioPlayerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Uri data = intent.getData();
-        isReadPermissionGranted = isReadPhonePermissionGranted();
+        boolean isReadPermissionGranted = isReadPhonePermissionGranted();
+        audioPlayerServiceHandlerThread.registerCallStateListener(isReadPermissionGranted);
+
         if (!audioPlayerServiceHandlerThread.request_focus()) {
             stopSelf();
         }
@@ -141,11 +141,8 @@ public class AudioPlayerService extends Service {
                         handler.obtainMessage(STOP).sendToTarget();
                         break;
                 }
-
             }
-
         }
-
         return START_NOT_STICKY;
     }
 
@@ -200,8 +197,9 @@ public class AudioPlayerService extends Service {
         if (audioPlayerServiceHandlerThread.mp != null) {
             handler.obtainMessage(STOP).sendToTarget();
         }
+        audioPlayerServiceHandlerThread.unregisterCallStateListener();
         audioPlayerServiceHandlerThread.releaseAudioFocus();
-        audioPlayerServiceHandlerThread.quit();
+        audioPlayerServiceHandlerThread.quitSafely();
         mediaSession.release();
     }
 
@@ -225,41 +223,15 @@ public class AudioPlayerService extends Service {
         private final AudioPlayerService audioPlayerService;
         private AudioManager audio_manager;
         private MediaPlayer mp;
+        private TelephonyManager telephonyManager;
+        private PhoneStateListener phoneStateListener;          // API <= 30
+        @RequiresApi(api = Build.VERSION_CODES.S)
+        private TelephonyCallback telephonyCallback;            // API 31+
+        private boolean callListenerRegistered = false;
 
         AudioPlayerServiceHandlerThread(AudioPlayerService audioPlayerService) {
             super("handlerthread");
             this.audioPlayerService = audioPlayerService;
-
-            TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    if (isReadPermissionGranted) {
-                        telephonyManager.registerTelephonyCallback(getMainExecutor(), new CustomCallback());
-                    }
-
-                } else {
-                    telephonyManager.listen(new PhoneStateListener() {
-                        public void onCallStateChanged(int state, String phonenumber) {
-                            switch (state) {
-                                case TelephonyManager.CALL_STATE_OFFHOOK:
-                                case TelephonyManager.CALL_STATE_RINGING:
-                                    if (mp != null) {
-                                        handler.obtainMessage(PAUSE).sendToTarget();
-                                        ongoingcall = true;
-                                    }
-                                    break;
-
-                                case TelephonyManager.CALL_STATE_IDLE:
-                                    if (ongoingcall) {
-                                        ongoingcall = false;
-                                        handler.obtainMessage(START).sendToTarget();
-
-                                    }
-                            }
-                        }
-                    }, PhoneStateListener.LISTEN_CALL_STATE);
-                }
-            }
         }
 
         public void onLooperPreparation() {
@@ -352,7 +324,6 @@ public class AudioPlayerService extends Service {
                             position, 1.0f);
             mediaSession.setPlaybackState(stateBuilder.build());
         }
-
         private void start_() {
             if (prepared) {
                 if (request_focus()) {
@@ -374,7 +345,6 @@ public class AudioPlayerService extends Service {
             updatePlaybackState();
             nPanel.updatePlayPauseAction(true);
         }
-
         private void pause() {
             if (prepared) {
                 mp.pause();
@@ -542,7 +512,6 @@ public class AudioPlayerService extends Service {
         public void onAudioFocusChange(int focusState) {
             switch (focusState) {
                 case AudioManager.AUDIOFOCUS_GAIN:
-
                     if (mp != null) {
                         mp.setVolume(1f, 1f);
                     }
@@ -638,28 +607,72 @@ public class AudioPlayerService extends Service {
 
         @RequiresApi(api = Build.VERSION_CODES.S)
         private class CustomCallback extends TelephonyCallback implements TelephonyCallback.CallStateListener {
-
             @Override
             public void onCallStateChanged(int i) {
-                switch (i) {
-                    case TelephonyManager.CALL_STATE_OFFHOOK:
-                    case TelephonyManager.CALL_STATE_RINGING:
-                        if (mp != null) {
-                            handler.obtainMessage(PAUSE).sendToTarget();
-                            ongoingcall = true;
-                        }
-                        break;
-
-                    case TelephonyManager.CALL_STATE_IDLE:
-                        if (ongoingcall) {
-                            ongoingcall = false;
-                            handler.obtainMessage(START).sendToTarget();
-
-                        }
-                }
+                handleCallState(i);
             }
         }
 
+
+        void registerCallStateListener(boolean isReadPermissionGranted) {
+            if (callListenerRegistered) return;
+
+            telephonyManager = (TelephonyManager) audioPlayerService.getSystemService(Context.TELEPHONY_SERVICE);
+            if (telephonyManager == null) return;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (!isReadPermissionGranted) return;
+
+                telephonyCallback = new CustomCallback();
+                telephonyManager.registerTelephonyCallback(audioPlayerService.getMainExecutor(), telephonyCallback);
+            } else {
+                phoneStateListener = new PhoneStateListener() {
+                    @Override
+                    public void onCallStateChanged(int state, String phoneNumber) {
+                        handleCallState(state);
+                    }
+                };
+                telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+            }
+            callListenerRegistered = true;
+        }
+
+        void unregisterCallStateListener() {
+            if (!callListenerRegistered || telephonyManager == null) return;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (telephonyCallback != null) {
+                    telephonyManager.unregisterTelephonyCallback(telephonyCallback);
+                    telephonyCallback = null;
+                }
+            } else {
+                if (phoneStateListener != null) {
+                    telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
+                    phoneStateListener = null;
+                }
+            }
+            callListenerRegistered = false;
+        }
+
+
+        private void handleCallState(int state) {
+            switch (state) {
+                case TelephonyManager.CALL_STATE_OFFHOOK:
+                case TelephonyManager.CALL_STATE_RINGING:
+                    if (mp != null) {
+                        handler.obtainMessage(PAUSE).sendToTarget();
+                        onGoingCall = true;
+                    }
+                    break;
+
+                case TelephonyManager.CALL_STATE_IDLE:
+                    if (onGoingCall) {
+                        onGoingCall = false;
+                        handler.obtainMessage(START).sendToTarget();
+                    }
+                    break;
+            }
+        }
     }
 
     class AudioBinder extends Binder {

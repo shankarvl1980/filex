@@ -561,12 +561,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
             flags |= DocumentsContract.Document.FLAG_DIR_SUPPORTS_CREATE;
         }
 
-        /*
-        // We only show thumbnails for image files - expect a call to openDocumentThumbnail for each file that has
-        // this flag set
-        if (mimeType.startsWith("image/"))
-            flags |= DocumentsContract.Document.FLAG_SUPPORTS_THUMBNAIL;
-            */
+
         row.add(DocumentsContract.Document.COLUMN_FLAGS, flags);
         // COLUMN_SIZE is required, but can be null
         row.add(DocumentsContract.Document.COLUMN_SIZE, file.isDirectory() ? 0 : file.getLength());

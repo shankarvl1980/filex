@@ -456,18 +456,20 @@ ImageViewFragment extends Fragment {
         getParentFragmentManager().setFragmentResultListener(SAF_PERMISSION_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                if (requestKey.equals(SAF_PERMISSION_REQUEST_CODE)) {
-                    tree_uri = result.getParcelable("tree_uri");
-                    tree_uri_path = result.getString("tree_uri_path");
-                    if (!FileUtil.isWritable(viewModel.currently_shown_file.getFileObjectType(), viewModel.currently_shown_file.getPath())) {
-                        if (!check_SAF_permission(viewModel.currently_shown_file.getPath(), viewModel.currently_shown_file.getFileObjectType())) {
-                            return;
-                        }
-                    } else {
-                        progress_bar.setVisibility(View.VISIBLE);
-                        viewModel.rotate(viewModel.rotation_degrees, tree_uri, tree_uri_path);
-                    }
+                if (!SAF_PERMISSION_REQUEST_CODE.equals(requestKey)) {
+                    return; // hard gate
                 }
+
+                tree_uri = result.getParcelable("tree_uri");
+                tree_uri_path = result.getString("tree_uri_path");
+                boolean writable = FileUtil.isWritable(viewModel.currently_shown_file.getFileObjectType(), viewModel.currently_shown_file.getPath());
+
+                if (!writable && !check_SAF_permission(viewModel.currently_shown_file.getPath(), viewModel.currently_shown_file.getFileObjectType())) {
+                    return; // permission not granted
+                }
+
+                progress_bar.setVisibility(View.VISIBLE);
+                viewModel.rotate(viewModel.rotation_degrees, tree_uri, tree_uri_path);
             }
         });
 

@@ -347,7 +347,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
         tb_layout = new EquallyDistributedButtonsWithTextLayout(this, 5, Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
         int[] action_mode_drawables = {R.drawable.cut_icon, R.drawable.copy_icon, R.drawable.rename_icon, R.drawable.delete_icon, R.drawable.overflow_icon};
-        titles = new String[]{getString(R.string.cut), getString(R.string.copy), getString(R.string.rename), getString(R.string.delete), getString(R.string.more)};
+        titles = new String[]{getString(R.string.cut), getString(R.string.Copy), getString(R.string.rename), getString(R.string.delete), getString(R.string.more)};
         tb_layout.setResourceImageDrawables(action_mode_drawables, titles);
         actionmode_toolbar = findViewById(R.id.action_mode_toolbar);
         actionmode_toolbar.addView(tb_layout);

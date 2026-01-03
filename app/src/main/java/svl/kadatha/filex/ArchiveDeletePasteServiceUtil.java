@@ -16,7 +16,6 @@ import svl.kadatha.filex.filemodel.FileModelFactory;
 import svl.kadatha.filex.instacrop.InstaCropperActivity;
 
 public class ArchiveDeletePasteServiceUtil {
-
     static Class getEmptyService(Context context) {
         Class emptyService = null;
 
@@ -132,7 +131,6 @@ public class ArchiveDeletePasteServiceUtil {
         bundle.putParcelable("filePOJO", filePOJO);
         Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_CUT_COPY_FILE_ACTION, LocalBroadcastManager.getInstance(App.getAppContext()), bundle);
     }
-
 
     public static void NOTIFY_ALL_DIALOG_FRAGMENTS_ON_ARCHIVE_UNARCHIVE_COMPLETE(String dest_folder, FileObjectType destFileObjectType, FilePOJO filePOJO) {
         Bundle bundle = new Bundle();

@@ -169,9 +169,6 @@ public class AppActionSelectDialog extends DialogFragment {
                             } catch (Exception e) {
                                 Global.print(context, getString(R.string.could_not_perform_action));
                             }
-
-//                            ApkBackUpNameDialog apkBackUpNameDialog = ApkBackUpNameDialog.getInstance(bundle);
-//                            apkBackUpNameDialog.show(getParentFragmentManager(), "");
                         } else {
                             getParentFragmentManager().setFragmentResult(AppManagerListFragment.APP_ACTION_REQUEST_CODE, bundle);
                         }

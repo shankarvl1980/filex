@@ -21,7 +21,6 @@ import svl.kadatha.filex.network.NetworkAccountDetailsViewModel;
 
 public class FtpFileModel implements FileModel {
 
-    private static final String TAG = "Ftp-FtpFileModel";
     private final String path;
 
     FtpFileModel(String path) {

@@ -18,7 +18,6 @@ import svl.kadatha.filex.FileUtil;
 import svl.kadatha.filex.Global;
 import timber.log.Timber;
 
-@SuppressWarnings("IOStreamConstructor")
 public class JavaFileModel implements FileModel {
 
     private final File file;

@@ -23,7 +23,6 @@ public class ArchiveViewerViewModel extends AndroidViewModel {
 
     public final MutableLiveData<AsyncTaskStatus> isExtractionCompleted = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> isArchiveEntriesPopulated = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-    private final TinyDB tinyDB;
     public boolean zipFileExtracted;
     public FileObjectType fileObjectType;
     ArrayList<String> zip_entries_array;
@@ -33,7 +32,6 @@ public class ArchiveViewerViewModel extends AndroidViewModel {
 
     public ArchiveViewerViewModel(@NonNull Application application) {
         super(application);
-        tinyDB = new TinyDB(application);
     }
 
     private static void populate_file_paths(List<String> file_path_array, List<File> file_array) {

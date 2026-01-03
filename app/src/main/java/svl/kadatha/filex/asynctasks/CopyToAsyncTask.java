@@ -60,9 +60,8 @@ public class CopyToAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> {
         long fileSize = 0;
         try (AssetFileDescriptor fileDescriptor = context.getContentResolver().openAssetFileDescriptor(uri, "r")) {
             fileSize = fileDescriptor.getLength();
+            return fileSize;
         } catch (IOException e) {
-
-        } finally {
             return fileSize;
         }
     }

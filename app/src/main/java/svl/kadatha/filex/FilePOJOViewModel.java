@@ -152,11 +152,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
                 try {
                     int size = filePOJOS.size();
                     for (int i = 0; i < size; i++) {   // starts at i=0 every retry
-//                        try {
-//                            Thread.sleep(1000);
-//                        } catch (InterruptedException e) {
-//                            throw new RuntimeException(e);
-//                        }
                         final FilePOJO pojo = filePOJOS.get(i);
                         if (!pojo.getIsDirectory()) continue;
                         SubFileCountUtil.ensureSubFileCount(pojo, (updatedPojo, count) -> {
@@ -202,7 +197,6 @@ public class FilePOJOViewModel extends AndroidViewModel {
             } catch (InterruptedException | ExecutionException e) {
                 // Optionally, set the asyncTaskStatus to FAILED
                 // asyncTaskStatus.postValue(AsyncTaskStatus.FAILED);
-                return;
             } finally {
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }

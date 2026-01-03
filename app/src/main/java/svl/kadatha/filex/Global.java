@@ -93,81 +93,49 @@ public class Global {
     public static final int IMAGE_VIEW_DIMENSION_MULTIPLIER_MEDIUM = 9;
     public static final int IMAGE_VIEW_DIMENSION_MULTIPLIER_LARGE = 10;
     static final HashMap<String, List<LibraryAlbumSelectDialog.LibraryDirPOJO>> LIBRARY_FILTER_HASHMAP = new HashMap<>();
-//    public static final String IMAGE_REGEX = "(?i)png|jpg|jpeg|svg|gif|tif|webp|avif";
-//    public static final String AUDIO_REGEX = "(?i)mp3|ogg|wav|aac|wma|opus|m4r|m4a|awb";
-//    public static final String VIDEO_REGEX = "(?i)3gp|mp4|avi|mov|flv|wmv|webm";
-//    static final String TEXT_REGEX = "(?i)txt|json|java|xml|cpp|c|h|log|html|htm";
-//    static final String RTF_REGEX = "(?i)rtf";
-//    static final String ZIP_REGEX = "(?i)zip|rar|jar|7z";
-//    static final String UNIX_ARCHIVE_REGEX = "(?i)tar|gzip|gz";
-//    static final String GZIP_REGEX = "(?i)gzip|gz";
-//    static final String APK_REGEX = "(?i)apk";
-//    static final String PDF_REGEX = "(?i)pdf";
-//    static final String DOC_REGEX = "(?i)doc|docx";
-//    static final String XLS_REGEX = "(?i)xls|xlsx";
-//    static final String PPT_REGEX = "(?i)ppt|pptx";
-//    static final String DB_REGEX = "(?i)db";
-
-
     public static final Set<String> IMAGE_EXT_SET = Set.of(
             "png", "jpg", "jpeg", "svg", "gif", "tif", "webp", "avif"
     );
-
     public static final Set<String> AUDIO_EXT_SET = Set.of(
             "mp3", "ogg", "wav", "aac", "wma", "opus", "m4r", "m4a", "awb"
     );
-
     public static final Set<String> VIDEO_EXT_SET = Set.of(
             "3gp", "mp4", "avi", "mov", "flv", "wmv", "webm"
     );
-
     public static final Set<String> TEXT_EXT_SET = Set.of(
             "txt", "json", "java", "xml", "cpp", "c", "h", "log", "html", "htm"
     );
-
     public static final Set<String> RTF_EXT_SET = Set.of(
             "rtf"
     );
-
     public static final Set<String> ZIP_EXT_SET = Set.of(
             "zip", "rar", "jar", "7z"
     );
-
     public static final Set<String> UNIX_ARCHIVE_EXT_SET = Set.of(
             "tar", "gzip", "gz"
     );
-
     public static final Set<String> GZIP_EXT_SET = Set.of(
             "gzip", "gz"
     );
-
     public static final Set<String> APK_EXT_SET = Set.of(
             "apk"
     );
-
     public static final Set<String> PDF_EXT_SET = Set.of(
             "pdf"
     );
-
     public static final Set<String> DOC_EXT_SET = Set.of(
             "doc", "docx"
     );
-
     public static final Set<String> XLS_EXT_SET = Set.of(
             "xls", "xlsx"
     );
-
     public static final Set<String> PPT_EXT_SET = Set.of(
             "ppt", "pptx"
     );
-
     public static final Set<String> DB_EXT_SET = Set.of(
             "db"
     );
-
     public static final Set<String> OTHER_EXT_SET = Set.of("");
-
-
     static final Set<String> SORT_CODE_SET = new HashSet<>(Arrays.asList("d_name_asc", "d_name_desc", "d_date_asc", "d_date_desc", "d_size_asc", "d_size_desc",
             "f_name_asc", "f_name_desc", "f_date_asc", "f_date_desc", "f_size_asc", "f_size_desc"));
     static final Set<String> THEME_CODE_SET = new HashSet<>(Arrays.asList("system", "light", "dark"));

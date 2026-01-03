@@ -64,11 +64,9 @@ public class ExtractZipFileViewModel extends AndroidViewModel {
             try {
                 if (inStream != null) {
                     inStream.close();
-                } else {
-                    return false;
                 }
-            } catch (Exception e) {
-                return false;
+            } catch (Exception ignored) {
+
             }
         }
     }
