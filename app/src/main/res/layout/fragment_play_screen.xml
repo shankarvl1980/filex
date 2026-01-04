@@ -190,7 +190,7 @@
 
         android:layout_marginStart="6dp"
         android:layout_marginEnd="6dp"
-        android:background="@drawable/select_detail_recyclerview"
+        android:background="@drawable/select_icon_selection"
         android:elevation="10dp"
         android:outlineProvider="none"
         android:scaleType="center"
@@ -208,7 +208,7 @@
         android:layout_height="match_parent"
         android:layout_marginStart="6dp"
         android:layout_marginEnd="6dp"
-        android:background="@drawable/select_detail_recyclerview"
+        android:background="@drawable/select_icon_selection"
         android:scaleType="center"
         android:src="@drawable/play_icon"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -226,7 +226,7 @@
 
         android:layout_marginStart="6dp"
         android:layout_marginEnd="6dp"
-        android:background="@drawable/select_detail_recyclerview"
+        android:background="@drawable/select_icon_selection"
         android:elevation="10dp"
         android:outlineProvider="none"
         android:scaleType="center"
@@ -245,7 +245,7 @@
 
         android:layout_marginStart="6dp"
         android:layout_marginEnd="6dp"
-        android:background="@drawable/select_detail_recyclerview"
+        android:background="@drawable/select_icon_selection"
         android:elevation="10dp"
         android:outlineProvider="none"
         android:scaleType="center"
