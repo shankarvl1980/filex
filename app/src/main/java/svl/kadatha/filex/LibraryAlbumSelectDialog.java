@@ -173,7 +173,11 @@ public class LibraryAlbumSelectDialog extends DialogFragment {
             int maxHeight = 0;
             int usedWidth;
 
-            usedWidth = Global.FOUR_DP;
+            if(Global.IS_TABLET){
+                usedWidth=Global.EIGHT_DP;
+            } else{
+                usedWidth = Global.SIX_DP;
+            }
             measureChildWithMargins(imageView, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
 
             usedWidth += imageview_dimension;
@@ -205,7 +209,13 @@ public class LibraryAlbumSelectDialog extends DialogFragment {
             View v = imageView;
             int imageMeasuredWidth = v.getMeasuredWidth();
             int imageMeasuredHeight = v.getMeasuredHeight();
-            margin_offset_icon = itemWidth - imageMeasuredWidth - Global.EIGHT_DP - Global.EIGHT_DP;
+            int recyclerview_padding;
+            if(Global.IS_TABLET){
+                recyclerview_padding=Global.TWELVE_DP;
+            } else{
+                recyclerview_padding = Global.EIGHT_DP;
+            }
+            margin_offset_icon = itemWidth - imageMeasuredWidth - Global.EIGHT_DP - Global.EIGHT_DP-recyclerview_padding;
             v.layout(margin_offset_icon, d, margin_offset_icon + imageMeasuredWidth, d + imageMeasuredHeight);
 
             // Then lay out the overlay_fileimageview at the bottom-right corner of fileimageview

@@ -18,6 +18,7 @@
 
     <dimen name="higher_floating_button_margin_bottom">180dp</dimen>
     <dimen name="dialog_inner_padding">4dp</dimen>
+    <dimen name="dialog_recyclerview_padding">8dp</dimen>"
 
     <dimen name="divider_margin">6dp</dimen>
 

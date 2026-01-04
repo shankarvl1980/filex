@@ -26,7 +26,7 @@
         android:layout_marginBottom="@dimen/layout_margin"
         android:background="?attr/dialog_background"
         android:choiceMode="singleChoice"
-        android:padding="@dimen/layout_margin"
+        android:padding="@dimen/dialog_recyclerview_padding"
         android:scrollbarThumbVertical="@drawable/scrollbar"
         android:scrollbars="vertical"
 

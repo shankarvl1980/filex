@@ -54,15 +54,20 @@ public class RecentRecyclerViewLayoutList extends ViewGroup {
         int pad = getResources().getDimensionPixelSize(R.dimen.layout_margin);
         setPaddingRelative(pad, 0, pad, 0);
         setBackground(ContextCompat.getDrawable(context, R.drawable.select_drawer_storage_list));
+
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int iconHeight;
         int maxHeight = 0;
-        int usedWidth;
 
-        usedWidth = Global.FOUR_DP;
+        int usedWidth;
+        if(Global.IS_TABLET){
+            usedWidth =Global.EIGHT_DP;
+        } else{
+            usedWidth = Global.SIX_DP;
+        }
         measureChildWithMargins(fileimageview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
         measureChildWithMargins(play_overlay_imageview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
         measureChildWithMargins(pdf_overlay_imageview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
