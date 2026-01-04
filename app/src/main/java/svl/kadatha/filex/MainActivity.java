@@ -2718,7 +2718,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                                 } else if (df.glm != null) {
                                     df.glm.scrollToPositionWithOffset(idx, 0);
                                 }
-
                             } else if (Global.IS_CHILD_FILE(tag, parent_dest_folder) && df.fileObjectType == destFileObjectType) {
                                 df.clearSelectionAndNotifyDataSetChanged();
                             }

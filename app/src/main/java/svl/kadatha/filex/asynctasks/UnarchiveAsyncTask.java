@@ -179,13 +179,13 @@ public class UnarchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean
             }
         }
 
-        if (destFileObjectType == FileObjectType.FILE_TYPE) {
+        if (sourceFileObjectType == FileObjectType.FILE_TYPE) {
             try {
                 zipfile = new ZipFile(zip_file_path);
             } catch (IOException e) {
                 return unzip(zip_file_path, tree_uri, tree_uri_path, zip_dest_path);
             }
-        } else if (Global.whether_file_cached(destFileObjectType)) {
+        } else if (Global.whether_file_cached(sourceFileObjectType)) {
             return unzip(zip_file_path, tree_uri, tree_uri_path, zip_dest_path);
         } else {
             return false;

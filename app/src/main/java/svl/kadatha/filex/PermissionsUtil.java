@@ -30,7 +30,6 @@ public class PermissionsUtil {
     }
 
     public void check_permission() {
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             int i, j;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -67,5 +66,4 @@ public class PermissionsUtil {
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
-
 }

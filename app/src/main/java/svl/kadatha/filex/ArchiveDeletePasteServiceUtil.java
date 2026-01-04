@@ -104,7 +104,6 @@ public class ArchiveDeletePasteServiceUtil {
                 noOperation = ArchiveDeletePasteServiceUtil.NO_OPERATION_ON_FILE_OBJECT_TYPE(FileObjectType.USB_TYPE);
             }
         }
-
         return noOperation;
     }
 

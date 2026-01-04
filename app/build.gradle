@@ -22,8 +22,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 36
 
-        versionCode 20101
-        versionName "2.01.01"
+        versionCode 30000
+        versionName "3.00.00"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release_config
@@ -38,8 +38,8 @@ android {
         }
 
         release {
-            minifyEnabled false
-            shrinkResources false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release_config
         }

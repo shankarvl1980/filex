@@ -642,7 +642,6 @@ public class MakeFilePOJOUtil {
                     if (f != null) {
                         filePOJO = MAKE_FilePOJO(f, false, fileObjectType, file_path, ftpClient);
                     }
-
                 } catch (IOException e) {
 
                 } finally {
