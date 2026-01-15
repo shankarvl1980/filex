@@ -11,6 +11,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import svl.kadatha.filex.App;
 import svl.kadatha.filex.AsyncTaskStatus;
@@ -21,6 +22,7 @@ import svl.kadatha.filex.IndexedLinkedHashMap;
 import svl.kadatha.filex.MakeFilePOJOUtil;
 import svl.kadatha.filex.MyExecutorService;
 import svl.kadatha.filex.RepositoryClass;
+import svl.kadatha.filex.network.NetworkAccountPOJO;
 
 public class CloudAccountViewModel extends AndroidViewModel {
     public static String GOOGLE_DRIVE_ACCESS_TOKEN;
@@ -32,9 +34,22 @@ public class CloudAccountViewModel extends AndroidViewModel {
     public FileObjectType fileObjectType;
     public List<CloudAccountPOJO> cloudAccountPOJOList;
     public IndexedLinkedHashMap<Integer, CloudAccountPOJO> mselecteditems = new IndexedLinkedHashMap<>();
+    public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> deleteAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public MutableLiveData<AsyncTaskStatus> cloudAccountConnectionAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public MutableLiveData<AsyncTaskStatus> cloudAccountStorageDirFillAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     private CloudAccountPOJO cloudAccount;
+    private boolean isCancelled;
+    private Future<?> future1;
+    private Future<?> future2;
+    private Future<?> future3;
+    private Future<?> future4;
+    private Future<?> future5;
+    private Future<?> future6;
+    private Future<?> future7;
+    private Future<?> future8;
+    private Future<?> future9;
+    private Future<?> future10;
 
     public CloudAccountViewModel(@NonNull Application application) {
         super(application);
@@ -45,8 +60,46 @@ public class CloudAccountViewModel extends AndroidViewModel {
     protected void onCleared() {
         super.onCleared();
         cloudAccountsDatabaseHelper.close();
+        cancel(true);
     }
 
+    private void cancel(boolean mayInterruptRunning) {
+        if (future1 != null) {
+            future1.cancel(mayInterruptRunning);
+        }
+        if (future2 != null) {
+            future2.cancel(mayInterruptRunning);
+        }
+        if (future3 != null) {
+            future3.cancel(mayInterruptRunning);
+        }
+        if (future4 != null) {
+            future4.cancel(mayInterruptRunning);
+        }
+        if (future5 != null) {
+            future5.cancel(mayInterruptRunning);
+        }
+        if (future6 != null) {
+            future6.cancel(mayInterruptRunning);
+        }
+        if (future7 != null) {
+            future7.cancel(mayInterruptRunning);
+        }
+        if (future8 != null) {
+            future8.cancel(mayInterruptRunning);
+        }
+        if (future9 != null) {
+            future9.cancel(mayInterruptRunning);
+        }
+        if (future10 != null) {
+            future10.cancel(mayInterruptRunning);
+        }
+        isCancelled = true;
+    }
+
+    private boolean isCancelled() {
+        return isCancelled;
+    }
     public CloudAccountPOJO getCloudAccount() {
         return cloudAccount;
     }
@@ -59,7 +112,45 @@ public class CloudAccountViewModel extends AndroidViewModel {
         this.authProvider = provider;
     }
 
-    public void authenticate() {
+    public synchronized void fetchCloudAccountPojoList(String type) {
+        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
+        asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future1 = executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                cloudAccountPOJOList = cloudAccountsDatabaseHelper.getCloudAccountList(type);
+                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+            }
+        });
+    }
+
+    public synchronized void deleteCloudAccountPojo(List<CloudAccountPOJO> cloudAccountPOJOS_for_delete) {
+        if (deleteAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
+        deleteAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future2 = executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+
+                int size = cloudAccountPOJOS_for_delete.size();
+                for (int i = 0; i < size; ++i) {
+                    CloudAccountPOJO cloudAccountPOJO = cloudAccountPOJOS_for_delete.get(i);
+                    int j = cloudAccountsDatabaseHelper.delete(cloudAccountPOJO.type, cloudAccountPOJO.userId);
+                    if (j > 0) {
+                        cloudAccountPOJOS_for_delete.remove(cloudAccountPOJO);
+                    }
+                }
+                deleteAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+            }
+        });
+    }
+
+    public synchronized void authenticate() {
         authProvider.authenticate(new CloudAuthProvider.AuthCallback() {
             @Override
             public void onSuccess(CloudAccountPOJO account) {
@@ -101,7 +192,7 @@ public class CloudAccountViewModel extends AndroidViewModel {
         });
     }
 
-    public void populateStorageDir(FileObjectType fileObjectType, CloudAccountPOJO cloudAccountPOJO) {
+    public synchronized void populateStorageDir(FileObjectType fileObjectType, CloudAccountPOJO cloudAccountPOJO) {
         if (cloudAccountStorageDirFillAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
             return;
         }

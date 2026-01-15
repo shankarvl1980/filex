@@ -37,9 +37,12 @@ public class FileModelFactory {
                 break;
             case GOOGLE_DRIVE_TYPE:
                 try {
-                    fileModel = new GoogleDriveFileModel(path);
+                    String p = normalizeGoogleDrivePath(path);
+                    fileModel = new GoogleDriveFileModel(p);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    // Do NOT crash your whole app for a missing file model
+                    // Return null so caller can handle it gracefully
+                    return null;
                 }
                 break;
 
@@ -56,4 +59,27 @@ public class FileModelFactory {
         }
         return fileModels;
     }
+
+    private static String normalizeGoogleDrivePath(String path) {
+        if (path == null) return null;
+
+        // Use forward slashes always
+        path = path.replace('\\', '/');
+
+        // Ensure leading slash
+        if (!path.startsWith("/")) path = "/" + path;
+
+        // Strip UI label "My Drive"
+        if (path.equals("/My Drive")) return "/";
+        if (path.startsWith("/My Drive/")) {
+            path = path.substring("/My Drive".length()); // keeps leading '/'
+            if (path.isEmpty()) path = "/";
+        }
+
+        // Optional: collapse multiple slashes
+        while (path.contains("//")) path = path.replace("//", "/");
+
+        return path;
+    }
+
 }
