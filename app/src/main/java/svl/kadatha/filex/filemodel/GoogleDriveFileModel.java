@@ -24,6 +24,7 @@ import okhttp3.Response;
 import okio.BufferedSink;
 import okio.Okio;
 import okio.Source;
+import svl.kadatha.filex.cloud.CloudAccountViewModel;
 
 public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
 
@@ -40,14 +41,9 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
     private final String fileId; // this model points to a Drive file/folder id
     private GoogleDriveFileMetadata metadata;
 
-    // Constructor for root directory
-    public GoogleDriveFileModel(String accessToken) throws IOException {
-        this(accessToken, "root");
-    }
+    public GoogleDriveFileModel(String path) throws IOException {
 
-    // Path-based constructor (your existing public API)
-    public GoogleDriveFileModel(String accessToken, String path) throws IOException {
-        this.accessToken = accessToken;
+        this.accessToken = CloudAccountViewModel.GOOGLE_DRIVE_ACCESS_TOKEN;
         this.httpClient = new okhttp3.OkHttpClient();
         this.gson = new Gson();
 

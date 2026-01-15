@@ -97,6 +97,7 @@ public class CloudAuthActivity extends BaseActivity {
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
                 if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
                     Bundle bundle = new Bundle();
+                    bundle.putSerializable("fileObjectType", fileObjectType);
                     Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_CONNECTED_TO_CLOUD_ACTION, LocalBroadcastManager.getInstance(context), bundle);
                     viewModel.cloudAccountConnectionAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                     finish();
@@ -109,6 +110,7 @@ public class CloudAuthActivity extends BaseActivity {
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
                 if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
                     Bundle bundle = new Bundle();
+                    bundle.putSerializable("fileObjectType", fileObjectType);
                     Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_CONNECTED_TO_CLOUD_ACTION, LocalBroadcastManager.getInstance(context), bundle);
                     viewModel.cloudAccountStorageDirFillAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                     finish();

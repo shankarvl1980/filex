@@ -2,6 +2,7 @@ package svl.kadatha.filex.filemodel;
 
 import android.net.Uri;
 
+import java.io.IOException;
 import java.util.List;
 
 import svl.kadatha.filex.FileObjectType;
@@ -34,6 +35,14 @@ public class FileModelFactory {
             case SMB_TYPE:
                 fileModel = new SmbFileModel(path);
                 break;
+            case GOOGLE_DRIVE_TYPE:
+                try {
+                    fileModel = new GoogleDriveFileModel(path);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+
         }
         return fileModel;
     }

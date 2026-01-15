@@ -95,6 +95,10 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             String destFileName = entry.getValue();
 
             FileModel sourceFileModel = FileModelFactory.getFileModel(sourceFilePath, sourceFileObjectType, source_uri, source_uri_path);
+            if (sourceFileModel == null) {
+                return copy_result;
+            }
+
             current_file_name = sourceFileModel.getName();
 
             if (whether_copy_between_network_file_systems) {
@@ -227,7 +231,6 @@ public class CutCopyAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
 
         return allCopiesSuccessful;
     }
-
 
     private boolean CopyFileModelForNetWorkDestFolders(FileModel sourceFileModel, FileModel destFileModel, String destFileName, boolean cut) {
         List<FileModel> filesToCopy = new ArrayList<>();

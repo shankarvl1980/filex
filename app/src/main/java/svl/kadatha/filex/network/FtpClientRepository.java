@@ -118,8 +118,15 @@ public class FtpClientRepository {
     private FTPClient validateAndPrepareClient(FTPClient client) throws IOException {
         if (!client.isConnected()) {
             client = reconnectClient(client);
+        } else {
+            try {
+                if (!client.sendNoOp()) {
+                    client = reconnectClient(client);
+                }
+            } catch (IOException e) {
+                client = reconnectClient(client);
+            }
         }
-
         lastUsedTimes.put(client, System.currentTimeMillis());
         inUseClients.offer(client);
         return client;
@@ -190,12 +197,13 @@ public class FtpClientRepository {
     private void configureFtpClient(FTPClient client) throws IOException {
         // Set Control Keep Alive Timeout
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            client.setControlKeepAliveTimeout(Duration.ofSeconds(10));
-            client.setControlKeepAliveReplyTimeout(Duration.ofMillis(500));
+            client.setControlKeepAliveTimeout(java.time.Duration.ofSeconds(30));
+            client.setControlKeepAliveReplyTimeout(java.time.Duration.ofSeconds(10));
         } else {
-            client.setControlKeepAliveTimeout(10);
-            client.setControlKeepAliveReplyTimeout(500);
+            client.setControlKeepAliveTimeout(30);
+            client.setControlKeepAliveReplyTimeout(10_000); // ms
         }
+
 
         // If using FTPS, configure additional security settings
         if (networkAccountPOJO.useFTPS && client instanceof FTPSClient) {
@@ -240,19 +248,21 @@ public class FtpClientRepository {
 
     private void sendKeepAlive() {
         for (FTPClient client : ftpClients) {
-            if (inUseClients.contains(client)) {
-                // Skip clients that are currently in use
-                continue;
-            }
+            if (inUseClients.contains(client)) continue;
+
             try {
                 if (client.isConnected()) {
-                    client.sendNoOp(); // Send NOOP to keep connection alive
-                    Timber.tag(TAG).d("Sent NOOP to keep connection alive for client: %s", client);
+                    boolean ok = client.sendNoOp();
+                    if (ok) {
+                        lastUsedTimes.put(client, System.currentTimeMillis()); // ✅ refresh
+                    } else {
+                        throw new IOException("NOOP returned false");
+                    }
                 }
             } catch (IOException e) {
-                Timber.tag(TAG).e("Failed to send NOOP: %s", e.getMessage());
+                Timber.tag(TAG).e("KeepAlive failed: %s", e.getMessage());
                 disconnectAndCloseClient(client);
-                ftpClients.remove(client); // Remove invalid client from pool
+                ftpClients.remove(client);
             }
         }
     }
