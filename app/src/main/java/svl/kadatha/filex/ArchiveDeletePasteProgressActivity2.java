@@ -55,7 +55,7 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity {
     private TableRow to_table_row;
     private Handler handler;
     private TextView size_progress_text_view;
-
+    private TableRow first_table_row;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +64,7 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity {
         setFinishOnTouchOutside(false);
         handler = new Handler();
         dialog_title = findViewById(R.id.dialog_fragment_cut_copy_title);
+        first_table_row=findViewById(R.id.archive_delete_paste_progress_first_row);
         to_table_row = findViewById(R.id.fragment_cut_copy_delete_archive_totablerow);
         from_label = findViewById(R.id.dialog_fragment_cut_copy_delete_from_label);
         to_label = findViewById(R.id.dialog_fragment_cut_copy_delete_to_label);
@@ -241,16 +242,25 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity {
                                 current_file.setText(archiveDeletePasteFileService.zip_folder_name);
                                 copied_textview.setText(archiveDeletePasteFileService.processed_file_name);
 
-                                from_textview.setText(archiveDeletePasteFileService.zip_file_path);
-                                to_textview.setText(archiveDeletePasteFileService.dest_folder + File.separator + archiveDeletePasteFileService.zip_folder_name + ".zip");
+                                if(archiveDeletePasteFileService.zip_file_path != null){
+                                    from_textview.setText(archiveDeletePasteFileService.zip_file_path);
+                                } else {
+                                    first_table_row.setVisibility(View.GONE);
+                                }
 
+                                to_textview.setText(archiveDeletePasteFileService.dest_folder + File.separator + archiveDeletePasteFileService.zip_folder_name + ".zip");
                                 no_files.setText("" + archiveDeletePasteFileService.counter_no_files);
                                 size_files.setText(size_progress);
                             }
                             break;
 
                             case UnarchiveAsyncTask.TASK_TYPE: {
-                                from_textview.setText(archiveDeletePasteFileService.zip_file_path);
+                                if(archiveDeletePasteFileService.zip_file_path != null){
+                                    from_textview.setText(archiveDeletePasteFileService.zip_file_path);
+                                } else {
+                                    first_table_row.setVisibility(View.GONE);
+                                }
+
                                 to_textview.setText(archiveDeletePasteFileService.zip_folder_name != null ? archiveDeletePasteFileService.dest_folder + File.separator + archiveDeletePasteFileService.zip_folder_name : archiveDeletePasteFileService.dest_folder);
                                 current_file.setText(archiveDeletePasteFileService.current_file_name);
                                 copied_textview.setText(archiveDeletePasteFileService.processed_file_name);
@@ -260,7 +270,12 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity {
                             break;
 
                             case DeleteAsyncTask.TASK_TYPE: {
-                                from_textview.setText(archiveDeletePasteFileService.source_folder);
+                                if(archiveDeletePasteFileService.source_folder != null){
+                                    from_textview.setText(archiveDeletePasteFileService.source_folder);
+                                } else {
+                                    first_table_row.setVisibility(View.GONE);
+                                }
+
                                 current_file.setText(archiveDeletePasteFileService.current_file_name);
                                 copied_textview.setText(archiveDeletePasteFileService.processed_file_name);
                                 no_files.setText("" + archiveDeletePasteFileService.counter_no_files);
@@ -270,9 +285,13 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity {
 
                             case CutCopyAsyncTask.TASK_TYPE_CUT:
                             case CutCopyAsyncTask.TASK_TYPE_COPY: {
-                                from_textview.setText(archiveDeletePasteFileService.source_folder);
-                                to_textview.setText(archiveDeletePasteFileService.dest_folder);
+                                if(archiveDeletePasteFileService.source_folder != null){
+                                    from_textview.setText(archiveDeletePasteFileService.source_folder);
+                                } else {
+                                    first_table_row.setVisibility(View.GONE);
+                                }
 
+                                to_textview.setText(archiveDeletePasteFileService.dest_folder);
                                 current_file.setText(archiveDeletePasteFileService.current_file_name);
                                 copied_textview.setText(archiveDeletePasteFileService.processed_file_name);
                                 no_files.setText("" + archiveDeletePasteFileService.counter_no_files);
@@ -281,8 +300,8 @@ public class ArchiveDeletePasteProgressActivity2 extends BaseActivity {
                             break;
 
                             case CopyToAsyncTask.TASK_TYPE: {
+                                first_table_row.setVisibility(View.GONE);
                                 to_textview.setText(archiveDeletePasteFileService.dest_folder);
-
                                 current_file.setText(archiveDeletePasteFileService.current_file_name);
                                 copied_textview.setText(archiveDeletePasteFileService.processed_file_name);
                                 no_files.setText("" + archiveDeletePasteFileService.counter_no_files);

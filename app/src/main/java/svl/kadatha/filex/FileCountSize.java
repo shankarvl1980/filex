@@ -88,7 +88,7 @@ public class FileCountSize {
         return isCancelled;
     }
 
-    public void fileCountDatalist() {
+    public void fileCountDataList() {
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future1 = executorService.submit(new Runnable() {
             @Override

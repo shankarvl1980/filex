@@ -1,11 +1,14 @@
 package svl.kadatha.filex;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.storage.StorageManager;
 import android.provider.DocumentsContract;
+import android.provider.OpenableColumns;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,8 +39,8 @@ import java.util.Vector;
 import me.jahnen.libaums.core.fs.UsbFile;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FtpFileModel;
+import svl.kadatha.filex.filemodel.StreamUploadFileModel;
 import svl.kadatha.filex.filemodel.UsbFileModel;
-import timber.log.Timber;
 
 /**
  * Utility class for helping parsing file systems.
@@ -127,15 +130,34 @@ public final class FileUtil {
         return false;
     }
 
-    public static long getSizeUri(Context context, @NonNull Uri uri) {
-        String size = "0";
-        Cursor cursor = context.getContentResolver().query(uri, new String[]{DocumentsContract.Document.COLUMN_SIZE}, null, null, null);
-        if (cursor != null) {
-            cursor.moveToFirst();
-            size = cursor.getString(0);
-            cursor.close();
+    public static long tryGetUriLength(Context ctx, Uri uri) {
+        ContentResolver cr = ctx.getContentResolver();
+
+        // 1) AssetFileDescriptor length (fast path)
+        try (AssetFileDescriptor afd = cr.openAssetFileDescriptor(uri, "r")) {
+            if (afd != null) {
+                long len = afd.getLength();
+                if (len > 0) return len;
+            }
+        } catch (Exception ignored) {}
+
+        // 2) OpenableColumns.SIZE (works for many document providers)
+        Cursor c = null;
+        try {
+            c = cr.query(uri, new String[]{OpenableColumns.SIZE}, null, null, null);
+            if (c != null && c.moveToFirst()) {
+                int idx = c.getColumnIndex(OpenableColumns.SIZE);
+                if (idx >= 0) {
+                    long len = c.getLong(idx);
+                    if (len > 0) return len;
+                }
+            }
+        } catch (Exception ignored) {
+        } finally {
+            if (c != null) c.close();
         }
-        return Long.parseLong(size);
+
+        return -1;
     }
 
     public static boolean existsUri(Context context, @NonNull final String target_file_path, @NonNull Uri tree_uri, String tree_uri_path) {
@@ -151,66 +173,84 @@ public final class FileUtil {
         return context.getContentResolver().getType(uri) != null;
     }
 
-    public static boolean copy_File_FileModel(@NonNull final File sourceFile, @NonNull final FileModel destFileModel, String child_name, boolean cut, long[] bytes_read) {
-        if (bytes_read != null && bytes_read.length > 0) bytes_read[0] = 0;
-
+    public static boolean copy_File_FileModel(@NonNull final File sourceFile,
+                                              @NonNull final FileModel destFileModel,
+                                              String child_name,
+                                              boolean cut,
+                                              long[] bytes_read) {
         FileInputStream fileInputStream = null;
         OutputStream outputStream = null;
-        boolean bufferedCopyStarted = false;
 
         try {
             fileInputStream = new FileInputStream(sourceFile);
+
+            if (destFileModel instanceof StreamUploadFileModel) {
+                long len = sourceFile.length();
+                long[] bytes_read_per_file = new long[1];
+                boolean ok = ((StreamUploadFileModel) destFileModel)
+                        .putChildFromStream(child_name, fileInputStream, len > 0 ? len : -1, bytes_read_per_file);
+                bytes_read[0]+= bytes_read_per_file[0];
+                if (ok && cut) sourceFile.delete();
+                return ok;
+            }
+
             outputStream = destFileModel.getChildOutputStream(child_name, 0);
             if (outputStream == null) return false;
 
-            bufferedCopyStarted = true;
             bufferedCopy(fileInputStream, outputStream, false, bytes_read);
 
             if (outputStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
                 ((FtpFileModel.FTPOutputStreamWrapper) outputStream).completePendingCommand();
             }
 
-            if (cut) {
-                sourceFile.delete();
-            }
-
+            if (cut) sourceFile.delete();
             return true;
 
         } catch (Exception e) {
             return false;
 
         } finally {
-            // Only close here if bufferedCopy() never ran (so it couldn't close them)
-            if (!bufferedCopyStarted) {
-                try {
-                    if (fileInputStream != null) fileInputStream.close();
-                } catch (Exception ignored) {
-                }
-                try {
-                    if (outputStream != null) outputStream.close();
-                } catch (Exception ignored) {
-                }
-            }
+                try { if (fileInputStream != null) fileInputStream.close(); } catch (Exception ignored) {}
+                try { if (outputStream != null) outputStream.close(); } catch (Exception ignored) {}
         }
     }
 
-    public static boolean copy_FileModel_FileModel(@NonNull final FileModel sourceFileModel, @NonNull final FileModel destFileModel, String child_name, boolean cut, long[] bytes_read) {
-        if (bytes_read != null && bytes_read.length > 0) bytes_read[0] = 0;
-
+    public static boolean copy_FileModel_FileModel(@NonNull final FileModel sourceFileModel,
+                                                   @NonNull final FileModel destFileModel,
+                                                   String child_name,
+                                                   boolean cut,
+                                                   long[] bytes_read) {
         InputStream inputStream = null;
         OutputStream outputStream = null;
-        boolean bufferedCopyStarted = false;
 
         try {
             inputStream = sourceFileModel.getInputStream();
             if (inputStream == null) return false;
 
+            // STREAM UPLOAD fast-path (WebDAV / Drive / Dropbox / Yandex / etc)
+            if (destFileModel instanceof StreamUploadFileModel) {
+                long len = -1;
+                try {
+                    len = sourceFileModel.getLength(); // may be 0/-1 depending on model; ok
+                    if (len <= 0) len = -1;
+                } catch (Exception ignored) {}
+                long[] bytes_read_per_file = new long[1];
+                boolean ok = ((StreamUploadFileModel) destFileModel)
+                        .putChildFromStream(child_name, inputStream, len, bytes_read_per_file);
+                bytes_read[0]+= bytes_read_per_file[0];
+
+                if (ok && cut) {
+                    try { sourceFileModel.delete(); } catch (Exception ignored) {}
+                }
+                return ok;
+            }
+
+            // fallback: classic OutputStream path
             outputStream = destFileModel.getChildOutputStream(child_name, 0);
             if (outputStream == null) return false;
 
             boolean fromUsbFile = sourceFileModel instanceof UsbFileModel;
 
-            bufferedCopyStarted = true;
             bufferedCopy(inputStream, outputStream, fromUsbFile, bytes_read);
 
             if (outputStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
@@ -227,34 +267,36 @@ public final class FileUtil {
             return false;
 
         } finally {
-            if (!bufferedCopyStarted) {
-                try {
-                    if (inputStream != null) inputStream.close();
-                } catch (Exception ignored) {
-                }
-                try {
-                    if (outputStream != null) outputStream.close();
-                } catch (Exception ignored) {
-                }
-            }
+                try { if (inputStream != null) inputStream.close(); } catch (Exception ignored) {}
+                try { if (outputStream != null) outputStream.close(); } catch (Exception ignored) {}
         }
     }
 
-    public static boolean CopyUriFileModel(@NonNull Uri data, @NonNull FileModel destFileModel, String file_name, long[] bytes_read) {
-        if (bytes_read != null && bytes_read.length > 0) bytes_read[0] = 0;
-
+    public static boolean CopyUriFileModel(@NonNull Uri data,
+                                           @NonNull FileModel destFileModel,
+                                           String file_name,
+                                           long[] bytes_read) {
         InputStream inStream = null;
         OutputStream fileOutStream = null;
-        boolean bufferedCopyStarted = false;
 
         try {
             inStream = App.getAppContext().getContentResolver().openInputStream(data);
             if (inStream == null) return false;
 
+            // STREAM UPLOAD fast-path (WebDAV / Drive / Dropbox / Yandex / etc)
+            if (destFileModel instanceof StreamUploadFileModel) {
+                long len = tryGetUriLength(App.getAppContext(), data); // -1 if unknown
+                long[] bytes_read_per_file = new long[1];
+                boolean ok= ((StreamUploadFileModel) destFileModel)
+                        .putChildFromStream(file_name, inStream, len, bytes_read_per_file);
+                bytes_read[0]+= bytes_read_per_file[0];
+                return ok;
+            }
+
+            // fallback
             fileOutStream = destFileModel.getChildOutputStream(file_name, 0);
             if (fileOutStream == null) return false;
 
-            bufferedCopyStarted = true;
             bufferedCopy(inStream, fileOutStream, false, bytes_read);
 
             if (fileOutStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
@@ -267,26 +309,18 @@ public final class FileUtil {
             return false;
 
         } finally {
-            if (!bufferedCopyStarted) {
-                try {
-                    if (inStream != null) inStream.close();
-                } catch (Exception ignored) {
-                }
-                try {
-                    if (fileOutStream != null) fileOutStream.close();
-                } catch (Exception ignored) {
-                }
-            }
+                try { if (inStream != null) inStream.close(); } catch (Exception ignored) {}
+                try { if (fileOutStream != null) fileOutStream.close(); } catch (Exception ignored) {}
         }
     }
 
-    public static boolean CopyHttpUrlToFileModel(@NonNull Uri data, @NonNull FileModel destFileModel, String fileName, long[] bytesRead) {
-        if (bytesRead != null && bytesRead.length > 0) bytesRead[0] = 0;
-
+    public static boolean CopyHttpUrlToFileModel(@NonNull Uri data,
+                                                 @NonNull FileModel destFileModel,
+                                                 String fileName,
+                                                 long[] bytesRead) {
         HttpURLConnection connection = null;
         InputStream inStream = null;
         OutputStream outStream = null;
-        boolean bufferedCopyStarted = false;
 
         try {
             URL url = new URL(data.toString());
@@ -301,10 +335,22 @@ public final class FileUtil {
             }
 
             inStream = new BufferedInputStream(connection.getInputStream());
+
+            // Streaming-upload destination (WebDAV/Drive/Dropbox/Yandex/etc.)
+            if (destFileModel instanceof StreamUploadFileModel) {
+                long len = getHttpContentLengthCompat(connection); // API 21 safe, supports >2GB if header exists
+                long[] bytes_read_per_file = new long[1];
+
+                boolean ok = ((StreamUploadFileModel) destFileModel)
+                        .putChildFromStream(fileName, inStream, len, bytes_read_per_file);
+                bytesRead[0]+= bytes_read_per_file[0];
+                return ok;
+            }
+
+            //  Fallback: OutputStream-based destinations (local/SMB/FTP/etc.)
             outStream = destFileModel.getChildOutputStream(fileName, 0);
             if (outStream == null) return false;
 
-            bufferedCopyStarted = true;
             bufferedCopy(inStream, outStream, false, bytesRead);
 
             if (outStream instanceof FtpFileModel.FTPOutputStreamWrapper) {
@@ -317,42 +363,53 @@ public final class FileUtil {
             return false;
 
         } finally {
-            // close streams ONLY if bufferedCopy never ran
-            if (!bufferedCopyStarted) {
-                try {
-                    if (inStream != null) inStream.close();
-                } catch (Exception ignored) {
-                }
-                try {
-                    if (outStream != null) outStream.close();
-                } catch (Exception ignored) {
-                }
-            }
+                try { if (inStream != null) inStream.close(); } catch (Exception ignored) {}
+                try { if (outStream != null) outStream.close(); } catch (Exception ignored) {}
 
             if (connection != null) {
-                connection.disconnect();
+                try { connection.disconnect(); } catch (Exception ignored) {}
             }
         }
     }
 
-    public static boolean CopyAnyUriOrHttp(@NonNull Uri data, @NonNull FileModel destFileModel, @NonNull String fileName, long[] bytesRead) {
-        if (bytesRead == null || bytesRead.length == 0) {
-            throw new IllegalArgumentException("bytesRead must be a long[1] array");
-        }
+    private static long getHttpContentLengthCompat(HttpURLConnection conn) {
+        // 1) Header parse (works all API levels)
+        try {
+            String v = conn.getHeaderField("Content-Length");
+            if (v != null) {
+                v = v.trim();
+                if (!v.isEmpty()) {
+                    long len = Long.parseLong(v);
+                    return (len > 0) ? len : -1L;
+                }
+            }
+        } catch (Throwable ignored) {}
 
+        // 2) Fallback to int-based API (may overflow for >2GB)
+        try {
+            int lenInt = conn.getContentLength();
+            if (lenInt > 0) return (long) lenInt;
+        } catch (Throwable ignored) {}
+
+        return -1L;
+    }
+
+    public static boolean CopyAnyUriOrHttp(@NonNull Uri data,
+                                           @NonNull FileModel destFileModel,
+                                           @NonNull String fileName,
+                                           long[] bytesRead) {
         String scheme = data.getScheme();
-        if (scheme == null) {
-            return false;
-        }
+        if (scheme == null) return false;
+
         scheme = scheme.toLowerCase();
 
         if ("http".equals(scheme) || "https".equals(scheme)) {
-            // new HTTP(S) download path
             return CopyHttpUrlToFileModel(data, destFileModel, fileName, bytesRead);
         } else {
             return CopyUriFileModel(data, destFileModel, fileName, bytesRead);
         }
     }
+
 
     @SuppressWarnings("null")
     public static boolean copy_File_File(@NonNull final File source, @NonNull final File target, boolean cut, long[] bytes_read) {
@@ -425,8 +482,6 @@ public final class FileUtil {
         }
         return null;
     }
-
-
     public static ChannelSftp.LsEntry getSftpEntry(ChannelSftp channelSftp, String path) {
         try {
             // Special handling for root directory
@@ -647,7 +702,6 @@ public final class FileUtil {
         return file.mkdirs();
     }
 
-
     public static boolean isFromInternal(FileObjectType fileObjectType, @NonNull final String file_path) {
         if (!fileObjectType.equals(FileObjectType.FILE_TYPE) && !fileObjectType.equals(FileObjectType.SEARCH_LIBRARY_TYPE)) {
             return false;
@@ -736,7 +790,6 @@ public final class FileUtil {
         return getExtSdCardFolder(file, context) != null;
     }
 
-
     @Nullable
     public static String getFullPathFromTreeUri(@Nullable final Uri tree_uri, Context context) {
         if (tree_uri == null) {
@@ -765,7 +818,6 @@ public final class FileUtil {
             return volumePath;
         }
     }
-
 
     private static String getVolumePath(final String volumeId, Context context) {
         try {
@@ -816,7 +868,6 @@ public final class FileUtil {
         }
     }
 
-
     private static String getDocumentPathFromTreeUri(final Uri tree_uri) {
         final String docId = DocumentsContract.getTreeDocumentId(tree_uri);
         final String[] split = docId.split(":");
@@ -833,12 +884,9 @@ public final class FileUtil {
         try (InputStream in = inputStream; OutputStream out = outputStream) {
             while ((count = in.read(buffer)) != -1) {
                 out.write(buffer, 0, count);
-                bytes_read[0] += count;
+                bytes_read[0]+=count;
             }
             out.flush();
-            Timber.tag(Global.TAG).d("SMB session released in bufferedcopymethod");
-        } catch (IOException e) {
-            throw e;
         }
     }
 }

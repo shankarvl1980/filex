@@ -45,7 +45,7 @@ public class ViewModelFileCount extends ViewModel {
         fileCountSize = new FileCountSize(context, data_list);
 
         // Call the method in FileCountSize (which handles background execution)
-        fileCountSize.fileCountDatalist();  // Assuming this method runs in a background thread
+        fileCountSize.fileCountDataList();  // Assuming this method runs in a background thread
 
         // Optionally, update LiveData as needed
         total_no_of_files.postValue(fileCountSize.total_no_of_files);

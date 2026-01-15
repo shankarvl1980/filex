@@ -49,44 +49,53 @@ public class EquallyDistributedButtonsWithTextLayout extends ViewGroup {
     private void init() {
         setLayoutParams(new ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, ViewGroup.MarginLayoutParams.WRAP_CONTENT));
         LayoutInflater.from(context).inflate(R.layout.toolbar_buttons_layout, this, true);
-        int visibleChildCount = 0;
 
-        int icon_dimension = Dimens.px(40);//(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
+        int icon_dimension = Dimens.px(40);
         topPadding = (Global.ACTION_BAR_HEIGHT - icon_dimension) / 4;
         child_count = Math.min(child_count, getChildCount());
-
-        // First, count the visible children
-        for (int i = 0; i < child_count; ++i) {
-            View child = getChildAt(i);
-            if (child.getVisibility() != View.GONE) {
-                visibleChildCount++;
-            }
-        }
-
-        // Calculate width per child
-        int toolbar_width = (Global.ORIENTATION == Configuration.ORIENTATION_LANDSCAPE) ? screen_height : screen_width;
-        int w = toolbar_width / visibleChildCount;
-        params = new LinearLayout.LayoutParams(w, Global.ACTION_BAR_HEIGHT);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int widthUsed = 0, maxHeight = 0, heightUsed = 0;
+        int parentWidth = MeasureSpec.getSize(widthMeasureSpec);
 
-        for (int i = 0; i < child_count; ++i) {
-            Button child = (Button) getChildAt(i);
-            if (child.getVisibility() != View.GONE) {
-                child.setLayoutParams(params);
-                child.setPadding(0, topPadding, 0, topPadding);
-                child.setTextSize((float) Global.ACTION_BAR_HEIGHT_IN_DP / 4);
-                measureChildWithMargins(child, widthMeasureSpec, widthUsed, Global.ACTION_BAR_HEIGHT, heightUsed);
-                widthUsed += child.getMeasuredWidth() + child.getPaddingStart() + child.getPaddingEnd();
-                heightUsed = child.getMeasuredHeight() + child.getPaddingTop() + child.getPaddingBottom();
-                maxHeight = Math.max(maxHeight, heightUsed);
+        // 1) Count visible children (up to child_count)
+        int visibleChildCount = 0;
+        for (int i = 0; i < child_count; i++) {
+            View child = getChildAt(i);
+            if (child != null && child.getVisibility() != View.GONE) {
+                visibleChildCount++;
             }
         }
-        setMeasuredDimension(widthMeasureSpec, Global.ACTION_BAR_HEIGHT);
+
+        // Avoid divide-by-zero
+        if (visibleChildCount == 0) {
+            setMeasuredDimension(parentWidth, Global.ACTION_BAR_HEIGHT);
+            return;
+        }
+
+        // 2) Compute per-child width based on current visibility
+        int perChildWidth = parentWidth / visibleChildCount;
+
+        // 3) Measure children with exact sizes
+        int childWidthSpec = MeasureSpec.makeMeasureSpec(perChildWidth, MeasureSpec.EXACTLY);
+        int childHeightSpec = MeasureSpec.makeMeasureSpec(Global.ACTION_BAR_HEIGHT, MeasureSpec.EXACTLY);
+
+        for (int i = 0; i < child_count; i++) {
+            View child = getChildAt(i);
+            if (child == null || child.getVisibility() == View.GONE) continue;
+
+            // Keep your styling decisions here if you want
+            child.setPadding(0, topPadding, 0, topPadding);
+            if (child instanceof Button) {
+                ((Button) child).setTextSize((float) Global.ACTION_BAR_HEIGHT_IN_DP / 4);
+            }
+
+            child.measure(childWidthSpec, childHeightSpec);
+        }
+        setMeasuredDimension(parentWidth, Global.ACTION_BAR_HEIGHT);
     }
+
 
     @Override
     protected void onLayout(boolean p1, int p2, int p3, int p4, int p5) {

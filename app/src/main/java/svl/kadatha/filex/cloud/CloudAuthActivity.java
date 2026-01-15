@@ -182,6 +182,14 @@ public class CloudAuthActivity extends BaseActivity {
         on_intent(intent, null);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (viewModel != null && viewModel.authProvider != null) {
+            viewModel.authProvider.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
 
     @Override
     protected void onStart() {

@@ -258,18 +258,24 @@
 
         <activity
             android:name="net.openid.appauth.AuthorizationManagementActivity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
+            android:theme="@style/Theme.AppCompat.Translucent.NoTitleBar" />
+
+        <activity
+            android:name="net.openid.appauth.RedirectUriReceiverActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <data
-                    android:host="oauth2redirect"
-                    android:scheme="svl.kadatha.filex" />
+                    android:scheme="com.googleusercontent.apps.603518003549-8m2h1s1blonbo7s3rvok93uf40ipb3cs"
+                    android:path="/oauth2redirect" />
             </intent-filter>
         </activity>
+
 
         <!-- Dropbox AuthActivity -->
         <activity

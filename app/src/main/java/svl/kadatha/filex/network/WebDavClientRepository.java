@@ -13,7 +13,12 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.Credentials;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import svl.kadatha.filex.App;
 import svl.kadatha.filex.FileObjectType;
 import svl.kadatha.filex.FilePOJO;
@@ -27,74 +32,83 @@ import timber.log.Timber;
 public class WebDavClientRepository {
     private static final String TAG = "WebDavClientRepository";
     private static WebDavClientRepository instance;
+
     public final String baseUrl;
     private final Sardine sardine;
     private NetworkAccountPOJO networkAccountPOJO;
-    private String discoveredBasePath; // Cached base path
+    private String discoveredBasePath;
+    private OkHttpClient okHttpClient;
 
     private WebDavClientRepository(NetworkAccountPOJO networkAccountPOJO) throws IOException {
         Timber.tag(TAG).d("Entering WebDavClientRepository constructor");
         this.networkAccountPOJO = networkAccountPOJO;
+
         this.baseUrl = buildBaseUrl();
         Timber.tag(TAG).d("Base URL built: %s", this.baseUrl);
 
         this.sardine = createAndConfigureSardineClient();
-        if (this.sardine == null) {
-            Timber.tag(TAG).e("Sardine client creation failed");
-            throw new IOException("Failed to create Sardine client");
-        }
+        if (this.sardine == null) throw new IOException("Failed to create Sardine client");
 
-        Timber.tag(TAG).d("Attempting to test WebDAV server connection");
         if (!testWebDavServerConnection()) {
-            Timber.tag(TAG).e("WebDAV server connection test failed");
             throw new IOException("Unable to connect to the WebDAV server with the provided credentials.");
         }
-        Timber.tag(TAG).d("WebDavClientRepository constructor completed successfully");
+
         discoveredBasePath = discoverBasePath(sardine);
     }
 
     public static synchronized WebDavClientRepository getInstance(NetworkAccountPOJO networkAccountPOJO) throws IOException {
-        Timber.tag(TAG).d("Entering getInstance method");
-        if (instance == null) {
-            Timber.tag(TAG).d("Creating new WebDavClientRepository instance");
-            instance = new WebDavClientRepository(networkAccountPOJO);
-        } else {
-            Timber.tag(TAG).d("Returning existing WebDavClientRepository instance");
-        }
+        if (instance == null) instance = new WebDavClientRepository(networkAccountPOJO);
         return instance;
     }
 
+    /**
+     * KEY FIXES:
+     * - Preemptive Authorization header (Interceptor)
+     * - followRedirects(false) + retryOnConnectionFailure(false) to avoid replaying a streaming body
+     * - sane timeouts for big uploads
+     */
     private Sardine createAndConfigureSardineClient() {
-        Timber.tag(TAG).d("Entering createAndConfigureSardineClient method");
         try {
-            Timber.tag(TAG).d("Attempting to create Sardine client");
-            Sardine sardine = new OkHttpSardine();
-            sardine.setCredentials(networkAccountPOJO.user_name, networkAccountPOJO.password);
-            Timber.tag(TAG).d("Sardine client created successfully");
-            return sardine;
-        } catch (IllegalArgumentException e) {
-            Timber.tag(TAG).e(e, "Invalid arguments for Sardine client creation: %s", e.getMessage());
-        } catch (RuntimeException e) {
-            Timber.tag(TAG).e(e, "Runtime exception during Sardine client creation: %s", e.getMessage());
+            final String credential = Credentials.basic(
+                    networkAccountPOJO.user_name,
+                    networkAccountPOJO.password
+            );
+
+            okHttpClient = new OkHttpClient.Builder()
+                    .connectTimeout(20, TimeUnit.SECONDS)
+                    .readTimeout(60, TimeUnit.SECONDS)
+                    .writeTimeout(0, TimeUnit.SECONDS) // allow large uploads; caller controls cancel
+                    .followRedirects(false)
+                    .followSslRedirects(false)
+                    .retryOnConnectionFailure(false)
+                    .addInterceptor(chain -> {
+                        Request req = chain.request();
+                        // Preemptive auth: send on FIRST request (prevents 401->retry->StreamClosed)
+                        if (req.header("Authorization") == null) {
+                            req = req.newBuilder().header("Authorization", credential).build();
+                        }
+                        return chain.proceed(req);
+                    })
+                    .build();
+
+            return new OkHttpSardine(okHttpClient);
         } catch (Exception e) {
-            Timber.tag(TAG).e(e, "Unexpected exception during Sardine client creation: %s", e.getMessage());
+            Timber.tag(TAG).e(e, "Failed to create sardine");
+            return null;
         }
-        Timber.tag(TAG).d("Exiting createAndConfigureSardineClient method with null");
-        return null;
+    }
+
+    public OkHttpClient getOkHttpClient() {
+        return okHttpClient;
     }
 
     private boolean testWebDavServerConnection() {
-        Timber.tag(TAG).d("Entering testWebDavServerConnection method");
         try {
             List<DavResource> resources = sardine.list(baseUrl);
-            boolean result = resources != null;
-            Timber.tag(TAG).d("WebDAV connection test result: %s", result ? "success" : "failure");
-            return result;
+            return resources != null;
         } catch (IOException e) {
             Timber.tag(TAG).e(e, "WebDAV connection test failed: %s", e.getMessage());
             return false;
-        } finally {
-            Timber.tag(TAG).d("Exiting testWebDavServerConnection method");
         }
     }
 
@@ -103,99 +117,69 @@ public class WebDavClientRepository {
         String protocol = networkAccountPOJO.useHTTPS ? "https" : "http";
         String host = networkAccountPOJO.host;
         int port = networkAccountPOJO.port;
-        String basePath = networkAccountPOJO.basePath != null ? networkAccountPOJO.basePath : "";
+        String basePath = networkAccountPOJO.basePath != null ? networkAccountPOJO.basePath.trim() : "";
 
-        // Construct the base URL
-        StringBuilder urlBuilder = new StringBuilder();
-        urlBuilder.append(protocol).append("://").append(host);
+        StringBuilder url = new StringBuilder();
+        url.append(protocol).append("://").append(host);
 
-        // Append port if it's specified and not the default
         if ((networkAccountPOJO.useHTTPS && port != 443) || (!networkAccountPOJO.useHTTPS && port != 80)) {
-            urlBuilder.append(":").append(port);
+            url.append(":").append(port);
         }
 
-        // Ensure basePath starts with a slash
-        if (!basePath.startsWith("/")) {
-            urlBuilder.append("/");
-        }
-        urlBuilder.append(basePath);
-
-        // Remove trailing slash if present
-        if (urlBuilder.charAt(urlBuilder.length() - 1) == '/') {
-            urlBuilder.deleteCharAt(urlBuilder.length() - 1);
+        // ROOT must end with '/'
+        if (basePath.isEmpty() || "/".equals(basePath)) {
+            url.append("/");
+            return url.toString();
         }
 
-        return urlBuilder.toString();
+        if (!basePath.startsWith("/")) url.append("/");
+        url.append(basePath);
+
+        // do NOT strip trailing '/'
+        return url.toString();
     }
 
     /**
-     * Builds a full URL from the given relative path.
-     *
-     * @param relativePath The relative path to append to the base URL.
-     * @return The full URL.
+     * Build full URL from relative path.
+     * NOTE: This does NOT percent-encode special characters.
+     * If you have special chars/spaces, encode at call site or keep server paths clean.
      */
     public String buildUrl(String relativePath) {
-        StringBuilder urlBuilder = new StringBuilder();
-        urlBuilder.append(baseUrl); // Use the base URL already built in the class
+        String base = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
+        String p = (relativePath == null) ? "" : relativePath.trim();
 
-        // Ensure the relativePath starts with '/'
-        if (!relativePath.startsWith("/")) {
-            urlBuilder.append("/");
-        }
-        urlBuilder.append(relativePath);
+        if (p.isEmpty() || "/".equals(p)) return base + "/";
+        if (!p.startsWith("/")) p = "/" + p;
+        p = p.replace('\\', '/');
 
-        // Remove trailing slash if present (optional, based on how you want the URLs formatted)
-        if (urlBuilder.charAt(urlBuilder.length() - 1) == '/') {
-            urlBuilder.deleteCharAt(urlBuilder.length() - 1);
-        }
-
-        return urlBuilder.toString(); // Return the full constructed URL
+        return base + p;
     }
 
-
-    // Helper method to construct full URL
-    private String buildFullPath(String relativePath) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(baseUrl);
-        if (!relativePath.startsWith("/")) {
-            sb.append("/");
-        }
-        sb.append(relativePath);
-        return sb.toString();
-    }
-
-    // Shutdown the repository (if needed)
     public void shutdown() {
         Timber.tag(TAG).d("Shutting down WebDAV client repository");
-        // OkHttpSardine manages its own connections, so no explicit shutdown is needed.
-        // If you have any additional resources, clean them up here.
 
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
         Iterator<FilePOJO> iterator = repositoryClass.storage_dir.iterator();
         while (iterator.hasNext()) {
-            if (iterator.next().getFileObjectType() == FileObjectType.WEBDAV_TYPE) {
-                iterator.remove();
-            }
+            if (iterator.next().getFileObjectType() == FileObjectType.WEBDAV_TYPE) iterator.remove();
         }
 
         Iterator<FilePOJO> iterator1 = MainActivity.RECENT.iterator();
         while (iterator1.hasNext()) {
-            if (iterator1.next().getFileObjectType() == FileObjectType.WEBDAV_TYPE) {
-                iterator1.remove();
-            }
+            if (iterator1.next().getFileObjectType() == FileObjectType.WEBDAV_TYPE) iterator1.remove();
         }
 
         Iterator<FilePOJO> iterator2 = FileSelectorActivity.RECENT.iterator();
         while (iterator2.hasNext()) {
-            if (iterator2.next().getFileObjectType() == FileObjectType.WEBDAV_TYPE) {
-                iterator2.remove();
-            }
+            if (iterator2.next().getFileObjectType() == FileObjectType.WEBDAV_TYPE) iterator2.remove();
         }
 
         Bundle bundle = new Bundle();
         bundle.putSerializable("fileObjectType", FileObjectType.WEBDAV_TYPE);
-        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION, LocalBroadcastManager.getInstance(App.getAppContext()), null);
-        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT, LocalBroadcastManager.getInstance(App.getAppContext()), bundle);
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION,
+                LocalBroadcastManager.getInstance(App.getAppContext()), null);
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT,
+                LocalBroadcastManager.getInstance(App.getAppContext()), bundle);
         FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), FileObjectType.WEBDAV_TYPE);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.WEBDAV_CACHE_DIR);
 
@@ -204,98 +188,42 @@ public class WebDavClientRepository {
         instance = null;
     }
 
-    /**
-     * Provides access to the Sardine client for performing WebDAV operations elsewhere.
-     *
-     * @return The Sardine client instance.
-     */
     public Sardine getSardine() {
         return sardine;
     }
 
     public synchronized String getBasePath(Sardine sardine) throws IOException {
-        // If base path is already set in NetworkAccountPOJO, use it
         if (networkAccountPOJO.basePath != null && !networkAccountPOJO.basePath.isEmpty()) {
-            Timber.tag(TAG).d("Using configured base path: %s", networkAccountPOJO.basePath);
             return networkAccountPOJO.basePath;
         }
-
-        // If base path is already discovered and cached, return it
         if (discoveredBasePath != null && !discoveredBasePath.isEmpty()) {
-            Timber.tag(TAG).d("Using cached discovered base path: %s", discoveredBasePath);
             return discoveredBasePath;
         }
-
-        // Discover base path dynamically
         discoveredBasePath = discoverBasePath(sardine);
-        if (!discoveredBasePath.isEmpty()) {
-            Timber.tag(TAG).d("Dynamically discovered base path: %s", discoveredBasePath);
-            return discoveredBasePath;
-        }
-
-        // Fallback to root if discovery fails
-        Timber.tag(TAG).w("Failed to discover base path. Defaulting to '/'");
+        if (!discoveredBasePath.isEmpty()) return discoveredBasePath;
         return "/";
     }
 
-    /**
-     * Discovers the base path of the WebDAV server via a PROPFIND request.
-     *
-     * @return The discovered base path as a String, or "/" if discovery fails.
-     */
     private String discoverBasePath(Sardine sardine) {
-        Timber.tag(TAG).d("Attempting to discover base path dynamically.");
         try {
-            List<DavResource> resources = sardine.list(baseUrl, 0); // Depth=0
-
+            List<DavResource> resources = sardine.list(baseUrl, 0);
             if (!resources.isEmpty()) {
                 DavResource rootResource = resources.get(0);
                 URI hrefUri = rootResource.getHref();
-
-                String discoveredPath = parsePathFromHref(hrefUri);
-
-                // Fallback to '/' if parsing fails
-                if (discoveredPath == null || discoveredPath.isEmpty()) {
-                    Timber.tag(TAG).w("Parsed base path is empty. Using '/' as base path.");
-                    discoveredPath = "/";
-                }
-
-                Timber.tag(TAG).d("Discovered base path: %s", discoveredPath);
-                return discoveredPath;
-            } else {
-                Timber.tag(TAG).w("No resources found at the root path. Using '/' as base path.");
-                return "/";
+                String discoveredPath = sanitizePath(hrefUri.getPath());
+                return (discoveredPath == null || discoveredPath.isEmpty()) ? "/" : discoveredPath;
             }
+            return "/";
         } catch (IOException e) {
             Timber.tag(TAG).e(e, "Failed to perform PROPFIND for base path discovery.");
             return "/";
         }
     }
 
-    private String parsePathFromHref(URI hrefUri) {
-        try {
-            String path = hrefUri.getPath();
-            return sanitizePath(path);
-        } catch (Exception e) {
-            Timber.tag(TAG).e(e, "Error parsing path from href URI: %s", hrefUri);
-            return null;
-        }
-    }
-
-
-    /**
-     * Sanitizes the provided path by ensuring it starts with '/' and does not end with '/'.
-     *
-     * @param path The path to sanitize.
-     * @return The sanitized path.
-     */
     private String sanitizePath(String path) {
-        if (!path.startsWith("/")) {
-            path = "/" + path;
-        }
-        if (path.endsWith("/") && path.length() > 1) {
-            path = path.substring(0, path.length() - 1);
-        }
+        if (path == null) return null;
+        if (!path.startsWith("/")) path = "/" + path;
+        if (path.endsWith("/") && path.length() > 1) path = path.substring(0, path.length() - 1);
         return path;
     }
 }

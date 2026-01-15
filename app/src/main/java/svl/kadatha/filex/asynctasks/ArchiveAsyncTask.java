@@ -238,6 +238,5 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             }
         }
     }
-
 }
 

@@ -311,6 +311,8 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
 
         if (action_sought_request_code == PICK_FILE_REQUEST_CODE) {
             add_folder_btn.setVisibility(View.GONE);
+            tb_layout.requestLayout();
+            tb_layout.invalidate();
         }
 
         search_btn.setOnClickListener(new View.OnClickListener() {
