@@ -21,38 +21,127 @@ import java.util.List;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import svl.kadatha.filex.filemodel.GoogleDriveFileModel;
 
-
+/**
+ * Drop-in MakeCloudFilePOJOUtil
+ *
+ * Key upgrades:
+ * 1) Drive: build FilePOJO directly from already-listed metadata (ID-based)
+ *    - sets cloudId, parentCloudId, driveMimeType
+ *    - avoids the unsafe "query by name" problem for listing flows
+ *
+ * 2) Drive root POJO includes cloudId="root"
+ *
+ * 3) Dropbox: opportunistically stores Dropbox id (if available)
+ *
+ * 4) Yandex: path-based, no stable id stored (fields left null)
+ */
 public class MakeCloudFilePOJOUtil {
 
+    // ---------------------------------------------------------------------
+    // ✅ DRIVE: Preferred path (NO network): from Drive metadata
+    // ---------------------------------------------------------------------
+    static FilePOJO MAKE_FilePOJO_FromDriveMeta(GoogleDriveFileModel.GoogleDriveFileMetadata meta,
+                                                String displayPath,
+                                                boolean extract_icon,
+                                                FileObjectType fileObjectType) {
+        if (meta == null) return null;
 
-    static FilePOJO MAKE_FilePOJO_FromDriveAPI(String file_path, boolean extract_icon, FileObjectType fileObjectType, String oauthToken) throws IOException {
-
-        // Handle the root folder case
-        if (file_path.equals("/")) {
-            // Create a FilePOJO representing the root folder
-            return new FilePOJO(
-                    fileObjectType,
-                    "/",            // name
-                    null,           // package_name (not needed)
-                    "/",            // path
-                    true,           // isDirectory
-                    0L,             // dateLong
-                    null,           // date (no modification time for root)
-                    0L,             // sizeLong
-                    null,           // si
-                    R.drawable.folder_icon, // type (folder)
-                    null,           // file_ext
-                    Global.ENABLE_ALFA,
-                    View.INVISIBLE,
-                    View.INVISIBLE
-            );
+        // Root display (if you ever pass it here)
+        if ("/".equals(displayPath) || displayPath == null) {
+            return MAKE_DriveRootPOJO(fileObjectType);
         }
 
-        // For non-root paths:
+        String name = meta.name != null ? meta.name : "";
+        String mimeType = meta.mimeType;
+        boolean isDirectory = "application/vnd.google-apps.folder".equals(mimeType);
+
+        long dateLong = 0L;
+        String date = "";
+
+        // NOTE: meta.modifiedTime is RFC3339; your app uses SDF_FTP in some places.
+        // Keeping your existing approach to avoid bigger refactor.
+        if (meta.modifiedTime != null) {
+            try {
+                Date d = MakeFilePOJOUtil.SDF_FTP.parse(meta.modifiedTime);
+                if (d != null) {
+                    dateLong = d.getTime();
+                    date = Global.SDF.format(d);
+                }
+            } catch (Exception ignored) {
+            }
+        }
+
+        long sizeLong = 0L;
+        String si = "";
+        String file_ext = "";
+        int play_overlay_visible = View.INVISIBLE;
+        int pdf_overlay_visible = View.INVISIBLE;
+        float alfa = Global.ENABLE_ALFA;
+        String package_name = null;
+        int type = R.drawable.folder_icon;
+
+        if (!isDirectory) {
+            type = R.drawable.unknown_file_icon;
+
+            int idx = name.lastIndexOf(".");
+            if (idx > 0) {
+                file_ext = name.substring(idx + 1);
+                type = GET_FILE_TYPE(false, file_ext);
+                if (type == -2) {
+                    play_overlay_visible = View.VISIBLE;
+                } else if (type == -3) {
+                    pdf_overlay_visible = View.VISIBLE;
+                } else if (extract_icon && type == 0) {
+                    package_name = EXTRACT_ICON(displayPath, file_ext);
+                }
+            }
+
+            if (meta.size != null) {
+                sizeLong = meta.size;
+                si = FileUtil.humanReadableByteCount(sizeLong);
+            }
+        }
+
+        FilePOJO pojo = new FilePOJO(fileObjectType, name, package_name, displayPath, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
+
+        // ✅ Store identity fields
+        pojo.setCloudId(meta.id);
+        if (meta.parents != null && !meta.parents.isEmpty()) {
+            pojo.setParentCloudId(meta.parents.get(0));
+        }
+        pojo.setDriveMimeType(mimeType);
+
+        return pojo;
+    }
+
+    static FilePOJO MAKE_DriveRootPOJO(FileObjectType fileObjectType) {
+        FilePOJO root = new FilePOJO(fileObjectType, "/", null, "/", true, 0L, null, 0L, null, R.drawable.folder_icon, null, Global.ENABLE_ALFA, View.INVISIBLE, View.INVISIBLE);
+
+        root.setCloudId("root");
+        root.setParentCloudId(null);
+        root.setDriveMimeType("application/vnd.google-apps.folder");
+        return root;
+    }
+
+    // ---------------------------------------------------------------------
+    // ⚠️ DRIVE: Legacy slow/unsafe fallback (network) from a *path* string
+    // - Keep only for "user typed path / jump to path"
+    // - Not recommended for listing flows because it queries only by name.
+    // ---------------------------------------------------------------------
+    static FilePOJO MAKE_FilePOJO_FromDriveAPI(String file_path,
+                                               boolean extract_icon,
+                                               FileObjectType fileObjectType,
+                                               String oauthToken) throws IOException {
+
+        if (file_path == null || file_path.equals("/")) {
+            return MAKE_DriveRootPOJO(fileObjectType);
+        }
+
         String fileName = new File(file_path).getName();
         String query = "name='" + fileName.replace("'", "\\'") + "'";
-        String fields = "files(id,name,mimeType,modifiedTime,size)";
+        String fields = "files(id,name,mimeType,modifiedTime,size,parents)";
 
         String encodedQuery = java.net.URLEncoder.encode(query, "UTF-8");
         String url = "https://www.googleapis.com/drive/v3/files?q=" + encodedQuery + "&fields=" + fields;
@@ -68,26 +157,29 @@ public class MakeCloudFilePOJOUtil {
                 throw new IOException("Drive API request failed: " + response.code() + " - " + response.message());
             }
 
-            String responseBody = response.body().string();
-            DriveFileListResponse listResponse = new Gson().fromJson(responseBody, DriveFileListResponse.class);
+            String responseBody = response.body() != null ? response.body().string() : null;
+            if (responseBody == null) return null;
 
-            if (listResponse.files == null || listResponse.files.isEmpty()) {
-                // No file found matching the given name
+            DriveFileListResponse listResponse = new Gson().fromJson(responseBody, DriveFileListResponse.class);
+            if (listResponse == null || listResponse.files == null || listResponse.files.isEmpty()) {
                 return null;
             }
 
-            // Take the first matching file
             DriveFileMetadata meta = listResponse.files.get(0);
 
+            // Build POJO
             String name = meta.name;
             boolean isDirectory = "application/vnd.google-apps.folder".equals(meta.mimeType);
+
             long dateLong = 0L;
             String date = "";
-
             if (meta.modifiedTime != null) {
                 try {
                     Date d = MakeFilePOJOUtil.SDF_FTP.parse(meta.modifiedTime);
-                    date = Global.SDF.format(d);
+                    if (d != null) {
+                        dateLong = d.getTime();
+                        date = Global.SDF.format(d);
+                    }
                 } catch (ParseException ignored) {
                 }
             }
@@ -103,7 +195,7 @@ public class MakeCloudFilePOJOUtil {
 
             if (!isDirectory) {
                 type = R.drawable.unknown_file_icon;
-                int idx = name.lastIndexOf(".");
+                int idx = name != null ? name.lastIndexOf(".") : -1;
                 if (idx > 0) {
                     file_ext = name.substring(idx + 1);
                     type = GET_FILE_TYPE(false, file_ext);
@@ -115,15 +207,14 @@ public class MakeCloudFilePOJOUtil {
                         package_name = EXTRACT_ICON(file_path, file_ext);
                     }
                 }
+
                 if (meta.size != null) {
                     sizeLong = meta.size;
                     si = FileUtil.humanReadableByteCount(sizeLong);
                 }
-            } else {
-                // For directories, if you need sub-file count, do another request.
             }
 
-            return new FilePOJO(
+            FilePOJO pojo = new FilePOJO(
                     fileObjectType,
                     name,
                     package_name,
@@ -139,13 +230,30 @@ public class MakeCloudFilePOJOUtil {
                     play_overlay_visible,
                     pdf_overlay_visible
             );
+
+            // ✅ store identity
+            pojo.setCloudId(meta.id);
+            if (meta.parents != null && !meta.parents.isEmpty()) {
+                pojo.setParentCloudId(meta.parents.get(0));
+            }
+            pojo.setDriveMimeType(meta.mimeType);
+
+            return pojo;
         }
     }
 
+    // ---------------------------------------------------------------------
+    // DROPBOX (opportunistic cloudId)
+    // ---------------------------------------------------------------------
+    static FilePOJO MAKE_FilePOJO(Metadata metadata,
+                                  boolean extract_icon,
+                                  FileObjectType fileObjectType,
+                                  String file_path,
+                                  DbxClientV2 dbxClient) {
 
-    static FilePOJO MAKE_FilePOJO(Metadata metadata, boolean extract_icon, FileObjectType fileObjectType, String file_path, DbxClientV2 dbxClient) {
         String name = metadata.getName();
         boolean isDirectory = (metadata instanceof FolderMetadata);
+
         long dateLong = 0L;
         String date = "";
         long sizeLong = 0L;
@@ -160,6 +268,7 @@ public class MakeCloudFilePOJOUtil {
         if (!isDirectory && metadata instanceof FileMetadata) {
             FileMetadata fMeta = (FileMetadata) metadata;
             type = R.drawable.unknown_file_icon;
+
             int idx = name.lastIndexOf(".");
             if (idx > 0) {
                 file_ext = name.substring(idx + 1);
@@ -177,23 +286,39 @@ public class MakeCloudFilePOJOUtil {
             si = FileUtil.humanReadableByteCount(sizeLong);
 
             Date d = fMeta.getServerModified();
-            date = Global.SDF.format(d);
-
-        } else if (isDirectory) {
-            // Optional: count items in the folder
-            // Careful: This may be an expensive operation
-            // ListFolderResult res = dbxClient.files().listFolder(file_path);
-            // int count = res.getEntries().size();
-            // si = "(" + count + ")";
+            if (d != null) {
+                dateLong = d.getTime();
+                date = Global.SDF.format(d);
+            }
         }
 
-        return new FilePOJO(fileObjectType, name, package_name, file_path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
+        FilePOJO pojo = new FilePOJO(fileObjectType, name, package_name, file_path, isDirectory,
+                dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
+
+        // ✅ opportunistic id (if present in your SDK version)
+        try {
+            String id = null;
+            if (metadata instanceof FileMetadata) id = ((FileMetadata) metadata).getId();
+            else if (metadata instanceof FolderMetadata) id = ((FolderMetadata) metadata).getId();
+            pojo.setCloudId(id);
+        } catch (Exception ignored) {
+        }
+
+        // parent id not typically needed for Dropbox (path-based)
+        return pojo;
     }
 
-    static FilePOJO MAKE_FilePOJO(YandexResource resource, boolean extract_icon,
-                                  FileObjectType fileObjectType, String file_path) {
+    // ---------------------------------------------------------------------
+    // YANDEX (path-based; no stable id captured)
+    // ---------------------------------------------------------------------
+    static FilePOJO MAKE_FilePOJO(YandexResource resource,
+                                  boolean extract_icon,
+                                  FileObjectType fileObjectType,
+                                  String file_path) {
+
         String name = resource.name;
         boolean isDirectory = "dir".equalsIgnoreCase(resource.type);
+
         long dateLong = 0L;
         String date = "";
         long sizeLong = 0L;
@@ -206,8 +331,8 @@ public class MakeCloudFilePOJOUtil {
         int type;
 
         if (!isDirectory) {
-            // It's a file
             type = R.drawable.unknown_file_icon;
+
             int idx = name.lastIndexOf(".");
             if (idx > 0 && idx < name.length() - 1) {
                 file_ext = name.substring(idx + 1);
@@ -226,32 +351,21 @@ public class MakeCloudFilePOJOUtil {
                 si = FileUtil.humanReadableByteCount(sizeLong);
             }
 
-            // Parse modified time if available
             if (resource.modified != null) {
                 try {
-                    // If Global.SDF matches the RFC3339 pattern, use it directly.
-                    // If not, create a dedicated parser like:
-                    // SimpleDateFormat rfc3339 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
-                    // rfc3339.setTimeZone(TimeZone.getTimeZone("UTC"));
-                    // Date d = rfc3339.parse(metadata.modified);
                     Date d = Global.SDF.parse(resource.modified);
                     if (d != null) {
-                        date = Global.SDF.format(d);
                         dateLong = d.getTime();
+                        date = Global.SDF.format(d);
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (Exception ignored) {
                 }
             }
-
         } else {
-            // It's a directory
             type = R.drawable.folder_icon;
-            // If you want to count items inside, you would do an additional Yandex Disk API request.
-            // Otherwise, just leave si blank or set to something indicative.
         }
 
-        return new FilePOJO(
+        FilePOJO pojo = new FilePOJO(
                 fileObjectType,
                 name,
                 package_name,
@@ -267,15 +381,82 @@ public class MakeCloudFilePOJOUtil {
                 play_overlay_visible,
                 pdf_overlay_visible
         );
+
+        // Yandex: no stable item ID used across operations in your current flow.
+        // Keep cloud fields null.
+        return pojo;
     }
 
+//    static FilePOJO MAKE_OneDriveRootPOJO(FileObjectType fileObjectType) {
+//        FilePOJO root = new FilePOJO(
+//                fileObjectType,
+//                "/",
+//                null,
+//                "/",
+//                true,
+//                0L,
+//                null,
+//                0L,
+//                null,
+//                R.drawable.folder_icon,
+//                null,
+//                Global.ENABLE_ALFA,
+//                View.INVISIBLE,
+//                View.INVISIBLE
+//        );
+//
+//        // OneDrive root has a real id, but unless you fetch it at login,
+//        // keep this stable marker. If you DO have root id, set it here.
+//        root.setCloudId("root");
+//        root.setParentCloudId(null);
+//        return root;
+//    }
+//
+//    static FilePOJO MAKE_FilePOJO_FromOneDriveModel(OneDriveFileModel model,
+//                                                    String displayPath,
+//                                                    boolean extract_icon,
+//                                                    FileObjectType fileObjectType) {
+//
+//        if (model == null) return null;
+//
+//        DriveItem item = model.getDriveItemUnsafe();
+//        if (item == null) {
+//            // Fallback: at least create a minimal directory/file shell
+//            String nameFallback = new File(displayPath).getName();
+//            boolean isDirFallback = model.isDirectory();
+//            FilePOJO p = new FilePOJO(
+//                    fileObjectType,
+//                    nameFallback,
+//                    null,
+//                    displayPath,
+//                    isDirFallback,
+//                    0L,
+//                    null,
+//                    0L,
+//                    null,
+//                    isDirFallback ? R.drawable.folder_icon : R.drawable.unknown_file_icon,
+//                    null,
+//                    Global.ENABLE_ALFA,
+//                    View.INVISIBLE,
+//                    View.INVISIBLE
+//            );
+//            return p;
+//        }
+//
+//        return MAKE_FilePOJO_FromOneDriveDriveItem(item, displayPath, extract_icon, fileObjectType);
+//    }
+
+    // ---------------------------------------------------------------------
+    // Helper DTOs (Drive + Yandex)
+    // ---------------------------------------------------------------------
     static class DriveFileMetadata {
         String id;
         String name;
         String mimeType;
         @SerializedName("modifiedTime")
-        String modifiedTime; // in RFC3339 format, e.g. "2023-11-02T10:20:30.000Z"
+        String modifiedTime; // RFC3339
         Long size;
+        List<String> parents;
     }
 
     static class DriveFileListResponse {
@@ -283,7 +464,6 @@ public class MakeCloudFilePOJOUtil {
     }
 
     static class YandexResourceListResponse {
-        // If you have a list response similar to DriveFileListResponse
         List<YandexResource> items;
     }
 
@@ -302,18 +482,13 @@ public class MakeCloudFilePOJOUtil {
     public class YandexResource {
         public String name;
         public String path;       // e.g. "disk:/Folder/File.txt"
-        public String modified;   // RFC3339 format, e.g. "2023-11-02T10:20:30Z"
+        public String modified;   // RFC3339
         public Long size;
         public YandexResourceEmbedded _embedded;
-        String type;       // "file" or "dir"
+        String type;              // "file" or "dir"
 
-        boolean isFile() {
-            return "file".equals(type);
-        }
-
-        public boolean isDir() {
-            return "dir".equals(type);
-        }
+        boolean isFile() { return "file".equals(type); }
+        public boolean isDir() { return "dir".equals(type); }
     }
 
     public class YandexResourceEmbedded {

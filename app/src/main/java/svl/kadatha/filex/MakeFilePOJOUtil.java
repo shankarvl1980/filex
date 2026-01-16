@@ -575,7 +575,6 @@ public class MakeFilePOJOUtil {
     }
 
     public static FilePOJO MAKE_FilePOJO(SmbFileInfo smbFileInfo, boolean extract_icon, FileObjectType fileObjectType) {
-
         String name = smbFileInfo.getFileName();
         String path = smbFileInfo.getFilePath();
         boolean isDirectory = smbFileInfo.getFileAttributes().contains(FileAttributes.FILE_ATTRIBUTE_DIRECTORY);
@@ -611,7 +610,6 @@ public class MakeFilePOJOUtil {
         }
         return new FilePOJO(fileObjectType, name, package_name, path, isDirectory, dateLong, date, sizeLong, si, type, file_ext, alfa, play_overlay_visible, pdf_overlay_visible);
     }
-
 
     public static FilePOJO MAKE_FilePOJO(FileObjectType fileObjectType, String file_path) {
         FilePOJO filePOJO = null;
@@ -735,7 +733,6 @@ public class MakeFilePOJOUtil {
         } else if (fileObjectType == FileObjectType.GOOGLE_DRIVE_TYPE) {
             try {
                 String oauthToken = CloudAccountViewModel.GOOGLE_DRIVE_ACCESS_TOKEN;
-
                 // Attempt to create a FilePOJO from the given file path and OAuth token
                 filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO_FromDriveAPI(file_path, true, fileObjectType, oauthToken);
             } catch (IOException e) {
@@ -794,8 +791,19 @@ public class MakeFilePOJOUtil {
             } catch (Exception e) {
                 Timber.tag(TAG).e("Error creating FilePOJO for Yandex file: %s", e.getMessage());
             }
+//        } else if (fileObjectType == FileObjectType.ONE_DRIVE_TYPE) {
+//            try {
+//                if ("/".equals(file_path)) {
+//                    filePOJO = MakeCloudFilePOJOUtil.MAKE_OneDriveRootPOJO(fileObjectType);
+//                } else {
+//                    OneDriveFileModel m = new OneDriveFileModel(file_path);
+//                    filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO_FromOneDriveModel(m, file_path, true, fileObjectType);
+//                }
+//            } catch (Exception e) {
+//                Timber.tag(TAG).e("Error creating FilePOJO for OneDrive file: %s", e.getMessage());
+//            }
         }
-        SubFileCountUtil.ensureSubFileCount(filePOJO,null);
+        SubFileCountUtil.ensureSubFileCount(filePOJO, null);
         return filePOJO;
     }
 
@@ -829,42 +837,29 @@ public class MakeFilePOJOUtil {
             return R.drawable.unknown_file_icon;
         }
 
-        // normalize ONCE
         String file_ext = file_extension.toLowerCase(Locale.ROOT);
 
         if (Global.AUDIO_EXT_SET.contains(file_ext)) {
             return R.drawable.audio_file_icon;
-
         } else if (Global.PDF_EXT_SET.contains(file_ext)) {
             return -3; // R.drawable.pdf_file_icon
-
         } else if (Global.APK_EXT_SET.contains(file_ext)) {
             return 0;
-
-        } else if (Global.ZIP_EXT_SET.contains(file_ext)
-                || Global.UNIX_ARCHIVE_EXT_SET.contains(file_ext)) {
+        } else if (Global.ZIP_EXT_SET.contains(file_ext) || Global.UNIX_ARCHIVE_EXT_SET.contains(file_ext)) {
             return R.drawable.archive_file_icon;
-
         } else if (Global.IMAGE_EXT_SET.contains(file_ext)) {
             return -1;
-
         } else if (Global.VIDEO_EXT_SET.contains(file_ext)) {
             return -2;
-
-        } else if (Global.TEXT_EXT_SET.contains(file_ext)
-                || Global.RTF_EXT_SET.contains(file_ext)) {
+        } else if (Global.TEXT_EXT_SET.contains(file_ext) || Global.RTF_EXT_SET.contains(file_ext)) {
             return R.drawable.text_file_icon;
-
         } else if (Global.DOC_EXT_SET.contains(file_ext)) {
             return R.drawable.word_file_icon;
-
         } else if (Global.XLS_EXT_SET.contains(file_ext)) {
             return R.drawable.xls_file_icon;
-
         } else if (Global.PPT_EXT_SET.contains(file_ext)) {
             return R.drawable.ppt_file_icon;
         }
-
         return R.drawable.unknown_file_icon;
     }
 

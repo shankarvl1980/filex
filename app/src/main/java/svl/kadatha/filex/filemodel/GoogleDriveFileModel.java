@@ -13,7 +13,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -24,80 +26,113 @@ import okhttp3.Response;
 import okio.BufferedSink;
 import okio.Okio;
 import okio.Source;
+import svl.kadatha.filex.FileObjectType;
+import svl.kadatha.filex.FilePOJO;
+import svl.kadatha.filex.FilePOJOUtil;
 import svl.kadatha.filex.cloud.CloudAccountViewModel;
 
+/**
+ * Drop-in GoogleDriveFileModel
+ *
+ * Goals:
+ * 1) If FilePOJO already has cloudId/parentId/mimeType/size/modifiedTime -> NO extra metadata HTTPS.
+ * 2) If IDs are missing -> fall back to path resolution (slow).
+ * 3) list() uses list response metadata (no per-child metadata fetch).
+ * 4) Still supports downloads/uploads/rename/delete/etc.
+ *
+ * IMPORTANT:
+ * - Implement tryResolveFilePOJO(path, type) using your existing hashmap cache.
+ * - Keep using UI "display path" for navigation. Drive "identity" = cloudId.
+ */
 public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
 
     private static final MediaType JSON = MediaType.parse("application/json; charset=UTF-8");
     private static final MediaType OCTET = MediaType.parse("application/octet-stream");
-
-    // Drive recommends multiples of 256 KiB for resumable chunks.
-    // 8 MiB is a good balance for mobile. You can tune.
     private static final int RESUMABLE_CHUNK_SIZE = 8 * 1024 * 1024;
 
     private final String accessToken;
-    private final okhttp3.OkHttpClient httpClient;
+    private final OkHttpClient httpClient;
     private final Gson gson;
-    private final String fileId; // this model points to a Drive file/folder id
-    private GoogleDriveFileMetadata metadata;
+
+    private final String fileId;               // Drive file/folder id (or "root")
+    private GoogleDriveFileMetadata metadata;  // may be partial; lazy fetch if needed
 
     public GoogleDriveFileModel(String path) throws IOException {
-
         this.accessToken = CloudAccountViewModel.GOOGLE_DRIVE_ACCESS_TOKEN;
-        this.httpClient = new okhttp3.OkHttpClient();
+        this.httpClient = new OkHttpClient();
         this.gson = new Gson();
 
+        // ✅ Fast path: resolve from cached FilePOJO (already listed in UI)
+        FilePOJO pojo = FilePOJOUtil.GET_FILE_POJO(path, FileObjectType.GOOGLE_DRIVE_TYPE);
+        if (pojo != null && pojo.getCloudId() != null && !pojo.getCloudId().isEmpty()) {
+            this.fileId = pojo.getCloudId();
+            this.metadata = buildMetaFromPojo(pojo);
+            return;
+        }
+
+        // 🐢 Slow fallback: resolve by path queries
         String resolvedId = getFileIdByPath(path);
         if (resolvedId == null) throw new FileNotFoundException("File not found: " + path);
 
         this.fileId = resolvedId;
-        this.metadata = getFileMetadata(this.fileId);
+        this.metadata = null; // lazy fetch when needed
     }
 
-    // ✅ Internal constructor: build directly from a known fileId (used by list())
-    private GoogleDriveFileModel(String accessToken, okhttp3.OkHttpClient client, Gson gson, String fileId) throws IOException {
+    /** Build minimal metadata from FilePOJO so most getters avoid HTTPS. */
+    private static GoogleDriveFileMetadata buildMetaFromPojo(FilePOJO pojo) {
+        GoogleDriveFileMetadata m = new GoogleDriveFileMetadata();
+        m.id = pojo.getCloudId();
+        m.name = pojo.getName();
+        m.mimeType = pojo.getDriveMimeType();
+
+        long sz = pojo.getSizeLong();
+        m.size = (sz > 0) ? sz : null;
+
+        // parents (optional)
+        if (pojo.getParentCloudId() != null && !pojo.getParentCloudId().isEmpty()) {
+            m.parents = new ArrayList<>();
+            m.parents.add(pojo.getParentCloudId());
+        } else {
+            // leave null; ensureMetadataParentsLoaded() will fetch only if required
+            m.parents = null;
+        }
+
+        // modifiedTime: only if you store it in FilePOJO later; otherwise leave null
+        // m.modifiedTime = pojo.getDriveModifiedTime();
+
+        return m;
+    }
+
+
+    private GoogleDriveFileModel(String accessToken, OkHttpClient client, Gson gson, GoogleDriveFileMetadata meta) {
         this.accessToken = accessToken;
         this.httpClient = client;
         this.gson = gson;
-        this.fileId = fileId;
-        this.metadata = getFileMetadata(this.fileId);
+        this.fileId = meta != null ? meta.id : null;
+        this.metadata = meta;
     }
 
-    // -----------------------------
+    // ---------------------------------------------------------------------
     // StreamUploadFileModel
-    // -----------------------------
+    // ---------------------------------------------------------------------
     @Override
-    public boolean putChildFromStream(String childName,
-                                      InputStream in,
-                                      long contentLengthOrMinus1,
-                                      long[] bytesRead) {
+    public boolean putChildFromStream(String childName, InputStream in, long contentLengthOrMinus1, long[] bytesRead) {
         if (bytesRead != null && bytesRead.length > 0) bytesRead[0] = 0;
-
         if (!isDirectory()) return false;
 
-        // If length is unknown, Google Drive resumable upload is painful:
-        // you can still do it, but you must buffer or have a known length.
-        // For your 2GB goal, enforce length when possible.
-        if (contentLengthOrMinus1 <= 0) {
-            // If you want to support unknown length, you need a different strategy.
-            return false;
-        }
+        // resumable upload requires total size
+        if (contentLengthOrMinus1 <= 0) return false;
 
         try {
-            // 1) Create resumable session
             String uploadUrl = startResumableSession(childName, contentLengthOrMinus1);
             if (uploadUrl == null) return false;
-
-            // 2) Upload in chunks (PUT Content-Range)
             return uploadResumableChunks(uploadUrl, in, contentLengthOrMinus1, bytesRead);
-
         } catch (Exception e) {
             return false;
         }
     }
 
     private String startResumableSession(String fileName, long totalBytes) throws IOException {
-        // POST https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable
         HttpUrl url = HttpUrl.parse("https://www.googleapis.com/upload/drive/v3/files")
                 .newBuilder()
                 .addQueryParameter("uploadType", "resumable")
@@ -118,18 +153,12 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
 
         try (Response resp = httpClient.newCall(request).execute()) {
             if (!resp.isSuccessful()) return null;
-
-            // Google returns the resumable session URL in the Location header
             String location = resp.header("Location");
             return (location != null && !location.isEmpty()) ? location : null;
         }
     }
 
-    private boolean uploadResumableChunks(String uploadUrl,
-                                          InputStream in,
-                                          long totalBytes,
-                                          long[] bytesRead) throws IOException {
-
+    private boolean uploadResumableChunks(String uploadUrl, InputStream in, long totalBytes, long[] bytesRead) throws IOException {
         byte[] buf = new byte[RESUMABLE_CHUNK_SIZE];
         long uploaded = 0;
 
@@ -138,12 +167,9 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
                 int toRead = (int) Math.min(buf.length, totalBytes - uploaded);
                 int off = 0;
 
-                // read exactly toRead unless EOF (which is an error because totalBytes promised)
                 while (off < toRead) {
                     int n = input.read(buf, off, toRead - off);
-                    if (n == -1) {
-                        return false; // premature EOF
-                    }
+                    if (n == -1) return false; // premature EOF
                     off += n;
                 }
 
@@ -164,31 +190,72 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
                 try (Response resp = httpClient.newCall(put).execute()) {
                     int code = resp.code();
 
-                    // 308 Resume Incomplete => keep going
                     if (code == 308) {
                         uploaded += off;
                         if (bytesRead != null && bytesRead.length > 0) bytesRead[0] = uploaded;
                         continue;
                     }
 
-                    // 200/201 => final chunk accepted; upload complete
                     if (code == 200 || code == 201) {
                         uploaded = totalBytes;
                         if (bytesRead != null && bytesRead.length > 0) bytesRead[0] = uploaded;
                         return true;
                     }
 
-                    // other failure
                     return false;
                 }
             }
         }
 
-        // If we exit loop cleanly, we should have completed.
         return true;
     }
 
-    // Small RequestBody that wraps a byte[] slice without copying
+    public static List<GoogleDriveFileMetadata> listFilesInFolder(String parentId, String oauthToken) {
+        List<GoogleDriveFileMetadata> out = new ArrayList<>();
+        String pageToken = null;
+
+        OkHttpClient client = new OkHttpClient();
+        Gson gson = new Gson();
+
+        try {
+            do {
+                HttpUrl.Builder urlBuilder = HttpUrl.parse("https://www.googleapis.com/drive/v3/files")
+                        .newBuilder()
+                        .addQueryParameter("q", "'" + parentId + "' in parents and trashed=false")
+                        .addQueryParameter("fields", "nextPageToken, files(id,name,mimeType,parents,modifiedTime,size)")
+                        .addQueryParameter("pageSize", "1000");
+
+                if (pageToken != null && !pageToken.isEmpty()) {
+                    urlBuilder.addQueryParameter("pageToken", pageToken);
+                }
+
+                Request request = new Request.Builder()
+                        .url(urlBuilder.build())
+                        .header("Authorization", "Bearer " + oauthToken)
+                        .get()
+                        .build();
+
+                try (Response response = client.newCall(request).execute()) {
+                    if (!response.isSuccessful() || response.body() == null) {
+                        break;
+                    }
+
+                    DriveFilesListResponse res =
+                            gson.fromJson(response.body().string(), DriveFilesListResponse.class);
+
+                    if (res == null || res.files == null) break;
+
+                    out.addAll(res.files);
+                    pageToken = res.nextPageToken;
+                }
+
+            } while (pageToken != null && !pageToken.isEmpty());
+        } catch (IOException ignored) {
+        }
+
+        return out;
+    }
+
     private static final class ByteArrayRequestBody extends RequestBody {
         private final byte[] data;
         private final int len;
@@ -208,22 +275,23 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
         }
     }
 
-    // -----------------------------
-    // FileModel API (mostly unchanged)
-    // -----------------------------
-
+    // ---------------------------------------------------------------------
+    // FileModel API
+    // ---------------------------------------------------------------------
     @Override
     public String getName() {
-        return metadata.name;
+        ensureMetadataBasicLoaded();
+        return metadata != null ? metadata.name : null;
     }
 
     @Override
     public String getParentName() {
         try {
-            if (metadata.parents != null && !metadata.parents.isEmpty()) {
+            ensureMetadataParentsLoaded();
+            if (metadata != null && metadata.parents != null && !metadata.parents.isEmpty()) {
                 String parentId = metadata.parents.get(0);
-                GoogleDriveFileMetadata parentMetadata = getFileMetadata(parentId);
-                return parentMetadata.name;
+                GoogleDriveFileMetadata parentMeta = getFileMetadata(parentId);
+                return parentMeta != null ? parentMeta.name : null;
             }
             return null;
         } catch (IOException e) {
@@ -231,10 +299,15 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
         }
     }
 
+    /**
+     * ⚠️ This is expensive and should not be used for UI paths.
+     * Prefer your UI displayPath = parentDisplayPath + "/" + name.
+     */
     @Override
     public String getPath() {
         try {
-            return buildPath(metadata);
+            ensureMetadataBasicLoaded();
+            return (metadata != null) ? buildPath(metadata) : null;
         } catch (IOException e) {
             return null;
         }
@@ -246,23 +319,23 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
             if ("root".equals(parentId)) {
                 return "/" + fileMetadata.name;
             } else {
-                GoogleDriveFileMetadata parentMetadata = getFileMetadata(parentId);
-                String parentPath = buildPath(parentMetadata);
+                GoogleDriveFileMetadata parent = getFileMetadata(parentId);
+                String parentPath = buildPath(parent);
                 return parentPath + "/" + fileMetadata.name;
             }
-        } else {
-            return "/" + fileMetadata.name;
         }
+        return "/" + fileMetadata.name;
     }
 
     @Override
     public String getParentPath() {
         try {
-            if (metadata.parents != null && !metadata.parents.isEmpty()) {
+            ensureMetadataParentsLoaded();
+            if (metadata != null && metadata.parents != null && !metadata.parents.isEmpty()) {
                 String parentId = metadata.parents.get(0);
                 if ("root".equals(parentId)) return "/";
-                GoogleDriveFileMetadata parentMetadata = getFileMetadata(parentId);
-                return buildPath(parentMetadata);
+                GoogleDriveFileMetadata parent = getFileMetadata(parentId);
+                return buildPath(parent);
             }
             return null;
         } catch (IOException e) {
@@ -272,13 +345,17 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
 
     @Override
     public boolean isDirectory() {
-        return "application/vnd.google-apps.folder".equals(metadata.mimeType);
+        ensureMetadataBasicLoaded();
+        return metadata != null && "application/vnd.google-apps.folder".equals(metadata.mimeType);
     }
 
     @Override
     public boolean rename(String new_name, boolean overwrite) {
         try {
-            HttpUrl url = HttpUrl.parse("https://www.googleapis.com/drive/v3/files/" + fileId).newBuilder().build();
+            HttpUrl url = HttpUrl.parse("https://www.googleapis.com/drive/v3/files/" + fileId)
+                    .newBuilder()
+                    .addQueryParameter("fields", "id,name,mimeType,parents,modifiedTime,size")
+                    .build();
 
             Map<String, Object> jsonMap = new HashMap<>();
             jsonMap.put("name", new_name);
@@ -293,8 +370,12 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
 
             try (Response response = httpClient.newCall(request).execute()) {
                 if (response.isSuccessful()) {
-                    String responseBody = response.body() != null ? response.body().string() : null;
-                    if (responseBody != null) metadata = gson.fromJson(responseBody, GoogleDriveFileMetadata.class);
+                    if (response.body() != null) {
+                        String responseBody = response.body().string();
+                        if (responseBody != null && !responseBody.isEmpty()) {
+                            metadata = gson.fromJson(responseBody, GoogleDriveFileMetadata.class);
+                        }
+                    }
                     return true;
                 }
                 return false;
@@ -341,8 +422,7 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
 
             Response response = httpClient.newCall(request).execute();
             if (response.isSuccessful() && response.body() != null) {
-                // Caller MUST close this stream. (As in your design)
-                return response.body().byteStream();
+                return response.body().byteStream(); // caller closes
             } else {
                 if (response.body() != null) response.body().close();
                 return null;
@@ -352,10 +432,6 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
         }
     }
 
-    /**
-     * 🚫 Do not use OutputStream abstraction for cloud uploads.
-     * Use putChildFromStream() instead.
-     */
     @Override
     public OutputStream getChildOutputStream(String child_name, long source_length) {
         throw new UnsupportedOperationException("GoogleDriveFileModel: use putChildFromStream()");
@@ -366,17 +442,19 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
         if (!isDirectory()) return new FileModel[0];
 
         try {
-            List<FileModel> fileModels = new ArrayList<>();
+            List<FileModel> out = new ArrayList<>();
             String pageToken = null;
 
             do {
                 HttpUrl.Builder urlBuilder = HttpUrl.parse("https://www.googleapis.com/drive/v3/files")
                         .newBuilder()
                         .addQueryParameter("q", "'" + fileId + "' in parents and trashed = false")
-                        .addQueryParameter("fields", "nextPageToken, files(id, name, mimeType, parents, size, modifiedTime)")
+                        .addQueryParameter("fields", "nextPageToken, files(id,name,mimeType,parents,modifiedTime,size)")
                         .addQueryParameter("pageSize", "1000");
 
-                if (pageToken != null) urlBuilder.addQueryParameter("pageToken", pageToken);
+                if (pageToken != null && !pageToken.isEmpty()) {
+                    urlBuilder.addQueryParameter("pageToken", pageToken);
+                }
 
                 Request request = new Request.Builder()
                         .url(urlBuilder.build())
@@ -387,21 +465,19 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
                 try (Response response = httpClient.newCall(request).execute()) {
                     if (!response.isSuccessful() || response.body() == null) break;
 
-                    String responseBody = response.body().string();
-                    DriveFilesListResponse filesListResponse = gson.fromJson(responseBody, DriveFilesListResponse.class);
-                    if (filesListResponse == null || filesListResponse.files == null) break;
+                    DriveFilesListResponse res = gson.fromJson(response.body().string(), DriveFilesListResponse.class);
+                    if (res == null || res.files == null) break;
 
-                    for (GoogleDriveFileMetadata m : filesListResponse.files) {
-                        // ✅ correct: construct from fileId directly
-                        fileModels.add(new GoogleDriveFileModel(accessToken, httpClient, gson, m.id));
+                    for (GoogleDriveFileMetadata m : res.files) {
+                        out.add(new GoogleDriveFileModel(accessToken, httpClient, gson, m)); // ✅ no extra metadata call
                     }
 
-                    pageToken = filesListResponse.nextPageToken;
+                    pageToken = res.nextPageToken;
                 }
 
-            } while (pageToken != null);
+            } while (pageToken != null && !pageToken.isEmpty());
 
-            return fileModels.toArray(new FileModel[0]);
+            return out.toArray(new FileModel[0]);
         } catch (Exception e) {
             return new FileModel[0];
         }
@@ -411,7 +487,6 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
     public boolean createFile(String name) {
         if (!isDirectory()) return false;
 
-        // For empty file, resumable is overkill; keep your old multipart behavior
         try {
             HttpUrl url = HttpUrl.parse("https://www.googleapis.com/upload/drive/v3/files")
                     .newBuilder()
@@ -422,9 +497,7 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
             metadataMap.put("name", name);
             metadataMap.put("parents", Collections.singletonList(fileId));
 
-            String metadataJson = gson.toJson(metadataMap);
-
-            RequestBody metadataPart = RequestBody.create(metadataJson, JSON);
+            RequestBody metadataPart = RequestBody.create(gson.toJson(metadataMap), JSON);
             RequestBody filePart = RequestBody.create(new byte[0], OCTET);
 
             okhttp3.MultipartBody multipartBody = new okhttp3.MultipartBody.Builder()
@@ -452,7 +525,7 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
         if (!isDirectory()) return false;
 
         try {
-            String query = "name = '" + dir_name.replace("'", "\\'") + "' and '" + fileId +
+            String query = "name = '" + escapeForDriveQuery(dir_name) + "' and '" + fileId +
                     "' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false";
 
             HttpUrl url = HttpUrl.parse("https://www.googleapis.com/drive/v3/files")
@@ -468,15 +541,14 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
                     .build();
 
             try (Response response = httpClient.newCall(request).execute()) {
-                if (!response.isSuccessful() || response.body() == null) return false;
-
-                DriveFilesListResponse filesListResponse = gson.fromJson(response.body().string(), DriveFilesListResponse.class);
-                if (filesListResponse != null && filesListResponse.files != null && !filesListResponse.files.isEmpty()) {
-                    return true;
+                if (response.isSuccessful() && response.body() != null) {
+                    DriveFilesListResponse filesListResponse = gson.fromJson(response.body().string(), DriveFilesListResponse.class);
+                    if (filesListResponse != null && filesListResponse.files != null && !filesListResponse.files.isEmpty()) {
+                        return true;
+                    }
                 }
             }
 
-            // Create folder
             Map<String, Object> metadataMap = new HashMap<>();
             metadataMap.put("name", dir_name);
             metadataMap.put("parents", Collections.singletonList(fileId));
@@ -484,10 +556,8 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
 
             RequestBody body = RequestBody.create(gson.toJson(metadataMap), JSON);
 
-            HttpUrl createUrl = HttpUrl.parse("https://www.googleapis.com/drive/v3/files").newBuilder().build();
-
             Request createRequest = new Request.Builder()
-                    .url(createUrl)
+                    .url("https://www.googleapis.com/drive/v3/files")
                     .addHeader("Authorization", "Bearer " + accessToken)
                     .post(body)
                     .build();
@@ -512,8 +582,7 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
             for (String dirName : paths) {
                 if (dirName.isEmpty()) continue;
 
-                String escaped = dirName.replace("'", "\\'");
-                String query = "name = '" + escaped + "' and '" + parentId +
+                String query = "name = '" + escapeForDriveQuery(dirName) + "' and '" + parentId +
                         "' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false";
 
                 HttpUrl url = HttpUrl.parse("https://www.googleapis.com/drive/v3/files")
@@ -531,9 +600,9 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
                 String foundId = null;
                 try (Response response = httpClient.newCall(request).execute()) {
                     if (response.isSuccessful() && response.body() != null) {
-                        DriveFilesListResponse filesListResponse = gson.fromJson(response.body().string(), DriveFilesListResponse.class);
-                        if (filesListResponse != null && filesListResponse.files != null && !filesListResponse.files.isEmpty()) {
-                            foundId = filesListResponse.files.get(0).id;
+                        DriveFilesListResponse res = gson.fromJson(response.body().string(), DriveFilesListResponse.class);
+                        if (res != null && res.files != null && !res.files.isEmpty()) {
+                            foundId = res.files.get(0).id;
                         }
                     } else {
                         return false;
@@ -573,66 +642,94 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
 
     @Override
     public long getLength() {
+        ensureMetadataSizeLoaded();
         if (isDirectory()) return 0;
-        return (metadata.size != null) ? metadata.size : 0;
+        return (metadata != null && metadata.size != null) ? metadata.size : 0;
     }
 
     @Override
     public boolean exists() {
-        return metadata != null;
+        return fileId != null && !fileId.isEmpty();
     }
 
     @Override
     public long lastModified() {
-        if (metadata.modifiedTime != null) {
+        ensureMetadataModifiedLoaded();
+        if (metadata == null || metadata.modifiedTime == null) return 0;
+
+        // RFC3339: "2026-01-16T12:34:56.000Z" OR "...56Z"
+        try {
+            SimpleDateFormat f1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+            f1.setTimeZone(TimeZone.getTimeZone("UTC"));
+            f1.setLenient(true);
+            Date d;
             try {
-                String modifiedTime = metadata.modifiedTime;
-                if (modifiedTime.endsWith("Z")) {
-                    modifiedTime = modifiedTime.substring(0, modifiedTime.length() - 1) + "+0000";
-                } else if (modifiedTime.matches(".*[\\+\\-]\\d\\d:\\d\\d$")) {
-                    modifiedTime = modifiedTime.substring(0, modifiedTime.length() - 3) + modifiedTime.substring(modifiedTime.length() - 2);
-                }
-
-                // NOTE: your original pattern looked wrong for RFC3339. Keeping your behavior,
-                // but ideally parse RFC3339 properly.
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-                sdf.setLenient(true);
-
-                Date date = sdf.parse(modifiedTime);
-                return date != null ? date.getTime() : 0;
-            } catch (Exception e) {
-                return 0;
+                d = f1.parse(metadata.modifiedTime);
+            } catch (Exception ignore) {
+                SimpleDateFormat f2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+                f2.setTimeZone(TimeZone.getTimeZone("UTC"));
+                f2.setLenient(true);
+                d = f2.parse(metadata.modifiedTime);
             }
+            return d != null ? d.getTime() : 0;
+        } catch (Exception e) {
+            return 0;
         }
-        return 0;
     }
 
     @Override
     public boolean isHidden() {
-        return metadata.name != null && metadata.name.startsWith(".");
+        ensureMetadataBasicLoaded();
+        return metadata != null && metadata.name != null && metadata.name.startsWith(".");
     }
 
-    // -----------------------------
-    // helpers and metadata
-    // -----------------------------
+    // ---------------------------------------------------------------------
+    // Metadata lazy loading (fetch ONLY when needed)
+    // ---------------------------------------------------------------------
+    private void ensureMetadataBasicLoaded() {
+        if (metadata != null && metadata.name != null && metadata.mimeType != null) return;
+        try { metadata = getFileMetadata(fileId); } catch (Exception ignored) {}
+    }
 
-    // Method to resolve path to fileId (unchanged)
+    private void ensureMetadataParentsLoaded() {
+        if (metadata != null && metadata.parents != null) return;
+        try { metadata = getFileMetadata(fileId); } catch (Exception ignored) {}
+    }
+
+    private void ensureMetadataSizeLoaded() {
+        if (metadata != null && metadata.size != null) return;
+        try { metadata = getFileMetadata(fileId); } catch (Exception ignored) {}
+    }
+
+    private void ensureMetadataModifiedLoaded() {
+        if (metadata != null && metadata.modifiedTime != null) return;
+        try { metadata = getFileMetadata(fileId); } catch (Exception ignored) {}
+    }
+
+    // ---------------------------------------------------------------------
+    // Drive query helpers
+    // ---------------------------------------------------------------------
+    private static String escapeForDriveQuery(String name) {
+        return name == null ? "" : name.replace("'", "\\'");
+    }
+
     private String getFileIdByPath(String path) throws IOException {
+        if (path == null) return null;
         if (!path.startsWith("/")) path = "/" + path;
+
         String[] parts = path.split("/");
         String currentFolderId = "root";
 
         for (int i = 1; i < parts.length; i++) {
             String name = parts[i];
-            if (name.isEmpty()) continue;
+            if (name == null || name.isEmpty()) continue;
 
-            String escapedName = name.replace("'", "\\'");
-            String query = "name = '" + escapedName + "' and '" + currentFolderId + "' in parents and trashed = false";
+            String query = "name = '" + escapeForDriveQuery(name) + "' and '" + currentFolderId + "' in parents and trashed = false";
 
             HttpUrl url = HttpUrl.parse("https://www.googleapis.com/drive/v3/files")
                     .newBuilder()
                     .addQueryParameter("q", query)
-                    .addQueryParameter("fields", "files(id, name)")
+                    .addQueryParameter("fields", "files(id,name)")
                     .build();
 
             Request request = new Request.Builder()
@@ -646,10 +743,9 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
                     throw new IOException("Failed to retrieve file ID: " + response.code() + " - " + response.message());
                 }
 
-                DriveFilesListResponse filesListResponse = gson.fromJson(response.body().string(), DriveFilesListResponse.class);
-
-                if (filesListResponse.files != null && !filesListResponse.files.isEmpty()) {
-                    currentFolderId = filesListResponse.files.get(0).id;
+                DriveFilesListResponse res = gson.fromJson(response.body().string(), DriveFilesListResponse.class);
+                if (res != null && res.files != null && !res.files.isEmpty()) {
+                    currentFolderId = res.files.get(0).id;
                 } else {
                     return null;
                 }
@@ -658,10 +754,10 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
         return currentFolderId;
     }
 
-    private GoogleDriveFileMetadata getFileMetadata(String fileId) throws IOException {
-        HttpUrl url = HttpUrl.parse("https://www.googleapis.com/drive/v3/files/" + fileId)
+    private GoogleDriveFileMetadata getFileMetadata(String id) throws IOException {
+        HttpUrl url = HttpUrl.parse("https://www.googleapis.com/drive/v3/files/" + id)
                 .newBuilder()
-                .addQueryParameter("fields", "*")
+                .addQueryParameter("fields", "id,name,mimeType,parents,modifiedTime,size")
                 .build();
 
         Request request = new Request.Builder()
@@ -678,79 +774,25 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
         }
     }
 
-    public static List<GoogleDriveFileMetadata> listFilesInFolder(String parentId, String oauthToken) {
-        List<GoogleDriveFileMetadata> out = new ArrayList<>();
-        String pageToken = null;
-
-        OkHttpClient client = new OkHttpClient();
-        Gson gson = new Gson();
-
-        try {
-            do {
-                HttpUrl.Builder urlBuilder = HttpUrl.parse("https://www.googleapis.com/drive/v3/files")
-                        .newBuilder()
-                        .addQueryParameter("q", "'" + parentId + "' in parents and trashed=false")
-                        .addQueryParameter("fields", "nextPageToken, files(id, name, mimeType, parents)")
-                        .addQueryParameter("pageSize", "1000");
-                // If you support shared drives, uncomment:
-                // .addQueryParameter("supportsAllDrives", "true")
-                // .addQueryParameter("includeItemsFromAllDrives", "true");
-
-                if (pageToken != null && !pageToken.isEmpty()) {
-                    urlBuilder.addQueryParameter("pageToken", pageToken);
-                }
-
-                Request request = new Request.Builder()
-                        .url(urlBuilder.build())
-                        .header("Authorization", "Bearer " + oauthToken)
-                        .get()
-                        .build();
-
-                try (Response response = client.newCall(request).execute()) {
-                    if (!response.isSuccessful() || response.body() == null) {
-                        System.err.println("List failed: " + response.code() + " - " + response.message());
-                        break;
-                    }
-
-                    String responseBody = response.body().string();
-                    DriveFilesListResponse filesListResponse =
-                            gson.fromJson(responseBody, DriveFilesListResponse.class);
-
-                    if (filesListResponse == null || filesListResponse.files == null) {
-                        break;
-                    }
-
-                    out.addAll(filesListResponse.files);
-                    pageToken = filesListResponse.nextPageToken;
-                }
-
-            } while (pageToken != null && !pageToken.isEmpty());
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return out;
-    }
-
-
-    // Helper classes
+    // ---------------------------------------------------------------------
+    // DTOs
+    // ---------------------------------------------------------------------
     public static class GoogleDriveFileMetadata {
         public String id;
         public String name;
-        String mimeType;
-        Long size;
-        String modifiedTime;
-        List<String> parents;
+        public String mimeType;
+        public Long size;
+        public String modifiedTime;
+        public List<String> parents;
     }
 
     public static class DriveFilesListResponse {
         public List<GoogleDriveFileMetadata> files;
         @SerializedName("nextPageToken")
-        String nextPageToken;
+        public String nextPageToken;
     }
 
-    // Keep your InputStreamRequestBody if you need it elsewhere; not used for resumable.
+    // Not used for resumable flow, but kept for compatibility if you still use it elsewhere.
     public static class InputStreamRequestBody extends RequestBody {
         private final MediaType contentType;
         private final InputStream inputStream;

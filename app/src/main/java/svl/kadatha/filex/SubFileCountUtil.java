@@ -2,6 +2,7 @@ package svl.kadatha.filex;
 
 import android.os.Build;
 
+import com.google.gson.Gson;
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
 import com.hierynomus.smbj.session.Session;
 import com.hierynomus.smbj.share.DiskShare;
@@ -21,6 +22,12 @@ import java.util.List;
 import java.util.Vector;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import svl.kadatha.filex.cloud.CloudAccountViewModel;
+import svl.kadatha.filex.filemodel.GoogleDriveFileModel;
 import svl.kadatha.filex.network.FtpClientRepository;
 import svl.kadatha.filex.network.NetworkAccountDetailsViewModel;
 import svl.kadatha.filex.network.SftpChannelRepository;
@@ -30,6 +37,9 @@ import svl.kadatha.filex.usb.ReadAccess;
 import svl.kadatha.filex.usb.UsbFileRootSingleton;
 
 public final class SubFileCountUtil {
+    private static final int cap=100;
+    private static final OkHttpClient CLOUD_HTTP = new OkHttpClient();
+    private static final Gson CLOUD_GSON = new Gson();
 
     public static void ensureSubFileCount(FilePOJO pojo, Callback cb) {
         if(pojo==null)return;
@@ -38,7 +48,14 @@ public final class SubFileCountUtil {
         // If you added dedicated fields:
         if (pojo.getSize() != null && !pojo.getSize().isEmpty()) return;
         int count = computeSubFileCountBlocking(pojo);
-        String si = "(" + count + ")";
+        String si;
+        if(Global.CLOUD_FILE_OBJECT_TYPES.contains(pojo.getFileObjectType())){
+            int limitSignal = cap + 1;
+            si = (count >= limitSignal) ? "(" + cap + "+)" : "(" + count + ")";
+        } else{
+            si = "(" + count + ")";
+        }
+
         pojo.setSize(si);
         if(cb!=null){
             cb.onSubFileCountReady(pojo, count);
@@ -48,7 +65,7 @@ public final class SubFileCountUtil {
     private static int computeSubFileCountBlocking(FilePOJO pojo) {
         FileObjectType type = pojo.getFileObjectType();
         String path = pojo.getPath();
-
+        String token;
         try {
             switch (type) {
                 case FILE_TYPE:
@@ -72,7 +89,26 @@ public final class SubFileCountUtil {
                 case SMB_TYPE:
                     return countSmbChildren(path);
 
-                // Cloud providers if you want…
+                case GOOGLE_DRIVE_TYPE:
+                    token = CloudAccountViewModel.GOOGLE_DRIVE_ACCESS_TOKEN;
+                    return countDriveChildrenCapped(pojo, token, cap + 1);
+
+                case DROP_BOX_TYPE: {
+                    token = CloudAccountViewModel.DROP_BOX_ACCESS_TOKEN;
+                    return countDropboxChildrenCapped(pojo, token, cap + 1);
+                }
+
+                case YANDEX_TYPE: {
+                    token = CloudAccountViewModel.YANDEX_ACCESS_TOKEN;
+                    return countYandexChildrenCapped(pojo, token, cap + 1);
+                }
+
+//                case ONE_DRIVE_TYPE: {
+//                    token = CloudAccountViewModel.ONE_DRIVE_ACCESS_TOKEN;
+//                    return countOneDriveChildrenCapped(pojo, token, cap + 1);
+//                }
+
+
                 default:
                     return 0;
             }
@@ -171,6 +207,180 @@ public final class SubFileCountUtil {
             if (smbRepo != null && session != null) smbRepo.releaseSession(session);
         }
     }
+
+    private static int countDriveChildrenCapped(FilePOJO pojo, String oauthToken, int capPlusOne) throws IOException {
+        // capPlusOne example: 101 (meaning show "100+" when result >= 101)
+        String folderId = pojo.getCloudId();
+        if (folderId == null || folderId.isEmpty()) return 0;
+
+        int count = 0;
+        String pageToken = null;
+
+        while (true) {
+            HttpUrl.Builder b = HttpUrl.parse("https://www.googleapis.com/drive/v3/files")
+                    .newBuilder()
+                    .addQueryParameter("q", "'" + folderId + "' in parents and trashed=false")
+                    .addQueryParameter("pageSize", "1000")
+                    .addQueryParameter("fields", "nextPageToken,files(id)");
+
+            if (pageToken != null && !pageToken.isEmpty()) {
+                b.addQueryParameter("pageToken", pageToken);
+            }
+
+            Request req = new Request.Builder()
+                    .url(b.build())
+                    .header("Authorization", "Bearer " + oauthToken)
+                    .get()
+                    .build();
+
+            try (Response resp = CLOUD_HTTP.newCall(req).execute()) {
+                if (!resp.isSuccessful() || resp.body() == null) return count;
+
+                GoogleDriveFileModel.DriveFilesListResponse res =
+                        CLOUD_GSON.fromJson(resp.body().charStream(), GoogleDriveFileModel.DriveFilesListResponse.class);
+
+                if (res == null || res.files == null) return count;
+
+                count += res.files.size();
+                if (count >= capPlusOne) return capPlusOne; // signal "cap+"
+
+                pageToken = res.nextPageToken;
+                if (pageToken == null || pageToken.isEmpty()) return count; // done
+            }
+        }
+    }
+
+    private static int countDropboxChildrenCapped(FilePOJO pojo, String accessToken, int capPlusOne) {
+        try {
+            String folderPath = pojo.getPath(); // Dropbox is path-based in your app
+            if (folderPath == null || folderPath.trim().isEmpty()) folderPath = "/";
+            folderPath = folderPath.trim();
+            if (!folderPath.startsWith("/")) folderPath = "/" + folderPath;
+
+            // Dropbox API uses "" to refer to root in listFolder
+            String argPath = "/".equals(folderPath) ? "" : folderPath;
+
+            com.dropbox.core.DbxRequestConfig cfg =
+                    com.dropbox.core.DbxRequestConfig.newBuilder("FileX").build();
+            com.dropbox.core.v2.DbxClientV2 client =
+                    new com.dropbox.core.v2.DbxClientV2(cfg, accessToken);
+
+            // One-shot listing with limit=capPlusOne
+            com.dropbox.core.v2.files.ListFolderResult result = client.files()
+                    .listFolderBuilder(argPath)
+                    .withLimit((long) capPlusOne)
+                    .start();
+
+            int count = (result.getEntries() != null) ? result.getEntries().size() : 0;
+
+            // If there's more beyond what we fetched => cap+
+            if (result.getHasMore()) return capPlusOne;
+
+            // If it exactly filled the capPlusOne bucket => still cap+
+            // (rare edge, but safe)
+            if (count >= capPlusOne) return capPlusOne;
+
+            return count;
+
+        } catch (Exception ignored) {
+            return 0;
+        }
+    }
+
+    private static int countYandexChildrenCapped(FilePOJO pojo, String oauthToken, int capPlusOne) {
+        try {
+            String folderPath = pojo.getPath(); // Yandex is path-based
+            if (folderPath == null || folderPath.isEmpty()) return 0;
+
+            // Ask only for total if possible; also request minimal items to validate embedded exists
+            HttpUrl url = HttpUrl.parse("https://cloud-api.yandex.net/v1/disk/resources")
+                    .newBuilder()
+                    .addQueryParameter("path", folderPath)
+                    .addQueryParameter("limit", "0")
+                    .addQueryParameter("fields", "_embedded.total")
+                    .build();
+
+            Request req = new Request.Builder()
+                    .url(url)
+                    .header("Authorization", "OAuth " + oauthToken)
+                    .get()
+                    .build();
+
+            try (Response resp = CLOUD_HTTP.newCall(req).execute()) {
+                if (!resp.isSuccessful() || resp.body() == null) return 0;
+
+                YandexTotalResponse r = CLOUD_GSON.fromJson(resp.body().charStream(), YandexTotalResponse.class);
+                if (r == null || r._embedded == null) return 0;
+
+                int total = r._embedded.total;
+                return (total >= capPlusOne) ? capPlusOne : total;
+            }
+
+        } catch (Exception ignored) {
+            return 0;
+        }
+    }
+
+    private static final class YandexTotalResponse {
+        YandexEmbedded _embedded;
+    }
+    private static final class YandexEmbedded {
+        int total;
+    }
+
+//    private static int countOneDriveChildrenCapped(FilePOJO pojo, String bearerToken, int capPlusOne) {
+//        try {
+//            String folderId = pojo.getCloudId(); // best: OneDrive item id
+//            if (folderId == null || folderId.isEmpty()) return 0;
+//
+//            HttpUrl url = HttpUrl.parse("https://graph.microsoft.com/v1.0/me/drive/items/" + folderId + "/children")
+//                    .newBuilder()
+//                    .addQueryParameter("$top", Integer.toString(capPlusOne))
+//                    .addQueryParameter("$select", "id")
+//                    .build();
+//
+//            Request req = new Request.Builder()
+//                    .url(url)
+//                    .header("Authorization", "Bearer " + bearerToken)
+//                    .get()
+//                    .build();
+//
+//            try (Response resp = CLOUD_HTTP.newCall(req).execute()) {
+//                if (!resp.isSuccessful() || resp.body() == null) return 0;
+//
+//                OneDriveChildrenResponse r =
+//                        CLOUD_GSON.fromJson(resp.body().charStream(), OneDriveChildrenResponse.class);
+//
+//                if (r == null || r.value == null) return 0;
+//
+//                int count = r.value.size();
+//
+//                // If Graph says there is more => cap+
+//                if (r.nextLink != null && !r.nextLink.isEmpty()) return capPlusOne;
+//
+//                // If we already hit capPlusOne in this page => cap+
+//                if (count >= capPlusOne) return capPlusOne;
+//
+//                return count;
+//            }
+//
+//        } catch (Exception ignored) {
+//            return 0;
+//        }
+//    }
+
+//    private static final class OneDriveChildrenResponse {
+//        @com.google.gson.annotations.SerializedName("value")
+//        java.util.List<OneDriveItem> value;
+//
+//        @com.google.gson.annotations.SerializedName("@odata.nextLink")
+//        String nextLink;
+//    }
+//    private static final class OneDriveItem {
+//        @com.google.gson.annotations.SerializedName("id")
+//        String id;
+//    }
+
 
     public interface Callback {
         void onSubFileCountReady(FilePOJO pojo, int subFileCount);

@@ -3,151 +3,253 @@
 //import androidx.annotation.NonNull;
 //
 //import com.microsoft.graph.core.ClientException;
+//import com.microsoft.graph.http.IHttpRequest;
+//import com.microsoft.graph.http.IHttpRequestBuilder;
 //import com.microsoft.graph.models.DriveItem;
 //import com.microsoft.graph.models.Folder;
 //import com.microsoft.graph.requests.DriveItemCollectionPage;
+//import com.microsoft.graph.requests.DriveItemCollectionRequest;
 //import com.microsoft.graph.requests.GraphServiceClient;
 //
-//import java.io.ByteArrayOutputStream;
 //import java.io.IOException;
 //import java.io.InputStream;
 //import java.io.OutputStream;
-//
+//import java.text.SimpleDateFormat;
 //import java.util.ArrayList;
 //import java.util.HashMap;
 //import java.util.List;
-//import java.util.Map;
+//import java.util.Locale;
 //
+//import okhttp3.HttpUrl;
 //import okhttp3.MediaType;
 //import okhttp3.OkHttpClient;
 //import okhttp3.Request;
 //import okhttp3.RequestBody;
 //import okhttp3.Response;
-//import okhttp3.HttpUrl;
+//import svl.kadatha.filex.FileObjectType;
+//import svl.kadatha.filex.FilePOJO;
+//import svl.kadatha.filex.FilePOJOUtil;
 //import timber.log.Timber;
 //
 ///**
-// * OneDrive FileModel + StreamUploadFileModel.
+// * OneDriveFileModel (path-only public ctor)
 // *
-// * Key rule: Do NOT use OutputStream abstraction for OneDrive large uploads.
-// * Use putChildFromStream() (upload session + chunked PUT).
+// * IMPORTANT:
+// * Call OneDriveFileModel.init(graphClient) once after login,
+// * OR call init(accessToken) to build a minimal Graph client.
 // */
 //public class OneDriveFileModel implements FileModel, StreamUploadFileModel {
 //
 //    private static final String TAG = "OneDriveFileModel";
 //
-//    // Your cap
-//    private static final long MAX_FILE_SIZE = 2L * 1024L * 1024L * 1024L; // 2GB
-//
-//    // Graph recommends chunk size multiple of 320 KiB.
-//    // 10 MiB is a solid default on mobile.
-//    private static final int CHUNK_SIZE = 10 * 1024 * 1024;
-//
+//    private static final int CHUNK_SIZE = 10 * 1024 * 1024; // must be multiple of 320KiB
 //    private static final MediaType OCTET = MediaType.parse("application/octet-stream");
 //
-//    private final GraphServiceClient<?> graphClient;
-//    private final OkHttpClient okHttp;
+//    // ✅ Shared singletons (like your DRIVE_HTTP/DRIVE_GSON style)
+//    private static final OkHttpClient HTTP = new OkHttpClient.Builder()
+//            .retryOnConnectionFailure(true)
+//            .build();
 //
-//    /**
-//     * Internal normalized path without leading "/", and root = "".
-//     * Example: "" (root), "Folder/Sub/file.txt"
-//     */
-//    private final String path;
+//    private static volatile GraphServiceClient<?> GRAPH; // must be set via init()
+//    private DriveItem driveItem;
+//    // -----------------------------
+//    // Instance state
+//    // -----------------------------
+//
+//    private final String displayPath; // "/" or "/Folder/Sub"
+//    private final String itemId;
 //    private DriveItem driveItem;
 //
-//    public OneDriveFileModel(GraphServiceClient<?> graphClient, String path) throws ClientException {
-//        this.graphClient = graphClient;
-//        this.okHttp = new OkHttpClient.Builder()
-//                .retryOnConnectionFailure(true)
-//                .build();
+//    // -----------------------------
+//    // Init hooks (call once after login)
+//    // -----------------------------
 //
-//        this.path = normalizePath(path);
-//        this.driveItem = getDriveItem(this.path);
+//    public static void init(@NonNull GraphServiceClient<?> graphClient) {
+//        GRAPH = graphClient;
 //    }
 //
-//    private static String normalizePath(String rawPath) {
-//        if (rawPath == null || rawPath.trim().isEmpty() || "/".equals(rawPath.trim())) {
-//            return ""; // root
+//    /**
+//     * Fallback: build a minimal Graph client using access token.
+//     * Use this ONLY if you don't already have a GraphServiceClient instance.
+//     */
+//    public static void init(@NonNull final String accessToken) {
+//        GRAPH = GraphServiceClient.builder()
+//                .authenticationProvider(request -> {
+//                    // This is where the SDK injects the Authorization header.
+//                    request.addHeader("Authorization", "Bearer " + accessToken);
+//                })
+//                .buildClient();
+//    }
+//
+//    private static GraphServiceClient<?> graph() {
+//        GraphServiceClient<?> g = GRAPH;
+//        if (g == null) {
+//            throw new IllegalStateException("OneDriveFileModel not initialized. Call OneDriveFileModel.init(...) after login.");
 //        }
-//        rawPath = rawPath.trim();
-//        if (rawPath.startsWith("/")) rawPath = rawPath.substring(1);
-//        // avoid trailing slash for non-root
-//        if (rawPath.endsWith("/")) rawPath = rawPath.substring(0, rawPath.length() - 1);
-//        return rawPath;
+//        return g;
 //    }
 //
-//    private DriveItem getDriveItem(String relativePathNoLeadingSlash) throws ClientException {
-//        // root item: itemWithPath("") is OK in most SDK versions; otherwise use root().buildRequest().get()
-//        if (relativePathNoLeadingSlash == null || relativePathNoLeadingSlash.isEmpty()) {
-//            return graphClient.me()
-//                    .drive()
-//                    .root()
-//                    .buildRequest()
-//                    .get();
+//    // -----------------------------
+//    // Public ctor: PATH ONLY
+//    // -----------------------------
+//
+//    public OneDriveFileModel(String path) throws ClientException {
+//        this.displayPath = normalizeDisplayPath(path);
+//
+//        // ✅ Fast path: resolve from your FilePOJO cache
+//        FilePOJO pojo = null;
+//        try {
+//            pojo = FilePOJOUtil.GET_FILE_POJO(this.displayPath, FileObjectType.ONE_DRIVE_TYPE);
+//        } catch (Exception ignored) {}
+//
+//        if (pojo != null && pojo.getCloudId() != null && !pojo.getCloudId().isEmpty()) {
+//            this.itemId = pojo.getCloudId();
+//            this.driveItem = buildDriveItemFromPojo(pojo); // minimal, no network
+//            return;
 //        }
 //
-//        return graphClient.me()
-//                .drive()
-//                .root()
-//                .itemWithPath(relativePathNoLeadingSlash)
-//                .buildRequest()
-//                .get();
+//        // 🐢 Slow fallback: resolve by path
+//        DriveItem resolved = resolveByPath(this.displayPath);
+//        if (resolved == null || resolved.id == null || resolved.id.isEmpty()) {
+//            throw new ClientException("OneDrive item not found: " + this.displayPath, null);
+//        }
+//
+//        this.itemId = resolved.id;
+//        this.driveItem = resolved;
 //    }
 //
-//    // Return app-level path with leading "/" (your existing convention)
+//    // Internal ctor used by list(): reuse DriveItem metadata (no extra GET)
+//    private OneDriveFileModel(String displayPath, DriveItem item) {
+//        this.displayPath = normalizeDisplayPath(displayPath);
+//        this.driveItem = item;
+//        this.itemId = (item != null) ? item.id : null;
+//    }
+//
+//    DriveItem getDriveItemUnsafe() {
+//        return driveItem;
+//    }
+//    // -----------------------------
+//    // Normalization helpers
+//    // -----------------------------
+//
+//    private static String normalizeDisplayPath(String p) {
+//        if (p == null || p.trim().isEmpty() || "/".equals(p.trim())) return "/";
+//        p = p.trim();
+//        if (!p.startsWith("/")) p = "/" + p;
+//        if (p.length() > 1 && p.endsWith("/")) p = p.substring(0, p.length() - 1);
+//        return p;
+//    }
+//
+//    private static String toGraphRelativePath(String displayPath) {
+//        if (displayPath == null || displayPath.trim().isEmpty() || "/".equals(displayPath.trim())) return "";
+//        String p = displayPath.trim();
+//        if (p.startsWith("/")) p = p.substring(1);
+//        if (p.endsWith("/")) p = p.substring(0, p.length() - 1);
+//        return p;
+//    }
+//
+//    private static String lastSegmentOfDisplayPath(String displayPath) {
+//        if (displayPath == null || displayPath.isEmpty() || "/".equals(displayPath)) return "/";
+//        int idx = displayPath.lastIndexOf('/');
+//        return (idx >= 0 && idx < displayPath.length() - 1) ? displayPath.substring(idx + 1) : displayPath;
+//    }
+//
+//    private static String parentDisplayPath(String displayPath) {
+//        if (displayPath == null || "/".equals(displayPath)) return null;
+//        int idx = displayPath.lastIndexOf('/');
+//        if (idx <= 0) return "/";
+//        return displayPath.substring(0, idx);
+//    }
+//
+//    private static DriveItem buildDriveItemFromPojo(FilePOJO pojo) {
+//        DriveItem di = new DriveItem();
+//        di.id = pojo.getCloudId();
+//        di.name = pojo.getName();
+//        if (pojo.getIsDirectory()) {
+//            di.folder = new Folder();
+//        } else {
+//            long sz = pojo.getSizeLong();
+//            if (sz > 0) di.size = sz;
+//        }
+//        return di;
+//    }
+//
+//    // -----------------------------
+//    // Graph resolution
+//    // -----------------------------
+//
+//    private static DriveItem resolveByPath(String displayPath) throws ClientException {
+//        String rel = toGraphRelativePath(displayPath);
+//        if (rel.isEmpty()) {
+//            return graph().me().drive().root().buildRequest().get();
+//        }
+//        return graph().me().drive().root().itemWithPath(rel).buildRequest().get();
+//    }
+//
+//    private static DriveItem fetchById(String id) throws ClientException {
+//        return graph().me().drive().items(id).buildRequest().get();
+//    }
+//
+//    private void ensureDriveItemLoaded() {
+//        if (driveItem != null && driveItem.id != null) return;
+//        try {
+//            if (itemId != null && !itemId.isEmpty()) {
+//                driveItem = fetchById(itemId);
+//            }
+//        } catch (Exception ignored) {}
+//    }
+//
+//    // -----------------------------
+//    // FileModel API
+//    // -----------------------------
+//
 //    @Override
 //    public String getPath() {
-//        return "/" + path;
+//        return displayPath;
 //    }
 //
 //    @Override
 //    public String getName() {
-//        if (path.isEmpty()) return "/";
-//        return driveItem != null ? driveItem.name : lastSegment(path);
-//    }
-//
-//    private static String lastSegment(String p) {
-//        int idx = p.lastIndexOf('/');
-//        return (idx >= 0) ? p.substring(idx + 1) : p;
+//        ensureDriveItemLoaded();
+//        if ("/".equals(displayPath)) return "/";
+//        return (driveItem != null && driveItem.name != null) ? driveItem.name : lastSegmentOfDisplayPath(displayPath);
 //    }
 //
 //    @Override
 //    public String getParentPath() {
-//        if (path.isEmpty()) return null; // root has no parent
-//        int lastSlash = path.lastIndexOf('/');
-//        if (lastSlash == -1) return ""; // parent is root (normalized)
-//        return path.substring(0, lastSlash);
+//        return parentDisplayPath(displayPath);
 //    }
 //
 //    @Override
 //    public String getParentName() {
 //        String parent = getParentPath();
 //        if (parent == null) return null;
-//        if (parent.isEmpty()) return "/";
+//        if ("/".equals(parent)) return "/";
 //        try {
-//            DriveItem p = getDriveItem(parent);
-//            return p != null ? p.name : null;
-//        } catch (ClientException e) {
+//            DriveItem p = resolveByPath(parent);
+//            return (p != null) ? p.name : null;
+//        } catch (Exception e) {
 //            return null;
 //        }
 //    }
 //
 //    @Override
 //    public boolean isDirectory() {
-//        return driveItem != null && driveItem.folder != null;
+//        ensureDriveItemLoaded();
+//        return "/".equals(displayPath) || (driveItem != null && driveItem.folder != null);
 //    }
 //
 //    @Override
 //    public boolean rename(String new_name, boolean overwrite) {
-//        if (path.isEmpty()) return false; // don't rename root
+//        if ("/".equals(displayPath)) return false;
+//        ensureDriveItemLoaded();
+//        if (driveItem == null || driveItem.id == null) return false;
 //
-//        DriveItem updatedItem = new DriveItem();
-//        updatedItem.name = new_name;
+//        DriveItem updated = new DriveItem();
+//        updated.name = new_name;
 //
 //        try {
-//            driveItem = graphClient.me().drive().items(driveItem.id)
-//                    .buildRequest()
-//                    .patch(updatedItem);
+//            driveItem = graph().me().drive().items(driveItem.id).buildRequest().patch(updated);
 //            return true;
 //        } catch (ClientException e) {
 //            return false;
@@ -156,11 +258,12 @@
 //
 //    @Override
 //    public boolean delete() {
-//        if (path.isEmpty()) return false; // don't delete root
+//        if ("/".equals(displayPath)) return false;
+//        ensureDriveItemLoaded();
+//        if (driveItem == null || driveItem.id == null) return false;
+//
 //        try {
-//            graphClient.me().drive().items(driveItem.id)
-//                    .buildRequest()
-//                    .delete();
+//            graph().me().drive().items(driveItem.id).buildRequest().delete();
 //            return true;
 //        } catch (ClientException e) {
 //            return false;
@@ -170,20 +273,16 @@
 //    @Override
 //    public InputStream getInputStream() {
 //        if (isDirectory()) return null;
+//        ensureDriveItemLoaded();
+//        if (driveItem == null || driveItem.id == null) return null;
+//
 //        try {
-//            return graphClient.me().drive().items(driveItem.id)
-//                    .content()
-//                    .buildRequest()
-//                    .get();
+//            return graph().me().drive().items(driveItem.id).content().buildRequest().get();
 //        } catch (ClientException e) {
 //            return null;
 //        }
 //    }
 //
-//    /**
-//     * 🚫 Do not use OutputStream abstraction for OneDrive uploads.
-//     * Use putChildFromStream() (upload session + chunks).
-//     */
 //    @Override
 //    public OutputStream getChildOutputStream(String child_name, long source_length) {
 //        throw new UnsupportedOperationException("OneDriveFileModel: use putChildFromStream()");
@@ -192,21 +291,39 @@
 //    @Override
 //    public FileModel[] list() {
 //        if (!isDirectory()) return new FileModel[0];
+//        ensureDriveItemLoaded();
+//        if (driveItem == null || driveItem.id == null) return new FileModel[0];
 //
 //        try {
-//            DriveItemCollectionPage children = graphClient.me()
+//            DriveItemCollectionRequest req = graph().me()
 //                    .drive()
 //                    .items(driveItem.id)
 //                    .children()
-//                    .buildRequest()
-//                    .get();
+//                    .buildRequest();
 //
 //            List<FileModel> out = new ArrayList<>();
-//            for (DriveItem item : children.getCurrentPage()) {
-//                String childPath = path.isEmpty() ? item.name : (path + "/" + item.name);
-//                out.add(new OneDriveFileModel(graphClient, "/" + childPath));
+//
+//            DriveItemCollectionPage page = req.get();
+//            while (page != null) {
+//                List<DriveItem> items = page.getCurrentPage();
+//                if (items != null) {
+//                    for (DriveItem child : items) {
+//                        if (child == null || child.name == null) continue;
+//
+//                        String childDisplayPath = "/".equals(displayPath)
+//                                ? ("/" + child.name)
+//                                : (displayPath + "/" + child.name);
+//
+//                        out.add(new OneDriveFileModel(childDisplayPath, child)); // ✅ reuse metadata, no network
+//                    }
+//                }
+//
+//                if (page.getNextPage() == null) break;
+//                page = page.getNextPage().buildRequest().get();
 //            }
+//
 //            return out.toArray(new FileModel[0]);
+//
 //        } catch (ClientException e) {
 //            return new FileModel[0];
 //        }
@@ -216,15 +333,14 @@
 //    public boolean createFile(String name) {
 //        if (!isDirectory()) return false;
 //
-//        // Create empty file: upload session with 0 is allowed, but simplest is small PUT of empty bytes.
-//        String childPath = path.isEmpty() ? name : (path + "/" + name);
-//        byte[] empty = new byte[0];
+//        String childDisplayPath = "/".equals(displayPath) ? ("/" + name) : (displayPath + "/" + name);
+//        String childRel = toGraphRelativePath(childDisplayPath);
 //
 //        try {
-//            graphClient.me().drive().root().itemWithPath(childPath)
+//            graph().me().drive().root().itemWithPath(childRel)
 //                    .content()
 //                    .buildRequest()
-//                    .put(empty);
+//                    .put(new byte[0]);
 //            return true;
 //        } catch (ClientException e) {
 //            return false;
@@ -234,26 +350,26 @@
 //    @Override
 //    public boolean makeDirIfNotExists(String dir_name) {
 //        if (!isDirectory()) return false;
+//        ensureDriveItemLoaded();
+//        if (driveItem == null || driveItem.id == null) return false;
 //
-//        String dirPath = path.isEmpty() ? dir_name : (path + "/" + dir_name);
-//
-//        // Try create under current folder by ID (more reliable than itemWithPath(parent).children()).
-//        DriveItem newFolder = new DriveItem();
-//        newFolder.name = dir_name;
-//        newFolder.folder = new Folder();
+//        DriveItem folder = new DriveItem();
+//        folder.name = dir_name;
+//        folder.folder = new Folder();
 //
 //        try {
-//            graphClient.me().drive().items(driveItem.id)
+//            graph().me().drive().items(driveItem.id)
 //                    .children()
 //                    .buildRequest()
-//                    .post(newFolder);
+//                    .post(folder);
 //            return true;
 //        } catch (ClientException e) {
-//            // If it already exists, metadata fetch should succeed
+//            // If it already exists, treat as success if it resolves
 //            try {
-//                getDriveItem(dirPath);
-//                return true;
-//            } catch (ClientException ignored) {
+//                String child = "/".equals(displayPath) ? ("/" + dir_name) : (displayPath + "/" + dir_name);
+//                DriveItem existing = resolveByPath(child);
+//                return existing != null && existing.folder != null;
+//            } catch (Exception ignored) {
 //                return false;
 //            }
 //        }
@@ -263,37 +379,30 @@
 //    public boolean makeDirsRecursively(String extended_path) {
 //        if (!isDirectory()) return false;
 //
+//        String base = displayPath;
 //        String[] parts = extended_path.split("/");
-//        String current = path; // normalized
 //
-//        for (String dir : parts) {
-//            if (dir == null || dir.isEmpty()) continue;
+//        for (String seg : parts) {
+//            if (seg == null || seg.isEmpty()) continue;
 //
-//            String next = current.isEmpty() ? dir : (current + "/" + dir);
+//            String next = "/".equals(base) ? ("/" + seg) : (base + "/" + seg);
 //
 //            try {
-//                // Create folder under "current"
-//                DriveItem parentItem = current.isEmpty() ? getDriveItem("") : getDriveItem(current);
-//
-//                DriveItem folder = new DriveItem();
-//                folder.name = dir;
-//                folder.folder = new Folder();
-//
-//                try {
-//                    graphClient.me().drive().items(parentItem.id)
-//                            .children()
-//                            .buildRequest()
-//                            .post(folder);
-//                } catch (ClientException ce) {
-//                    // If exists, allow
-//                    getDriveItem(next);
+//                DriveItem item = resolveByPath(next);
+//                if (item == null || item.folder == null) {
+//                    OneDriveFileModel parentModel = new OneDriveFileModel(base);
+//                    if (!parentModel.makeDirIfNotExists(seg)) return false;
 //                }
-//
-//            } catch (ClientException ex) {
-//                return false;
+//            } catch (Exception e) {
+//                try {
+//                    OneDriveFileModel parentModel = new OneDriveFileModel(base);
+//                    if (!parentModel.makeDirIfNotExists(seg)) return false;
+//                } catch (Exception ex) {
+//                    return false;
+//                }
 //            }
 //
-//            current = next;
+//            base = next;
 //        }
 //
 //        return true;
@@ -302,27 +411,65 @@
 //    @Override
 //    public long getLength() {
 //        if (isDirectory()) return 0;
+//        ensureDriveItemLoaded();
 //        return (driveItem != null && driveItem.size != null) ? driveItem.size : 0;
 //    }
 //
 //    @Override
 //    public boolean exists() {
 //        try {
-//            getDriveItem(path);
-//            return true;
-//        } catch (ClientException e) {
+//            if (itemId != null && !itemId.isEmpty()) return true;
+//            DriveItem i = resolveByPath(displayPath);
+//            return i != null && i.id != null;
+//        } catch (Exception e) {
 //            return false;
 //        }
 //    }
 //
+//    // -----------------------------
+//    // lastModified (minSdk21 safe)
+//    // -----------------------------
+//
+//    private static final SimpleDateFormat RFC3339_Z =
+//            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
+//    private static final SimpleDateFormat RFC3339_Z_MS =
+//            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
+//
+//    private static String normalizeRfc3339(String s) {
+//        if (s == null) return null;
+//        // "+05:30" -> "+0530"
+//        if (s.length() >= 6) {
+//            char c = s.charAt(s.length() - 6);
+//            if (c == '+' || c == '-') {
+//                return s.substring(0, s.length() - 3) + s.substring(s.length() - 2);
+//            }
+//        }
+//        return s;
+//    }
+//
 //    @Override
 //    public long lastModified() {
-//        if (driveItem != null && driveItem.lastModifiedDateTime != null) {
-//            long epochSecond = driveItem.lastModifiedDateTime.toEpochSecond();
-//            int nano = driveItem.lastModifiedDateTime.getNano();
-//            return epochSecond * 1000L + nano / 1_000_000L;
+//        ensureDriveItemLoaded();
+//        if (driveItem == null || driveItem.lastModifiedDateTime == null) return 0;
+//
+//        String s;
+//        try {
+//            s = String.valueOf(driveItem.lastModifiedDateTime);
+//        } catch (Exception e) {
+//            return 0;
 //        }
-//        return 0;
+//
+//        if (s == null || s.isEmpty()) return 0;
+//
+//        if (s.endsWith("Z")) s = s.substring(0, s.length() - 1) + "+0000";
+//        s = normalizeRfc3339(s);
+//
+//        try {
+//            if (s.contains(".")) return RFC3339_Z_MS.parse(s).getTime();
+//            return RFC3339_Z.parse(s).getTime();
+//        } catch (Exception e) {
+//            return 0;
+//        }
 //    }
 //
 //    @Override
@@ -331,14 +478,10 @@
 //        return n != null && n.startsWith(".");
 //    }
 //
-//    // ---------------------------------------------------------------------
+//    // -----------------------------
 //    // StreamUploadFileModel
-//    // ---------------------------------------------------------------------
+//    // -----------------------------
 //
-//    /**
-//     * OneDrive large-file upload requires a known total size to set Content-Range.
-//     * So contentLengthOrMinus1 MUST be > 0 for large uploads.
-//     */
 //    @Override
 //    public boolean putChildFromStream(@NonNull String childName,
 //                                      @NonNull InputStream in,
@@ -346,43 +489,34 @@
 //                                      long[] bytesRead) {
 //
 //        if (bytesRead != null && bytesRead.length > 0) bytesRead[0] = 0;
-//
 //        if (!isDirectory()) return false;
 //
 //        if (contentLengthOrMinus1 <= 0) {
-//            // You can’t do correct Content-Range without total size.
-//            // Decide size earlier; do not guess.
 //            Timber.tag(TAG).e("putChildFromStream requires known content length for OneDrive.");
 //            return false;
 //        }
 //
-//        if (contentLengthOrMinus1 > MAX_FILE_SIZE) {
-//            Timber.tag(TAG).e("File too large: %d bytes (max %d).", contentLengthOrMinus1, MAX_FILE_SIZE);
-//            return false;
-//        }
+//        String childDisplayPath = "/".equals(displayPath)
+//                ? ("/" + childName)
+//                : (displayPath + "/" + childName);
 //
-//        final String childPath = path.isEmpty() ? childName : (path + "/" + childName);
+//        final String childRel = toGraphRelativePath(childDisplayPath);
 //
 //        try (InputStream input = in) {
 //
-//            // 1) Create upload session (Graph SDK call)
-//            UploadSession session = createUploadSession(childPath);
+//            UploadSession session = createUploadSession(childRel);
 //            if (session == null || session.uploadUrl == null || session.uploadUrl.trim().isEmpty()) {
 //                Timber.tag(TAG).e("createUploadSession failed (no uploadUrl).");
 //                return false;
 //            }
 //
-//            // 2) Upload chunks to uploadUrl
 //            long uploaded = 0;
 //            byte[] buf = new byte[CHUNK_SIZE];
 //
 //            while (uploaded < contentLengthOrMinus1) {
 //                int toRead = (int) Math.min((long) buf.length, contentLengthOrMinus1 - uploaded);
-//                int n = readFullyUpTo(input, buf, toRead);
-//                if (n <= 0) {
-//                    Timber.tag(TAG).e("Unexpected EOF: uploaded=%d expected=%d", uploaded, contentLengthOrMinus1);
-//                    return false;
-//                }
+//                int n = readExactly(input, buf, toRead);
+//                if (n <= 0) return false;
 //
 //                long start = uploaded;
 //                long end = uploaded + n - 1;
@@ -396,11 +530,8 @@
 //                        .header("Content-Range", "bytes " + start + "-" + end + "/" + contentLengthOrMinus1)
 //                        .build();
 //
-//                try (Response res = okHttp.newCall(req).execute()) {
+//                try (Response res = HTTP.newCall(req).execute()) {
 //                    int code = res.code();
-//
-//                    // 202 Accepted = continue uploading
-//                    // 201 Created / 200 OK = completed
 //                    if (code == 202 || code == 200 || code == 201) {
 //                        uploaded += n;
 //                        if (bytesRead != null && bytesRead.length > 0) bytesRead[0] = uploaded;
@@ -411,9 +542,6 @@
 //                }
 //            }
 //
-//            // 3) Refresh metadata best-effort
-//            try { this.driveItem = getDriveItem(childPath); } catch (Exception ignored) {}
-//
 //            return uploaded == contentLengthOrMinus1;
 //
 //        } catch (IOException e) {
@@ -422,28 +550,17 @@
 //        }
 //    }
 //
-//    private UploadSession createUploadSession(String childPathNoLeadingSlash) {
-//        // We use a customRequest because SDK method availability differs by version.
-//        // Endpoint:
-//        // /me/drive/root:/path/to/file:/createUploadSession
-//        // Body: { "item": { "@microsoft.graph.conflictBehavior": "replace", "name": "file.ext" } }
-//
+//    private UploadSession createUploadSession(String childRelPathNoLeadingSlash) {
 //        try {
-//            String safePath = childPathNoLeadingSlash;
-//            // Build encoded URL path safely
-//            // We only need to ensure spaces etc are encoded in the URL.
-//            // Graph SDK customRequest accepts relative URL.
-//            String url = "/me/drive/root:/" + encodeGraphPath(safePath) + ":/createUploadSession";
+//            String url = "/me/drive/root:/" + encodeGraphPath(childRelPathNoLeadingSlash) + ":/createUploadSession";
 //
-//            Map<String, Object> item = new HashMap<>();
+//            HashMap<String, Object> item = new HashMap<>();
 //            item.put("@microsoft.graph.conflictBehavior", "replace");
-//            // name field is optional here because path already includes it, but it’s fine:
-//            item.put("name", lastSegment(safePath));
 //
-//            Map<String, Object> body = new HashMap<>();
+//            HashMap<String, Object> body = new HashMap<>();
 //            body.put("item", item);
 //
-//            return graphClient.customRequest(url, UploadSession.class)
+//            return graph().customRequest(url, UploadSession.class)
 //                    .buildRequest()
 //                    .post(body);
 //
@@ -453,36 +570,30 @@
 //        }
 //    }
 //
-//    /**
-//     * Encode each path segment for Graph "root:/...:/..." addressing.
-//     */
 //    private static String encodeGraphPath(String p) {
 //        if (p == null || p.isEmpty()) return "";
 //        String[] parts = p.split("/");
 //        StringBuilder sb = new StringBuilder();
-//        for (int i = 0; i < parts.length; i++) {
-//            if (parts[i].isEmpty()) continue;
+//        for (String seg : parts) {
+//            if (seg == null || seg.isEmpty()) continue;
 //            if (sb.length() > 0) sb.append("/");
-//            // Use HttpUrl to encode segment safely
-//            sb.append(HttpUrl.parse("https://x/").newBuilder().addPathSegment(parts[i]).build().encodedPath().substring(1));
+//            sb.append(HttpUrl.parse("https://x/").newBuilder()
+//                    .addPathSegment(seg)
+//                    .build()
+//                    .encodedPath()
+//                    .substring(1));
 //        }
 //        return sb.toString();
 //    }
 //
-//    /**
-//     * Read up to max bytes. Returns bytes read, or -1 if EOF immediately.
-//     * This avoids tiny reads causing too many small uploads.
-//     */
-//    private static int readFullyUpTo(InputStream in, byte[] buf, int max) throws IOException {
-//        int total = 0;
-//        while (total < max) {
-//            int n = in.read(buf, total, max - total);
-//            if (n == -1) return (total == 0) ? -1 : total;
-//            total += n;
-//            // Don’t block forever trying to fill; one successful read is enough to progress.
-//            break;
+//    private static int readExactly(InputStream in, byte[] buf, int len) throws IOException {
+//        int off = 0;
+//        while (off < len) {
+//            int n = in.read(buf, off, len - off);
+//            if (n == -1) return -1;
+//            off += n;
 //        }
-//        return total;
+//        return off;
 //    }
 //
 //    private static byte[] copyOf(byte[] src, int len) {
@@ -491,14 +602,9 @@
 //        return out;
 //    }
 //
-//    /**
-//     * Minimal model for upload session response.
-//     * Graph returns at least: uploadUrl, expirationDateTime.
-//     */
 //    public static class UploadSession {
 //        public String uploadUrl;
 //        public String expirationDateTime;
-//        // Optional: nextExpectedRanges etc (not required for sequential upload)
 //        public List<String> nextExpectedRanges;
 //    }
 //}

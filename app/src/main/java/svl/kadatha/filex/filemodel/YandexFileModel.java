@@ -47,6 +47,12 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
         RFC3339_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
         RFC3339_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
+    private static final SimpleDateFormat RFC3339_Z =
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
+
+    private static final SimpleDateFormat RFC3339_Z_MS =
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
+
 
     private final String accessToken;
     private final String path; // app-level path: "/" or "/Folder/File"
@@ -393,38 +399,48 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
 
     @Override
     public boolean exists() {
-        try {
-            return fetchMetadata(path) != null;
-        } catch (IOException e) {
-            return false;
-        }
+        if ("/".equals(path)) return true;
+        if (metadata != null) return true;
+        try { return fetchMetadata(path) != null; }
+        catch (IOException e) { return false; }
     }
 
     @Override
     public long lastModified() {
         if (isDirectory()) return 0;
+        if (metadata == null || metadata.modified == null) return 0;
 
-        if (metadata != null && metadata.modified != null) {
-            try {
-                // Best-effort parse. Yandex often returns "2020-01-01T12:34:56+00:00"
-                // Your current formatter only handles 'Z'. We'll attempt two strategies:
-                String s = metadata.modified;
+        String raw = metadata.modified;
+        String s = normalizeRfc3339(raw);
 
-                // If ends with Z, use formatter
-                if (s.endsWith("Z")) {
-                    Date d = RFC3339_FORMAT.parse(s);
-                    return (d != null) ? d.getTime() : 0;
-                }
+        try {
+            if (s.contains(".")) {
+                Date d = RFC3339_Z_MS.parse(s);
+                return d != null ? d.getTime() : 0;
+            } else {
+                Date d = RFC3339_Z.parse(s);
+                return d != null ? d.getTime() : 0;
+            }
+        } catch (Exception e) {
+            return 0;
+        }
+    }
 
-                // Fallback: try java.time if available (desugaring), else return 0.
-                // To keep it drop-in for your current environment, do not depend on java.time.
-                return 0;
+    private static String normalizeRfc3339(String s) {
+        if (s == null) return null;
 
-            } catch (Exception ignored) {
+        // Convert "+03:00" → "+0300"
+        // Convert "-05:30" → "-0530"
+        if (s.length() >= 6) {
+            char c = s.charAt(s.length() - 6);
+            if (c == '+' || c == '-') {
+                return s.substring(0, s.length() - 3)
+                        + s.substring(s.length() - 2);
             }
         }
-        return 0;
+        return s;
     }
+
 
     @Override
     public boolean isHidden() {

@@ -46,6 +46,12 @@ public class DropBoxFileModel implements FileModel, StreamUploadFileModel {
         this.path = normalizePath(path);
         this.metadata = fetchMetadataOrRoot(this.path);
     }
+    private DropBoxFileModel(String accessToken, DbxClientV2 client, String path, Metadata meta) {
+        this.accessToken = accessToken;
+        this.dbxClient = client;
+        this.path = normalizePath(path);
+        this.metadata = meta; // already have it from list
+    }
 
     private static DbxClientV2 newDbxClient(String accessToken) {
         DbxRequestConfig cfg = DbxRequestConfig.newBuilder("FileX").build();
@@ -308,19 +314,32 @@ public class DropBoxFileModel implements FileModel, StreamUploadFileModel {
 
         try {
             String argPath = toDropboxArgPath(path);
-            ListFolderResult result = dbxClient.files().listFolder(argPath);
 
             List<FileModel> fileModels = new ArrayList<>();
-            for (Metadata m : result.getEntries()) {
-                // ✅ reuse same client
-                fileModels.add(new DropBoxFileModel(accessToken, dbxClient, m.getPathLower()));
+
+            ListFolderResult result = dbxClient.files().listFolder(argPath);
+
+            while (true) {
+                for (Metadata m : result.getEntries()) {
+                    String childPath = m.getPathLower(); // canonical for API ops
+                    fileModels.add(new DropBoxFileModel(accessToken, dbxClient, childPath, m));
+                }
+
+                if (!result.getHasMore()) {
+                    break; // ✅ clean exit
+                }
+
+                // fetch next page
+                result = dbxClient.files().listFolderContinue(result.getCursor());
             }
+
             return fileModels.toArray(new FileModel[0]);
 
         } catch (DbxException e) {
             return new FileModel[0];
         }
     }
+
 
     @Override
     public boolean createFile(String name) {

@@ -18,6 +18,7 @@ public class FilePOJO implements Parcelable {
 
     private final String lower_name;
     private final String package_name;
+
     private FileObjectType fileObjectType;
     private String name;
     private String path;
@@ -39,13 +40,19 @@ public class FilePOJO implements Parcelable {
     private String checksum;
     private boolean whetherExternal;
 
+    // -----------------------------
+    // ✅ NEW: cloud identity fields (nullable)
+    // -----------------------------
+    private String cloudId;        // e.g., Google Drive fileId
+    private String parentCloudId;  // e.g., Drive parent id
+    private String driveMimeType;  // e.g., application/vnd.google-apps.folder
+
     FilePOJO(FileObjectType fileObjectType, String n, String p_n, String p, boolean dir, long dl, String d, long sl, String s, int t,
              String ext, float a, int play_o, int pdf_o
-             //, int tf, long tsl, String ts, double tspd, String tsp, String checksum
     ) {
         this.fileObjectType = fileObjectType;
         this.name = n;
-        this.lower_name = n.toLowerCase();
+        this.lower_name = n != null ? n.toLowerCase() : null;
         this.package_name = p_n;
         this.path = p;
         this.isDirectory = dir;
@@ -58,17 +65,24 @@ public class FilePOJO implements Parcelable {
         this.alfa = a;
         this.play_overlay_visible = play_o;
         this.pdf_overlay_visible = pdf_o;
+
+        // defaults for new fields
+        this.cloudId = null;
+        this.parentCloudId = null;
+        this.driveMimeType = null;
     }
 
     protected FilePOJO(Parcel in) {
         lower_name = in.readString();
         package_name = in.readString();
+
         int fileObjectTypeOrdinal = in.readInt();
         if (fileObjectTypeOrdinal == -1) {
             fileObjectType = null;
         } else {
             fileObjectType = FileObjectType.values()[fileObjectTypeOrdinal];
         }
+
         name = in.readString();
         path = in.readString();
         isDirectory = in.readByte() != 0;
@@ -88,6 +102,13 @@ public class FilePOJO implements Parcelable {
         totalSizePercentage = in.readString();
         checksum = in.readString();
         whetherExternal = in.readByte() != 0;
+
+        // -----------------------------
+        // ✅ NEW fields (must match write order)
+        // -----------------------------
+        cloudId = in.readString();
+        parentCloudId = in.readString();
+        driveMimeType = in.readString();
     }
 
     @Override
@@ -114,6 +135,13 @@ public class FilePOJO implements Parcelable {
         dest.writeString(totalSizePercentage);
         dest.writeString(checksum);
         dest.writeByte((byte) (whetherExternal ? 1 : 0));
+
+        // -----------------------------
+        // ✅ NEW fields (must match read order)
+        // -----------------------------
+        dest.writeString(cloudId);
+        dest.writeString(parentCloudId);
+        dest.writeString(driveMimeType);
     }
 
     @Override
@@ -121,172 +149,86 @@ public class FilePOJO implements Parcelable {
         return 0;
     }
 
-    // Getters and setters
-    public FileObjectType getFileObjectType() {
-        return this.fileObjectType;
-    }
+    // -----------------------------
+    // Existing getters/setters
+    // -----------------------------
+    public FileObjectType getFileObjectType() { return this.fileObjectType; }
+    public void setFileObjectType(FileObjectType f) { this.fileObjectType = f; }
 
-    public void setFileObjectType(FileObjectType f) {
-        this.fileObjectType = f;
-    }
+    public String getName() { return this.name; }
+    public void setName(String n) { this.name = n; }
 
-    public String getName() {
-        return this.name;
-    }
+    public String getLowerName() { return lower_name; }
+    public String getPackage_name() { return this.package_name; }
 
-    public void setName(String n) {
-        this.name = n;
-    }
+    public String getPath() { return this.path; }
+    public void setPath(String p) { this.path = p; }
 
-    public String getLowerName() {
-        return lower_name;
-    }
+    public boolean getIsDirectory() { return this.isDirectory; }
+    public void setIsDirectory(boolean dir) { this.isDirectory = dir; }
 
-    public String getPackage_name() {
-        return this.package_name;
-    }
+    public long getDateLong() { return this.dateLong; }
+    public void setDateLong(long dl) { this.dateLong = dl; }
 
-    public String getPath() {
-        return this.path;
-    }
+    public String getDate() { return this.date; }
+    public void setDate(String d) { this.date = d; }
 
-    public void setPath(String p) {
-        this.path = p;
-    }
+    public long getSizeLong() { return this.sizeLong; }
+    public void setSizeLong(long sl) { this.sizeLong = sl; }
 
-    public boolean getIsDirectory() {
-        return this.isDirectory;
-    }
+    public String getSize() { return this.size; }
+    public void setSize(String s) { this.size = s; }
 
-    public void setIsDirectory(boolean dir) {
-        this.isDirectory = dir;
-    }
+    public int getType() { return this.type; }
+    public void setType(int t) { this.type = t; }
 
-    public long getDateLong() {
-        return this.dateLong;
-    }
+    public String getExt() { return this.ext; }
+    public void setExt(String ext) { this.ext = ext; }
 
-    public void setDateLong(long dl) {
-        this.dateLong = dl;
-    }
+    public float getAlfa() { return this.alfa; }
+    public void setAlfa(float alfa) { this.alfa = alfa; }
 
-    public String getDate() {
-        return this.date;
-    }
+    public int getPlayOverlayVisibility() { return this.play_overlay_visible; }
+    public void setPlayOverlayVisibility(int play_overlay_visible) { this.play_overlay_visible = play_overlay_visible; }
 
-    public void setDate(String d) {
-        this.date = d;
-    }
+    public int getPdfOverlayVisibility() { return this.pdf_overlay_visible; }
+    public void setPdfOverlayVisibility(int pdf_overlay_visible) { this.pdf_overlay_visible = pdf_overlay_visible; }
 
-    public long getSizeLong() {
-        return this.sizeLong;
-    }
+    public int getTotalFiles() { return this.totalFiles; }
+    public void setTotalFiles(int totalFiles) { this.totalFiles = totalFiles; }
 
-    public void setSizeLong(long sl) {
-        this.sizeLong = sl;
-    }
+    public long getTotalSizeLong() { return this.totalSizeLong; }
+    public void setTotalSizeLong(long totalSizeLong) { this.totalSizeLong = totalSizeLong; }
 
-    public String getSize() {
-        return this.size;
-    }
+    public String getTotalSize() { return this.totalSize; }
+    public void setTotalSize(String totalSize) { this.totalSize = totalSize; }
 
-    public void setSize(String s) {
-        this.size = s;
-    }
+    public double getTotalSizePercentageDouble() { return this.totalSizePercentageDouble; }
+    public void setTotalSizePercentageDouble(double totalSizePercentageDouble) { this.totalSizePercentageDouble = totalSizePercentageDouble; }
 
-    public int getType() {
-        return this.type;
-    }
+    public String getTotalSizePercentage() { return this.totalSizePercentage; }
+    public void setTotalSizePercentage(String totalSizePercentage) { this.totalSizePercentage = totalSizePercentage; }
 
-    public void setType(int t) {
-        this.type = t;
-    }
+    public String getChecksum() { return checksum; }
+    public void setChecksum(String checksum) { this.checksum = checksum; }
 
-    public String getExt() {
-        return this.ext;
-    }
+    public boolean getWhetherExternal() { return whetherExternal; }
+    public void setWhetherExternal(boolean whetherExternal) { this.whetherExternal = whetherExternal; }
 
-    public void setExt(String ext) {
-        this.ext = ext;
-    }
+    // -----------------------------
+    // ✅ NEW getters/setters
+    // -----------------------------
+    public String getCloudId() { return cloudId; }
+    public void setCloudId(String cloudId) { this.cloudId = cloudId; }
 
-    public float getAlfa() {
-        return this.alfa;
-    }
+    public String getParentCloudId() { return parentCloudId; }
+    public void setParentCloudId(String parentCloudId) { this.parentCloudId = parentCloudId; }
 
-    public void setAlfa(float alfa) {
-        this.alfa = alfa;
-    }
+    public String getDriveMimeType() { return driveMimeType; }
+    public void setDriveMimeType(String driveMimeType) { this.driveMimeType = driveMimeType; }
 
-    public int getPlayOverlayVisibility() {
-        return this.play_overlay_visible;
-    }
-
-    public void setPlayOverlayVisibility(int play_overlay_visible) {
-        this.play_overlay_visible = play_overlay_visible;
-    }
-
-    public int getPdfOverlayVisibility() {
-        return this.pdf_overlay_visible;
-    }
-
-    public void setPdfOverlayVisibility(int pdf_overlay_visible) {
-        this.pdf_overlay_visible = pdf_overlay_visible;
-    }
-
-    public int getTotalFiles() {
-        return this.totalFiles;
-    }
-
-    public void setTotalFiles(int totalFiles) {
-        this.totalFiles = totalFiles;
-    }
-
-    public long getTotalSizeLong() {
-        return this.totalSizeLong;
-    }
-
-    public void setTotalSizeLong(long totalSizeLong) {
-        this.totalSizeLong = totalSizeLong;
-    }
-
-    public String getTotalSize() {
-        return this.totalSize;
-    }
-
-    public void setTotalSize(String totalSize) {
-        this.totalSize = totalSize;
-    }
-
-    public double getTotalSizePercentageDouble() {
-        return this.totalSizePercentageDouble;
-    }
-
-    public void setTotalSizePercentageDouble(double totalSizePercentageDouble) {
-        this.totalSizePercentageDouble = totalSizePercentageDouble;
-    }
-
-    public String getTotalSizePercentage() {
-        return this.totalSizePercentage;
-    }
-
-    public void setTotalSizePercentage(String totalSizePercentage) {
-        this.totalSizePercentage = totalSizePercentage;
-    }
-
-    public String getChecksum() {
-        return checksum;
-    }
-
-    public void setChecksum(String checksum) {
-        this.checksum = checksum;
-    }
-
-    public boolean getWhetherExternal() {
-        return whetherExternal;
-    }
-
-    public void setWhetherExternal(boolean whetherExternal) {
-        this.whetherExternal = whetherExternal;
+    // Optional convenience (Drive-specific folder check)
+    public boolean isDriveFolder() {
+        return "application/vnd.google-apps.folder".equals(driveMimeType);
     }
 }

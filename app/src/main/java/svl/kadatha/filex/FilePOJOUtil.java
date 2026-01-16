@@ -2,7 +2,9 @@ package svl.kadatha.filex;
 
 import android.os.Build;
 
+import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 import com.google.gson.Gson;
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
@@ -48,7 +50,6 @@ import svl.kadatha.filex.usb.UsbFileRootSingleton;
 import timber.log.Timber;
 
 public class FilePOJOUtil {
-    private static final String TAG = "Ftp-FilePOJOUtil";
     private static final Object file_pojo_lock = new Object();
     private static final Object audio_pojo_lock = new Object();
 
@@ -314,7 +315,6 @@ public class FilePOJOUtil {
         return filePOJO;
     }
 
-
     public static void UPDATE_PARENT_FOLDER_HASHMAP_FILE_POJO(String dest_folder, FileObjectType fileObjectType) {
         String parent_path_to_dest_folder = new File(dest_folder).getParent();
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
@@ -381,6 +381,22 @@ public class FilePOJOUtil {
 
         repositoryClass.hashmap_internal_directory_size.remove(file_path);
         repositoryClass.hashmap_external_directory_size.remove(file_path);
+    }
+
+    public static FilePOJO GET_FILE_POJO(String file_path, FileObjectType fileObjectType) {
+        String parent_path = Global.getParentPath(file_path);
+        RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
+        List<FilePOJO> filePOJOList = repositoryClass.hashmap_file_pojo.get(fileObjectType + parent_path);
+        if (filePOJOList == null) return null;
+        Iterator<FilePOJO> iterator = filePOJOList.iterator();
+        FilePOJO filePOJO;
+        while (iterator.hasNext()) {
+            filePOJO = iterator.next();
+            if (filePOJO.getPath().equals(file_path)) {
+                return filePOJO;
+            }
+        }
+        return null;
     }
 
     public static void SET_PARENT_HASHMAP_FILE_POJO_SIZE_NULL(String file_path, FileObjectType fileObjectType) {
@@ -658,16 +674,19 @@ public class FilePOJOUtil {
                 try {
                     String oauthToken = CloudAccountViewModel.GOOGLE_DRIVE_ACCESS_TOKEN;
                     String parentId = getFileIdByPath(fileclickselected, oauthToken);
+
                     List<GoogleDriveFileModel.GoogleDriveFileMetadata> driveFiles = GoogleDriveFileModel.listFilesInFolder(parentId, oauthToken);
                     for (GoogleDriveFileModel.GoogleDriveFileMetadata meta : driveFiles) {
                         try {
                             String name = meta.name;
                             String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
-                            FilePOJO filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO_FromDriveAPI(path, false, fileObjectType, oauthToken);
-                            if (!filePOJO.getName().startsWith(".")) {
-                                filePOJOS_filtered.add(filePOJO);
+                            FilePOJO filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO_FromDriveMeta(meta, path, false, fileObjectType);
+
+                            if (filePOJO != null) {
+                                if (!filePOJO.getName().startsWith("."))
+                                    filePOJOS_filtered.add(filePOJO);
+                                filePOJOS.add(filePOJO);
                             }
-                            filePOJOS.add(filePOJO);
                         } catch (Exception itemEx) {
                             Timber.tag(Global.TAG).w(itemEx, "GOOGLE_DRIVE item skipped");
                         }
@@ -675,40 +694,53 @@ public class FilePOJOUtil {
                 } catch (Exception e) {
                     Timber.tag(Global.TAG).w(e, "GOOGLE_DRIVE_TYPE listing failed: %s", fileclickselected);
                 }
-
             } else if (fileObjectType == FileObjectType.DROP_BOX_TYPE) {
                 try {
                     String accessToken = CloudAccountViewModel.DROP_BOX_ACCESS_TOKEN;
-                    DbxClientV2 dbxClient = new DbxClientV2(new com.dropbox.core.DbxRequestConfig("YourAppName"), accessToken);
-                    String dropboxPath = fileclickselected.equals("/") ? "" : fileclickselected;
-                    List<Metadata> entries = dbxClient.files().listFolder(dropboxPath).getEntries();
-                    for (Metadata meta : entries) {
-                        try {
-                            String name = meta.getName();
-                            String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
-                            FilePOJO filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO(meta, false, fileObjectType, path, dbxClient);
-                            if (!filePOJO.getName().startsWith(".")) {
-                                filePOJOS_filtered.add(filePOJO);
+                    DbxClientV2 dbxClient = new DbxClientV2(new DbxRequestConfig("YourAppName"), accessToken);
+
+                    String dropboxPath = "/".equals(fileclickselected) ? "" : fileclickselected;
+
+                    ListFolderResult result = dbxClient.files().listFolder(dropboxPath);
+
+                    while (true) {
+                        for (Metadata meta : result.getEntries()) {
+                            try {
+                                String name = meta.getName();
+                                String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
+
+                                FilePOJO filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO(meta, false, fileObjectType, path, dbxClient);
+
+                                if (filePOJO != null) {
+                                    if (!filePOJO.getName().startsWith("."))
+                                        filePOJOS_filtered.add(filePOJO);
+                                    filePOJOS.add(filePOJO);
+                                }
+                            } catch (Exception itemEx) {
+                                Timber.tag(Global.TAG).w(itemEx, "DROPBOX item skipped");
                             }
-                            filePOJOS.add(filePOJO);
-                        } catch (Exception itemEx) {
-                            Timber.tag(Global.TAG).w(itemEx, "DROPBOX item skipped");
                         }
+
+                        if (!result.getHasMore()) break;
+                        result = dbxClient.files().listFolderContinue(result.getCursor());
                     }
                 } catch (Exception e) {
                     Timber.tag(Global.TAG).w(e, "DROP_BOX_TYPE listing failed: %s", fileclickselected);
                 }
-
             } else if (fileObjectType == FileObjectType.YANDEX_TYPE) {
                 try {
                     String accessToken = CloudAccountViewModel.YANDEX_ACCESS_TOKEN;
                     OkHttpClient client = new OkHttpClient();
                     Gson gson = new Gson();
 
+                    String yPath = (fileclickselected == null || fileclickselected.trim().isEmpty()) ? "/" : fileclickselected;
+
                     HttpUrl url = HttpUrl.parse("https://cloud-api.yandex.net/v1/disk/resources")
                             .newBuilder()
-                            .addQueryParameter("path", fileclickselected)
-                            .addQueryParameter("fields", "_embedded.items.name,_embedded.items.type,_embedded.items.size,_embedded.items.modified,_embedded.items.path")
+                            .addQueryParameter("path", yPath)
+                            .addQueryParameter("limit", "1000") // reduce risk of missing items
+                            .addQueryParameter("fields",
+                                    "_embedded.items.name,_embedded.items.type,_embedded.items.size,_embedded.items.modified,_embedded.items.path")
                             .build();
 
                     Request request = new Request.Builder()
@@ -719,17 +751,22 @@ public class FilePOJOUtil {
 
                     try (Response response = client.newCall(request).execute()) {
                         if (response.isSuccessful() && response.body() != null) {
-                            MakeCloudFilePOJOUtil.YandexResource dirRes = gson.fromJson(response.body().charStream(), MakeCloudFilePOJOUtil.YandexResource.class);
+                            MakeCloudFilePOJOUtil.YandexResource dirRes =
+                                    gson.fromJson(response.body().charStream(), MakeCloudFilePOJOUtil.YandexResource.class);
+
                             if (dirRes != null && dirRes._embedded != null && dirRes._embedded.items != null) {
                                 for (MakeCloudFilePOJOUtil.YandexResource item : dirRes._embedded.items) {
                                     try {
                                         String name = item.name;
                                         String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
+
                                         FilePOJO filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO(item, false, fileObjectType, path);
-                                        if (!filePOJO.getName().startsWith(".")) {
-                                            filePOJOS_filtered.add(filePOJO);
+
+                                        if (filePOJO != null) {
+                                            if (!filePOJO.getName().startsWith("."))
+                                                filePOJOS_filtered.add(filePOJO);
+                                            filePOJOS.add(filePOJO);
                                         }
-                                        filePOJOS.add(filePOJO);
                                     } catch (Exception itemEx) {
                                         Timber.tag(Global.TAG).w(itemEx, "YANDEX item skipped");
                                     }
@@ -743,127 +780,174 @@ public class FilePOJOUtil {
                     Timber.tag(Global.TAG).w(e, "YANDEX_TYPE listing failed: %s", fileclickselected);
                 }
 
-            } else {
-                try {
-                    FileModel fileModel = FileModelFactory.getFileModel(fileclickselected, fileObjectType, null, null);
-                    FileModel[] fileModels = fileModel.list();
-                    int size = fileModels.length;
-                    for (int i = 0; i < size; ++i) {
-                        FileModel f = fileModels[i];
-                        try {
-                            String name = f.getName();
-                            String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
-                            FileModel childFileModel = FileModelFactory.getFileModel(path, fileObjectType, null, null);
-                            FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(childFileModel, false, fileObjectType);
-                            filePOJOS_filtered.add(filePOJO);
-                            filePOJOS.add(filePOJO);
-                        } catch (Exception itemEx) {
-                            Timber.tag(Global.TAG).w(itemEx, "GEN item skipped");
-                        }
+
+//            } else if (fileObjectType == FileObjectType.ONE_DRIVE_TYPE) {
+//                try {
+//                    // Listing via your path-only OneDriveFileModel
+//                    FileModel folderModel = new OneDriveFileModel(fileclickselected);
+//                    FileModel[] children = folderModel.list();
+//
+//                    for (FileModel child : children) {
+//                        try {
+//                            // Build display path (you already do this pattern everywhere)
+//                            String name = child.getName();
+//                            String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
+//
+//                            // IMPORTANT: avoid re-resolving network by creating another model if possible.
+//                            // We should build FilePOJO from metadata, but we only have FileModel here.
+//                            // So: if your OneDriveFileModel exposes DriveItem, use that.
+//                            // If not, fallback: MakeFilePOJOUtil.MAKE_FilePOJO(child,...)
+//
+//                            FilePOJO filePOJO;
+//
+//                            if (child instanceof OneDriveFileModel) {
+//                                // Add a getter in OneDriveFileModel: DriveItem getDriveItemUnsafe()
+//                                filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO_FromOneDriveModel(
+//                                        (OneDriveFileModel) child,
+//                                        path,
+//                                        false,
+//                                        fileObjectType
+//                                );
+//                            } else {
+//                                filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(child, false, fileObjectType);
+//                            }
+//
+//                            if (filePOJO != null) {
+//                                if (!filePOJO.getName().startsWith("."))
+//                                    filePOJOS_filtered.add(filePOJO);
+//                                filePOJOS.add(filePOJO);
+//                            }
+//                        } catch (Exception itemEx) {
+//                            Timber.tag(Global.TAG).w(itemEx, "ONEDRIVE item skipped");
+//                        }
+//                    }
+//
+//                } catch (Exception e) {
+//                    Timber.tag(Global.TAG).w(e, "ONE_DRIVE_TYPE listing failed: %s", fileclickselected);
+//                }
+        } else{
+            try {
+                FileModel fileModel = FileModelFactory.getFileModel(fileclickselected, fileObjectType, null, null);
+                FileModel[] fileModels = fileModel.list();
+                int size = fileModels.length;
+                for (int i = 0; i < size; ++i) {
+                    FileModel f = fileModels[i];
+                    try {
+                        String name = f.getName();
+                        String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
+                        FileModel childFileModel = FileModelFactory.getFileModel(path, fileObjectType, null, null);
+                        FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(childFileModel, false, fileObjectType);
+                        filePOJOS_filtered.add(filePOJO);
+                        filePOJOS.add(filePOJO);
+                    } catch (Exception itemEx) {
+                        Timber.tag(Global.TAG).w(itemEx, "GEN item skipped");
                     }
-                } catch (Exception e) {
-                    Timber.tag(Global.TAG).w(e, "GENERIC listing failed: %s", fileclickselected);
                 }
+            } catch (Exception e) {
+                Timber.tag(Global.TAG).w(e, "GENERIC listing failed: %s", fileclickselected);
+            }
+        }
+
+    } finally
+
+    {
+        RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
+        repositoryClass.hashmap_file_pojo.put(fileObjectType + fileclickselected, new ArrayList<>(filePOJOS));
+        repositoryClass.hashmap_file_pojo_filtered.put(fileObjectType + fileclickselected, new ArrayList<>(filePOJOS_filtered));
+    }
+}
+
+private static void file_type_fill_filePOJO(File file, FileObjectType fileObjectType, List<FilePOJO> filePOJOS, List<FilePOJO> filePOJOS_filtered) {
+    File[] file_array;
+    if ((file_array = file.listFiles()) != null) {
+        int size = file_array.length;
+        for (int i = 0; i < size; ++i) {
+            File f = file_array[i];
+            FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(f, true, fileObjectType);
+            if (!filePOJO.getName().startsWith(".")) {
+                filePOJOS_filtered.add(filePOJO);
+            }
+            filePOJOS.add(filePOJO);
+        }
+    }
+}
+
+private static void file_type_fill_filePOJO_zip(File file, FileObjectType fileObjectType, List<FilePOJO> filePOJOS, List<FilePOJO> filePOJOS_filtered) {
+    File[] file_array;
+    if ((file_array = file.listFiles()) != null) {
+        int size = file_array.length;
+        for (int i = 0; i < size; ++i) {
+            File f = file_array[i];
+            FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO_ZIP(f, true, fileObjectType);
+            if (!filePOJO.getName().startsWith(".")) {
+                filePOJOS_filtered.add(filePOJO);
+            }
+            filePOJOS.add(filePOJO);
+        }
+    }
+}
+
+
+public static String getFileIdByPath(String file_path, String oauthToken) throws IOException {
+    // Create the OkHttpClient and Gson instances here
+    OkHttpClient httpClient = new OkHttpClient();
+    Gson gson = new Gson();
+
+    // Normalize path
+    if (!file_path.startsWith("/")) {
+        file_path = "/" + file_path;
+    }
+
+    // If the path is just root "/"
+    if (file_path.equals("/")) {
+        return "root";
+    }
+
+    String[] parts = file_path.split("/");
+    String currentFolderId = "root"; // Start from root
+
+    for (int i = 1; i < parts.length; i++) {
+        String name = parts[i].trim();
+        if (name.isEmpty()) {
+            // Skip empty components (e.g. if path ends with "/")
+            continue;
+        }
+
+        // Escape single quotes in the name
+        String escapedName = name.replace("'", "\\'");
+
+        // Search for a child with the given name under the current folder
+        String query = "name = '" + escapedName + "' and '" + currentFolderId + "' in parents and trashed = false";
+        HttpUrl url = HttpUrl.parse("https://www.googleapis.com/drive/v3/files")
+                .newBuilder()
+                .addQueryParameter("q", query)
+                .addQueryParameter("fields", "files(id, name)")
+                .build();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", "Bearer " + oauthToken)
+                .get()
+                .build();
+
+        try (Response response = httpClient.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Failed to retrieve file ID: " + response.code() + " - " + response.message());
             }
 
-        } finally {
-            RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
-            repositoryClass.hashmap_file_pojo.put(fileObjectType + fileclickselected, new ArrayList<>(filePOJOS));
-            repositoryClass.hashmap_file_pojo_filtered.put(fileObjectType + fileclickselected, new ArrayList<>(filePOJOS_filtered));
+            String responseBody = response.body().string();
+            GoogleDriveFileModel.DriveFilesListResponse filesListResponse = gson.fromJson(responseBody, GoogleDriveFileModel.DriveFilesListResponse.class);
+
+            if (filesListResponse.files != null && !filesListResponse.files.isEmpty()) {
+                // Take the first matching file/folder
+                currentFolderId = filesListResponse.files.get(0).id;
+            } else {
+                // Item not found
+                return null;
+            }
         }
     }
 
-    private static void file_type_fill_filePOJO(File file, FileObjectType fileObjectType, List<FilePOJO> filePOJOS, List<FilePOJO> filePOJOS_filtered) {
-        File[] file_array;
-        if ((file_array = file.listFiles()) != null) {
-            int size = file_array.length;
-            for (int i = 0; i < size; ++i) {
-                File f = file_array[i];
-                FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(f, true, fileObjectType);
-                if (!filePOJO.getName().startsWith(".")) {
-                    filePOJOS_filtered.add(filePOJO);
-                }
-                filePOJOS.add(filePOJO);
-            }
-        }
-    }
-
-    private static void file_type_fill_filePOJO_zip(File file, FileObjectType fileObjectType, List<FilePOJO> filePOJOS, List<FilePOJO> filePOJOS_filtered) {
-        File[] file_array;
-        if ((file_array = file.listFiles()) != null) {
-            int size = file_array.length;
-            for (int i = 0; i < size; ++i) {
-                File f = file_array[i];
-                FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO_ZIP(f, true, fileObjectType);
-                if (!filePOJO.getName().startsWith(".")) {
-                    filePOJOS_filtered.add(filePOJO);
-                }
-                filePOJOS.add(filePOJO);
-            }
-        }
-    }
-
-
-    public static String getFileIdByPath(String file_path, String oauthToken) throws IOException {
-        // Create the OkHttpClient and Gson instances here
-        OkHttpClient httpClient = new OkHttpClient();
-        Gson gson = new Gson();
-
-        // Normalize path
-        if (!file_path.startsWith("/")) {
-            file_path = "/" + file_path;
-        }
-
-        // If the path is just root "/"
-        if (file_path.equals("/")) {
-            return "root";
-        }
-
-        String[] parts = file_path.split("/");
-        String currentFolderId = "root"; // Start from root
-
-        for (int i = 1; i < parts.length; i++) {
-            String name = parts[i].trim();
-            if (name.isEmpty()) {
-                // Skip empty components (e.g. if path ends with "/")
-                continue;
-            }
-
-            // Escape single quotes in the name
-            String escapedName = name.replace("'", "\\'");
-
-            // Search for a child with the given name under the current folder
-            String query = "name = '" + escapedName + "' and '" + currentFolderId + "' in parents and trashed = false";
-            HttpUrl url = HttpUrl.parse("https://www.googleapis.com/drive/v3/files")
-                    .newBuilder()
-                    .addQueryParameter("q", query)
-                    .addQueryParameter("fields", "files(id, name)")
-                    .build();
-
-            Request request = new Request.Builder()
-                    .url(url)
-                    .addHeader("Authorization", "Bearer " + oauthToken)
-                    .get()
-                    .build();
-
-            try (Response response = httpClient.newCall(request).execute()) {
-                if (!response.isSuccessful()) {
-                    throw new IOException("Failed to retrieve file ID: " + response.code() + " - " + response.message());
-                }
-
-                String responseBody = response.body().string();
-                GoogleDriveFileModel.DriveFilesListResponse filesListResponse = gson.fromJson(responseBody, GoogleDriveFileModel.DriveFilesListResponse.class);
-
-                if (filesListResponse.files != null && !filesListResponse.files.isEmpty()) {
-                    // Take the first matching file/folder
-                    currentFolderId = filesListResponse.files.get(0).id;
-                } else {
-                    // Item not found
-                    return null;
-                }
-            }
-        }
-
-        return currentFolderId;
-    }
+    return currentFolderId;
+}
 }
