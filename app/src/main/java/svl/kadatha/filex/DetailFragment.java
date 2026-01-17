@@ -51,6 +51,10 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
     public static final String SFTP_FILE_PREFIX = "sftp:";
     public static final String WEBDAV_FILE_PREFIX = "webdav:";
     public static final String SMB_FILE_PREFIX = "smb:";
+    public static final String GOOGLE_DRIVE_FILE_PREFIX = "drive:";
+    public static final String ONE_DRIVE_FILE_PREFIX = "onedrive:";
+    public static final String DROP_BOX_FILE_PREFIX = "dropbox:";
+    public static final String YANDEX_FILE_PREFIX = "yandex:";
     static final String SEARCH_RESULT = "Search";
     private static final String CANCEL_PROGRESS_REQUEST_CODE = "search_cancel_progress_request_code";
     private final static String SAF_PERMISSION_REQUEST_CODE = "detail_fragment_saf_permission_request_code";
