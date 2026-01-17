@@ -1,5 +1,8 @@
 package svl.kadatha.filex;
 
+import static svl.kadatha.filex.Global.CLOUD_FILE_OBJECT_TYPES;
+import static svl.kadatha.filex.Global.NETWORK_FILE_OBJECT_TYPES;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -744,9 +747,8 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             if (filePOJO == null) {
                 continue;
             }
-            if (filePOJO.getFileObjectType() == FileObjectType.FILE_TYPE || filePOJO.getFileObjectType() == FileObjectType.FTP_TYPE
-                    || filePOJO.getFileObjectType() == FileObjectType.USB_TYPE || filePOJO.getFileObjectType() == FileObjectType.SFTP_TYPE
-                    || filePOJO.getFileObjectType() == FileObjectType.WEBDAV_TYPE || filePOJO.getFileObjectType() == FileObjectType.SMB_TYPE) {
+            if (filePOJO.getFileObjectType() == FileObjectType.FILE_TYPE || filePOJO.getFileObjectType() == FileObjectType.USB_TYPE
+            || NETWORK_FILE_OBJECT_TYPES.contains(filePOJO.getFileObjectType()) || CLOUD_FILE_OBJECT_TYPES.contains(filePOJO.getFileObjectType())) {
                 filePOJOS.add(filePOJO);
             }
         }

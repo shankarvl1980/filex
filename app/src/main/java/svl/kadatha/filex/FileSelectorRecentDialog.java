@@ -250,20 +250,16 @@ public class FileSelectorRecentDialog extends DialogFragment implements FileSele
                 } else if (fileObjectType == FileObjectType.SMB_TYPE) {
                     p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.network_icon));
                     p1.textView_recent_dir.setText(DetailFragment.SMB_FILE_PREFIX + filePOJO.getName() + space);
-                }
-                else if (fileObjectType == FileObjectType.GOOGLE_DRIVE_TYPE) {
+                } else if (fileObjectType == FileObjectType.GOOGLE_DRIVE_TYPE) {
                     p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.cloud_icon));
                     p1.textView_recent_dir.setText(DetailFragment.GOOGLE_DRIVE_FILE_PREFIX + filePOJO.getName() + space);
-                }
-                else if (fileObjectType == FileObjectType.ONE_DRIVE_TYPE) {
+                } else if (fileObjectType == FileObjectType.ONE_DRIVE_TYPE) {
                     p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.cloud_icon));
                     p1.textView_recent_dir.setText(DetailFragment.ONE_DRIVE_FILE_PREFIX + filePOJO.getName() + space);
-                }
-                else if (fileObjectType == FileObjectType.DROP_BOX_TYPE) {
+                } else if (fileObjectType == FileObjectType.DROP_BOX_TYPE) {
                     p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.cloud_icon));
                     p1.textView_recent_dir.setText(DetailFragment.DROP_BOX_FILE_PREFIX + filePOJO.getName() + space);
-                }
-                else if (fileObjectType == FileObjectType.YANDEX_TYPE) {
+                } else if (fileObjectType == FileObjectType.YANDEX_TYPE) {
                     p1.fileimageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.cloud_icon));
                     p1.textView_recent_dir.setText(DetailFragment.YANDEX_FILE_PREFIX + filePOJO.getName() + space);
                 }

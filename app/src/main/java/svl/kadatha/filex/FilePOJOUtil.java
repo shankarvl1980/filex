@@ -8,7 +8,6 @@ import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 import com.google.gson.Gson;
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
-import com.hierynomus.smbj.session.Session;
 import com.hierynomus.smbj.share.DiskShare;
 import com.jcraft.jsch.ChannelSftp;
 import com.thegrizzlylabs.sardineandroid.DavResource;
@@ -707,7 +706,7 @@ public class FilePOJOUtil {
                                 String name = meta.getName();
                                 String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
 
-                                FilePOJO filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO(meta, false, fileObjectType, path, dbxClient);
+                                FilePOJO filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO(meta, false, fileObjectType, path);
 
                                 if (filePOJO != null) {
                                     if (!filePOJO.getName().startsWith("."))

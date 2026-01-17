@@ -376,6 +376,11 @@ public class ArchiveSetUpDialog extends DialogFragment {
                             }
                         }
 
+                        if(Global.CLOUD_FILE_OBJECT_TYPES.contains(destFileObjectType)){
+                            Global.print(context, getString(R.string.not_supported));
+                            return;
+                        }
+
                         if (sourceFileObjectType == FileObjectType.SMB_TYPE && destFileObjectType == FileObjectType.SMB_TYPE) {
                             Global.print(context, getString(R.string.not_supported));
                             return;
@@ -417,6 +422,11 @@ public class ArchiveSetUpDialog extends DialogFragment {
                                 Global.print(context, getString(R.string.root_access_not_avaialable));
                                 return;
                             }
+                        }
+
+                        if(Global.CLOUD_FILE_OBJECT_TYPES.contains(destFileObjectType) || Global.CLOUD_FILE_OBJECT_TYPES.contains(sourceFileObjectType)){
+                            Global.print(context, getString(R.string.not_supported));
+                            return;
                         }
 
                         if (sourceFileObjectType == FileObjectType.SMB_TYPE && destFileObjectType == FileObjectType.SMB_TYPE) {

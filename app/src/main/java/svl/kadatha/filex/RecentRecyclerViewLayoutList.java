@@ -63,9 +63,9 @@ public class RecentRecyclerViewLayoutList extends ViewGroup {
         int maxHeight = 0;
 
         int usedWidth;
-        if(Global.IS_TABLET){
-            usedWidth =Global.EIGHT_DP;
-        } else{
+        if (Global.IS_TABLET) {
+            usedWidth = Global.EIGHT_DP;
+        } else {
             usedWidth = Global.SIX_DP;
         }
         measureChildWithMargins(fileimageview, widthMeasureSpec, usedWidth, heightMeasureSpec, 0);
@@ -186,6 +186,18 @@ public class RecentRecyclerViewLayoutList extends ViewGroup {
                 break;
             case SMB_TYPE:
                 displayText = DetailFragment.SMB_FILE_PREFIX + filePOJO.getPath();
+                break;
+            case GOOGLE_DRIVE_TYPE:
+                displayText = DetailFragment.GOOGLE_DRIVE_FILE_PREFIX + filePOJO.getPath();
+                break;
+            case ONE_DRIVE_TYPE:
+                displayText = DetailFragment.ONE_DRIVE_FILE_PREFIX + filePOJO.getPath();
+                break;
+            case DROP_BOX_TYPE:
+                displayText = DetailFragment.DROP_BOX_FILE_PREFIX + filePOJO.getPath();
+                break;
+            case YANDEX_TYPE:
+                displayText = DetailFragment.YANDEX_FILE_PREFIX + filePOJO.getPath();
                 break;
             default:
                 displayText = filePOJO.getPath();

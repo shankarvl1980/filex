@@ -1626,7 +1626,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         actionmode_toolbar.setVisibility(View.GONE);
         viewModel.toolbar_shown = "bottom";
         df.is_toolbar_visible = true;
-    }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    }
+
+    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -2243,20 +2245,16 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             } else if (fileObjectType == FileObjectType.ROOT_TYPE) {
                 p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.device_icon));
                 p1.textView_storage_dir.setText(R.string.root_directory);
-            }
-            else if (fileObjectType == FileObjectType.GOOGLE_DRIVE_TYPE) {
+            } else if (fileObjectType == FileObjectType.GOOGLE_DRIVE_TYPE) {
                 p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.cloud_icon));
                 p1.textView_storage_dir.setText(DetailFragment.GOOGLE_DRIVE_FILE_PREFIX + filePOJO.getName());
-            }
-            else if (fileObjectType == FileObjectType.ONE_DRIVE_TYPE) {
+            } else if (fileObjectType == FileObjectType.ONE_DRIVE_TYPE) {
                 p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.cloud_icon));
                 p1.textView_storage_dir.setText(DetailFragment.ONE_DRIVE_FILE_PREFIX + filePOJO.getName());
-            }
-            else if (fileObjectType == FileObjectType.DROP_BOX_TYPE) {
+            } else if (fileObjectType == FileObjectType.DROP_BOX_TYPE) {
                 p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.cloud_icon));
                 p1.textView_storage_dir.setText(DetailFragment.DROP_BOX_FILE_PREFIX + filePOJO.getName());
-            }
-            else if (fileObjectType == FileObjectType.YANDEX_TYPE) {
+            } else if (fileObjectType == FileObjectType.YANDEX_TYPE) {
                 p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.cloud_icon));
                 p1.textView_storage_dir.setText(DetailFragment.YANDEX_FILE_PREFIX + filePOJO.getName());
             }

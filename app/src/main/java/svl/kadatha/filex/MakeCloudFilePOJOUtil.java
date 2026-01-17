@@ -5,7 +5,6 @@ import static svl.kadatha.filex.MakeFilePOJOUtil.GET_FILE_TYPE;
 
 import android.view.View;
 
-import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.FolderMetadata;
 import com.dropbox.core.v2.files.Metadata;
@@ -14,7 +13,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -63,14 +61,9 @@ public class MakeCloudFilePOJOUtil {
         // NOTE: meta.modifiedTime is RFC3339; your app uses SDF_FTP in some places.
         // Keeping your existing approach to avoid bigger refactor.
         if (meta.modifiedTime != null) {
-            try {
-                Date d = MakeFilePOJOUtil.SDF_FTP.parse(meta.modifiedTime);
-                if (d != null) {
-                    dateLong = d.getTime();
-                    date = Global.SDF.format(d);
-                }
-            } catch (Exception ignored) {
-            }
+            CloudDateUtil.DatePair dp = CloudDateUtil.toDatePair(meta.modifiedTime);
+            dateLong = dp.epochMillis;
+            date = dp.ui;
         }
 
         long sizeLong = 0L;
@@ -174,14 +167,9 @@ public class MakeCloudFilePOJOUtil {
             long dateLong = 0L;
             String date = "";
             if (meta.modifiedTime != null) {
-                try {
-                    Date d = MakeFilePOJOUtil.SDF_FTP.parse(meta.modifiedTime);
-                    if (d != null) {
-                        dateLong = d.getTime();
-                        date = Global.SDF.format(d);
-                    }
-                } catch (ParseException ignored) {
-                }
+                CloudDateUtil.DatePair dp = CloudDateUtil.toDatePair(meta.modifiedTime);
+                dateLong = dp.epochMillis;
+                date = dp.ui;
             }
 
             long sizeLong = 0L;
@@ -248,8 +236,7 @@ public class MakeCloudFilePOJOUtil {
     static FilePOJO MAKE_FilePOJO(Metadata metadata,
                                   boolean extract_icon,
                                   FileObjectType fileObjectType,
-                                  String file_path,
-                                  DbxClientV2 dbxClient) {
+                                  String file_path) {
 
         String name = metadata.getName();
         boolean isDirectory = (metadata instanceof FolderMetadata);
@@ -352,14 +339,10 @@ public class MakeCloudFilePOJOUtil {
             }
 
             if (resource.modified != null) {
-                try {
-                    Date d = Global.SDF.parse(resource.modified);
-                    if (d != null) {
-                        dateLong = d.getTime();
-                        date = Global.SDF.format(d);
-                    }
-                } catch (Exception ignored) {
-                }
+                CloudDateUtil.DatePair dp = CloudDateUtil.toDatePair(resource.modified);
+                dateLong = dp.epochMillis;
+                date = dp.ui;
+
             }
         } else {
             type = R.drawable.folder_icon;
@@ -493,5 +476,62 @@ public class MakeCloudFilePOJOUtil {
 
     public class YandexResourceEmbedded {
         public java.util.List<YandexResource> items;
+    }
+
+    static final class CloudDateUtil {
+
+        private CloudDateUtil() {}
+
+        private static final ThreadLocal<java.text.SimpleDateFormat> RFC3339_MILLIS =
+                new ThreadLocal<java.text.SimpleDateFormat>() {
+                    @Override protected java.text.SimpleDateFormat initialValue() {
+                        java.text.SimpleDateFormat f =
+                                new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX", java.util.Locale.US);
+                        f.setLenient(true);
+                        f.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+                        return f;
+                    }
+                };
+
+        private static final ThreadLocal<java.text.SimpleDateFormat> RFC3339_NO_MILLIS =
+                new ThreadLocal<java.text.SimpleDateFormat>() {
+                    @Override protected java.text.SimpleDateFormat initialValue() {
+                        java.text.SimpleDateFormat f =
+                                new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX", java.util.Locale.US);
+                        f.setLenient(true);
+                        f.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+                        return f;
+                    }
+                };
+
+        static java.util.Date parseRfc3339(String s) {
+            if (s == null) return null;
+            s = s.trim();
+            if (s.isEmpty()) return null;
+
+            try {
+                if (s.indexOf('.') >= 0) return RFC3339_MILLIS.get().parse(s);
+                return RFC3339_NO_MILLIS.get().parse(s);
+            } catch (Exception e) {
+                try { return RFC3339_MILLIS.get().parse(s); } catch (Exception ignored) {}
+                try { return RFC3339_NO_MILLIS.get().parse(s); } catch (Exception ignored) {}
+                return null;
+            }
+        }
+
+        static DatePair toDatePair(String rfc3339) {
+            java.util.Date d = parseRfc3339(rfc3339);
+            if (d == null) return new DatePair(0L, "");
+            return new DatePair(d.getTime(), Global.SDF.format(d));
+        }
+
+        static final class DatePair {
+            final long epochMillis;
+            final String ui;
+            DatePair(long epochMillis, String ui) {
+                this.epochMillis = epochMillis;
+                this.ui = ui;
+            }
+        }
     }
 }

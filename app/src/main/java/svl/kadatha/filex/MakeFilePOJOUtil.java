@@ -14,7 +14,6 @@ import com.google.gson.Gson;
 import com.hierynomus.msfscc.FileAttributes;
 import com.hierynomus.msfscc.fileinformation.FileAllInformation;
 import com.hierynomus.smbj.common.SMBRuntimeException;
-import com.hierynomus.smbj.session.Session;
 import com.hierynomus.smbj.share.DiskShare;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpATTRS;
@@ -749,7 +748,7 @@ public class MakeFilePOJOUtil {
                     // For non-root paths, fetch metadata
                     Metadata metadata = dbxClient.files().getMetadata(file_path);
                     // Create a FilePOJO from the metadata
-                    filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO(metadata, true, fileObjectType, file_path, dbxClient);
+                    filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO(metadata, true, fileObjectType, file_path);
                 }
             } catch (Exception e) {
                 Timber.tag(TAG).e("Error creating FilePOJO for Dropbox file: %s", e.getMessage());
