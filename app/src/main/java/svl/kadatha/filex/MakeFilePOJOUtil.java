@@ -43,7 +43,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import svl.kadatha.filex.appmanager.AppManagerListFragment;
-import svl.kadatha.filex.cloud.CloudAccountViewModel;
+import svl.kadatha.filex.cloud.CloudAuthActivityViewModel;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.WebDavFileModel;
 import svl.kadatha.filex.network.FtpClientRepository;
@@ -728,7 +728,7 @@ public class MakeFilePOJOUtil {
             }
         } else if (fileObjectType == FileObjectType.GOOGLE_DRIVE_TYPE) {
             try {
-                String oauthToken = CloudAccountViewModel.GOOGLE_DRIVE_ACCESS_TOKEN;
+                String oauthToken = CloudAuthActivityViewModel.GOOGLE_DRIVE_ACCESS_TOKEN;
                 // Attempt to create a FilePOJO from the given file path and OAuth token
                 filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO_FromDriveAPI(file_path, true, fileObjectType, oauthToken);
             } catch (IOException e) {
@@ -736,7 +736,7 @@ public class MakeFilePOJOUtil {
             }
         } else if (fileObjectType == FileObjectType.DROP_BOX_TYPE) {
             try {
-                String accessToken = CloudAccountViewModel.DROP_BOX_ACCESS_TOKEN;
+                String accessToken = CloudAuthActivityViewModel.DROP_BOX_ACCESS_TOKEN;
                 // Get Dropbox client
                 DbxClientV2 dbxClient = new DbxClientV2(new DbxRequestConfig("YourAppName"), accessToken);
 
@@ -757,7 +757,7 @@ public class MakeFilePOJOUtil {
 
         } else if (fileObjectType == FileObjectType.YANDEX_TYPE) {
             try {
-                String accessToken = CloudAccountViewModel.YANDEX_ACCESS_TOKEN;
+                String accessToken = CloudAuthActivityViewModel.YANDEX_ACCESS_TOKEN;
                 OkHttpClient client = new OkHttpClient();
                 Gson gson = new Gson();
                 HttpUrl url = HttpUrl.parse("https://cloud-api.yandex.net/v1/disk/resources")

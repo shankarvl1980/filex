@@ -35,7 +35,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import svl.kadatha.filex.audio.AudioPOJO;
-import svl.kadatha.filex.cloud.CloudAccountViewModel;
+import svl.kadatha.filex.cloud.CloudAuthActivityViewModel;
 import svl.kadatha.filex.filemodel.FileModel;
 import svl.kadatha.filex.filemodel.FileModelFactory;
 import svl.kadatha.filex.filemodel.GoogleDriveFileModel;
@@ -669,7 +669,7 @@ public class FilePOJOUtil {
 
             } else if (fileObjectType == FileObjectType.GOOGLE_DRIVE_TYPE) {
                 try {
-                    String oauthToken = CloudAccountViewModel.GOOGLE_DRIVE_ACCESS_TOKEN;
+                    String oauthToken = CloudAuthActivityViewModel.GOOGLE_DRIVE_ACCESS_TOKEN;
                     String parentId = getFileIdByPath(fileclickselected, oauthToken);
 
                     List<GoogleDriveFileModel.GoogleDriveFileMetadata> driveFiles = GoogleDriveFileModel.listFilesInFolder(parentId, oauthToken);
@@ -693,7 +693,7 @@ public class FilePOJOUtil {
                 }
             } else if (fileObjectType == FileObjectType.DROP_BOX_TYPE) {
                 try {
-                    String accessToken = CloudAccountViewModel.DROP_BOX_ACCESS_TOKEN;
+                    String accessToken = CloudAuthActivityViewModel.DROP_BOX_ACCESS_TOKEN;
                     DbxClientV2 dbxClient = new DbxClientV2(new DbxRequestConfig("YourAppName"), accessToken);
 
                     String dropboxPath = "/".equals(fileclickselected) ? "" : fileclickselected;
@@ -726,7 +726,7 @@ public class FilePOJOUtil {
                 }
             } else if (fileObjectType == FileObjectType.YANDEX_TYPE) {
                 try {
-                    String accessToken = CloudAccountViewModel.YANDEX_ACCESS_TOKEN;
+                    String accessToken = CloudAuthActivityViewModel.YANDEX_ACCESS_TOKEN;
                     OkHttpClient client = new OkHttpClient();
                     Gson gson = new Gson();
 

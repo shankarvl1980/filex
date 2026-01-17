@@ -779,7 +779,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     nestedScrollView.post(new Runnable() {
                         @Override
                         public void run() {
-                            nestedScrollView.smoothScrollTo(0, networkRecyclerView.getBottom());
+                            nestedScrollView.smoothScrollTo(0, cloudRecyclerView.getBottom());
                         }
                     });
                     viewModel.cloud_shown = true;

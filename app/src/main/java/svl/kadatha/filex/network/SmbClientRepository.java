@@ -23,8 +23,8 @@ import timber.log.Timber;
 public class SmbClientRepository {
     private static final String TAG = "Smb-SmbClientRepository";
     // Pool sizing for short operations (not streaming)
-    private static final int DEFAULT_POOL_SIZE = 2;      // keep small
-    private static final int MAX_POOL_SIZE = 4;          // don’t explode connections
+    private static final int DEFAULT_POOL_SIZE = 3;      // keep small
+    private static final int MAX_POOL_SIZE = 5;          // don’t explode connections
     private static final int MAX_RETRIES = 2;            // retry once on dead socket
     private static final long PROBE_IDLE_MS = 20_000;    // probe session if idle > 20s
 

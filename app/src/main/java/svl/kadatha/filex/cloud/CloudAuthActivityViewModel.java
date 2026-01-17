@@ -22,9 +22,8 @@ import svl.kadatha.filex.IndexedLinkedHashMap;
 import svl.kadatha.filex.MakeFilePOJOUtil;
 import svl.kadatha.filex.MyExecutorService;
 import svl.kadatha.filex.RepositoryClass;
-import svl.kadatha.filex.network.NetworkAccountPOJO;
 
-public class CloudAccountViewModel extends AndroidViewModel {
+public class CloudAuthActivityViewModel extends AndroidViewModel {
     public static String GOOGLE_DRIVE_ACCESS_TOKEN;
     public static String DROP_BOX_ACCESS_TOKEN;
     public static String MEDIA_FIRE_ACCESS_TOKEN;
@@ -50,8 +49,9 @@ public class CloudAccountViewModel extends AndroidViewModel {
     private Future<?> future8;
     private Future<?> future9;
     private Future<?> future10;
+    public boolean connected;
 
-    public CloudAccountViewModel(@NonNull Application application) {
+    public CloudAuthActivityViewModel(@NonNull Application application) {
         super(application);
         cloudAccountsDatabaseHelper = new CloudAccountsDatabaseHelper(application);
     }
@@ -136,7 +136,6 @@ public class CloudAccountViewModel extends AndroidViewModel {
         future2 = executorService.submit(new Runnable() {
             @Override
             public void run() {
-
                 int size = cloudAccountPOJOS_for_delete.size();
                 for (int i = 0; i < size; ++i) {
                     CloudAccountPOJO cloudAccountPOJO = cloudAccountPOJOS_for_delete.get(i);
@@ -151,43 +150,53 @@ public class CloudAccountViewModel extends AndroidViewModel {
     }
 
     public synchronized void authenticate() {
-        authProvider.authenticate(new CloudAuthProvider.AuthCallback() {
+        if (cloudAccountConnectionAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
+        cloudAccountConnectionAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        connected=false;
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future3=executorService.submit(new Runnable() {
             @Override
-            public void onSuccess(CloudAccountPOJO account) {
-                long l = cloudAccountsDatabaseHelper.updateOrInsert(account.type, account.userId, account);
-                // Update the list of accounts if necessary
-                //cloudAccountPOJOList = cloudAccountsDatabaseHelper.getAllAccounts();
-                // Notify observers if you're using LiveData
-                if (l != -1) {
-                    cloudAccount = account;
-                    switch (fileObjectType) {
-                        case GOOGLE_DRIVE_TYPE:
-                            GOOGLE_DRIVE_ACCESS_TOKEN = account.accessToken;
-                            break;
-                        case ONE_DRIVE_TYPE:
-                            break;
-                        case DROP_BOX_TYPE:
-                            DROP_BOX_ACCESS_TOKEN = account.accessToken;
-                            break;
-                        case MEDIA_FIRE_TYPE:
-                            MEDIA_FIRE_ACCESS_TOKEN = account.accessToken;
-                            break;
-                        case BOX_TYPE:
-                            break;
-                        case NEXT_CLOUD_TYPE:
-                            break;
-                        case YANDEX_TYPE:
-                            YANDEX_ACCESS_TOKEN = account.accessToken;
-                            break;
+            public void run() {
+                authProvider.authenticate(new CloudAuthProvider.AuthCallback() {
+                    @Override
+                    public void onSuccess(CloudAccountPOJO account) {
+                        long l = cloudAccountsDatabaseHelper.updateOrInsert(account.type, account.userId, account);
+                        if (l != -1) {
+                            cloudAccount = account;
+                            switch (fileObjectType) {
+                                case GOOGLE_DRIVE_TYPE:
+                                    GOOGLE_DRIVE_ACCESS_TOKEN = account.accessToken;
+                                    break;
+                                case ONE_DRIVE_TYPE:
+                                    break;
+                                case DROP_BOX_TYPE:
+                                    DROP_BOX_ACCESS_TOKEN = account.accessToken;
+                                    break;
+                                case MEDIA_FIRE_TYPE:
+                                    MEDIA_FIRE_ACCESS_TOKEN = account.accessToken;
+                                    break;
+                                case BOX_TYPE:
+                                    break;
+                                case NEXT_CLOUD_TYPE:
+                                    break;
+                                case YANDEX_TYPE:
+                                    YANDEX_ACCESS_TOKEN = account.accessToken;
+                                    break;
+                            }
+                            onCloudConnection();
+                            connected=true;
+                            cloudAccountConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+                        }
                     }
-                    onCloudConnection();
-                    cloudAccountConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
-                }
-            }
 
-            @Override
-            public void onError(Exception e) {
-                // Handle error (e.g., show a message)
+                    @Override
+                    public void onError(Exception e) {
+                        connected=false;
+                        cloudAccountConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+                    }
+                });
             }
         });
     }
@@ -196,19 +205,20 @@ public class CloudAccountViewModel extends AndroidViewModel {
         if (cloudAccountStorageDirFillAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
             return;
         }
+        cloudAccountStorageDirFillAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         executorService.submit(new Runnable() {
             @Override
             public void run() {
                 String type = cloudAccountPOJO.type;
                 if (type.equals(FileObjectType.GOOGLE_DRIVE_TYPE.toString())) {
-                    CloudAccountViewModel.GOOGLE_DRIVE_ACCESS_TOKEN = cloudAccountPOJO.accessToken;
+                    CloudAuthActivityViewModel.GOOGLE_DRIVE_ACCESS_TOKEN = cloudAccountPOJO.accessToken;
                 } else if (type.equals(FileObjectType.DROP_BOX_TYPE.toString())) {
-                    CloudAccountViewModel.DROP_BOX_ACCESS_TOKEN = cloudAccountPOJO.accessToken;
+                    CloudAuthActivityViewModel.DROP_BOX_ACCESS_TOKEN = cloudAccountPOJO.accessToken;
                 } else if (type.equals(FileObjectType.MEDIA_FIRE_TYPE.toString())) {
-                    CloudAccountViewModel.MEDIA_FIRE_ACCESS_TOKEN = cloudAccountPOJO.accessToken;
+                    CloudAuthActivityViewModel.MEDIA_FIRE_ACCESS_TOKEN = cloudAccountPOJO.accessToken;
                 } else if (type.equals(FileObjectType.YANDEX_TYPE.toString())) {
-                    CloudAccountViewModel.YANDEX_ACCESS_TOKEN = cloudAccountPOJO.accessToken;
+                    CloudAuthActivityViewModel.YANDEX_ACCESS_TOKEN = cloudAccountPOJO.accessToken;
                 }
 
                 onCloudConnection();
@@ -229,4 +239,9 @@ public class CloudAccountViewModel extends AndroidViewModel {
         FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), fileObjectType);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.CLOUD_CACHE_DIR);
     }
+
+    public void saveAccount(@NonNull CloudAccountPOJO account) {
+        cloudAccountsDatabaseHelper.updateOrInsert(account.type, account.userId, account);
+    }
+
 }

@@ -4,7 +4,6 @@ import android.os.Build;
 
 import com.google.gson.Gson;
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
-import com.hierynomus.smbj.session.Session;
 import com.hierynomus.smbj.share.DiskShare;
 import com.jcraft.jsch.ChannelSftp;
 import com.thegrizzlylabs.sardineandroid.DavResource;
@@ -26,7 +25,7 @@ import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import svl.kadatha.filex.cloud.CloudAccountViewModel;
+import svl.kadatha.filex.cloud.CloudAuthActivityViewModel;
 import svl.kadatha.filex.filemodel.GoogleDriveFileModel;
 import svl.kadatha.filex.network.FtpClientRepository;
 import svl.kadatha.filex.network.NetworkAccountDetailsViewModel;
@@ -90,21 +89,21 @@ public final class SubFileCountUtil {
                     return countSmbChildren(path);
 
                 case GOOGLE_DRIVE_TYPE:
-                    token = CloudAccountViewModel.GOOGLE_DRIVE_ACCESS_TOKEN;
+                    token = CloudAuthActivityViewModel.GOOGLE_DRIVE_ACCESS_TOKEN;
                     return countDriveChildrenCapped(pojo, token, cap + 1);
 
                 case DROP_BOX_TYPE: {
-                    token = CloudAccountViewModel.DROP_BOX_ACCESS_TOKEN;
+                    token = CloudAuthActivityViewModel.DROP_BOX_ACCESS_TOKEN;
                     return countDropboxChildrenCapped(pojo, token, cap + 1);
                 }
 
                 case YANDEX_TYPE: {
-                    token = CloudAccountViewModel.YANDEX_ACCESS_TOKEN;
+                    token = CloudAuthActivityViewModel.YANDEX_ACCESS_TOKEN;
                     return countYandexChildrenCapped(pojo, token, cap + 1);
                 }
 
 //                case ONE_DRIVE_TYPE: {
-//                    token = CloudAccountViewModel.ONE_DRIVE_ACCESS_TOKEN;
+//                    token = CloudAuthActivityViewModel.ONE_DRIVE_ACCESS_TOKEN;
 //                    return countOneDriveChildrenCapped(pojo, token, cap + 1);
 //                }
 

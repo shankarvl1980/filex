@@ -29,7 +29,7 @@ import okio.Source;
 import svl.kadatha.filex.FileObjectType;
 import svl.kadatha.filex.FilePOJO;
 import svl.kadatha.filex.FilePOJOUtil;
-import svl.kadatha.filex.cloud.CloudAccountViewModel;
+import svl.kadatha.filex.cloud.CloudAuthActivityViewModel;
 
 /**
  * Drop-in GoogleDriveFileModel
@@ -58,7 +58,7 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
     private GoogleDriveFileMetadata metadata;  // may be partial; lazy fetch if needed
 
     public GoogleDriveFileModel(String path) throws IOException {
-        this.accessToken = CloudAccountViewModel.GOOGLE_DRIVE_ACCESS_TOKEN;
+        this.accessToken = CloudAuthActivityViewModel.GOOGLE_DRIVE_ACCESS_TOKEN;
         this.httpClient = new OkHttpClient();
         this.gson = new Gson();
 

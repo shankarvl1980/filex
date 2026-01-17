@@ -35,7 +35,6 @@ public final class GoogleDriveAuthProvider implements CloudAuthProvider {
 
     private static final Uri AUTH_ENDPOINT = Uri.parse("https://accounts.google.com/o/oauth2/v2/auth");
     private static final Uri TOKEN_ENDPOINT = Uri.parse("https://oauth2.googleapis.com/token");
-//603518003549-8m2h1s1blonbo7s3rvok93uf40ipb3cs.apps.googleusercontent.com
     private static final String CLIENT_ID =
             "603518003549-8m2h1s1blonbo7s3rvok93uf40ipb3cs.apps.googleusercontent.com";
 
@@ -49,8 +48,6 @@ public final class GoogleDriveAuthProvider implements CloudAuthProvider {
             "openid",
             "email",
             "profile",
-            "https://www.googleapis.com/auth/drive.file",
-            "https://www.googleapis.com/auth/drive.appdata",
             "https://www.googleapis.com/auth/drive"
     };
 
@@ -154,7 +151,8 @@ public final class GoogleDriveAuthProvider implements CloudAuthProvider {
     }
 
     @Override
-    public void refreshToken(AuthCallback callback) {
+    public void refreshToken(CloudAccountPOJO cloudAccount,AuthCallback callback) {
+        this.cloudAccount=cloudAccount;
         if (cloudAccount == null || cloudAccount.refreshToken == null) {
             if (callback != null) callback.onError(new Exception("No refresh token available"));
             return;
@@ -184,14 +182,21 @@ public final class GoogleDriveAuthProvider implements CloudAuthProvider {
     }
 
     @Override
-    public String getAccessToken() {
+    public String getAccessToken(CloudAccountPOJO cloudAccountPOJO) {
+        this.cloudAccount=cloudAccountPOJO;
         return cloudAccount != null ? cloudAccount.accessToken : null;
     }
 
     @Override
-    public boolean isAccessTokenValid() {
+    public boolean isAccessTokenValid(CloudAccountPOJO cloudAccountPOJO) {
+        this.cloudAccount=cloudAccountPOJO;
         return cloudAccount != null && cloudAccount.accessToken != null
                 && System.currentTimeMillis() < cloudAccount.tokenExpiryTime;
+    }
+
+    @Override
+    public boolean supportsRefresh() {
+        return true;
     }
 
     @Override
