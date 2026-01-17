@@ -225,70 +225,66 @@ public class FileCountSize {
                     }
                 } else if (sourceFileObjectType == FileObjectType.SMB_TYPE) {
                     Timber.tag(TAG).d("Starting file count for SMB files");
-                    SmbClientRepository smbClientRepository = null;
-                    Session session = null;
-                    String shareName;
+                    SmbClientRepository smbClientRepository= SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+                    SmbClientRepository.ShareHandle h = null;
                     try {
-                        smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
-                        session = smbClientRepository.getSession();
-                        shareName = smbClientRepository.getShareName();
-                        try (DiskShare share = (DiskShare) session.connectShare(shareName)) {
-                            for (String filePath : files_selected_array) {
-                                if (isCancelled()) {
-                                    Timber.tag(TAG).d("Operation cancelled during SMB file count.");
-                                    return;
-                                }
-
-                                Timber.tag(TAG).d("Processing SMB path: %s", filePath);
-
-                                String adjustedPath;
-                                if (filePath.equals("/") || filePath.isEmpty()) {
-                                    adjustedPath = "";
-                                } else {
-                                    adjustedPath = filePath.startsWith("/") ? filePath.substring(1) : filePath;
-                                }
-
-                                // Determine if the path is a directory or a file
-                                boolean isDirectory = share.folderExists(adjustedPath);
-                                boolean isFile = share.fileExists(adjustedPath);
-
-                                if (isDirectory) {
-                                    Timber.tag(TAG).d("Path is a directory. Starting traversal.");
-                                    // Start traversing the directory
-                                    populate(share, adjustedPath, include_folder);
-                                } else if (isFile) {
-                                    Timber.tag(TAG).d("Path is a file. Processing single file.");
-                                    // Path is a file; get its size and count as one
-                                    FileAllInformation fileInfo = share.getFileInformation(adjustedPath);
-
-                                    // Optionally, exclude hidden/system files
-                                    Set<FileAttributes> attributes = MakeFilePOJOUtil.parseAttributes(fileInfo.getBasicInformation().getFileAttributes());
-                                    if (attributes.contains(FileAttributes.FILE_ATTRIBUTE_HIDDEN) ||
-                                            attributes.contains(FileAttributes.FILE_ATTRIBUTE_SYSTEM)) {
-                                        Timber.tag(TAG).d("Skipping hidden/system file: %s", filePath);
-                                    } else {
-                                        total_no_of_files += 1;
-                                        total_size_of_files += fileInfo.getStandardInformation().getEndOfFile();
-
-                                        // Update LiveData
-                                        mutable_total_no_of_files.postValue(total_no_of_files);
-                                        mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
-
-                                        Timber.tag(TAG).d("Processed file - Total files: %d, Total size: %d", total_no_of_files, total_size_of_files);
-                                    }
-                                } else {
-                                    // Path does not exist or is inaccessible
-                                    Timber.tag(TAG).w("SMB path does not exist or is inaccessible: %s", filePath);
-                                }
-
-                                Timber.tag(TAG).d("Completed processing SMB path: %s", filePath);
+                        h = smbClientRepository.acquireShare();
+                        DiskShare share = h.share;
+                        for (String filePath : files_selected_array) {
+                            if (isCancelled()) {
+                                Timber.tag(TAG).d("Operation cancelled during SMB file count.");
+                                return;
                             }
+
+                            Timber.tag(TAG).d("Processing SMB path: %s", filePath);
+
+                            String adjustedPath;
+                            if (filePath.equals("/") || filePath.isEmpty()) {
+                                adjustedPath = "";
+                            } else {
+                                adjustedPath = filePath.startsWith("/") ? filePath.substring(1) : filePath;
+                            }
+
+                            // Determine if the path is a directory or a file
+                            boolean isDirectory = share.folderExists(adjustedPath);
+                            boolean isFile = share.fileExists(adjustedPath);
+
+                            if (isDirectory) {
+                                Timber.tag(TAG).d("Path is a directory. Starting traversal.");
+                                // Start traversing the directory
+                                populate(share, adjustedPath, include_folder);
+                            } else if (isFile) {
+                                Timber.tag(TAG).d("Path is a file. Processing single file.");
+                                // Path is a file; get its size and count as one
+                                FileAllInformation fileInfo = share.getFileInformation(adjustedPath);
+
+                                // Optionally, exclude hidden/system files
+                                Set<FileAttributes> attributes = MakeFilePOJOUtil.parseAttributes(fileInfo.getBasicInformation().getFileAttributes());
+                                if (attributes.contains(FileAttributes.FILE_ATTRIBUTE_HIDDEN) ||
+                                        attributes.contains(FileAttributes.FILE_ATTRIBUTE_SYSTEM)) {
+                                    Timber.tag(TAG).d("Skipping hidden/system file: %s", filePath);
+                                } else {
+                                    total_no_of_files += 1;
+                                    total_size_of_files += fileInfo.getStandardInformation().getEndOfFile();
+
+                                    // Update LiveData
+                                    mutable_total_no_of_files.postValue(total_no_of_files);
+                                    mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
+
+                                    Timber.tag(TAG).d("Processed file - Total files: %d, Total size: %d", total_no_of_files, total_size_of_files);
+                                }
+                            } else {
+                                // Path does not exist or is inaccessible
+                                Timber.tag(TAG).w("SMB path does not exist or is inaccessible: %s", filePath);
+                            }
+
+                            Timber.tag(TAG).d("Completed processing SMB path: %s", filePath);
                         }
                     } catch (Exception e) {
                         Timber.tag(TAG).e("Error during SMB file count: %s", e.getMessage());
                     } finally {
-                        if (smbClientRepository != null && session != null) {
-                            smbClientRepository.releaseSession(session);
+                        if (smbClientRepository != null) {
+                            smbClientRepository.releaseShare(h);
                             Timber.tag(TAG).d("SMB session released");
                         }
                     }

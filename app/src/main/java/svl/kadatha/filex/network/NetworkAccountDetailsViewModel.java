@@ -310,37 +310,47 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         }
     }
 
-    private void connectSmb(NetworkAccountPOJO networkAccountPOJO, MutableLiveData<AsyncTaskStatus> asyncTaskStatus) {
+    private void connectSmb(NetworkAccountPOJO networkAccountPOJO,
+                            MutableLiveData<AsyncTaskStatus> asyncTaskStatus) {
         loggedInStatus = false;
+
         SmbClientRepository smbClientRepository = null;
-        Session session = null;
+        SmbClientRepository.ShareHandle h = null;
+
         try {
             NetworkAccountPOJO networkAccountPOJOCopy = networkAccountPOJO.deepCopy();
+
+            // reset any previous singleton state (your current approach)
             smbClientRepository = SmbClientRepository.getInstance(networkAccountPOJOCopy);
             smbClientRepository.shutdown();
+
             smbClientRepository = SmbClientRepository.getInstance(networkAccountPOJO);
+
             SMB_NETWORK_ACCOUNT_POJO = networkAccountPOJO;
             NetworkAccountDetailsViewModel.this.networkAccountPOJO = networkAccountPOJO;
 
-            session = smbClientRepository.getSession();
-            if (smbClientRepository.isSessionConnected(session)) {
-                loggedInStatus = true;
-                SMB_WORKING_DIR_PATH = "/";
-            } else {
-                loggedInStatus = false;
-                throw new Exception("Smb client is not connected");
-            }
+            // ✅ New "connection test": can we acquire a share + do a minimal operation?
+            h = smbClientRepository.acquireShare();
+            // If acquireShare() returns, we are connected enough.
+            // Optionally do a tiny probe (this will throw if dead):
+            h.share.folderExists("");
+
+            loggedInStatus = true;
+            SMB_WORKING_DIR_PATH = "/";
 
             if (!Global.CHECK_WHETHER_STORAGE_DIR_CONTAINS_FILE_OBJECT(FileObjectType.SMB_TYPE)) {
                 RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
-                repositoryClass.storage_dir.add(MakeFilePOJOUtil.MAKE_FilePOJO(FileObjectType.SMB_TYPE, SMB_WORKING_DIR_PATH));
+                repositoryClass.storage_dir.add(
+                        MakeFilePOJOUtil.MAKE_FilePOJO(FileObjectType.SMB_TYPE, SMB_WORKING_DIR_PATH)
+                );
             }
         } catch (Exception e) {
             loggedInStatus = false;
-            Global.print_background_thread(application, application.getString(R.string.server_could_not_be_connected));
+            Global.print_background_thread(application,
+                    application.getString(R.string.server_could_not_be_connected));
         } finally {
-            if (session != null) {
-                smbClientRepository.releaseSession(session);
+            if (smbClientRepository != null) {
+                smbClientRepository.releaseShare(h); // ✅ single exit point
             }
             asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
         }

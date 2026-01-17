@@ -13,6 +13,8 @@ import com.hierynomus.smbj.session.Session;
 import com.hierynomus.smbj.share.DiskShare;
 import com.hierynomus.smbj.share.File;
 
+import java.io.FilterInputStream;
+import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -39,28 +41,29 @@ public class SmbFileModel implements FileModel {
     private static boolean mkdirSmb(String filePath) {
         Timber.tag(TAG).d("Attempting to create SMB directory: %s", filePath);
         SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
-        Session session = null;
-        String shareName = smbClientRepository.getShareName();
+        SmbClientRepository.ShareHandle h = null;
         try {
-            session = smbClientRepository.getSession();
-            try (DiskShare share = (DiskShare) session.connectShare(shareName)) {
-                if (share.folderExists(filePath)) {
-                    Timber.tag(TAG).d("SMB directory already exists: %s", filePath);
-                    return true;
-                } else {
-                    share.mkdir(filePath);
-                    Timber.tag(TAG).d("SMB directory created: %s", filePath);
-                    return true;
-                }
+            h = smbClientRepository.acquireShare();
+            DiskShare share = h.share;
+            if (share.folderExists(filePath)) {
+                Timber.tag(TAG).d("SMB directory already exists: %s", filePath);
+                return true;
+            } else {
+                share.mkdir(filePath);
+                Timber.tag(TAG).d("SMB directory created: %s", filePath);
+                return true;
             }
+
         } catch (IOException | SMBRuntimeException e) {
             Timber.tag(TAG).e("Error creating SMB directory: %s", e.getMessage());
             return false;
         } finally {
-            if (session != null) {
-                smbClientRepository.releaseSession(session);
+            if(smbClientRepository!=null)
+            {
+                smbClientRepository.releaseShare(h);
                 Timber.tag(TAG).d("SMB session released");
             }
+
         }
     }
 
@@ -118,24 +121,21 @@ public class SmbFileModel implements FileModel {
 
     private boolean isDirectory(String filePath) {
         Timber.tag(TAG).d("Checking if SMB path is directory: %s", filePath);
-        SmbClientRepository smbClientRepository = null;
-        Session session = null;
-        String shareName;
+        SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+        SmbClientRepository.ShareHandle h = null;
         try {
-            smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
-            session = smbClientRepository.getSession();
-            shareName = smbClientRepository.getShareName();
-            try (DiskShare share = (DiskShare) session.connectShare(shareName)) {
-                boolean exists = share.folderExists(filePath);
-                Timber.tag(TAG).d("SMB path is directory result: %b for path: %s", exists, filePath);
-                return exists;
-            }
+            h = smbClientRepository.acquireShare();
+            DiskShare share = h.share;
+            boolean exists = share.folderExists(filePath);
+            Timber.tag(TAG).d("SMB path is directory result: %b for path: %s", exists, filePath);
+            return exists;
+
         } catch (IOException | SMBRuntimeException e) {
             Timber.tag(TAG).e("Error checking if SMB path is directory: %s", e.getMessage());
             return false;
         } finally {
-            if (smbClientRepository != null && session != null) {
-                smbClientRepository.releaseSession(session);
+            if (smbClientRepository != null) {
+                smbClientRepository.releaseShare(h);
             }
         }
     }
@@ -148,30 +148,26 @@ public class SmbFileModel implements FileModel {
         String sanitizedPath = old_file_path.startsWith("/") ? old_file_path.substring(1) : old_file_path;
         String sanitizedNewFilePath = new_file_path.startsWith("/") ? new_file_path.substring(1) : new_file_path;
         Timber.tag(TAG).d("after sanitization,attempting to rename from '%s' to '%s'", sanitizedPath, sanitizedNewFilePath);
-        SmbClientRepository smbClientRepository = null;
-        Session session = null;
-        String shareName;
+        SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+        SmbClientRepository.ShareHandle h = null;
         try {
-            smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
-            session = smbClientRepository.getSession();
-            shareName = smbClientRepository.getShareName();
-            try (DiskShare share = (DiskShare) session.connectShare(shareName)) {
-                // Open the source file with DELETE access
-                File smbFile = share.openFile(
-                        sanitizedPath,
-                        EnumSet.of(AccessMask.DELETE, AccessMask.FILE_WRITE_ATTRIBUTES),
-                        null,
-                        SMB2ShareAccess.ALL,
-                        SMB2CreateDisposition.FILE_OPEN,
-                        null
-                );
+            h = smbClientRepository.acquireShare();
+            DiskShare share = h.share;
+            // Open the source file with DELETE access
+            File smbFile = share.openFile(
+                    sanitizedPath,
+                    EnumSet.of(AccessMask.DELETE, AccessMask.FILE_WRITE_ATTRIBUTES),
+                    null,
+                    SMB2ShareAccess.ALL,
+                    SMB2CreateDisposition.FILE_OPEN,
+                    null
+            );
 
-                // Perform the rename operation
-                smbFile.rename(sanitizedNewFilePath, true);
-                smbFile.close();
-                Timber.tag(TAG).d("Rename operation successful");
-                return true;
-            }
+            // Perform the rename operation
+            smbFile.rename(sanitizedNewFilePath, true);
+            smbFile.close();
+            Timber.tag(TAG).d("Rename operation successful");
+            return true;
         } catch (SMBApiException e) {
             Timber.tag(TAG).e(e, "SMBApiException during rename operation");
             Timber.tag(TAG).e("Error Code: %s", e.getStatus());
@@ -180,8 +176,8 @@ public class SmbFileModel implements FileModel {
             Timber.tag(TAG).e(e, "IOException during rename operation");
             return false;
         } finally {
-            if (smbClientRepository != null && session != null) {
-                smbClientRepository.releaseSession(session);
+            if (smbClientRepository != null) {
+                smbClientRepository.releaseShare(h);
                 Timber.tag(TAG).d("SMB session released");
             }
         }
@@ -191,60 +187,58 @@ public class SmbFileModel implements FileModel {
     @Override
     public boolean delete() {
         Timber.tag(TAG).d("Attempting to delete SMB directory: %s", path);
-        SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
-        Session session = null;
         boolean success = true;
-        String shareName = smbClientRepository.getShareName();
-
+        SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+        SmbClientRepository.ShareHandle h = null;
         try {
-            session = smbClientRepository.getSession();
-            try (DiskShare share = (DiskShare) session.connectShare(shareName)) {
-                Stack<String> stack = new Stack<>();
-                stack.push(path);
+            h = smbClientRepository.acquireShare();
+            DiskShare share = h.share;
+            Stack<String> stack = new Stack<>();
+            stack.push(path);
 
-                while (!stack.isEmpty() && success) {
-                    String currentPath = stack.pop();
-                    String baseName = new java.io.File(currentPath).getName();
-                    if (".".equals(baseName) || "..".equals(baseName)) {
-                        Timber.tag(TAG).w("Skipping deletion of special directory: %s", currentPath);
-                        continue;
-                    }
+            while (!stack.isEmpty() && success) {
+                String currentPath = stack.pop();
+                String baseName = new java.io.File(currentPath).getName();
+                if (".".equals(baseName) || "..".equals(baseName)) {
+                    Timber.tag(TAG).w("Skipping deletion of special directory: %s", currentPath);
+                    continue;
+                }
 
-                    if (share.folderExists(currentPath)) {
-                        List<FileIdBothDirectoryInformation> list = share.list(currentPath);
-                        if (list != null && !list.isEmpty()) {
-                            for (FileIdBothDirectoryInformation item : list) {
-                                String itemName = item.getFileName();
-                                if (!".".equals(itemName) && !"..".equals(itemName)) {
-                                    String itemPath = Global.CONCATENATE_PARENT_CHILD_PATH(currentPath, itemName);
-                                    stack.push(itemPath);
-                                }
+                if (share.folderExists(currentPath)) {
+                    List<FileIdBothDirectoryInformation> list = share.list(currentPath);
+                    if (list != null && !list.isEmpty()) {
+                        for (FileIdBothDirectoryInformation item : list) {
+                            String itemName = item.getFileName();
+                            if (!".".equals(itemName) && !"..".equals(itemName)) {
+                                String itemPath = Global.CONCATENATE_PARENT_CHILD_PATH(currentPath, itemName);
+                                stack.push(itemPath);
                             }
-                        } else {
-                            share.rmdir(currentPath, false);
                         }
-                    } else if (share.fileExists(currentPath)) {
-                        share.rm(currentPath);
+                    } else {
+                        share.rmdir(currentPath, false);
                     }
-
-                    if (!success) {
-                        Timber.tag(TAG).e("Failed to delete: %s", currentPath);
-                    }
+                } else if (share.fileExists(currentPath)) {
+                    share.rm(currentPath);
                 }
 
-                // If the original path was a directory and all contents were successfully deleted, delete the directory itself
-                if (success && share.folderExists(path)) {
-                    share.rmdir(path, false);
+                if (!success) {
+                    Timber.tag(TAG).e("Failed to delete: %s", currentPath);
                 }
-
-                Timber.tag(TAG).d("SMB directory deletion result: %b for path: %s", success, path);
             }
+
+            // If the original path was a directory and all contents were successfully deleted, delete the directory itself
+            if (success && share.folderExists(path)) {
+                share.rmdir(path, false);
+            }
+
+            Timber.tag(TAG).d("SMB directory deletion result: %b for path: %s", success, path);
+
         } catch (IOException | SMBRuntimeException e) {
             Timber.tag(TAG).e("Error deleting SMB directory: %s", e.getMessage());
             success = false;
         } finally {
-            if (session != null) {
-                smbClientRepository.releaseSession(session);
+            if (smbClientRepository != null) {
+                smbClientRepository.releaseShare(h);
                 Timber.tag(TAG).d("SMB session released");
             }
         }
@@ -254,73 +248,114 @@ public class SmbFileModel implements FileModel {
     @Override
     public InputStream getInputStream() {
         Timber.tag(TAG).d("Attempting to get InputStream for path: %s", path);
-        SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
-        Session session = null;
-        String shareName = smbClientRepository.getShareName();
+
+        SmbClientRepository repo =
+                SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+
+        SmbClientRepository.ShareHandle h = null;
         try {
-            session = smbClientRepository.getSession();
-            DiskShare share = (DiskShare) session.connectShare(shareName);
-            File file = share.openFile(
-                    path,
+            h = repo.acquireShareForStreaming();
+            DiskShare share = h.share;
+            String p = SmbClientRepository.stripLeadingSlash(path);
+            File smbFile = share.openFile(
+                    p,
                     EnumSet.of(AccessMask.GENERIC_READ),
                     null,
                     EnumSet.of(SMB2ShareAccess.FILE_SHARE_READ),
                     SMB2CreateDisposition.FILE_OPEN,
                     null
             );
-            InputStream inputStream = file.getInputStream();
+
+            InputStream in = smbFile.getInputStream();
             Timber.tag(TAG).d("Successfully retrieved InputStream for path: %s", path);
-            return new SMBInputStreamWrapper(inputStream, file, share, session, smbClientRepository);
+
+            return new SMBInputStreamWrapper(in, smbFile, h);
+
         } catch (Exception e) {
-            Timber.tag(TAG).e("Failed to get InputStream: %s", e.getMessage());
-            if (session != null) {
-                Timber.tag(Global.TAG).d("SMB session released in getInputStream()");
-                smbClientRepository.releaseSession(session);
+            Timber.tag(TAG).e(e, "Failed to get InputStream for path: %s", path);
+            if (h != null) {
+                try { h.close(); } catch (Exception ignored) {}
             }
             return null;
         }
     }
 
+
+
     @Override
     public OutputStream getChildOutputStream(String child_name, long source_length) {
-        String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(path, child_name);
-        Timber.tag(TAG).d("Attempting to get OutputStream for path: %s", file_path);
-        SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
-        Session session = null;
-        String shareName = smbClientRepository.getShareName();
+        String filePath = Global.CONCATENATE_PARENT_CHILD_PATH(path, child_name);
+        Timber.tag(TAG).d("Attempting to get OutputStream for path: %s", filePath);
+
+        SmbClientRepository repo =
+                SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+
+        SmbClientRepository.ShareHandle h = null;
         try {
-            session = smbClientRepository.getSession();
-            DiskShare share = (DiskShare) session.connectShare(shareName);
-            File file = share.openFile(
-                    file_path,
+            h = repo.acquireShareForStreaming();
+            DiskShare share = h.share;
+            String p = SmbClientRepository.stripLeadingSlash(filePath);
+
+            // Ensure parent dirs exist if your pipeline expects it
+            // (Optional – keep if you want)
+            String parent = new java.io.File(p).getParent();
+            if (parent != null && parent.length() > 0) {
+                // if parent doesn't exist, mkdirs style
+                // NOTE: folderExists uses share-relative paths
+                if (!share.folderExists(parent)) {
+                    // create recursively
+                    mkdirsOnShare(share, parent);
+                }
+            }
+
+            File smbFile = share.openFile(
+                    p,
                     EnumSet.of(AccessMask.GENERIC_WRITE),
                     null,
-                    EnumSet.of(SMB2ShareAccess.FILE_SHARE_WRITE),
+                    SMB2ShareAccess.ALL,
                     SMB2CreateDisposition.FILE_OVERWRITE_IF,
                     null
             );
-            OutputStream outputStream = file.getOutputStream();
-            Timber.tag(TAG).d("Successfully retrieved OutputStream for path: %s", file_path);
-            return new SMBOutputStreamWrapper(outputStream, file, share, session, smbClientRepository);
-        } catch (IOException | SMBRuntimeException e) {
-            Timber.tag(TAG).e("Failed to get OutputStream: %s", e.getMessage());
-            if (session != null) {
-                Timber.tag(Global.TAG).d("SMB session released in getOutputStream()");
-                smbClientRepository.releaseSession(session);
+
+            OutputStream out = smbFile.getOutputStream();
+            Timber.tag(TAG).d("Successfully retrieved OutputStream for path: %s", filePath);
+            return new SMBOutputStreamWrapper(out, smbFile, h);
+        } catch (Exception e) {
+            Timber.tag(TAG).e(e, "Failed to get OutputStream for path: %s", filePath);
+            if (h != null) {
+                try { h.close(); } catch (Exception ignored) {}
             }
             return null;
+        }
+    }
+
+    /** share-relative mkdirs helper (no leading slash) */
+    private static void mkdirsOnShare(DiskShare share, String shareRelativeDir) {
+        if (shareRelativeDir == null || shareRelativeDir.isEmpty()) return;
+
+        String[] parts = shareRelativeDir.split("/");
+        String cur = "";
+        for (String part : parts) {
+            if (part == null || part.isEmpty()) continue;
+            cur = cur.isEmpty() ? part : (cur + "/" + part);
+            try {
+                if (!share.folderExists(cur)) {
+                    share.mkdir(cur);
+                }
+            } catch (Exception ignored) {
+                // If it already exists or races with another thread, ignore.
+            }
         }
     }
 
     @Override
     public FileModel[] list() {
         Timber.tag(TAG).d("Attempting to list files for path: %s", path);
-        SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
-        Session session = null;
-        String shareName = smbClientRepository.getShareName();
+        SmbClientRepository smbClientRepository= SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+        SmbClientRepository.ShareHandle h = null;
         try {
-            session = smbClientRepository.getSession();
-            DiskShare share = (DiskShare) session.connectShare(shareName);
+            h = smbClientRepository.acquireShare();
+            DiskShare share = h.share;
             List<FileIdBothDirectoryInformation> fileList = share.list(path);
             if (fileList == null || fileList.isEmpty()) {
                 Timber.tag(TAG).w("No files listed or directory is empty for path: %s", path);
@@ -341,8 +376,8 @@ public class SmbFileModel implements FileModel {
             Timber.tag(TAG).e("Failed to list files: %s", e.getMessage());
             return new FileModel[0];
         } finally {
-            if (session != null) {
-                smbClientRepository.releaseSession(session);
+            if (smbClientRepository != null) {
+                smbClientRepository.releaseShare(h);
                 Timber.tag(TAG).d("SMB session released");
             }
         }
@@ -352,36 +387,36 @@ public class SmbFileModel implements FileModel {
     public boolean createFile(String name) {
         String file_path = Global.CONCATENATE_PARENT_CHILD_PATH(path, name);
         Timber.tag(TAG).d("Attempting to create file: %s", file_path);
-        SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
-        Session session = null;
-        String shareName = smbClientRepository.getShareName();
+        SmbClientRepository repo = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+        SmbClientRepository.ShareHandle h = null;
         try {
-            session = smbClientRepository.getSession();
-            DiskShare share = (DiskShare) session.connectShare(shareName);
-            if (share.fileExists(file_path)) {
+            h = repo.acquireShare();
+            DiskShare share = h.share;
+            String adjusted = file_path.startsWith("/") ? file_path.substring(1) : file_path;
+            if (share.fileExists(adjusted)) {
                 Timber.tag(TAG).w("File already exists: %s", file_path);
                 return false;
             }
+
             share.openFile(
-                    file_path,
+                    adjusted,
                     EnumSet.of(AccessMask.GENERIC_WRITE),
                     null,
                     EnumSet.of(SMB2ShareAccess.FILE_SHARE_WRITE),
                     SMB2CreateDisposition.FILE_CREATE,
                     null
             ).close();
+
             Timber.tag(TAG).d("File creation successful: %s", file_path);
             return true;
-        } catch (IOException | SMBRuntimeException e) {
-            Timber.tag(TAG).e("Failed to create file: %s", e.getMessage());
+        } catch (Exception e) {
+            Timber.tag(TAG).e(e, "Failed to create file: %s", file_path);
             return false;
         } finally {
-            if (session != null) {
-                smbClientRepository.releaseSession(session);
-                Timber.tag(TAG).d("SMB session released");
-            }
+            repo.releaseShare(h);
         }
     }
+
 
     @Override
     public boolean makeDirIfNotExists(String dir_name) {
@@ -401,77 +436,72 @@ public class SmbFileModel implements FileModel {
     @Override
     public long getLength() {
         Timber.tag(TAG).d("getLength() called for SMB file: %s", path);
-        SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
-        Session session = null;
-        String shareName = smbClientRepository.getShareName();
+        SmbClientRepository repo = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+        SmbClientRepository.ShareHandle h = null;
         try {
-            session = smbClientRepository.getSession();
-            DiskShare share = (DiskShare) session.connectShare(shareName);
-            if (share.fileExists(path)) {
-                FileAllInformation fileInfo = share.getFileInformation(path);
-                long size = fileInfo.getStandardInformation().getEndOfFile();
-                Timber.tag(TAG).d("File size: %d bytes", size);
-                return size;
+            h = repo.acquireShare();
+            DiskShare share = h.share;
+            String adjusted = path.startsWith("/") ? path.substring(1) : path;
+            if (share.fileExists(adjusted)) {
+                FileAllInformation fileInfo = share.getFileInformation(adjusted);
+                return fileInfo.getStandardInformation().getEndOfFile();
             }
-        } catch (IOException | SMBRuntimeException e) {
-            Timber.tag(TAG).e("Failed to get file size: %s", e.getMessage());
+            return 0;
+        } catch (Exception e) {
+            Timber.tag(TAG).e(e, "Failed to get file size: %s", path);
+            return 0;
         } finally {
-            if (session != null) {
-                smbClientRepository.releaseSession(session);
-                Timber.tag(TAG).d("SMB session released");
-            }
+            repo.releaseShare(h);
         }
-        return 0;
     }
+
 
     @Override
     public boolean exists() {
         Timber.tag(TAG).d("Checking if SMB file exists: %s", path);
-        SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
-        Session session = null;
-        String shareName = smbClientRepository.getShareName();
+
+        SmbClientRepository repo = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+        SmbClientRepository.ShareHandle h = null;
+
         try {
-            session = smbClientRepository.getSession();
-            DiskShare share = (DiskShare) session.connectShare(shareName);
-            boolean exists = share.fileExists(path) || share.folderExists(path);
-            Timber.tag(TAG).d("SMB file exists result: %b for path: %s", exists, path);
-            return exists;
-        } catch (IOException | SMBRuntimeException e) {
-            Timber.tag(TAG).e("Error checking if SMB file exists: %s", e.getMessage());
+            h = repo.acquireShare();
+            DiskShare share = h.share;
+            String adjusted = path.startsWith("/") ? path.substring(1) : path;
+            return share.fileExists(adjusted) || share.folderExists(adjusted);
+        } catch (Exception e) {
+            Timber.tag(TAG).e(e, "Error checking if SMB file exists: %s", path);
             return false;
         } finally {
-            if (session != null) {
-                smbClientRepository.releaseSession(session);
-                Timber.tag(TAG).d("SMB session released");
-            }
+            repo.releaseShare(h);
         }
     }
 
     @Override
     public long lastModified() {
         Timber.tag(TAG).d("lastModified() called for SMB file: %s", path);
-        SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
-        Session session = null;
-        String shareName = smbClientRepository.getShareName();
+
+        SmbClientRepository repo = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+        SmbClientRepository.ShareHandle h = null;
+
         try {
-            session = smbClientRepository.getSession();
-            DiskShare share = (DiskShare) session.connectShare(shareName);
-            if (share.fileExists(path) || share.folderExists(path)) {
-                FileAllInformation fileInfo = share.getFileInformation(path);
-                long lastModified = fileInfo.getBasicInformation().getChangeTime().toEpochMillis();
-                Timber.tag(TAG).d("File last modified time: %d", lastModified);
-                return lastModified;
+            h = repo.acquireShare();
+            DiskShare share = h.share;
+
+            String adjusted = path.startsWith("/") ? path.substring(1) : path;
+
+            if (share.fileExists(adjusted) || share.folderExists(adjusted)) {
+                FileAllInformation fileInfo = share.getFileInformation(adjusted);
+                return fileInfo.getBasicInformation().getChangeTime().toEpochMillis();
             }
-        } catch (IOException | SMBRuntimeException e) {
-            Timber.tag(TAG).e("Failed to get last modified time: %s", e.getMessage());
+            return 0;
+        } catch (Exception e) {
+            Timber.tag(TAG).e(e, "Failed to get last modified time: %s", path);
+            return 0;
         } finally {
-            if (session != null) {
-                smbClientRepository.releaseSession(session);
-                Timber.tag(TAG).d("SMB session released");
-            }
+            repo.releaseShare(h);
         }
-        return 0;
     }
+
 
     @Override
     public boolean isHidden() {
@@ -480,99 +510,68 @@ public class SmbFileModel implements FileModel {
     }
 
     // Inner classes for InputStream and OutputStream wrappers
-    public static class SMBInputStreamWrapper extends InputStream {
-        private final InputStream wrappedStream;
+    public static final class SMBInputStreamWrapper extends FilterInputStream {
         private final File smbFile;
-        private final DiskShare share;
-        private final Session session;
-        private final SmbClientRepository repository;
+        private final SmbClientRepository.ShareHandle handle;
+        private boolean closed;
 
-        public SMBInputStreamWrapper(InputStream wrappedStream, File smbFile, DiskShare share, Session session, SmbClientRepository repository) {
-            this.wrappedStream = wrappedStream;
+        public SMBInputStreamWrapper(InputStream in, File smbFile, SmbClientRepository.ShareHandle handle) {
+            super(in);
             this.smbFile = smbFile;
-            this.share = share;
-            this.session = session;
-            this.repository = repository;
-        }
-
-        @Override
-        public int read() throws IOException {
-            return wrappedStream.read();
-        }
-
-        @Override
-        public int read(byte[] b) throws IOException {
-            return wrappedStream.read(b);
-        }
-
-        @Override
-        public int read(byte[] b, int off, int len) throws IOException {
-            return wrappedStream.read(b, off, len);
-        }
-
-        @Override
-        public long skip(long n) throws IOException {
-            return wrappedStream.skip(n);
-        }
-
-        @Override
-        public int available() throws IOException {
-            return wrappedStream.available();
+            this.handle = handle;
         }
 
         @Override
         public void close() throws IOException {
+            if (closed) return;
+            closed = true;
+            IOException first = null;
             try {
-                wrappedStream.close();
-                smbFile.close();
-                share.close();
-            } finally {
-                repository.releaseSession(session);
-                Timber.tag("SMBInputStreamWrapper").d("SMB session released");
+                super.close();
+            } catch (IOException e) {
+                first = e;
             }
+
+            try { if (smbFile != null) smbFile.close(); } catch (Exception ignored) {}
+            try { if (handle != null) handle.close(); } catch (Exception ignored) {}
+
+            if (first != null) throw first;
         }
     }
 
-    public static class SMBOutputStreamWrapper extends OutputStream {
-        private final OutputStream wrappedStream;
+    public static final class SMBOutputStreamWrapper extends FilterOutputStream {
         private final File smbFile;
-        private final DiskShare share;
-        private final Session session;
-        private final SmbClientRepository repository;
+        private final SmbClientRepository.ShareHandle handle;
+        private boolean closed;
 
-        public SMBOutputStreamWrapper(OutputStream wrappedStream, File smbFile, DiskShare share, Session session, SmbClientRepository repository) {
-            this.wrappedStream = wrappedStream;
+        public SMBOutputStreamWrapper(OutputStream out, File smbFile, SmbClientRepository.ShareHandle handle) {
+            super(out);
             this.smbFile = smbFile;
-            this.share = share;
-            this.session = session;
-            this.repository = repository;
-        }
-
-        @Override
-        public void write(int b) throws IOException {
-            wrappedStream.write(b);
-        }
-
-        @Override
-        public void write(byte[] b) throws IOException {
-            wrappedStream.write(b);
-        }
-
-        @Override
-        public void write(byte[] b, int off, int len) throws IOException {
-            wrappedStream.write(b, off, len);
+            this.handle = handle;
         }
 
         @Override
         public void close() throws IOException {
+            if (closed) return;
+            closed = true;
+            IOException first = null;
             try {
-                wrappedStream.close();
-                smbFile.close();
-                share.close();
-            } finally {
-                repository.releaseSession(session);
-                Timber.tag("SMBOutputStreamWrapper").d("SMB session released");
+                // flush then close
+                super.flush();
+            } catch (IOException e) {
+                first = e;
             }
+
+            try {
+                super.close();
+            } catch (IOException e) {
+                if (first == null) first = e;
+            }
+
+            try { if (smbFile != null) smbFile.close(); } catch (Exception ignored) {}
+            try { if (handle != null) handle.close(); } catch (Exception ignored) {}
+
+            if (first != null) throw first;
         }
     }
 }

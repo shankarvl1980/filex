@@ -636,13 +636,11 @@ public class FilePOJOUtil {
                 }
 
             } else if (fileObjectType == FileObjectType.SMB_TYPE) {
-                SmbClientRepository smbClientRepository = null;
-                Session session = null;
+                SmbClientRepository smbClientRepository= SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+                SmbClientRepository.ShareHandle h = null;
                 try {
-                    smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
-                    session = smbClientRepository.getSession();
-                    String shareName = smbClientRepository.getShareName();
-                    try (DiskShare share = (DiskShare) session.connectShare(shareName)) {
+                    h = smbClientRepository.acquireShare();
+                    DiskShare share = h.share;
                         String adjustedPath = fileclickselected.startsWith("/") ? fileclickselected.substring(1) : fileclickselected;
                         List<FileIdBothDirectoryInformation> fileList = share.list(adjustedPath);
                         for (FileIdBothDirectoryInformation info : fileList) {
@@ -661,12 +659,12 @@ public class FilePOJOUtil {
                                 Timber.tag(Global.TAG).w(itemEx, "SMB item skipped");
                             }
                         }
-                    }
+
                 } catch (Exception e) {
                     Timber.tag(Global.TAG).w(e, "SMB_TYPE listing failed: %s", fileclickselected);
                 } finally {
-                    if (smbClientRepository != null && session != null) {
-                        smbClientRepository.releaseSession(session);
+                    if (smbClientRepository != null) {
+                        smbClientRepository.releaseShare(h);
                     }
                 }
 

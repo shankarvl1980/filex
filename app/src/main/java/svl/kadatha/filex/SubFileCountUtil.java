@@ -191,20 +191,18 @@ public final class SubFileCountUtil {
     }
 
     private static int countSmbChildren(String path) throws IOException {
-        SmbClientRepository smbRepo = null;
-        Session session = null;
+        SmbClientRepository smbClientRepository= SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+        SmbClientRepository.ShareHandle h = null;
         try {
-            smbRepo = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
-            session = smbRepo.getSession();
-            String shareName = smbRepo.getShareName();
-            try (DiskShare share = (DiskShare) session.connectShare(shareName)) {
+            h = smbClientRepository.acquireShare();
+            DiskShare share = h.share;
                 String adj = path.startsWith("/") ? path.substring(1) : path;
                 List<FileIdBothDirectoryInformation> list = share.list(adj);
                 // minus 2 for "." and ".."
                 return list != null ? Math.max(0, list.size() - 2) : 0;
-            }
+
         } finally {
-            if (smbRepo != null && session != null) smbRepo.releaseSession(session);
+            if (smbClientRepository != null) smbClientRepository.releaseShare(h);
         }
     }
 

@@ -689,14 +689,11 @@ public class MakeFilePOJOUtil {
                 Timber.tag(TAG).e("Error creating FilePOJO for WebDAV resource: %s", e.getMessage());
             }
         } else if (fileObjectType == FileObjectType.SMB_TYPE) {
-            SmbClientRepository smbClientRepository = null;
-            Session session = null;
-            String shareName;
+            SmbClientRepository smbClientRepository= SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+            SmbClientRepository.ShareHandle h = null;
             try {
-                smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
-                session = smbClientRepository.getSession();
-                shareName = smbClientRepository.getShareName();
-                try (DiskShare share = (DiskShare) session.connectShare(shareName)) {
+                h = smbClientRepository.acquireShare();
+                DiskShare share = h.share;
                     // Adjust file_path if necessary (e.g., remove leading "/")
                     String adjustedPath = file_path.startsWith("/") ? file_path.substring(1) : file_path;
 
@@ -721,12 +718,12 @@ public class MakeFilePOJOUtil {
 
                         filePOJO = MAKE_FilePOJO(smbFileInfo, false, fileObjectType);
                     }
-                }
+
             } catch (IOException | SMBRuntimeException e) {
                 Timber.tag(TAG).e("Error creating FilePOJO for SMB file: %s", e.getMessage());
             } finally {
-                if (smbClientRepository != null && session != null) {
-                    smbClientRepository.releaseSession(session);
+                if (smbClientRepository != null) {
+                    smbClientRepository.releaseShare(h);
                     Timber.tag(TAG).d("SMB session released");
                 }
             }

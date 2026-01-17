@@ -31,7 +31,7 @@ import timber.log.Timber;
 public class SftpChannelRepository {
     private static final int MAX_IDLE_CONNECTIONS = 4;
     private static final long IDLE_TIMEOUT = 180000; // 3 minutes
-    private static final String TAG = "Sftp-sftpchannel";
+    private static final String TAG = "Sftp-channel";
     private static SftpChannelRepository instance;
     private final ConcurrentLinkedQueue<ChannelSftp> sftpChannels;
     private final ConcurrentLinkedQueue<ChannelSftp> inUseChannels;
@@ -80,14 +80,34 @@ public class SftpChannelRepository {
     }
 
     public synchronized ChannelSftp getSftpChannel() throws JSchException {
-        ChannelSftp channel = sftpChannels.poll();
-        if (channel == null || !channel.isConnected()) {
-            channel = createAndConnectSftpChannel();
+        ChannelSftp ch = sftpChannels.poll();
+
+        if (!isAlive(ch)) {
+            disconnectAndCloseChannel(ch);
+            ch = createAndConnectSftpChannel();
         }
-        inUseChannels.offer(channel);
-        lastUsedTimes.put(channel, System.currentTimeMillis());
-        return channel;
+
+        inUseChannels.offer(ch);
+        lastUsedTimes.put(ch, System.currentTimeMillis());
+        return ch;
     }
+
+    private boolean isAlive(ChannelSftp ch) {
+        if (ch == null) return false;
+        if (!ch.isConnected()) return false;
+
+        try {
+            Session s = ch.getSession();
+            if (s == null || !s.isConnected()) return false;
+
+            // cheap liveness probe (optional but robust)
+            s.sendKeepAliveMsg();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 
     public synchronized void releaseChannel(ChannelSftp channel) {
         inUseChannels.remove(channel);
@@ -100,7 +120,11 @@ public class SftpChannelRepository {
 
     private ChannelSftp createAndConnectSftpChannel() throws JSchException {
         JSch jsch = new JSch();
-        Session session = jsch.getSession(networkAccountPOJO.user_name, networkAccountPOJO.host, networkAccountPOJO.port);
+        Session session = jsch.getSession(
+                networkAccountPOJO.user_name,
+                networkAccountPOJO.host,
+                networkAccountPOJO.port
+        );
 
         if (!networkAccountPOJO.privateKeyPath.isEmpty()) {
             jsch.addIdentity(networkAccountPOJO.privateKeyPath, networkAccountPOJO.privateKeyPassphrase);
@@ -108,16 +132,21 @@ public class SftpChannelRepository {
             session.setPassword(networkAccountPOJO.password);
         }
 
+
         if (!networkAccountPOJO.knownHostsPath.isEmpty()) {
             jsch.setKnownHosts(networkAccountPOJO.knownHostsPath);
         } else {
             session.setConfig("StrictHostKeyChecking", "no");
         }
 
-        session.connect();
+        session.setTimeout(15_000);
+        session.setServerAliveInterval(30_000);
+        session.setServerAliveCountMax(2);
+
+        session.connect(15_000);
 
         ChannelSftp channelSftp = (ChannelSftp) session.openChannel("sftp");
-        channelSftp.connect();
+        channelSftp.connect(15_000);
 
         return channelSftp;
     }
@@ -125,36 +154,41 @@ public class SftpChannelRepository {
 
     private void sendKeepAlive() {
         for (ChannelSftp channel : sftpChannels) {
-            if (!inUseChannels.contains(channel)) {
-                try {
-                    channel.getSession().sendKeepAliveMsg();
-                } catch (Exception e) {
-                    // Log error and remove faulty channel
-                    disconnectAndCloseChannel(channel);
-                    sftpChannels.remove(channel);
+            if (inUseChannels.contains(channel)) continue;
+
+            try {
+                Session s = channel.getSession();
+                if (s != null && s.isConnected()) {
+                    s.sendKeepAliveMsg();
+                    lastUsedTimes.put(channel, System.currentTimeMillis()); // ✅ refresh
+                } else {
+                    throw new Exception("Session not connected");
                 }
+            } catch (Exception e) {
+                disconnectAndCloseChannel(channel);
+                sftpChannels.remove(channel);
             }
         }
     }
 
+
     private void disconnectAndCloseChannel(ChannelSftp channel) {
-        if (channel.isConnected()) {
-            channel.disconnect();
-        }
+        if (channel == null) return;
 
         try {
-            Session session = channel.getSession();
-            if (session != null && session.isConnected()) {
-                session.disconnect();
-            }
-        } catch (JSchException e) {
-            // Log the exception
-            Timber.tag(TAG).e("Error getting session for channel: %s", e.getMessage());
-            // You might want to add more specific error handling here if needed
+            try {
+                if (channel.isConnected()) channel.disconnect();
+            } catch (Exception ignored) {}
+
+            try {
+                Session session = channel.getSession();
+                if (session != null && session.isConnected()) session.disconnect();
+            } catch (Exception ignored) {}
         } finally {
             lastUsedTimes.remove(channel);
         }
     }
+
 
     public void shutdown() {
         keepAliveScheduler.shutdown();

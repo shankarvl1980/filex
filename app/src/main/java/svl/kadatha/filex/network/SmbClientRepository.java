@@ -1,11 +1,6 @@
 package svl.kadatha.filex.network;
 
-import android.os.Bundle;
-
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import com.hierynomus.mssmb2.SMB2Dialect;
-import com.hierynomus.mssmb2.SMBApiException;
 import com.hierynomus.smbj.SMBClient;
 import com.hierynomus.smbj.SmbConfig;
 import com.hierynomus.smbj.auth.AuthenticationContext;
@@ -14,93 +9,331 @@ import com.hierynomus.smbj.session.Session;
 import com.hierynomus.smbj.share.DiskShare;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import svl.kadatha.filex.App;
-import svl.kadatha.filex.FileObjectType;
-import svl.kadatha.filex.FilePOJO;
-import svl.kadatha.filex.FilePOJOUtil;
-import svl.kadatha.filex.FileSelectorActivity;
-import svl.kadatha.filex.Global;
-import svl.kadatha.filex.MainActivity;
-import svl.kadatha.filex.RepositoryClass;
 import timber.log.Timber;
 
 public class SmbClientRepository {
     private static final String TAG = "Smb-SmbClientRepository";
-    private static final long IDLE_TIMEOUT = 180000; // 3 minutes
-    private static final int MAX_IDLE_SESSIONS = 4;
-    private static final int MAX_RETRIES = 3;
-    private static final int RETRY_DELAY_MS = 1000; // 1 second delay between retries
+    // Pool sizing for short operations (not streaming)
+    private static final int DEFAULT_POOL_SIZE = 2;      // keep small
+    private static final int MAX_POOL_SIZE = 4;          // don’t explode connections
+    private static final int MAX_RETRIES = 2;            // retry once on dead socket
+    private static final long PROBE_IDLE_MS = 20_000;    // probe session if idle > 20s
+
     private static SmbClientRepository instance;
+
     private final SMBClient smbClient;
-    private final ConcurrentLinkedQueue<Session> sessionPool;
-    private final ConcurrentLinkedQueue<Session> inUseSessions;
-    private final Map<Session, Long> lastUsedTimes;
-    private final ScheduledExecutorService keepAliveScheduler = Executors.newScheduledThreadPool(1);
-    // Added property for shareName
+    private final ConcurrentLinkedQueue<Session> sessionPool = new ConcurrentLinkedQueue<>();
+    private final Map<Session, Long> lastUsedTimes = new ConcurrentHashMap<>();
+
+    private final NetworkAccountPOJO networkAccountPOJO;
     private final String shareName;
-    private NetworkAccountPOJO networkAccountPOJO;
-    private int initialSessions;
 
-    private SmbClientRepository(NetworkAccountPOJO networkAccountPOJO) {
-        this.networkAccountPOJO = networkAccountPOJO;
+    private SmbClientRepository(NetworkAccountPOJO pojo) {
+        this.networkAccountPOJO = pojo;
 
-        // Set the shareName from networkAccountPOJO
-        if (networkAccountPOJO.shareName != null && !networkAccountPOJO.shareName.isEmpty()) {
-            this.shareName = networkAccountPOJO.shareName;
-        } else {
-            // Set to default or root directory if shareName is not provided
-            this.shareName = "/"; // or set to a default share name if applicable
-        }
+        // ---- shareName MUST be a share, NOT "/" ----
+        String sn = (pojo.shareName == null) ? "" : pojo.shareName.trim();
+        this.shareName = sn;
 
-        // Build SmbConfig with custom dialects if smbVersion is specified
-        SmbConfig.Builder configBuilder = SmbConfig.builder()
-                .withTimeout(60, TimeUnit.SECONDS)
-                .withSoTimeout(60, TimeUnit.SECONDS);
-
-        if (networkAccountPOJO.smbVersion != null && !networkAccountPOJO.smbVersion.isEmpty()) {
-            // Parse the SMB version and set the dialects
-            List<SMB2Dialect> dialects = getDialectsFromVersion(networkAccountPOJO.smbVersion);
-            if (!dialects.isEmpty()) {
-                // Corrected method name and usage
-                configBuilder.withDialects(dialects.toArray(new SMB2Dialect[0]));
-            }
-        }
-
-        SmbConfig config = configBuilder.build();
-
+        SmbConfig config = buildConfigFromPojo(pojo);
         this.smbClient = new SMBClient(config);
-        this.sessionPool = new ConcurrentLinkedQueue<>();
-        this.inUseSessions = new ConcurrentLinkedQueue<>();
-        this.lastUsedTimes = new ConcurrentHashMap<>();
-        initializeSessions();
+
+        // pre-warm a couple of sessions for small ops
+        warmPool();
     }
 
-    public static synchronized SmbClientRepository getInstance(NetworkAccountPOJO networkAccountPOJO) {
-        if (instance == null) {
-            instance = new SmbClientRepository(networkAccountPOJO);
-        }
+    public static synchronized SmbClientRepository getInstance(NetworkAccountPOJO pojo) {
+        if (instance == null) instance = new SmbClientRepository(pojo);
         return instance;
     }
 
-    private List<SMB2Dialect> getDialectsFromVersion(String smbVersion) {
+    // ----------------------------------------------------------------------
+    // Public API you should use everywhere
+    // ----------------------------------------------------------------------
+
+    /** Handle for share + session. Always close() it (or call releaseShare). */
+    public static final class ShareHandle implements AutoCloseable {
+        public final Session session;
+        public final DiskShare share;
+
+        // pooled=false means dedicated session for streaming
+        private final boolean pooled;
+        private final SmbClientRepository repo;
+        private boolean closed;
+
+        private ShareHandle(SmbClientRepository repo, Session session, DiskShare share, boolean pooled) {
+            this.repo = repo;
+            this.session = session;
+            this.share = share;
+            this.pooled = pooled;
+        }
+
+        @Override
+        public void close() {
+            repo.releaseShare(this);
+        }
+    }
+
+    /**
+     * For SHORT operations: list/exists/mkdir/delete/rename etc.
+     * Uses pooled session and internally heals broken sockets.
+     */
+    public ShareHandle acquireShare() throws IOException {
+        ensureShareNameValid();
+
+        IOException last = null;
+        for (int attempt = 0; attempt < MAX_RETRIES; attempt++) {
+            Session s = null;
+            try {
+                s = getPooledSession();
+                s = validateSessionMaybeProbe(s);
+
+                DiskShare sh = (DiskShare) s.connectShare(shareName);
+                markUsed(s);
+                return new ShareHandle(this, s, sh, true);
+
+            } catch (Exception e) {
+                last = asIo(e, "acquireShare failed");
+                // pooled session is suspect, discard it
+                safeDisconnectSession(s);
+            }
+        }
+        throw last != null ? last : new IOException("acquireShare failed");
+    }
+
+    /**
+     * For STREAMING operations: InputStream/OutputStream.
+     * Always creates a FRESH session so the stream owns its socket.
+     */
+    public ShareHandle acquireShareForStreaming() throws IOException {
+        ensureShareNameValid();
+
+        IOException last = null;
+        for (int attempt = 0; attempt < MAX_RETRIES; attempt++) {
+            Session s = null;
+            try {
+                s = createFreshSession();
+                DiskShare sh = (DiskShare) s.connectShare(shareName);
+                markUsed(s);
+                return new ShareHandle(this, s, sh, false);
+            } catch (Exception e) {
+                last = asIo(e, "acquireShareForStreaming failed");
+                safeDisconnectSession(s);
+            }
+        }
+        throw last != null ? last : new IOException("acquireShareForStreaming failed");
+    }
+
+    /** Release handle. Prefer h.close() via try-with-resources. */
+    public void releaseShare(ShareHandle h) {
+        if (h == null || h.closed) return;
+        h.closed = true;
+
+        try { if (h.share != null) h.share.close(); } catch (Exception ignored) {}
+
+        if (h.pooled) {
+            // return session to pool if still connected
+            if (isSessionConnected(h.session) && sessionPool.size() < MAX_POOL_SIZE) {
+                sessionPool.offer(h.session);
+                markUsed(h.session);
+            } else {
+                safeDisconnectSession(h.session);
+            }
+        } else {
+            // streaming = always close session
+            safeDisconnectSession(h.session);
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // Optional: “connect test” for your login screen
+    // ----------------------------------------------------------------------
+
+    /** Cheap connection test (uses pooled acquire). */
+    public boolean testConnection() {
+        ShareHandle h = null;
+        try {
+            h = acquireShare();
+            // minimal call
+            return h.share.folderExists("");
+        } catch (Exception e) {
+            Timber.tag(TAG).w(e, "testConnection failed");
+            return false;
+        } finally {
+            if (h != null) h.close();
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // Shutdown
+    // ----------------------------------------------------------------------
+
+    public synchronized void shutdown() {
+        // close pooled sessions
+        Session s;
+        while ((s = sessionPool.poll()) != null) {
+            safeDisconnectSession(s);
+        }
+        lastUsedTimes.clear();
+
+        try { smbClient.close(); } catch (Exception ignored) {}
+        instance = null;
+    }
+
+    // ----------------------------------------------------------------------
+    // Internals
+    // ----------------------------------------------------------------------
+
+    private void ensureShareNameValid() throws IOException {
+        if (shareName == null || shareName.isEmpty() || "/".equals(shareName)) {
+            throw new IOException("Invalid shareName. Must be a real SMB share (e.g. 'Audit-I'), not '/'");
+        }
+    }
+
+    private void warmPool() {
+        int count = Math.min(DEFAULT_POOL_SIZE, MAX_POOL_SIZE);
+        for (int i = 0; i < count; i++) {
+            try {
+                Session s = createFreshSession();
+                sessionPool.offer(s);
+                markUsed(s);
+            } catch (Exception e) {
+                Timber.tag(TAG).w(e, "warmPool session %d failed", i);
+            }
+        }
+    }
+
+    private Session getPooledSession() throws IOException {
+        Session s = sessionPool.poll();
+        if (s != null) return s;
+        return createFreshSession();
+    }
+
+    private Session createFreshSession() throws IOException {
+        Connection c;
+        if (networkAccountPOJO.port > 0) c = smbClient.connect(networkAccountPOJO.host, networkAccountPOJO.port);
+        else c = smbClient.connect(networkAccountPOJO.host);
+
+        AuthenticationContext ac = getAuthenticationContext();
+        return c.authenticate(ac);
+    }
+
+    private AuthenticationContext getAuthenticationContext() {
+        if (networkAccountPOJO.anonymous) {
+            return AuthenticationContext.anonymous();
+        }
+        String domain = networkAccountPOJO.domain != null ? networkAccountPOJO.domain : "";
+        char[] pw = networkAccountPOJO.password != null ? networkAccountPOJO.password.toCharArray() : new char[0];
+        return new AuthenticationContext(networkAccountPOJO.user_name, pw, domain);
+    }
+
+    private boolean isSessionConnected(Session s) {
+        try {
+            return s != null && s.getConnection() != null && s.getConnection().isConnected();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private Session validateSessionMaybeProbe(Session s) throws IOException {
+        if (!isSessionConnected(s)) {
+            safeDisconnectSession(s);
+            return createFreshSession();
+        }
+
+        Long last = lastUsedTimes.get(s);
+        long now = System.currentTimeMillis();
+        boolean shouldProbe = (last == null) || (now - last > PROBE_IDLE_MS);
+        if (!shouldProbe) return s;
+
+        // Probe = connectShare + folderExists + close share.
+        // This catches half-dead sockets after idle/background/network change.
+        try (DiskShare sh = (DiskShare) s.connectShare(shareName)) {
+            sh.folderExists("");
+        } catch (Exception e) {
+            safeDisconnectSession(s);
+            return createFreshSession();
+        }
+
+        return s;
+    }
+
+    public boolean testSmbServerConnection() {
+        ShareHandle h = null;
+        try {
+            // Use non-streaming (pooled) if you have it; otherwise use streaming too.
+            // Prefer pooled:
+            h = acquireShare();  // if you kept acquireShare()
+            // If you removed acquireShare(), replace with:
+            // h = acquireShareForStreaming();
+
+            DiskShare share = h.share;
+
+            // Minimal probe that actually touches server
+            return share.folderExists("");   // root of the share
+        } catch (Exception e) {
+            Timber.tag(TAG).w(e, "SMB test connection failed");
+            return false;
+        } finally {
+            releaseShare(h);
+        }
+    }
+
+    private void markUsed(Session s) {
+        if (s != null) lastUsedTimes.put(s, System.currentTimeMillis());
+    }
+
+    private void safeDisconnectSession(Session s) {
+        if (s == null) return;
+        lastUsedTimes.remove(s);
+
+        try { s.close(); } catch (Exception ignored) {}
+        try {
+            Connection c = s.getConnection();
+            if (c != null) {
+                try { c.close(); } catch (Exception ignored) {}
+            }
+        } catch (Exception ignored) {}
+    }
+
+    private IOException asIo(Exception e, String msg) {
+        if (e instanceof IOException) return (IOException) e;
+
+        // keep the socket error visible
+        Throwable cause = e.getCause();
+        if (cause instanceof SocketException) {
+            return new IOException(msg + " (socket): " + cause.getMessage(), e);
+        }
+        return new IOException(msg, e);
+    }
+
+    // Your SMB version mapping, kept here
+    private static SmbConfig buildConfigFromPojo(NetworkAccountPOJO pojo) {
+        SmbConfig.Builder b = SmbConfig.builder()
+                .withTimeout(60, TimeUnit.SECONDS)
+                .withSoTimeout(60, TimeUnit.SECONDS);
+
+        if (pojo.smbVersion != null && !pojo.smbVersion.trim().isEmpty()) {
+            List<SMB2Dialect> dialects = getDialectsFromVersion(pojo.smbVersion.trim());
+            if (!dialects.isEmpty()) {
+                b.withDialects(dialects.toArray(new SMB2Dialect[0]));
+            }
+        }
+        return b.build();
+    }
+
+    private static List<SMB2Dialect> getDialectsFromVersion(String smbVersion) {
         List<SMB2Dialect> dialects = new ArrayList<>();
         switch (smbVersion) {
-            case "SMB1":
-                // SMB1 is not supported by smbj due to security issues
-                Timber.tag(TAG).w("SMB1 is not supported by SMBJ library");
-                break;
             case "SMB2":
                 dialects.add(SMB2Dialect.SMB_2_0_2);
                 dialects.add(SMB2Dialect.SMB_2_1);
@@ -110,286 +343,23 @@ public class SmbClientRepository {
                 dialects.add(SMB2Dialect.SMB_3_0_2);
                 dialects.add(SMB2Dialect.SMB_3_1_1);
                 break;
+            case "SMB1":
+                // SMBJ doesn’t support SMB1
+                break;
             default:
-                // Use default dialects
                 dialects.addAll(Arrays.asList(SMB2Dialect.values()));
                 break;
         }
         return dialects;
     }
 
-    private void initializeSessions() {
-        initialSessions = Math.min(MAX_IDLE_SESSIONS, 4);
-        // Initialize the first session
-        try {
-            Session session = createAndConnectSession();
-            sessionPool.offer(session);
-            lastUsedTimes.put(session, System.currentTimeMillis());
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to initialize the first SMB session.", e);
-        }
-
-        // Initialize additional sessions
-        for (int i = 1; i < initialSessions; i++) {
-            try {
-                Session session = createAndConnectSession();
-                sessionPool.offer(session);
-                lastUsedTimes.put(session, System.currentTimeMillis());
-            } catch (IOException e) {
-                Timber.tag(TAG).e("Failed to initialize SMB session %d: %s", i + 1, e.getMessage());
-                // Continue with available sessions
-            }
-        }
-
-        keepAliveScheduler.scheduleWithFixedDelay(this::sendKeepAlive, 30, 30, TimeUnit.SECONDS);
+    // Convenience for callers that need sanitized paths
+    public static String stripLeadingSlash(String p) {
+        if (p == null) return "";
+        return p.startsWith("/") ? p.substring(1) : p;
     }
 
-    public synchronized Session getSession() throws IOException {
-        int attempt = 0;
-        while (attempt < MAX_RETRIES) {
-            try {
-                Session session = getOrCreateSession();
-                session = validateAndPrepareSession(session);
-                return session;
-            } catch (IOException e) {
-                Timber.tag(TAG).w("SMB connection attempt %d failed: %s", attempt + 1, e.getMessage());
-                if (attempt == MAX_RETRIES - 1) {
-                    throw e; // Rethrow on last attempt
-                }
-                try {
-                    Thread.sleep(RETRY_DELAY_MS);
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    throw new IOException("Interrupted while retrying SMB connection", ie);
-                }
-            } finally {
-                attempt++; // Increment attempt after each try-catch block
-            }
-        }
-        throw new IOException("Failed to get a valid SMB session after " + MAX_RETRIES + " attempts");
-    }
-
-    private Session getOrCreateSession() throws IOException {
-        Session session = sessionPool.poll();
-        if (session == null) {
-            return createAndConnectSession();
-        }
-        return session;
-    }
-
-    private Session validateAndPrepareSession(Session session) throws IOException {
-        if (!isSessionConnected(session)) {
-            session = reconnectSession(session);
-        }
-        lastUsedTimes.put(session, System.currentTimeMillis());
-        inUseSessions.offer(session);
-        return session;
-    }
-
-    public boolean isSessionConnected(Session session) {
-        return session != null && session.getConnection() != null && session.getConnection().isConnected();
-    }
-
-    private Session createAndConnectSession() throws IOException {
-        Connection connection;
-        if (networkAccountPOJO.port > 0) {
-            connection = smbClient.connect(networkAccountPOJO.host, networkAccountPOJO.port);
-        } else {
-            connection = smbClient.connect(networkAccountPOJO.host);
-        }
-        AuthenticationContext ac = getAuthenticationContext();
-        return connection.authenticate(ac);
-    }
-
-    private Session reconnectSession(Session session) throws IOException {
-        disconnectAndCloseSession(session);
-        return createAndConnectSession();
-    }
-
-    private AuthenticationContext getAuthenticationContext() {
-        if (networkAccountPOJO.anonymous) {
-            return AuthenticationContext.anonymous();
-        } else {
-            String domain = networkAccountPOJO.domain != null ? networkAccountPOJO.domain : "";
-            char[] passwordChars = networkAccountPOJO.password != null ? networkAccountPOJO.password.toCharArray() : new char[0];
-            return new AuthenticationContext(networkAccountPOJO.user_name, passwordChars, domain);
-        }
-    }
-
-    private void disconnectAndCloseSession(Session session) {
-        try {
-            if (session != null) {
-                Connection connection = session.getConnection();
-                if (connection != null && connection.isConnected()) {
-                    connection.close();
-                }
-            }
-        } catch (Exception e) {
-            Timber.tag(TAG).e("Error disconnecting SMB session: %s", e.getMessage());
-        } finally {
-            lastUsedTimes.remove(session);
-        }
-    }
-
-    public synchronized void releaseSession(Session session) {
-        inUseSessions.remove(session);
-        if (sessionPool.size() < initialSessions) {
-            sessionPool.offer(session);
-        } else {
-            disconnectAndCloseSession(session);
-        }
-    }
-
-    private void sendKeepAlive() {
-        for (Session session : sessionPool) {
-            if (inUseSessions.contains(session)) {
-                // Skip sessions that are currently in use
-                continue;
-            }
-            try {
-                if (isSessionConnected(session)) {
-                    // Perform a minimal operation to keep the session alive
-                    if (shareName != null && !shareName.isEmpty()) {
-                        try (DiskShare share = (DiskShare) session.connectShare(shareName)) {
-                            // Perform a minimal operation, such as checking if the root folder exists
-                            share.folderExists("");
-                            Timber.tag(TAG).d("Performed keep-alive operation on session: %s", session);
-                        } catch (Exception e) {
-                            Timber.tag(TAG).e("Failed to perform keep-alive operation: %s", e.getMessage());
-                            disconnectAndCloseSession(session);
-                            sessionPool.remove(session);
-                        }
-                    } else {
-                        // If shareName is not provided, we can perform a minimal operation that doesn't require a share
-                        // For example, we can attempt to list the shares available on the server
-                        Timber.tag(TAG).d("No shareName provided, skipping keep-alive operation that requires a share");
-                    }
-                }
-            } catch (Exception e) {
-                Timber.tag(TAG).e("Failed to send keep-alive: %s", e.getMessage());
-                disconnectAndCloseSession(session);
-                sessionPool.remove(session); // Remove invalid session from pool
-            }
-        }
-    }
-
-    public void shutdown() {
-        Timber.tag(TAG).d("Shutting down SMB client repository");
-        keepAliveScheduler.shutdown();
-        try {
-            if (!keepAliveScheduler.awaitTermination(5, TimeUnit.SECONDS)) {
-                keepAliveScheduler.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            keepAliveScheduler.shutdownNow();
-        }
-
-        // Perform necessary cleanup similar to FtpClientRepository
-        // For example, remove SMB entries from storage_dir, etc.
-
-        RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
-        Iterator<FilePOJO> iterator = repositoryClass.storage_dir.iterator();
-        while (iterator.hasNext()) {
-            if (iterator.next().getFileObjectType() == FileObjectType.SMB_TYPE) {
-                iterator.remove();
-            }
-        }
-
-        Iterator<FilePOJO> iterator1 = MainActivity.RECENT.iterator();
-        while (iterator1.hasNext()) {
-            if (iterator1.next().getFileObjectType() == FileObjectType.SMB_TYPE) {
-                iterator1.remove();
-            }
-        }
-
-        Iterator<FilePOJO> iterator2 = FileSelectorActivity.RECENT.iterator();
-        while (iterator2.hasNext()) {
-            if (iterator2.next().getFileObjectType() == FileObjectType.SMB_TYPE) {
-                iterator2.remove();
-            }
-        }
-
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("fileObjectType", FileObjectType.SMB_TYPE);
-        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION, LocalBroadcastManager.getInstance(App.getAppContext()), null);
-        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT, LocalBroadcastManager.getInstance(App.getAppContext()), bundle);
-        FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), FileObjectType.SMB_TYPE);
-        Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.SMB_CACHE_DIR);
-
-        for (Session session : sessionPool) {
-            disconnectAndCloseSession(session);
-        }
-        for (Session session : inUseSessions) {
-            disconnectAndCloseSession(session);
-        }
-        sessionPool.clear();
-        inUseSessions.clear();
-        lastUsedTimes.clear();
-        networkAccountPOJO = null;
-        NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO = null;
-        instance = null;
-    }
-
-    public boolean testSmbServerConnection() {
-        Session session = null;
-        try {
-            session = getSession();
-            if (isSessionConnected(session)) {
-                if (shareName != null && !shareName.isEmpty()) {
-                    try (DiskShare share = (DiskShare) session.connectShare(shareName)) {
-                        // Try to access root directory
-                        return share.folderExists("");
-                    } catch (SMBApiException e) {
-                        Timber.tag(TAG).e("Failed to access share: %s", e.getMessage());
-                        return false;
-                    }
-                } else {
-                    // If shareName is not provided, test the connection by listing available shares
-                    Timber.tag(TAG).d("No shareName provided, testing connection by listing shares");
-                    try {
-                        List<String> shares = listShares(session);
-                        return !shares.isEmpty();
-                    } catch (Exception e) {
-                        Timber.tag(TAG).e("Failed to list shares: %s", e.getMessage());
-                        return false;
-                    }
-                }
-            } else {
-                return false;
-            }
-        } catch (IOException e) {
-            Timber.tag(TAG).e("Failed to test SMB connection: %s", e.getMessage());
-            return false;
-        } finally {
-            if (session != null) {
-                releaseSession(session);
-            }
-        }
-    }
-
-    public void cleanIdleSessions() {
-        long currentTime = System.currentTimeMillis();
-        Iterator<Session> iterator = sessionPool.iterator();
-        while (iterator.hasNext()) {
-            Session session = iterator.next();
-            Long lastUsedTime = lastUsedTimes.get(session);
-            if (lastUsedTime == null || (currentTime - lastUsedTime > IDLE_TIMEOUT)) {
-                iterator.remove();
-                disconnectAndCloseSession(session);
-            }
-        }
-    }
-
-    // Added method to get shareName
     public String getShareName() {
         return shareName;
-    }
-
-    // Placeholder method to list available shares
-    public List<String> listShares(Session session) throws IOException {
-        // SMBJ doesn't provide a direct method to list shares.
-        // You might need to use another library like JCIFS or implement NetShareEnum.
-        // For now, we'll return an empty list.
-        return new ArrayList<>();
     }
 }
