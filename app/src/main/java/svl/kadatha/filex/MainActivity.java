@@ -1745,7 +1745,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             // Handle exception
         }
 
-        // The rest of your existing code
+
         boolean usb_path_added = false;
         for (FilePOJO filePOJO : repositoryClass.storage_dir) {
             if (filePOJO.getFileObjectType() == FileObjectType.USB_TYPE
@@ -2243,6 +2243,22 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             } else if (fileObjectType == FileObjectType.ROOT_TYPE) {
                 p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.device_icon));
                 p1.textView_storage_dir.setText(R.string.root_directory);
+            }
+            else if (fileObjectType == FileObjectType.GOOGLE_DRIVE_TYPE) {
+                p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.cloud_icon));
+                p1.textView_storage_dir.setText(DetailFragment.GOOGLE_DRIVE_FILE_PREFIX + filePOJO.getName());
+            }
+            else if (fileObjectType == FileObjectType.ONE_DRIVE_TYPE) {
+                p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.cloud_icon));
+                p1.textView_storage_dir.setText(DetailFragment.ONE_DRIVE_FILE_PREFIX + filePOJO.getName());
+            }
+            else if (fileObjectType == FileObjectType.DROP_BOX_TYPE) {
+                p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.cloud_icon));
+                p1.textView_storage_dir.setText(DetailFragment.DROP_BOX_FILE_PREFIX + filePOJO.getName());
+            }
+            else if (fileObjectType == FileObjectType.YANDEX_TYPE) {
+                p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.cloud_icon));
+                p1.textView_storage_dir.setText(DetailFragment.YANDEX_FILE_PREFIX + filePOJO.getName());
             }
         }
 
