@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -40,11 +41,11 @@ import svl.kadatha.filex.Global;
 import svl.kadatha.filex.IndexedLinkedHashMap;
 import svl.kadatha.filex.PermissionsUtil;
 import svl.kadatha.filex.R;
-import svl.kadatha.filex.network.NetworkAccountsDetailsDialog;
+import svl.kadatha.filex.network.DeleteNetworkAccountAlertDialog;
 
 public class CloudAuthActivity extends BaseActivity {
 
-    private final List<CloudAccountPOJO> cloudAccountPOJO_selected_for_delete = new ArrayList<>();
+    private List<CloudAccountPOJO> cloudAccountPOJO_selected_for_delete = new ArrayList<>();
     public boolean clear_cache;
     public CloudAuthActivityViewModel viewModel;
     public ActivityResultLauncher<Intent> mediaFireAuthLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -69,6 +70,7 @@ public class CloudAuthActivity extends BaseActivity {
     private Context context;
     private CloudAccountPOJO connected_cloud_account_pojo;
     private CloudAccountPojoListAdapter cloudAccountPojoListAdapter;
+    private final static String CLOUD_ACCOUNT_DELETE_REQUEST_CODE = "cloud_account_delete_request_code";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,11 +94,19 @@ public class CloudAuthActivity extends BaseActivity {
         disconnect_btn.setOnClickListener(bottomToolbarClickListener);
         edit_btn.setOnClickListener(bottomToolbarClickListener);
         progress_bar = findViewById(R.id.activity_cloud_list_progressbar);
+
+        cloud_number_text_view = findViewById(R.id.activity_cloud_details_number);
+        empty_cloud_account_list_tv = findViewById(R.id.activity_cloud_details_empty);
+        cloud_account_list_recyclerview = findViewById(R.id.activity_cloud_account_recyclerview);
         permissionsUtil = new PermissionsUtil(context, (AppCompatActivity) context);
         viewModel = new ViewModelProvider(this).get(CloudAuthActivityViewModel.class);
         Intent intent = getIntent();
         on_intent(intent, savedInstanceState);
-        viewModel.fetchCloudAccountPojoList(fileObjectType.toString());
+        viewModel.fetchCloudAccountPojoList(fileObjectType);
+
+        int size = viewModel.mselecteditems.size();
+        cloud_number_text_view.setText(size + "/" + num_all_network_account);
+        enable_disable_buttons(size != 0, size);
 
         viewModel.asyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
             @Override
@@ -152,6 +162,39 @@ public class CloudAuthActivity extends BaseActivity {
             }
         });
 
+        viewModel.deleteAsyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
+            @Override
+            public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+                if (asyncTaskStatus == AsyncTaskStatus.STARTED) {
+                    progress_bar.setVisibility(View.VISIBLE);
+                } else if (asyncTaskStatus == AsyncTaskStatus.COMPLETED) {
+                    progress_bar.setVisibility(View.GONE);
+                    num_all_network_account = viewModel.cloudAccountPOJOList.size();
+                    if (num_all_network_account == 0) {
+                        cloud_account_list_recyclerview.setVisibility(View.GONE);
+                        empty_cloud_account_list_tv.setVisibility(View.VISIBLE);
+                    } else {
+                        cloud_account_list_recyclerview.setVisibility(View.VISIBLE);
+                        empty_cloud_account_list_tv.setVisibility(View.GONE);
+                    }
+                    clear_selection();
+                    viewModel.deleteAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+                }
+            }
+        });
+
+        getSupportFragmentManager().setFragmentResultListener(CLOUD_ACCOUNT_DELETE_REQUEST_CODE, this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                if (requestKey.equals(CLOUD_ACCOUNT_DELETE_REQUEST_CODE)) {
+                    progress_bar.setVisibility(View.VISIBLE);
+                    cloudAccountPOJO_selected_for_delete = new ArrayList<>();
+                    cloudAccountPOJO_selected_for_delete.addAll(viewModel.mselecteditems.values());
+                    viewModel.deleteCloudAccountPojo(cloudAccountPOJO_selected_for_delete);
+                }
+            }
+        });
+
         TextView heading = findViewById(R.id.activity_cloud_list_heading);
         if (fileObjectType.equals(FileObjectType.GOOGLE_DRIVE_TYPE)) {
             heading.setText(R.string.google_drive);
@@ -160,13 +203,11 @@ public class CloudAuthActivity extends BaseActivity {
         } else if (fileObjectType.equals(FileObjectType.YANDEX_TYPE)) {
             heading.setText(R.string.yandex);
         }
-        cloud_number_text_view = findViewById(R.id.activity_cloud_details_number);
-        empty_cloud_account_list_tv = findViewById(R.id.activity_cloud_details_empty);
-        cloud_account_list_recyclerview = findViewById(R.id.activity_cloud_account_recyclerview);
         cloud_account_list_recyclerview.setLayoutManager(new LinearLayoutManager(context));
         cloud_account_list_recyclerview.addItemDecoration(Global.DIVIDERITEMDECORATION);
         cloud_account_list_recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
             final int threshold = 5;
+
             public void onScrolled(RecyclerView rv, int dx, int dy) {
                 super.onScrolled(rv, dx, dy);
                 if (scroll_distance > threshold && toolbar_visible) {
@@ -193,6 +234,7 @@ public class CloudAuthActivity extends BaseActivity {
             }
         });
     }
+
     private void on_intent(Intent intent, Bundle savedInstanceState) {
         if (intent != null) {
             fileObjectType = (FileObjectType) intent.getSerializableExtra("fileObjectType");
@@ -313,16 +355,13 @@ public class CloudAuthActivity extends BaseActivity {
     }
 
     private void handleAccountClick(@NonNull CloudAccountPOJO account) {
-
         if (!permissionsUtil.isNetworkConnected()) {
             Global.print(context, getString(R.string.not_connected_to_network));
             return;
         }
 
         progress_bar.setVisibility(View.VISIBLE);
-
         CloudAuthProvider provider; // optional if already set
-        // Better: always create/set the right provider for this fileObjectType
         viewModel.setAuthProvider(createProvider(fileObjectType));
         provider = viewModel.authProvider;
 
@@ -344,13 +383,13 @@ public class CloudAuthActivity extends BaseActivity {
                 @Override
                 public void onError(Exception e) {
                     // refresh failed -> OAuth again (reuse your activity method)
-                    authenticate(); // <-- your existing method
+                    authenticate();
                 }
             });
 
         } else {
             // no refresh path -> OAuth again
-            authenticate(); // <-- your existing method
+            authenticate();
         }
     }
 
@@ -469,23 +508,20 @@ public class CloudAuthActivity extends BaseActivity {
             if (id == R.id.toolbar_btn_1) {
                 clear_selection();
                 authenticate();
-//                NetworkAccountDetailsInputDialog networkAccountDetailsInputDialog = NetworkAccountDetailsInputDialog.getInstance(NETWORK_ACCOUNT_INPUT_DETAILS_REQUEST_CODE, viewModel.type, null);
-//                networkAccountDetailsInputDialog.show(getFragmentManager(), "");
-
             } else if (id == R.id.toolbar_btn_2) {
                 int s = viewModel.mselecteditems.size();
                 if (s > 0) {
                     CloudAccountPOJO cloudAccountPOJO = viewModel.mselecteditems.getValueAtIndex(0);
                     String display = cloudAccountPOJO.displayName;
-//                    DeleteNetworkAccountAlertDialog deleteNetworkAccountAlertDialog = DeleteNetworkAccountAlertDialog.getInstance(NETWORK_ACCOUNT_DELETE_REQUEST_CODE, (display == null || display.isEmpty()) ? networkAccountPOJO.host : display, s);
-//                    deleteNetworkAccountAlertDialog.show(getParentFragmentManager(), "");
+                    DeleteNetworkAccountAlertDialog deleteNetworkAccountAlertDialog = DeleteNetworkAccountAlertDialog.getInstance(CLOUD_ACCOUNT_DELETE_REQUEST_CODE, (display == null || display.isEmpty()) ? cloudAccountPOJO.userId : display, s);
+                    deleteNetworkAccountAlertDialog.show(getSupportFragmentManager(), "");
                 }
             } else if (id == R.id.toolbar_btn_3) {
                 if (connected_cloud_account_pojo == null) {
                     return;
                 }
                 progress_bar.setVisibility(View.VISIBLE);
-                //viewModel.disconnectNetworkConnection();
+                viewModel.disconnectCloudConnection();
             } else if (id == R.id.toolbar_btn_4) {
                 int s = viewModel.mselecteditems.size();
                 if (s == 1) {

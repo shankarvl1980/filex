@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -21,7 +22,14 @@ import svl.kadatha.filex.Global;
 import svl.kadatha.filex.IndexedLinkedHashMap;
 import svl.kadatha.filex.MakeFilePOJOUtil;
 import svl.kadatha.filex.MyExecutorService;
+import svl.kadatha.filex.R;
 import svl.kadatha.filex.RepositoryClass;
+import svl.kadatha.filex.network.FtpClientRepository;
+import svl.kadatha.filex.network.NetworkAccountDetailsViewModel;
+import svl.kadatha.filex.network.NetworkAccountsDetailsDialog;
+import svl.kadatha.filex.network.SftpChannelRepository;
+import svl.kadatha.filex.network.SmbClientRepository;
+import svl.kadatha.filex.network.WebDavClientRepository;
 
 public class CloudAuthActivityViewModel extends AndroidViewModel {
     public static String GOOGLE_DRIVE_ACCESS_TOKEN;
@@ -37,6 +45,7 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
     public final MutableLiveData<AsyncTaskStatus> deleteAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public MutableLiveData<AsyncTaskStatus> cloudAccountConnectionAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public MutableLiveData<AsyncTaskStatus> cloudAccountStorageDirFillAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+    public final MutableLiveData<AsyncTaskStatus> disconnectCloudConnectionAsyncTaskStatus = new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     private CloudAccountPOJO cloudAccount;
     private boolean isCancelled;
     private Future<?> future1;
@@ -112,16 +121,17 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
         this.authProvider = provider;
     }
 
-    public synchronized void fetchCloudAccountPojoList(String type) {
+    public synchronized void fetchCloudAccountPojoList(FileObjectType fileObjectType) {
         if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
             return;
         }
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        this.fileObjectType = fileObjectType;
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future1 = executorService.submit(new Runnable() {
             @Override
             public void run() {
-                cloudAccountPOJOList = cloudAccountsDatabaseHelper.getCloudAccountList(type);
+                cloudAccountPOJOList = cloudAccountsDatabaseHelper.getCloudAccountList(fileObjectType.toString());
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
@@ -206,8 +216,9 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
             return;
         }
         cloudAccountStorageDirFillAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        connected=false;
         ExecutorService executorService = MyExecutorService.getExecutorService();
-        executorService.submit(new Runnable() {
+        future4=executorService.submit(new Runnable() {
             @Override
             public void run() {
                 String type = cloudAccountPOJO.type;
@@ -222,7 +233,33 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
                 }
 
                 onCloudConnection();
+                connected=true;
                 cloudAccountStorageDirFillAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+            }
+        });
+    }
+
+    public synchronized void disconnectCloudConnection() {
+        if (disconnectCloudConnectionAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
+        disconnectCloudConnectionAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future9 = executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                authProvider.logout(new CloudAuthProvider.AuthCallback() {
+                    @Override
+                    public void onSuccess(CloudAccountPOJO account) {
+                        NetworkAccountDetailsViewModel.clearNetworkFileObjectType(fileObjectType);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                            Global.print_background_thread(App.getAppContext(),App.getAppContext().getString(R.string.error_while_disconnecting_from_cloud));
+                    }
+                });
+                disconnectCloudConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
@@ -243,5 +280,4 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
     public void saveAccount(@NonNull CloudAccountPOJO account) {
         cloudAccountsDatabaseHelper.updateOrInsert(account.type, account.userId, account);
     }
-
 }

@@ -56,10 +56,6 @@ public class SmbClientRepository {
         return instance;
     }
 
-    // ----------------------------------------------------------------------
-    // Public API you should use everywhere
-    // ----------------------------------------------------------------------
-
     /** Handle for share + session. Always close() it (or call releaseShare). */
     public static final class ShareHandle implements AutoCloseable {
         public final Session session;
@@ -154,10 +150,6 @@ public class SmbClientRepository {
         }
     }
 
-    // ----------------------------------------------------------------------
-    // Optional: “connect test” for your login screen
-    // ----------------------------------------------------------------------
-
     /** Cheap connection test (uses pooled acquire). */
     public boolean testConnection() {
         ShareHandle h = null;
@@ -173,10 +165,6 @@ public class SmbClientRepository {
         }
     }
 
-    // ----------------------------------------------------------------------
-    // Shutdown
-    // ----------------------------------------------------------------------
-
     public synchronized void shutdown() {
         // close pooled sessions
         Session s;
@@ -188,10 +176,6 @@ public class SmbClientRepository {
         try { smbClient.close(); } catch (Exception ignored) {}
         instance = null;
     }
-
-    // ----------------------------------------------------------------------
-    // Internals
-    // ----------------------------------------------------------------------
 
     private void ensureShareNameValid() throws IOException {
         if (shareName == null || shareName.isEmpty() || "/".equals(shareName)) {

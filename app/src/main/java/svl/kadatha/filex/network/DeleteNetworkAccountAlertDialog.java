@@ -23,17 +23,17 @@ import svl.kadatha.filex.R;
 public class DeleteNetworkAccountAlertDialog extends DialogFragment {
 
     private Context context;
-    private String ftp_display;
-    private int ftp_selected_size;
+    private String network_display;
+    private int network_selected_size;
     private String request_code;
     private TextView textView;
 
-    public static DeleteNetworkAccountAlertDialog getInstance(String request_code, String ftp_display, int ftp_selected_size) {
+    public static DeleteNetworkAccountAlertDialog getInstance(String request_code, String network_display, int network_selected_size) {
         DeleteNetworkAccountAlertDialog deleteNetworkAccountAlertDialog = new DeleteNetworkAccountAlertDialog();
         Bundle bundle = new Bundle();
         bundle.putString("request_code", request_code);
-        bundle.putString("ftp_display", ftp_display);
-        bundle.putInt("ftp_selected_size", ftp_selected_size);
+        bundle.putString("network_display", network_display);
+        bundle.putInt("network_selected_size", network_selected_size);
         deleteNetworkAccountAlertDialog.setArguments(bundle);
         return deleteNetworkAccountAlertDialog;
     }
@@ -52,8 +52,8 @@ public class DeleteNetworkAccountAlertDialog extends DialogFragment {
 
         if (bundle != null) {
             request_code = bundle.getString("request_code");
-            ftp_display = bundle.getString("ftp_display");
-            ftp_selected_size = bundle.getInt("ftp_selected_size");
+            network_display = bundle.getString("network_display");
+            network_selected_size = bundle.getInt("network_selected_size");
         }
     }
 
@@ -66,10 +66,10 @@ public class DeleteNetworkAccountAlertDialog extends DialogFragment {
         TextView size_tv = v.findViewById(R.id.dialog_fragment_rename_delete_total_size);
         number_tv.setVisibility(View.GONE);
         size_tv.setVisibility(View.GONE);
-        if (ftp_selected_size == 1) {
-            dialog_message_textview.setText(getString(R.string.are_you_sure_to_delete_ftp_details) + " '" + ftp_display + "'");
+        if (network_selected_size == 1) {
+            dialog_message_textview.setText(getString(R.string.are_you_sure_to_delete_network_details) + " '" + network_display + "'");
         } else {
-            dialog_message_textview.setText(getString(R.string.are_you_sure_to_delete_ftp_details) + " " + ftp_selected_size + " " + getString(R.string.ftp_server_details));
+            dialog_message_textview.setText(getString(R.string.are_you_sure_to_delete_network_details) + " " + network_selected_size + " " + getString(R.string.network_server_details));
         }
 
         EditText new_file_name_edittext = v.findViewById(R.id.dialog_fragment_rename_delete_newfilename);

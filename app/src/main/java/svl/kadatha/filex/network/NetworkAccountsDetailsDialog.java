@@ -1,6 +1,8 @@
 package svl.kadatha.filex.network;
 
 import android.content.Context;
+import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -415,8 +418,12 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
     public void onResume() {
         super.onResume();
         Window window = getDialog().getWindow();
-        window.setLayout(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.MATCH_PARENT);
-        window.setBackgroundDrawable(new ColorDrawable(R.attr.dialog_recyclerview_background));
+        if (Global.ORIENTATION == Configuration.ORIENTATION_LANDSCAPE) {
+            window.setLayout(Global.DIALOG_WIDTH, Global.DIALOG_WIDTH);
+        } else {
+            window.setLayout(Global.DIALOG_WIDTH, Global.DIALOG_HEIGHT);
+        }
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
 
     private void initiateCreateFragmentTransactions() {

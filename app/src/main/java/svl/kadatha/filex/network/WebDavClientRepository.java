@@ -157,32 +157,6 @@ public class WebDavClientRepository {
 
     public void shutdown() {
         Timber.tag(TAG).d("Shutting down WebDAV client repository");
-
-        RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
-        Iterator<FilePOJO> iterator = repositoryClass.storage_dir.iterator();
-        while (iterator.hasNext()) {
-            if (iterator.next().getFileObjectType() == FileObjectType.WEBDAV_TYPE) iterator.remove();
-        }
-
-        Iterator<FilePOJO> iterator1 = MainActivity.RECENT.iterator();
-        while (iterator1.hasNext()) {
-            if (iterator1.next().getFileObjectType() == FileObjectType.WEBDAV_TYPE) iterator1.remove();
-        }
-
-        Iterator<FilePOJO> iterator2 = FileSelectorActivity.RECENT.iterator();
-        while (iterator2.hasNext()) {
-            if (iterator2.next().getFileObjectType() == FileObjectType.WEBDAV_TYPE) iterator2.remove();
-        }
-
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("fileObjectType", FileObjectType.WEBDAV_TYPE);
-        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION,
-                LocalBroadcastManager.getInstance(App.getAppContext()), null);
-        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT,
-                LocalBroadcastManager.getInstance(App.getAppContext()), bundle);
-        FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), FileObjectType.WEBDAV_TYPE);
-        Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.WEBDAV_CACHE_DIR);
-
         networkAccountPOJO = null;
         NetworkAccountDetailsViewModel.WEBDAV_NETWORK_ACCOUNT_POJO = null;
         instance = null;

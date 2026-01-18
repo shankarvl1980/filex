@@ -6,22 +6,29 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.hierynomus.smbj.session.Session;
 import com.jcraft.jsch.ChannelSftp;
 import com.thegrizzlylabs.sardineandroid.Sardine;
 
 import org.apache.commons.net.ftp.FTPClient;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+import svl.kadatha.filex.App;
 import svl.kadatha.filex.AsyncTaskStatus;
 import svl.kadatha.filex.FileObjectType;
+import svl.kadatha.filex.FilePOJO;
+import svl.kadatha.filex.FilePOJOUtil;
+import svl.kadatha.filex.FileSelectorActivity;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.IndexedLinkedHashMap;
+import svl.kadatha.filex.MainActivity;
 import svl.kadatha.filex.MakeFilePOJOUtil;
 import svl.kadatha.filex.MyExecutorService;
 import svl.kadatha.filex.R;
@@ -473,16 +480,19 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                     case NetworkAccountsDetailsDialog.FTP:
                         FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(networkAccountPOJO);
                         ftpClientRepository.shutdown();
+                        clearNetworkFileObjectType(FileObjectType.FTP_TYPE);
                         break;
                     case NetworkAccountsDetailsDialog.SFTP:
                         SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(networkAccountPOJO);
                         sftpChannelRepository.shutdown();
+                        clearNetworkFileObjectType(FileObjectType.SFTP_TYPE);
                         break;
                     case NetworkAccountsDetailsDialog.WebDAV:
                         WebDavClientRepository webDavClientRepository;
                         try {
                             webDavClientRepository = WebDavClientRepository.getInstance(networkAccountPOJO);
                             webDavClientRepository.shutdown();
+                            clearNetworkFileObjectType(FileObjectType.WEBDAV_TYPE);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
@@ -490,10 +500,80 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                     case NetworkAccountsDetailsDialog.SMB:
                         SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(networkAccountPOJO);
                         smbClientRepository.shutdown();
+                        clearNetworkFileObjectType(FileObjectType.SMB_TYPE);
                         break;
                 }
                 disconnectNetworkConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
+
+    public static void clearNetworkFileObjectType(@NonNull FileObjectType type) {
+
+        // Remove from storage_dir
+        RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
+        Iterator<FilePOJO> iterator = repositoryClass.storage_dir.iterator();
+        while (iterator.hasNext()) {
+            if (iterator.next().getFileObjectType() == type) {
+                iterator.remove();
+            }
+        }
+
+        // Remove from MainActivity RECENT
+        Iterator<FilePOJO> iterator1 = MainActivity.RECENT.iterator();
+        while (iterator1.hasNext()) {
+            if (iterator1.next().getFileObjectType() == type) {
+                iterator1.remove();
+            }
+        }
+
+        // Remove from FileSelectorActivity RECENT
+        Iterator<FilePOJO> iterator2 = FileSelectorActivity.RECENT.iterator();
+        while (iterator2.hasNext()) {
+            if (iterator2.next().getFileObjectType() == type) {
+                iterator2.remove();
+            }
+        }
+
+        // Broadcast refresh + popup action
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("fileObjectType", type);
+
+        LocalBroadcastManager lbm =
+                LocalBroadcastManager.getInstance(App.getAppContext());
+
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION, lbm, null);
+
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT, lbm, bundle);
+
+        // Cleanup child hashmap
+        FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), type);
+
+        // Delete cache dir based on type (includes SMB)
+        switch (type) {
+            case FTP_TYPE:
+                Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.FTP_CACHE_DIR);
+                break;
+
+            case SFTP_TYPE:
+                Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.SFTP_CACHE_DIR);
+                break;
+
+            case WEBDAV_TYPE:
+                Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.WEBDAV_CACHE_DIR);
+                break;
+
+            case SMB_TYPE:
+                Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.SMB_CACHE_DIR);
+                break;
+
+            default:
+                // No-op: unknown/unsupported type
+                break;
+        }
+         if(Global.CLOUD_FILE_OBJECT_TYPES.contains(type)){
+             Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.CLOUD_CACHE_DIR);
+         }
+    }
 }
+
