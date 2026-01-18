@@ -29,7 +29,7 @@ import svl.kadatha.filex.RepositoryClass;
 import timber.log.Timber;
 
 public class SftpChannelRepository {
-    private static final int MAX_IDLE_CONNECTIONS = 4;
+    private static final int MAX_IDLE_CONNECTIONS = 5;
     private static final long IDLE_TIMEOUT = 180000; // 3 minutes
     private static final String TAG = "Sftp-channel";
     private static SftpChannelRepository instance;
