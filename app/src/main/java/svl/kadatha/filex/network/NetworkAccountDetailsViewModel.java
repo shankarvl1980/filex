@@ -126,16 +126,56 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         return isCancelled;
     }
 
+    public static final String TYPE_ALL = "all";
+
+    private void reloadList() {
+        if (TYPE_ALL.equals(type)) {
+            networkAccountPOJOList = networkAccountsDatabaseHelper.getAllNetworkAccountPOJOList();
+        } else {
+            networkAccountPOJOList = networkAccountsDatabaseHelper.getNetworkAccountPOJOList(type);
+        }
+    }
+
+    // "connected" check for a row (per type)
+    public static boolean isPojoConnected(NetworkAccountPOJO pojo) {
+        if (pojo == null) return false;
+        switch (pojo.type) {
+            case NetworkAccountsDetailsDialog.FTP:
+                return FTP_NETWORK_ACCOUNT_POJO != null
+                        && sameKey(pojo, FTP_NETWORK_ACCOUNT_POJO);
+            case NetworkAccountsDetailsDialog.SFTP:
+                return SFTP_NETWORK_ACCOUNT_POJO != null
+                        && sameKey(pojo, SFTP_NETWORK_ACCOUNT_POJO);
+            case NetworkAccountsDetailsDialog.WebDAV:
+                return WEBDAV_NETWORK_ACCOUNT_POJO != null
+                        && sameKey(pojo, WEBDAV_NETWORK_ACCOUNT_POJO);
+            case NetworkAccountsDetailsDialog.SMB:
+                return SMB_NETWORK_ACCOUNT_POJO != null
+                        && sameKey(pojo, SMB_NETWORK_ACCOUNT_POJO);
+            default:
+                return false;
+        }
+    }
+
+    private static boolean sameKey(NetworkAccountPOJO a, NetworkAccountPOJO b) {
+        return a.host.equals(b.host)
+                && a.port == b.port
+                && a.user_name.equals(b.user_name)
+                && a.type.equals(b.type);
+    }
+
     public synchronized void fetchNetworkAccountPojoList(String type) {
         if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
             return;
         }
+        this.type = (type == null ? TYPE_ALL : type);
+
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future1 = executorService.submit(new Runnable() {
             @Override
             public void run() {
-                networkAccountPOJOList = networkAccountsDatabaseHelper.getNetworkAccountPOJOList(type);
+                reloadList();
                 asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
@@ -154,7 +194,9 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                 int size = networkAccountPOJOS_for_delete.size();
                 for (int i = 0; i < size; ++i) {
                     NetworkAccountPOJO networkAccountPOJO = networkAccountPOJOS_for_delete.get(i);
-                    int j = networkAccountsDatabaseHelper.delete(networkAccountPOJO.host, networkAccountPOJO.port, networkAccountPOJO.user_name, type);
+                    String t = TYPE_ALL.equals(type) ? networkAccountPOJO.type : type;
+                    int j = networkAccountsDatabaseHelper.delete(networkAccountPOJO.host, networkAccountPOJO.port, networkAccountPOJO.user_name, t);
+
                     if (j > 0) {
                         networkAccountPOJOList.remove(networkAccountPOJO);
                     }
@@ -173,15 +215,20 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         future3 = executorService.submit(new Runnable() {
             @Override
             public void run() {
-                type = networkAccountPOJO.type;
-                if (type.equals(NetworkAccountsDetailsDialog.FTP)) {
+                final String rowType = networkAccountPOJO.type;
+                NetworkAccountDetailsViewModel.this.networkAccountPOJO = networkAccountPOJO;
+
+                if (NetworkAccountsDetailsDialog.FTP.equals(rowType)) {
                     connectFtp(networkAccountPOJO, networkConnectAsyncTaskStatus);
-                } else if (type.equals(NetworkAccountsDetailsDialog.SFTP)) {
+                } else if (NetworkAccountsDetailsDialog.SFTP.equals(rowType)) {
                     connectSftp(networkAccountPOJO, networkConnectAsyncTaskStatus);
-                } else if (type.equals(NetworkAccountsDetailsDialog.WebDAV)) {
+                } else if (NetworkAccountsDetailsDialog.WebDAV.equals(rowType)) {
                     connectWebDav(networkAccountPOJO, networkConnectAsyncTaskStatus);
-                } else if (type.equals(NetworkAccountsDetailsDialog.SMB)) {
+                } else if (NetworkAccountsDetailsDialog.SMB.equals(rowType)) {
                     connectSmb(networkAccountPOJO, networkConnectAsyncTaskStatus);
+                } else {
+                    loggedInStatus = false;
+                    networkConnectAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
                 }
             }
         });
@@ -193,15 +240,27 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         }
         replaceAndConnectNetworkAccountAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
-        future5 = executorService.submit(new Runnable() {
+        future4 = executorService.submit(new Runnable() {
             @Override
             public void run() {
                 replaceNetworkAccountPojo(bundle);
                 String host = bundle.getString("host");
                 int port = bundle.getInt("port");
                 String user_name = bundle.getString("user_name");
-                NetworkAccountPOJO networkAccountPOJO = networkAccountsDatabaseHelper.getNetworkAccountPOJO(host, port, user_name, type);
+                String rowType = bundle.getString("type");
+                if (rowType == null || rowType.isEmpty()) {
+                    NetworkAccountPOJO p = bundle.getParcelable("networkAccountPOJO");
+                    if (p != null) rowType = p.type;
+                }
+                if (rowType == null || rowType.isEmpty() || TYPE_ALL.equals(rowType)) {
+                    // last resort: cannot safely query
+                    replaceAndConnectNetworkAccountAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+                    return;
+                }
+                NetworkAccountPOJO networkAccountPOJO = networkAccountsDatabaseHelper.getNetworkAccountPOJO(host, port, user_name, rowType);
+
                 type = networkAccountPOJO.type;
+
                 if (type.equals(NetworkAccountsDetailsDialog.FTP)) {
                     connectFtp(networkAccountPOJO, replaceAndConnectNetworkAccountAsyncTaskStatus);
                 } else if (type.equals(NetworkAccountsDetailsDialog.SFTP)) {
@@ -317,8 +376,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         }
     }
 
-    private void connectSmb(NetworkAccountPOJO networkAccountPOJO,
-                            MutableLiveData<AsyncTaskStatus> asyncTaskStatus) {
+    private void connectSmb(NetworkAccountPOJO networkAccountPOJO, MutableLiveData<AsyncTaskStatus> asyncTaskStatus) {
         loggedInStatus = false;
 
         SmbClientRepository smbClientRepository = null;
@@ -326,11 +384,8 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
 
         try {
             NetworkAccountPOJO networkAccountPOJOCopy = networkAccountPOJO.deepCopy();
-
-            // reset any previous singleton state (your current approach)
             smbClientRepository = SmbClientRepository.getInstance(networkAccountPOJOCopy);
             smbClientRepository.shutdown();
-
             smbClientRepository = SmbClientRepository.getInstance(networkAccountPOJO);
 
             SMB_NETWORK_ACCOUNT_POJO = networkAccountPOJO;
@@ -385,8 +440,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         } else {
             row_number = networkAccountsDatabaseHelper.insert(networkAccountPOJO);
         }
-
-        networkAccountPOJOList = networkAccountsDatabaseHelper.getNetworkAccountPOJOList(type);
+        reloadList();
     }
 
     public synchronized void replaceNetworkAccountPojoList(Bundle bundle) {
@@ -395,7 +449,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         }
         replaceNetworkAccountAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
-        future4 = executorService.submit(new Runnable() {
+        future5 = executorService.submit(new Runnable() {
             @Override
             public void run() {
                 replaceNetworkAccountPojo(bundle);
@@ -421,7 +475,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         });
     }
 
-    public synchronized void checkWhetherNetworkAccountPojoAlreadyExists(String host, int port, String user_name) {
+    public synchronized void checkWhetherNetworkAccountPojoAlreadyExists(String host, int port, String user_name, String typeForCheck) {
         if (checkDuplicateNetworkAccountDisplayAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
             return;
         }
@@ -431,8 +485,9 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 networkAccountPOJOAlreadyExists = false;
-                NetworkAccountPOJO networkAccountPOJO = networkAccountsDatabaseHelper.getNetworkAccountPOJO(host, port, user_name, type);
-                networkAccountPOJOAlreadyExists = networkAccountPOJO != null;
+                String t = (typeForCheck == null ? type : typeForCheck);
+                NetworkAccountPOJO p = networkAccountsDatabaseHelper.getNetworkAccountPOJO(host, port, user_name, t);
+                networkAccountPOJOAlreadyExists = p != null;
                 checkDuplicateNetworkAccountDisplayAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
@@ -467,6 +522,59 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         });
     }
 
+    public synchronized void disconnectSelectedConnectedRows(List<NetworkAccountPOJO> selected) {
+        if (disconnectNetworkConnectionAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
+            return;
+        }
+        disconnectNetworkConnectionAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        future9 = executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                boolean wantFtp = false, wantSftp = false, wantWebdav = false, wantSmb = false;
+
+                if (selected != null) {
+                    for (NetworkAccountPOJO pojo : selected) {
+                        if (pojo == null) continue;
+
+                        // Only if that selected row is the active one for that type
+                        if (!isPojoConnected(pojo)) continue;
+
+                        if (NetworkAccountsDetailsDialog.FTP.equals(pojo.type)) wantFtp = true;
+                        else if (NetworkAccountsDetailsDialog.SFTP.equals(pojo.type)) wantSftp = true;
+                        else if (NetworkAccountsDetailsDialog.WebDAV.equals(pojo.type)) wantWebdav = true;
+                        else if (NetworkAccountsDetailsDialog.SMB.equals(pojo.type)) wantSmb = true;
+                    }
+                }
+
+                if (wantFtp && FTP_NETWORK_ACCOUNT_POJO != null) {
+                    FtpClientRepository.getInstance(FTP_NETWORK_ACCOUNT_POJO).shutdown();
+                    FTP_NETWORK_ACCOUNT_POJO = null;
+                    FTP_WORKING_DIR_PATH = null;
+                }
+
+                if (wantSftp && SFTP_NETWORK_ACCOUNT_POJO != null) {
+                    SftpChannelRepository.getInstance(SFTP_NETWORK_ACCOUNT_POJO).shutdown();
+                    SFTP_NETWORK_ACCOUNT_POJO = null;
+                    SFTP_WORKING_DIR_PATH = null;
+                }
+
+                if (wantWebdav && WEBDAV_NETWORK_ACCOUNT_POJO != null) {
+                    try { WebDavClientRepository.getInstance(WEBDAV_NETWORK_ACCOUNT_POJO).shutdown(); } catch (IOException ignored) {}
+                    WEBDAV_NETWORK_ACCOUNT_POJO = null;
+                    WEBDAV_WORKING_DIR_PATH = null;
+                }
+
+                if (wantSmb && SMB_NETWORK_ACCOUNT_POJO != null) {
+                    SmbClientRepository.getInstance(SMB_NETWORK_ACCOUNT_POJO).shutdown();
+                    SMB_NETWORK_ACCOUNT_POJO = null;
+                    SMB_WORKING_DIR_PATH = null;
+                }
+                disconnectNetworkConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+            }
+        });
+    }
+
     public synchronized void disconnectNetworkConnection() {
         if (disconnectNetworkConnectionAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
             return;
@@ -476,33 +584,39 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         future9 = executorService.submit(new Runnable() {
             @Override
             public void run() {
-                switch (type) {
-                    case NetworkAccountsDetailsDialog.FTP:
-                        FtpClientRepository ftpClientRepository = FtpClientRepository.getInstance(networkAccountPOJO);
-                        ftpClientRepository.shutdown();
-                        clearNetworkFileObjectType(FileObjectType.FTP_TYPE);
-                        break;
-                    case NetworkAccountsDetailsDialog.SFTP:
-                        SftpChannelRepository sftpChannelRepository = SftpChannelRepository.getInstance(networkAccountPOJO);
-                        sftpChannelRepository.shutdown();
-                        clearNetworkFileObjectType(FileObjectType.SFTP_TYPE);
-                        break;
-                    case NetworkAccountsDetailsDialog.WebDAV:
-                        WebDavClientRepository webDavClientRepository;
-                        try {
-                            webDavClientRepository = WebDavClientRepository.getInstance(networkAccountPOJO);
-                            webDavClientRepository.shutdown();
-                            clearNetworkFileObjectType(FileObjectType.WEBDAV_TYPE);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                        break;
-                    case NetworkAccountsDetailsDialog.SMB:
-                        SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(networkAccountPOJO);
-                        smbClientRepository.shutdown();
-                        clearNetworkFileObjectType(FileObjectType.SMB_TYPE);
-                        break;
+                final String t = (TYPE_ALL.equals(type) && networkAccountPOJO != null) ? networkAccountPOJO.type : type;
+                final NetworkAccountPOJO pojo = networkAccountPOJO;
+
+                if (NetworkAccountsDetailsDialog.FTP.equals(t)) {
+                    // Prefer disconnecting the actually connected POJO
+                    NetworkAccountPOJO active = FTP_NETWORK_ACCOUNT_POJO != null ? FTP_NETWORK_ACCOUNT_POJO : pojo;
+                    if (active != null) FtpClientRepository.getInstance(active).shutdown();
+                    FTP_NETWORK_ACCOUNT_POJO = null;
+                    FTP_WORKING_DIR_PATH = null;
+
+                } else if (NetworkAccountsDetailsDialog.SFTP.equals(t)) {
+                    NetworkAccountPOJO active = SFTP_NETWORK_ACCOUNT_POJO != null ? SFTP_NETWORK_ACCOUNT_POJO : pojo;
+                    if (active != null) SftpChannelRepository.getInstance(active).shutdown();
+                    SFTP_NETWORK_ACCOUNT_POJO = null;
+                    SFTP_WORKING_DIR_PATH = null;
+
+                } else if (NetworkAccountsDetailsDialog.WebDAV.equals(t)) {
+                    NetworkAccountPOJO active = WEBDAV_NETWORK_ACCOUNT_POJO != null ? WEBDAV_NETWORK_ACCOUNT_POJO : pojo;
+                    if (active != null) {
+                        try { WebDavClientRepository.getInstance(active).shutdown(); } catch (IOException ignored) {}
+                    }
+                    WEBDAV_NETWORK_ACCOUNT_POJO = null;
+                    WEBDAV_WORKING_DIR_PATH = null;
+
+                } else if (NetworkAccountsDetailsDialog.SMB.equals(t)) {
+                    NetworkAccountPOJO active = SMB_NETWORK_ACCOUNT_POJO != null ? SMB_NETWORK_ACCOUNT_POJO : pojo;
+                    if (active != null) SmbClientRepository.getInstance(active).shutdown();
+                    SMB_NETWORK_ACCOUNT_POJO = null;
+                    SMB_WORKING_DIR_PATH = null;
                 }
+
+                // Clear the "currently selected networkAccountPOJO" pointer if it matches disconnected
+                NetworkAccountDetailsViewModel.this.networkAccountPOJO = null;
                 disconnectNetworkConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });

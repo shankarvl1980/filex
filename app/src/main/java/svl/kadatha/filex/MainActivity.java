@@ -124,9 +124,8 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     ActionModeListener actionModeListener;
     private List<String> library_categories = new ArrayList<>();
     private FilePOJO drawer_storage_file_pojo_selected;
-    private ImageView working_dir_expand_indicator, library_expand_indicator, clean_storage_expand_indicator, network_expand_indicator, cloud_expand_indicator;
+    private ImageView working_dir_expand_indicator, library_expand_indicator, clean_storage_expand_indicator;
     private RecyclerView workingDirListRecyclerView;
-    private RecyclerView networkRecyclerView, cloudRecyclerView;
     private int countBackPressed = 0;
     private Group working_dir_button_layout;
     private WorkingDirRecyclerAdapter workingDirRecyclerAdapter;
@@ -368,7 +367,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         list_popupwindowpojos.add(extract_listPopupWindowPOJO);
         list_popupwindowpojos.add(open_listPopupWindowPOJO);
 
-
         listPopWindow = new PopupWindow(context);
         listView = new ListView(context);
         popupWindowAdapter = new ListPopupWindowPOJO.PopupWindowAdapter(context, list_popupwindowpojos);
@@ -599,11 +597,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             @Override
             public void onClick(View view) {
                 clear_cache = false;
-                //final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
                 final BlankFragment pbf = BlankFragment.newInstance();
                 pbf.show(fm, "");
                 drawerLayout.closeDrawer(drawer);
-
                 Handler h = new Handler();
                 h.postDelayed(new Runnable() {
                     @Override
@@ -623,7 +619,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             @Override
             public void onClick(View view) {
                 clear_cache = false;
-                //final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
                 final BlankFragment pbf = BlankFragment.newInstance();
                 pbf.show(fm, "");
                 drawerLayout.closeDrawer(drawer);
@@ -677,7 +672,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             @Override
             public void onClick(View view) {
                 clear_cache = false;
-                //final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
                 final BlankFragment pbf = BlankFragment.newInstance();
                 pbf.show(fm, "");
                 drawerLayout.closeDrawer(drawer);
@@ -721,7 +715,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         access_pc_heading_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //final ProgressBarFragment pbf = ProgressBarFragment.newInstance();
                 final BlankFragment pbf = BlankFragment.newInstance();
                 pbf.show(fm, "");
                 drawerLayout.closeDrawer(drawer);
@@ -739,66 +732,48 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         });
 
-        network_layout_group = findViewById(R.id.network_layout_group);
         View network_heading_layout = findViewById(R.id.network_layout_background);
         network_heading_layout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (network_layout_group.getVisibility() == View.GONE) {
-                    network_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.right_arrow_drawer_icon));
-                    network_layout_group.setVisibility(View.VISIBLE);
-                    nestedScrollView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            nestedScrollView.smoothScrollTo(0, networkRecyclerView.getBottom());
-                        }
-                    });
-                    viewModel.network_shown = true;
-                } else {
-                    network_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.down_arrow_drawer_icon));
-                    network_layout_group.setVisibility(View.GONE);
-                    viewModel.network_shown = false;
-                }
+                final BlankFragment pbf = BlankFragment.newInstance();
+                pbf.show(fm, "");
+                drawerLayout.closeDrawer(drawer);
+                Handler h = new Handler();
+                h.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
+                        action_mode_finish(df);
+                        NetworkAccountsDetailsDialog networkAccountsDetailsDialog = NetworkAccountsDetailsDialog.getAllInstance();
+                        networkAccountsDetailsDialog.show(fm, "");
+                        pbf.dismissAllowingStateLoss();
+                    }
+                }, DRAWER_CLOSE_DELAY);
             }
         });
 
-        network_expand_indicator = findViewById(R.id.network_expand_indicator);
-        List<String> network_types = Arrays.asList(getResources().getStringArray(R.array.network_types));
-        networkRecyclerView = findViewById(R.id.network_recyclerview);
-        networkRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        networkRecyclerView.addItemDecoration(Global.DIVIDERITEMDECORATION);
-        int[] network_icon_image_array = {R.drawable.network_icon, R.drawable.network_icon, R.drawable.network_icon, R.drawable.network_icon};
-        networkRecyclerView.setAdapter(new NetworkRecyclerAdapter(network_types, network_icon_image_array));
 
-        cloud_layout_group = findViewById(R.id.cloud_layout_group);
         View cloud_heading_layout = findViewById(R.id.cloud_layout_background);
         cloud_heading_layout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (cloud_layout_group.getVisibility() == View.GONE) {
-                    cloud_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.right_arrow_drawer_icon));
-                    cloud_layout_group.setVisibility(View.VISIBLE);
-                    nestedScrollView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            nestedScrollView.smoothScrollTo(0, cloudRecyclerView.getBottom());
-                        }
-                    });
-                    viewModel.cloud_shown = true;
-                } else {
-                    cloud_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.down_arrow_drawer_icon));
-                    cloud_layout_group.setVisibility(View.GONE);
-                    viewModel.cloud_shown = false;
-                }
+                final BlankFragment pbf = BlankFragment.newInstance();
+                pbf.show(fm, "");
+                drawerLayout.closeDrawer(drawer);
+                Handler h = new Handler();
+                h.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
+                        action_mode_finish(df);
+                        Intent intent = new Intent(context, CloudAuthActivity.class);
+                        FileObjectType fileObjectType = FileObjectType.GOOGLE_DRIVE_TYPE;
+                        intent.putExtra("fileObjectType", fileObjectType);
+                        startActivity(intent);
+                        pbf.dismissAllowingStateLoss();
+                    }
+                }, DRAWER_CLOSE_DELAY);
             }
         });
-
-        cloud_expand_indicator = findViewById(R.id.cloud_expand_indicator);
-        List<String> cloud_types = Arrays.asList(getResources().getStringArray(R.array.cloud_types));
-        cloudRecyclerView = findViewById(R.id.cloud_recyclerview);
-        cloudRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        cloudRecyclerView.addItemDecoration(Global.DIVIDERITEMDECORATION);
-        int[] cloud_icon_image_array = {R.drawable.cloud_icon, R.drawable.cloud_icon, R.drawable.cloud_icon};
-        cloudRecyclerView.setAdapter(new CloudRecyclerAdapter(cloud_types, cloud_icon_image_array));
-
 
         int drawer_width = (int) getResources().getDimension(R.dimen.drawer_width_with_padding);
         tb_layout = new EquallyDistributedButtonsWithTextLayout(this, 2, drawer_width, drawer_width);
@@ -1281,16 +1256,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         if (viewModel.clean_storage_shown) {
             clean_storage_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.right_arrow_drawer_icon));
             clean_storage_layout_group.setVisibility(View.VISIBLE);
-        }
-
-        if (viewModel.network_shown) {
-            network_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.right_arrow_drawer_icon));
-            network_layout_group.setVisibility(View.VISIBLE);
-        }
-
-        if (viewModel.cloud_shown) {
-            cloud_expand_indicator.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.right_arrow_drawer_icon));
-            cloud_layout_group.setVisibility(View.VISIBLE);
         }
 
         clear_cache = savedInstanceState.getBoolean("clear_cache");
@@ -2437,154 +2402,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                                         rescanLargeDuplicateFilesLibrary("duplicate");
                                         break;
                                 }
-                                pbf.dismissAllowingStateLoss();
-                            }
-                        }, DRAWER_CLOSE_DELAY);
-                    }
-                });
-            }
-        }
-    }
-
-    private class NetworkRecyclerAdapter extends RecyclerView.Adapter<NetworkRecyclerAdapter.ViewHolder> {
-        final List<String> network_arraylist;
-        final int[] icon_image_list;
-
-        NetworkRecyclerAdapter(List<String> network_arraylist, int[] icon_image_list) {
-            this.network_arraylist = network_arraylist;
-            this.icon_image_list = icon_image_list;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
-            View v = LayoutInflater.from(context).inflate(R.layout.storage_dir_recyclerview_layout, p1, false);
-            return new ViewHolder(v);
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder p1, int p2) {
-            p1.textView_network.setText(network_arraylist.get(p2));
-            p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, icon_image_list[p2]));
-        }
-
-        @Override
-        public int getItemCount() {
-            return network_arraylist.size();
-        }
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-            final View v;
-            final ImageView imageview;
-            final ImageView play_overlay_imageview, pdf_overlay_imageview;
-            final TextView textView_network;
-
-            ViewHolder(View v) {
-                super(v);
-                this.v = v;
-                imageview = v.findViewById(R.id.image_storage_dir);
-                play_overlay_imageview = v.findViewById(R.id.play_overlay_image_storage_dir);
-                pdf_overlay_imageview = v.findViewById(R.id.pdf_overlay_image_storage_dir);
-                textView_network = v.findViewById(R.id.text_storage_dir_name);
-                play_overlay_imageview.setVisibility(View.GONE);
-                final int[] position = new int[1];
-                v.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View p) {
-                        position[0] = getBindingAdapterPosition();
-                        final BlankFragment pbf = BlankFragment.newInstance();
-                        pbf.show(fm, "");
-                        drawerLayout.closeDrawer(drawer);
-                        Handler h = new Handler();
-                        h.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-                                action_mode_finish(df);
-                                if (position[0] == 0) {
-                                    NetworkAccountsDetailsDialog networkAccountsDetailsDialog = NetworkAccountsDetailsDialog.getInstance(NetworkAccountsDetailsDialog.FTP);
-                                    networkAccountsDetailsDialog.show(fm, "");
-                                } else if (position[0] == 1) {
-                                    NetworkAccountsDetailsDialog networkAccountsDetailsDialog = NetworkAccountsDetailsDialog.getInstance(NetworkAccountsDetailsDialog.SFTP);
-                                    networkAccountsDetailsDialog.show(fm, "");
-                                } else if (position[0] == 2) {
-                                    NetworkAccountsDetailsDialog networkAccountsDetailsDialog = NetworkAccountsDetailsDialog.getInstance(NetworkAccountsDetailsDialog.WebDAV);
-                                    networkAccountsDetailsDialog.show(fm, "");
-                                } else if (position[0] == 3) {
-                                    NetworkAccountsDetailsDialog networkAccountsDetailsDialog = NetworkAccountsDetailsDialog.getInstance(NetworkAccountsDetailsDialog.SMB);
-                                    networkAccountsDetailsDialog.show(fm, "");
-                                }
-                                pbf.dismissAllowingStateLoss();
-                            }
-                        }, DRAWER_CLOSE_DELAY);
-                    }
-                });
-            }
-        }
-    }
-
-    private class CloudRecyclerAdapter extends RecyclerView.Adapter<CloudRecyclerAdapter.ViewHolder> {
-        final List<String> cloud_arraylist;
-        final int[] icon_image_list;
-
-        CloudRecyclerAdapter(List<String> cloud_arraylist, int[] icon_image_list) {
-            this.cloud_arraylist = cloud_arraylist;
-            this.icon_image_list = icon_image_list;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup p1, int p2) {
-            View v = LayoutInflater.from(context).inflate(R.layout.storage_dir_recyclerview_layout, p1, false);
-            return new ViewHolder(v);
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder p1, int p2) {
-            p1.textView_network.setText(cloud_arraylist.get(p2));
-            p1.imageview.setImageDrawable(ContextCompat.getDrawable(context, icon_image_list[p2]));
-        }
-
-        @Override
-        public int getItemCount() {
-            return cloud_arraylist.size();
-        }
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-            final View v;
-            final ImageView imageview;
-            final ImageView play_overlay_imageview, pdf_overlay_imageview;
-            final TextView textView_network;
-
-            ViewHolder(View v) {
-                super(v);
-                this.v = v;
-                imageview = v.findViewById(R.id.image_storage_dir);
-                play_overlay_imageview = v.findViewById(R.id.play_overlay_image_storage_dir);
-                pdf_overlay_imageview = v.findViewById(R.id.pdf_overlay_image_storage_dir);
-                textView_network = v.findViewById(R.id.text_storage_dir_name);
-                play_overlay_imageview.setVisibility(View.GONE);
-                final int[] position = new int[1];
-                v.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View p) {
-                        position[0] = getBindingAdapterPosition();
-                        final BlankFragment pbf = BlankFragment.newInstance();
-                        pbf.show(fm, "");
-                        drawerLayout.closeDrawer(drawer);
-                        Handler h = new Handler();
-                        h.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-                                action_mode_finish(df);
-                                Intent intent = new Intent(context, CloudAuthActivity.class);
-                                FileObjectType fileObjectType = null;
-                                if (position[0] == 0) {
-                                    fileObjectType = FileObjectType.GOOGLE_DRIVE_TYPE;
-                                } else if (position[0] == 1) {
-                                    fileObjectType = FileObjectType.DROP_BOX_TYPE;
-                                } else if (position[0] == 2) {
-                                    fileObjectType = FileObjectType.YANDEX_TYPE;
-                                }
-                                intent.putExtra("fileObjectType", fileObjectType);
-                                startActivity(intent);
                                 pbf.dismissAllowingStateLoss();
                             }
                         }, DRAWER_CLOSE_DELAY);

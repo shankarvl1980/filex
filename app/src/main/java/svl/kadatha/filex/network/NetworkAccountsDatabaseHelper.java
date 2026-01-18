@@ -106,6 +106,28 @@ public class NetworkAccountsDatabaseHelper extends SQLiteOpenHelper {
                 new String[]{host, String.valueOf(port), user_name, type});
     }
 
+    // Get all NetworkAccountPOJO (all types)
+    public List<NetworkAccountPOJO> getAllNetworkAccountPOJOList() {
+        List<NetworkAccountPOJO> pojoList = new ArrayList<>();
+        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            cursor = sqLiteDatabase.query(TABLE, null,
+                    null, null, null, null,
+                    "type ASC, display COLLATE NOCASE ASC");
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    pojoList.add(createPojoFromCursor(cursor));
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            // no-op / log if needed
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+        return pojoList;
+    }
+
     // Get NetworkAccountPOJO list by type
     public List<NetworkAccountPOJO> getNetworkAccountPOJOList(String type) {
         List<NetworkAccountPOJO> pojoList = new ArrayList<>();

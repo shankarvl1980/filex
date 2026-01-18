@@ -160,6 +160,7 @@ public class WebDavClientRepository {
         networkAccountPOJO = null;
         NetworkAccountDetailsViewModel.WEBDAV_NETWORK_ACCOUNT_POJO = null;
         instance = null;
+        NetworkAccountDetailsViewModel.clearNetworkFileObjectType(FileObjectType.WEBDAV_TYPE);
     }
 
     public Sardine getSardine() {

@@ -343,7 +343,7 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
         encoding = encoding_tv.getText().toString().trim();
         useFTPS = useFTPS_check_box.isChecked();
         useHTTPS = useHTTPS_check_box.isChecked();
-        privateKeyPath = private_key_passphrase_tv.getText().toString().trim();
+        privateKeyPath = private_key_path_tv.getText().toString().trim();
         privateKeyPassphrase = private_key_passphrase_tv.getText().toString().trim();
         knownHostsPath = known_hosts_path_tv.getText().toString().trim();
         basePath = base_path_tv.getText().toString().trim();
@@ -357,7 +357,7 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
 
 
         bundle.putBoolean("whetherToConnect", whetherToConnect);
-        if (!update && whetherNetworkAccountPOJOAlreadyExists(host, user_name, type) && !replace) {
+        if (!update && whetherNetworkAccountPOJOAlreadyExists(host,port, user_name, type) && !replace) {
             YesOrNoAlertDialog ftpServerCloseAlertDialog = YesOrNoAlertDialog.getInstance(NETWORK_ACCOUNT_REPLACE_REQUEST_CODE, R.string.network_account_setting_already_exists_want_to_replace_it, bundle);
             ftpServerCloseAlertDialog.show(getParentFragmentManager(), "");
         } else {
@@ -366,6 +366,7 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
             bundle.putString("original_user_name", original_user_name);
             bundle.putBoolean("update", update);
             bundle.putBoolean("replace", replace);
+            bundle.putString("type", type);
             NetworkAccountPOJO networkAccountPOJO = new NetworkAccountPOJO(
                     host, port, user_name, password, encoding, display, type, mode, anonymous, useFTPS, privateKeyPath, privateKeyPassphrase, knownHostsPath, basePath, useHTTPS, domain, shareName, smbVersion);
             bundle.putParcelable("networkAccountPOJO", networkAccountPOJO);
@@ -376,7 +377,7 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
         }
     }
 
-    private boolean whetherNetworkAccountPOJOAlreadyExists(String host, String user_name, String type) {
+    private boolean whetherNetworkAccountPOJOAlreadyExists(String host, int port, String user_name, String type) {
         NetworkAccountPOJO networkAccountPOJO = networkAccountsDatabaseHelper.getNetworkAccountPOJO(host, port, user_name, type);
         return networkAccountPOJO != null;
     }

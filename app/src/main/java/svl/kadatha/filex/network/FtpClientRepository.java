@@ -303,6 +303,7 @@ public class FtpClientRepository {
         networkAccountPOJO = null;
         NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO = null;
         instance = null;
+        NetworkAccountDetailsViewModel.clearNetworkFileObjectType(FileObjectType.FTP_TYPE);
     }
 
     public boolean testConnection(FTPClient client) {

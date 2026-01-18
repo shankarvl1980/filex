@@ -532,5 +532,6 @@
     <string name="modify_file_extension">Modify file extension</string>
     <string name="first_selected_file_is_sent">First selected file is sent</string>
     <string name="error_while_disconnecting_from_cloud">Error while disconnecting from cloud</string>
+    <string name="network_accounts">Network Accounts</string>
 
 </resources>

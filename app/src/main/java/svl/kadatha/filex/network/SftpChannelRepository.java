@@ -212,6 +212,7 @@ public class SftpChannelRepository {
         networkAccountPOJO = null;
         NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO = null;
         instance = null;
+        NetworkAccountDetailsViewModel.clearNetworkFileObjectType(FileObjectType.SFTP_TYPE);
     }
 
     public boolean testConnection(ChannelSftp channel) {

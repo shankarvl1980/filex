@@ -18,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
+import svl.kadatha.filex.FileObjectType;
 import timber.log.Timber;
 
 public class SmbClientRepository {
@@ -175,6 +176,7 @@ public class SmbClientRepository {
 
         try { smbClient.close(); } catch (Exception ignored) {}
         instance = null;
+        NetworkAccountDetailsViewModel.clearNetworkFileObjectType(FileObjectType.SMB_TYPE);
     }
 
     private void ensureShareNameValid() throws IOException {
