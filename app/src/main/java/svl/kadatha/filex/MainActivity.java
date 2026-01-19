@@ -1154,6 +1154,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     @Override
     protected void onStart() {
         super.onStart();
+        runPendingCloudPopIfSafe();
         clear_cache = true;
         Global.WORKOUT_AVAILABLE_SPACE();
         createLibraryCache();
