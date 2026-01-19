@@ -15,153 +15,190 @@ public class CloudAccountsDatabaseHelper extends SQLiteOpenHelper {
     static final String TABLE = "CloudAccountsList";
     private static final int DATABASE_VERSION = 1;
 
+    // Column names (single source of truth)
+    private static final String COL_TYPE = "type";
+    private static final String COL_USER_ID = "user_id";
+    private static final String COL_DISPLAY_NAME = "display_name";
+    private static final String COL_ACCESS_TOKEN = "access_token";
+    private static final String COL_REFRESH_TOKEN = "refresh_token";
+    private static final String COL_TOKEN_EXPIRY_TIME = "token_expiry_time";
+    private static final String COL_SCOPES = "scopes";
+    private static final String COL_EXTRA1 = "extra1";
+    private static final String COL_EXTRA2 = "extra2";
+    private static final String COL_EXTRA3 = "extra3";
+
+    private final Context appContext;
+
     public CloudAccountsDatabaseHelper(Context context) {
         super(context, DATABASE, null, DATABASE_VERSION);
+        this.appContext = context.getApplicationContext();
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // Create table with composite primary key (type, user_id)
+        // Composite primary key (type, user_id)
         db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE + " (" +
-                "type TEXT, " +
-                "user_id TEXT, " +
-                "display_name TEXT, " +
-                "access_token TEXT, " +
-                "refresh_token TEXT, " +
-                "token_expiry_time INTEGER, " +
-                "scopes TEXT, " +
-                "extra1 TEXT, " +
-                "extra2 TEXT, " +
-                "extra3 TEXT, " +
-                "PRIMARY KEY (type, user_id)" +
+                COL_TYPE + " TEXT, " +
+                COL_USER_ID + " TEXT, " +
+                COL_DISPLAY_NAME + " TEXT, " +
+                COL_ACCESS_TOKEN + " TEXT, " +
+                COL_REFRESH_TOKEN + " TEXT, " +
+                COL_TOKEN_EXPIRY_TIME + " INTEGER, " +
+                COL_SCOPES + " TEXT, " +
+                COL_EXTRA1 + " TEXT, " +
+                COL_EXTRA2 + " TEXT, " +
+                COL_EXTRA3 + " TEXT, " +
+                "PRIMARY KEY (" + COL_TYPE + ", " + COL_USER_ID + ")" +
                 ")");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // If you later bump DATABASE_VERSION, implement migrations here.
     }
 
-    // Insert method
+    // Insert
     public long insert(CloudAccountPOJO pojo) {
-        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
-        // Delete existing record if any
-        sqLiteDatabase.delete(TABLE, "type=? AND user_id=?",
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE, COL_TYPE + "=? AND " + COL_USER_ID + "=?",
                 new String[]{pojo.type, pojo.userId});
-        ContentValues contentValues = createContentValues(pojo);
-        return sqLiteDatabase.insert(TABLE, null, contentValues);
+        ContentValues values = createContentValues(pojo);
+        return db.insert(TABLE, null, values);
     }
 
-    // Update or Insert method
+    // Update or Insert
     public long updateOrInsert(String original_type, String original_user_id, CloudAccountPOJO pojo) {
-        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
-        ContentValues contentValues = createContentValues(pojo);
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = createContentValues(pojo);
 
-        // Attempt to update the existing record
-        int rowsAffected = sqLiteDatabase.update(TABLE, contentValues,
-                "type=? AND user_id=?",
+        int rowsAffected = db.update(TABLE, values,
+                COL_TYPE + "=? AND " + COL_USER_ID + "=?",
                 new String[]{original_type, original_user_id});
 
         if (rowsAffected == 0) {
-            // No existing record found; insert a new one
-            return sqLiteDatabase.insert(TABLE, null, contentValues);
-        } else {
-            // Update was successful; return the number of rows updated
-            return rowsAffected;
+            return db.insert(TABLE, null, values);
         }
+        return rowsAffected;
     }
 
-    // Delete method
+    // Delete
     public int delete(String type, String user_id) {
-        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
-        return sqLiteDatabase.delete(TABLE,
-                "type=? AND user_id=?",
+        SQLiteDatabase db = getWritableDatabase();
+        return db.delete(TABLE,
+                COL_TYPE + "=? AND " + COL_USER_ID + "=?",
                 new String[]{type, user_id});
     }
 
-    // Change display name method
+    // Change display name
     public int changeDisplayName(String type, String user_id, String new_display_name) {
-        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("display_name", new_display_name);
-        return sqLiteDatabase.update(TABLE, contentValues,
-                "type=? AND user_id=?",
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COL_DISPLAY_NAME, new_display_name);
+        return db.update(TABLE, values,
+                COL_TYPE + "=? AND " + COL_USER_ID + "=?",
                 new String[]{type, user_id});
     }
 
     public List<CloudAccountPOJO> getAllCloudAccountList() {
-        List<CloudAccountPOJO> pojoList = new ArrayList<>();
+        List<CloudAccountPOJO> list = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(TABLE, null, null, null, null, null, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                pojoList.add(createPojoFromCursor(cursor));
-            } while (cursor.moveToNext());
-            cursor.close();
+
+        try (Cursor c = db.query(TABLE, null, null, null, null, null, null)) {
+            if (c != null && c.moveToFirst()) {
+                do {
+                    list.add(createPojoFromCursor(c));
+                } while (c.moveToNext());
+            }
         }
-        return pojoList;
+        return list;
     }
 
-
-    // Get list of CloudAccountPOJO by type
+    // Get list by type
     public List<CloudAccountPOJO> getCloudAccountList(String type) {
-        List<CloudAccountPOJO> pojoList = new ArrayList<>();
-        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
-        String selection = "type = ?";
-        String[] selectionArgs = {type};
-        Cursor cursor = sqLiteDatabase.query(TABLE, null, selection, selectionArgs, null, null, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                CloudAccountPOJO pojo = createPojoFromCursor(cursor);
-                pojoList.add(pojo);
-            } while (cursor.moveToNext());
-            cursor.close();
+        List<CloudAccountPOJO> list = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+
+        String selection = COL_TYPE + " = ?";
+        String[] args = {type};
+
+        try (Cursor c = db.query(TABLE, null, selection, args, null, null, null)) {
+            if (c != null && c.moveToFirst()) {
+                do {
+                    list.add(createPojoFromCursor(c));
+                } while (c.moveToNext());
+            }
         }
-        return pojoList;
+        return list;
     }
 
-    // Get a specific CloudAccountPOJO
+    // Get a specific account
     public CloudAccountPOJO getCloudAccount(String type, String user_id) {
-        CloudAccountPOJO pojo = null;
-        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
-        Cursor cursor = sqLiteDatabase.query(TABLE, null,
-                "type=? AND user_id=?",
+        SQLiteDatabase db = getReadableDatabase();
+
+        try (Cursor c = db.query(TABLE, null,
+                COL_TYPE + "=? AND " + COL_USER_ID + "=?",
                 new String[]{type, user_id},
-                null, null, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            pojo = createPojoFromCursor(cursor);
-            cursor.close();
+                null, null, null)) {
+
+            if (c != null && c.moveToFirst()) {
+                return createPojoFromCursor(c);
+            }
         }
-        return pojo;
+        return null;
     }
 
-    // Helper method to create ContentValues from POJO
+    // -------------------- helpers --------------------
+
     private ContentValues createContentValues(CloudAccountPOJO pojo) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("type", pojo.type);
-        contentValues.put("user_id", pojo.userId);
-        contentValues.put("display_name", pojo.displayName);
-        contentValues.put("access_token", pojo.accessToken);
-        contentValues.put("refresh_token", pojo.refreshToken);
-        contentValues.put("token_expiry_time", pojo.tokenExpiryTime);
-        contentValues.put("scopes", pojo.scopes);
-        contentValues.put("extra1", pojo.extra1);
-        contentValues.put("extra2", pojo.extra2);
-        contentValues.put("extra3", pojo.extra3);
-        return contentValues;
+        ContentValues values = new ContentValues();
+
+        values.put(COL_TYPE, pojo.type);
+        values.put(COL_USER_ID, pojo.userId);
+        values.put(COL_DISPLAY_NAME, pojo.displayName);
+
+        // Encrypt tokens at rest (TEXT + base64 payload)
+        try {
+            values.put(COL_ACCESS_TOKEN, TokenCrypto.encrypt(appContext, pojo.accessToken));
+            values.put(COL_REFRESH_TOKEN, TokenCrypto.encrypt(appContext, pojo.refreshToken));
+        } catch (Exception e) {
+            // Fallback: do not crash login flow. You can tighten this later to "fail closed".
+            values.put(COL_ACCESS_TOKEN, pojo.accessToken);
+            values.put(COL_REFRESH_TOKEN, pojo.refreshToken);
+        }
+
+        values.put(COL_TOKEN_EXPIRY_TIME, pojo.tokenExpiryTime);
+        values.put(COL_SCOPES, pojo.scopes);
+        values.put(COL_EXTRA1, pojo.extra1);
+        values.put(COL_EXTRA2, pojo.extra2);
+        values.put(COL_EXTRA3, pojo.extra3);
+
+        return values;
     }
 
-    // Helper method to create POJO from Cursor
-    private CloudAccountPOJO createPojoFromCursor(Cursor cursor) {
-        String type = cursor.getString(cursor.getColumnIndex("type"));
-        String userId = cursor.getString(cursor.getColumnIndex("user_id"));
-        String displayName = cursor.getString(cursor.getColumnIndex("display_name"));
-        String accessToken = cursor.getString(cursor.getColumnIndex("access_token"));
-        String refreshToken = cursor.getString(cursor.getColumnIndex("refresh_token"));
-        long tokenExpiryTime = cursor.getLong(cursor.getColumnIndex("token_expiry_time"));
-        String scopes = cursor.getString(cursor.getColumnIndex("scopes"));
-        String extra1 = cursor.getString(cursor.getColumnIndex("extra1"));
-        String extra2 = cursor.getString(cursor.getColumnIndex("extra2"));
-        String extra3 = cursor.getString(cursor.getColumnIndex("extra3"));
+    private CloudAccountPOJO createPojoFromCursor(Cursor c) {
+        String type = c.getString(c.getColumnIndexOrThrow(COL_TYPE));
+        String userId = c.getString(c.getColumnIndexOrThrow(COL_USER_ID));
+        String displayName = c.getString(c.getColumnIndexOrThrow(COL_DISPLAY_NAME));
+
+        String accessPayload = c.getString(c.getColumnIndexOrThrow(COL_ACCESS_TOKEN));
+        String refreshPayload = c.getString(c.getColumnIndexOrThrow(COL_REFRESH_TOKEN));
+
+        String accessToken;
+        String refreshToken;
+        try {
+            accessToken = TokenCrypto.decrypt(appContext, accessPayload);
+            refreshToken = TokenCrypto.decrypt(appContext, refreshPayload);
+        } catch (Exception e) {
+            // Legacy/plaintext or corrupted values fallback
+            accessToken = accessPayload;
+            refreshToken = refreshPayload;
+        }
+
+        long tokenExpiryTime = c.getLong(c.getColumnIndexOrThrow(COL_TOKEN_EXPIRY_TIME));
+        String scopes = c.getString(c.getColumnIndexOrThrow(COL_SCOPES));
+        String extra1 = c.getString(c.getColumnIndexOrThrow(COL_EXTRA1));
+        String extra2 = c.getString(c.getColumnIndexOrThrow(COL_EXTRA2));
+        String extra3 = c.getString(c.getColumnIndexOrThrow(COL_EXTRA3));
 
         return new CloudAccountPOJO(
                 type, displayName, userId,
