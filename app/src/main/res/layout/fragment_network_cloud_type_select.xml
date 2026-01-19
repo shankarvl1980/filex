@@ -26,7 +26,6 @@
             android:paddingTop="@dimen/layout_margin"
             android:paddingEnd="@dimen/ten_dp"
             android:paddingBottom="@dimen/layout_margin"
-            android:text="@string/open_as"
             android:textSize="19sp" />
 
 

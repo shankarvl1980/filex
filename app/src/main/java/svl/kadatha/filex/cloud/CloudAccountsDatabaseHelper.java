@@ -88,6 +88,20 @@ public class CloudAccountsDatabaseHelper extends SQLiteOpenHelper {
                 new String[]{type, user_id});
     }
 
+    public List<CloudAccountPOJO> getAllCloudAccountList() {
+        List<CloudAccountPOJO> pojoList = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE, null, null, null, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                pojoList.add(createPojoFromCursor(cursor));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return pojoList;
+    }
+
+
     // Get list of CloudAccountPOJO by type
     public List<CloudAccountPOJO> getCloudAccountList(String type) {
         List<CloudAccountPOJO> pojoList = new ArrayList<>();
