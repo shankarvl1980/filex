@@ -415,8 +415,6 @@
 
     <string-array name="cloud_types">
         <item>@string/google_drive</item>
-        <item>@string/drop_box</item>
-        <item>@string/yandex</item>
     </string-array>
 
     <string name="running_label">FTP Server</string>

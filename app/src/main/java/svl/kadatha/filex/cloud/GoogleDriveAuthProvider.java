@@ -129,16 +129,20 @@ public final class GoogleDriveAuthProvider implements CloudAuthProvider {
                     return;
                 }
 
+                String userId = !TextUtils.isEmpty(userInfo.email) ? userInfo.email : userInfo.id;
+                String display = !TextUtils.isEmpty(userInfo.name) ? userInfo.name : userId;
+
                 cloudAccount = new CloudAccountPOJO(
                         FileObjectType.GOOGLE_DRIVE_TYPE.toString(),
-                        userInfo.name,
-                        userInfo.id,
+                        display,
+                        userId,
                         accessToken,
                         refreshToken,
                         expiry,
                         TextUtils.join(" ", SCOPES),
                         null, null, null
                 );
+
 
                 if (authCallback != null) authCallback.onSuccess(cloudAccount);
             });

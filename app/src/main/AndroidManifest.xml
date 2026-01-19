@@ -268,22 +268,37 @@
         <activity
             android:name="net.openid.appauth.RedirectUriReceiverActivity"
             android:exported="true">
+
+            <!-- Google -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <!-- Google -->
-                <data android:scheme="com.googleusercontent.apps.603518003549-8m2h1s1blonbo7s3rvok93uf40ipb3cs" />
-                <data android:path="/oauth2redirect" />
-
-                <!-- Dropbox (AppAuth) -->
-                <data android:scheme="svl.kadatha.filex.dropbox" />
-                <data android:host="oauth2redirect" />
-
-                <!-- Yandex  -->
-                <data android:scheme="yandex-your_client_id" />
-                <data android:host="callback" />
+                <data
+                    android:scheme="com.googleusercontent.apps.603518003549-8m2h1s1blonbo7s3rvok93uf40ipb3cs"
+                    android:path="/oauth2redirect" />
             </intent-filter>
+
+            <!-- Dropbox -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="svl.kadatha.filex.dropbox"
+                    android:host="oauth2redirect" />
+            </intent-filter>
+
+            <!-- Yandex -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="yandex-your_client_id"
+                    android:host="callback" />
+            </intent-filter>
+
         </activity>
 
 

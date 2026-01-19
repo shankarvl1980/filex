@@ -59,6 +59,16 @@ public class CloudAuthActivity extends BaseActivity {
     private final List<CloudAccountPOJO> cloudAccountPOJO_selected_for_delete = new ArrayList<>();
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        CloudAuthProvider provider = viewModel != null ? viewModel.getAuthProvider() : null;
+        if (provider != null) {
+            provider.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -477,7 +487,7 @@ public class CloudAuthActivity extends BaseActivity {
         class VH extends RecyclerView.ViewHolder {
             final View v;
             final ImageView cloud_account_select_indicator;
-            final TextView cloud_account_display;
+            final TextView cloud_account_display,host;
             final TextView cloud_account_user_id;
             final ImageView green_dot;
 
@@ -486,6 +496,8 @@ public class CloudAuthActivity extends BaseActivity {
                 v = view;
                 cloud_account_display = v.findViewById(R.id.network_list_recyclerview_display);
                 cloud_account_user_id = v.findViewById(R.id.network_list_recyclerview_user_name);
+                host=v.findViewById(R.id.network_list_recyclerview_host);
+                host.setVisibility(View.GONE);
                 cloud_account_select_indicator = v.findViewById(R.id.network_list_recyclerview_select_indicator);
                 green_dot = v.findViewById(R.id.network_list_recyclerview_connected_indicator);
 

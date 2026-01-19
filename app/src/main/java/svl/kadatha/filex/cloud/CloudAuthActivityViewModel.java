@@ -131,6 +131,10 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
         disconnectCloudConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.STARTED);
         scheduleDrainStep();
     }
+    public CloudAuthProvider getAuthProvider() {
+        return authProvider;
+    }
+
 
     private void scheduleDrainStep() {
         ExecutorService executorService = MyExecutorService.getExecutorService();
