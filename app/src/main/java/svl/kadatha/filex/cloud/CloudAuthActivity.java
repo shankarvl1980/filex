@@ -138,7 +138,7 @@ public class CloudAuthActivity extends BaseActivity {
 
         ((TextView) findViewById(R.id.activity_cloud_list_heading)).setText(R.string.cloud_accounts);
 
-        enable_disable_buttons(false, 0);
+        enable_disable_buttons(false, 0, false);
         cloud_number_text_view.setText("0/0");
     }
 
@@ -431,7 +431,20 @@ public class CloudAuthActivity extends BaseActivity {
         viewModel.authenticate();
     }
 
-    private void enable_disable_buttons(boolean enable, int selection_size) {
+    private boolean hasAnyConnectedSelection() {
+        int s = viewModel.mselecteditems.size();
+        if (s == 0) return false;
+
+        for (int i = 0; i < s; i++) {
+            CloudAccountPOJO pojo = viewModel.mselecteditems.getValueAtIndex(i);
+            if (CloudAuthActivityViewModel.isPojoConnected(pojo)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void enable_disable_buttons(boolean enable, int selection_size, boolean enableDisconnect) {
         if (enable) {
             delete_btn.setAlpha(Global.ENABLE_ALFA);
             edit_btn.setAlpha(selection_size == 1 ? Global.ENABLE_ALFA : Global.DISABLE_ALFA);
@@ -442,14 +455,16 @@ public class CloudAuthActivity extends BaseActivity {
         delete_btn.setEnabled(enable);
         edit_btn.setEnabled(enable && selection_size == 1);
 
-        disconnect_btn.setEnabled(enable);
-        disconnect_btn.setAlpha(enable ? Global.ENABLE_ALFA : Global.DISABLE_ALFA);
+        // disconnect only if at least one selected item is connected
+        disconnect_btn.setEnabled(enable && enableDisconnect);
+        disconnect_btn.setAlpha((enable && enableDisconnect) ? Global.ENABLE_ALFA : Global.DISABLE_ALFA);
     }
+
 
     public void clear_selection() {
         viewModel.mselecteditems = new IndexedLinkedHashMap<>();
         if (cloudAccountPojoListAdapter != null) cloudAccountPojoListAdapter.notifyDataSetChanged();
-        enable_disable_buttons(false, 0);
+        enable_disable_buttons(false, 0, false);
         cloud_number_text_view.setText("0/" + num_all_network_account);
     }
 
@@ -543,7 +558,7 @@ public class CloudAuthActivity extends BaseActivity {
                 toolbar_visible = true;
                 scroll_distance = 0;
 
-                enable_disable_buttons(size > 0, size);
+                enable_disable_buttons(size > 0, size, hasAnyConnectedSelection());
                 cloud_number_text_view.setText(size + "/" + num_all_network_account);
             }
         }
