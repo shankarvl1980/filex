@@ -583,6 +583,12 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        runPendingCloudPopIfSafe();
+    }
+
+    @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean("clear_cache", clear_cache);
@@ -597,7 +603,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     @Override
     protected void onStop() {
         super.onStop();
-        runPendingCloudPopIfSafe();
         if (search_toolbar_visible) {
             setSearchBarVisibility(false);
         }
