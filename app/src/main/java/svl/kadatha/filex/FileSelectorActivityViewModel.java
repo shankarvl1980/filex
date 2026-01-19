@@ -22,6 +22,8 @@ public class FileSelectorActivityViewModel extends AndroidViewModel {
     ClipData clipData;
     private boolean isCancelled;
     private Future<?> future1, future2;
+    public boolean pendingPop = false;
+    public FileObjectType pendingPopType = null;
 
     public FileSelectorActivityViewModel(@NonNull Application application) {
         super(application);

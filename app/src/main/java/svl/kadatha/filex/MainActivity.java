@@ -140,6 +140,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     private ListView listView;
     private MediaMountReceiver mediaMountReceiver;
     private FileDuplicationViewModel fileDuplicationViewModel;
+
     private final ActivityResultLauncher<Intent> activityResultLauncher_file_select = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -1176,6 +1177,33 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
     public void clearCache(String file_path, FileObjectType fileObjectType) {
         FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(file_path), fileObjectType); //no need of broad cast here, as the method includes broadcast
+    }
+
+    private void runPendingCloudPopIfSafe() {
+        if (!viewModel.pendingPop) return;
+
+        // Only execute when Activity is in a safe lifecycle state
+        if (!getLifecycle().getCurrentState().isAtLeast(androidx.lifecycle.Lifecycle.State.RESUMED)) {
+            return;
+        }
+
+        // Also guard FragmentManager state
+        if (fm.isStateSaved()) {
+            return;
+        }
+
+        // optional: re-check condition
+        DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
+        if (df == null || viewModel.pendingPopType == null || df.fileObjectType != viewModel.pendingPopType) {
+            viewModel.pendingPop = false;
+            viewModel.pendingPopType = null;
+            return;
+        }
+
+        viewModel.pendingPop = false;
+        viewModel.pendingPopType = null;
+
+        onbackpressed(false); // now safe
     }
 
     @Override
@@ -2492,7 +2520,9 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     if (bundle != null) {
                         FileObjectType fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
                         if (df != null && fileObjectType != null && fileObjectType == df.fileObjectType) {
-                            onbackpressed(false);
+                            viewModel.pendingPop = true;
+                            viewModel.pendingPopType = fileObjectType;
+                            runPendingCloudPopIfSafe();
                         }
                     }
                     break;

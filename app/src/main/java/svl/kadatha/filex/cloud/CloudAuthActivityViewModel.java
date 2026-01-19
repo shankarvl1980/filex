@@ -27,13 +27,13 @@ import svl.kadatha.filex.network.NetworkAccountDetailsViewModel;
 
 public class CloudAuthActivityViewModel extends AndroidViewModel {
 
-    // tokens (your existing behavior)
+    // tokens
     public static String GOOGLE_DRIVE_ACCESS_TOKEN;
     public static String DROP_BOX_ACCESS_TOKEN;
     public static String MEDIA_FIRE_ACCESS_TOKEN;
     public static String YANDEX_ACCESS_TOKEN;
 
-    // active accounts (your existing behavior)
+    // active accounts
     public static CloudAccountPOJO GOOGLE_DRIVE_ACCOUNT;
     public static CloudAccountPOJO DROPBOX_ACCOUNT;
     public static CloudAccountPOJO MEDIAFIRE_ACCOUNT;
@@ -58,27 +58,39 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
     public final MutableLiveData<AsyncTaskStatus> cloudAccountStorageDirFillAsyncTaskStatus =
             new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
 
-    // IMPORTANT: single LiveData for ALL disconnects (row-click + toolbar batch)
+    // Toolbar/batch disconnect status
     public final MutableLiveData<AsyncTaskStatus> disconnectCloudConnectionAsyncTaskStatus =
             new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+
+    // Row-click disconnect status (disconnect -> then Activity connects)
+    public final MutableLiveData<AsyncTaskStatus> rowDisconnectAsyncTaskStatus =
+            new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+
+    // pending connect (row click flow only)
+    private volatile PendingConnect rowPendingConnect = null;
+
+    public static final class PendingConnect {
+        public final FileObjectType type;
+        public final CloudAccountPOJO account;
+
+        public PendingConnect(FileObjectType type, CloudAccountPOJO account) {
+            this.type = type;
+            this.account = account;
+        }
+    }
 
     private CloudAccountPOJO cloudAccount;
     public boolean connected;
 
-    // pending connect (row click flow only)
-    public FileObjectType pendingTypeToConnect = null;
-    public CloudAccountPOJO pendingAccountToConnect = null;
-    public boolean waitingForDisconnect = false;
-
-    // last disconnected (optional; helpful for debugging / guarding)
-    public volatile FileObjectType lastDisconnectedType = null;
-
-    // futures (keep your style)
+    // futures
     private Future<?> future1;
     private Future<?> future2;
     private Future<?> future3;
     private Future<?> future4;
-    private Future<?> future9;
+
+    // Use separate future refs so cancelling one doesn't kill the other flow unexpectedly
+    private Future<?> futureDisconnectBatch;
+    private Future<?> futureDisconnectRow;
 
     // -------------------------------------------------------------------------
     // Provider factory (Activity supplies "new Provider(Activity)" safely)
@@ -103,23 +115,29 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
     }
 
     // -------------------------------------------------------------------------
-    // Sequential disconnect queue (NO parallel; toolbar + row-click share this)
+    // Sequential disconnect queue (BATCH only)
     // -------------------------------------------------------------------------
     private final java.util.ArrayDeque<FileObjectType> disconnectQueue = new java.util.ArrayDeque<>();
     private boolean disconnectInFlight = false;
 
     private synchronized void enqueueDisconnect(@NonNull FileObjectType type) {
-        disconnectQueue.addLast(type);
+        // avoid duplicates so toolbar selection doesn't enqueue same type twice
+        if (!disconnectQueue.contains(type)) disconnectQueue.addLast(type);
     }
 
     private synchronized void startDisconnectDrainIfNeeded() {
         if (disconnectInFlight) return;
         disconnectInFlight = true;
         disconnectCloudConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.STARTED);
-        drainDisconnectQueue();
+        scheduleDrainStep();
     }
 
-    private void drainDisconnectQueue() {
+    private void scheduleDrainStep() {
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        futureDisconnectBatch = executorService.submit(this::drainDisconnectQueueStep);
+    }
+
+    private void drainDisconnectQueueStep() {
         final FileObjectType type;
 
         synchronized (this) {
@@ -131,49 +149,41 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
             }
         }
 
-        ExecutorService executorService = MyExecutorService.getExecutorService();
-        future9 = executorService.submit(() -> {
-            CloudAuthProvider provider;
-            try {
-                provider = requireProvider(type);
-            } catch (Throwable t) {
-                // even if provider can't be created (shouldn't happen), clear local mapping and continue
-                clearAfterDisconnect(type);
-                lastDisconnectedType = type;
-                drainDisconnectQueue();
-                return;
-            }
+        CloudAuthProvider provider;
+        try {
+            provider = requireProvider(type);
+        } catch (Throwable t) {
+            // can't create provider -> still clear local mapping and continue
+            clearAfterDisconnect(type);
+            scheduleDrainStep();
+            return;
+        }
 
-            try {
-                provider.logout(new CloudAuthProvider.AuthCallback() {
-                    @Override
-                    public void onSuccess(CloudAccountPOJO account) {
-                        clearAfterDisconnect(type);
-                        lastDisconnectedType = type;
-                        drainDisconnectQueue();
-                    }
+        try {
+            provider.logout(new CloudAuthProvider.AuthCallback() {
+                @Override
+                public void onSuccess(CloudAccountPOJO account) {
+                    clearAfterDisconnect(type);
+                    scheduleDrainStep(); // continue on executor
+                }
 
-                    @Override
-                    public void onError(Exception e) {
-                        Global.print_background_thread(App.getAppContext(),
-                                App.getAppContext().getString(R.string.error_while_disconnecting_from_cloud));
-                        clearAfterDisconnect(type);
-                        lastDisconnectedType = type;
-                        drainDisconnectQueue();
-                    }
-                });
-            } catch (Throwable t) {
-                clearAfterDisconnect(type);
-                lastDisconnectedType = type;
-                drainDisconnectQueue();
-            }
-        });
+                @Override
+                public void onError(Exception e) {
+                    Global.print_background_thread(App.getAppContext(),
+                            App.getAppContext().getString(R.string.error_while_disconnecting_from_cloud));
+                    clearAfterDisconnect(type);
+                    scheduleDrainStep(); // continue on executor
+                }
+            });
+        } catch (Throwable t) {
+            clearAfterDisconnect(type);
+            scheduleDrainStep();
+        }
     }
 
     private void clearAfterDisconnect(@NonNull FileObjectType type) {
         CloudAuthActivityViewModel.clearActive(type);
         NetworkAccountDetailsViewModel.clearNetworkFileObjectType(type);
-        // NOTE: we do NOT touch storage_dir here; your app seems to rebuild/populate on connect
     }
 
     // -------------------------------------------------------------------------
@@ -196,7 +206,8 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
         if (future2 != null) future2.cancel(mayInterruptRunning);
         if (future3 != null) future3.cancel(mayInterruptRunning);
         if (future4 != null) future4.cancel(mayInterruptRunning);
-        if (future9 != null) future9.cancel(mayInterruptRunning);
+        if (futureDisconnectBatch != null) futureDisconnectBatch.cancel(mayInterruptRunning);
+        if (futureDisconnectRow != null) futureDisconnectRow.cancel(mayInterruptRunning);
     }
 
     // -------------------------------------------------------------------------
@@ -215,74 +226,78 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
     }
 
     // -------------------------------------------------------------------------
-    // Selection-driven (toolbar) batch disconnect: Activity calls ONLY this
+    // Toolbar batch disconnect: Activity calls this ONCE
     // -------------------------------------------------------------------------
-    public void disconnectSelectedConnectedAccountsFromToolbar() {
-        // toolbar must NOT trigger auto-connect
-        clearPendingConnect();
-
-        boolean queuedAny = false;
+    public synchronized void disconnectSelectedConnectedAccountsFromToolbar() {
         int s = mselecteditems.size();
+        if (s == 0) return;
+
         for (int i = 0; i < s; i++) {
             CloudAccountPOJO pojo = mselecteditems.getValueAtIndex(i);
-            if (CloudAuthActivityViewModel.isPojoConnected(pojo)) {
-                FileObjectType t = FileObjectType.valueOf(pojo.type);
-                enqueueDisconnect(t);
-                queuedAny = true;
+            if (isPojoConnected(pojo)) {
+                try {
+                    FileObjectType t = FileObjectType.valueOf(pojo.type);
+                    enqueueDisconnect(t);
+                } catch (Throwable ignore) {
+                }
             }
         }
+        startDisconnectDrainIfNeeded();
+    }
 
-        if (!queuedAny) {
-            // nothing to do, but allow Activity to hide progress
-            disconnectCloudConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+    // -------------------------------------------------------------------------
+    // Row-click flow: disconnect active of that type (if any), then Activity connects
+    // -------------------------------------------------------------------------
+    public synchronized void disconnectThenConnectRowClick(@NonNull FileObjectType type,
+                                                           @NonNull CloudAccountPOJO account,
+                                                           @NonNull CloudAuthProvider provider) {
+        if (rowDisconnectAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+
+        // always set pending connect first
+        rowPendingConnect = new PendingConnect(type, account);
+
+        rowDisconnectAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+
+        CloudAccountPOJO active = getActiveForType(type);
+        if (active == null) {
+            // no active -> proceed directly to connect via observer
+            rowDisconnectAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             return;
         }
 
-        startDisconnectDrainIfNeeded();
+        ExecutorService executorService = MyExecutorService.getExecutorService();
+        futureDisconnectRow = executorService.submit(() -> {
+            try {
+                provider.logout(new CloudAuthProvider.AuthCallback() {
+                    @Override
+                    public void onSuccess(CloudAccountPOJO ignored) {
+                        clearAfterDisconnect(type);
+                        rowDisconnectAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Global.print_background_thread(App.getAppContext(),
+                                App.getAppContext().getString(R.string.error_while_disconnecting_from_cloud));
+                        clearAfterDisconnect(type);
+                        rowDisconnectAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+                    }
+                });
+            } catch (Throwable t) {
+                clearAfterDisconnect(type);
+                rowDisconnectAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+            }
+        });
     }
 
-    // -------------------------------------------------------------------------
-    // Row-click flow: disconnect current active for the type, then Activity connects
-    // Activity does:
-    //   set pending... + waitingForDisconnect=true
-    //   viewModel.disconnectTypeForPendingConnect(type)
-    // Observer consumesPendingConnect() and calls startConnectFlow(...)
-    // -------------------------------------------------------------------------
-    public void disconnectTypeForPendingConnect(@NonNull FileObjectType type) {
-        enqueueDisconnect(type);
-        startDisconnectDrainIfNeeded();
-    }
-
-    // pending connect helpers
-    public void clearPendingConnect() {
-        waitingForDisconnect = false;
-        pendingTypeToConnect = null;
-        pendingAccountToConnect = null;
-    }
-
-    public boolean hasPendingConnect() {
-        return waitingForDisconnect && pendingTypeToConnect != null && pendingAccountToConnect != null;
-    }
-
-    public PendingConnect consumePendingConnect() {
-        if (!hasPendingConnect()) return null;
-        PendingConnect pc = new PendingConnect(pendingTypeToConnect, pendingAccountToConnect);
-        clearPendingConnect();
+    public synchronized PendingConnect consumeRowPendingConnect() {
+        PendingConnect pc = rowPendingConnect;
+        rowPendingConnect = null;
         return pc;
     }
 
-    public static final class PendingConnect {
-        public final FileObjectType type;
-        public final CloudAccountPOJO account;
-
-        public PendingConnect(FileObjectType type, CloudAccountPOJO account) {
-            this.type = type;
-            this.account = account;
-        }
-    }
-
     // -------------------------------------------------------------------------
-    // DB + connect/auth flows (unchanged behavior, but keep type discipline)
+    // DB + connect/auth flows
     // -------------------------------------------------------------------------
     public synchronized void fetchCloudAccountPojoList() {
         if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
@@ -305,7 +320,7 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
             for (int i = 0; i < size; ++i) {
                 CloudAccountPOJO cloudAccountPOJO = cloudAccountPOJOS_for_delete.get(i);
                 int j = cloudAccountsDatabaseHelper.delete(cloudAccountPOJO.type, cloudAccountPOJO.userId);
-                if (j > 0) {
+                if (j > 0 && cloudAccountPOJOList != null) {
                     cloudAccountPOJOList.remove(cloudAccountPOJO);
                 }
             }
@@ -329,10 +344,7 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
                     long l = cloudAccountsDatabaseHelper.updateOrInsert(account.type, account.userId, account);
                     if (l != -1) {
                         cloudAccount = account;
-
-                        // set token + active mapping based on CURRENT fileObjectType
                         setActive(fileObjectType, account);
-
                         onCloudConnection();
                         connected = true;
                     } else {
@@ -358,16 +370,13 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
 
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future4 = executorService.submit(() -> {
-            // IMPORTANT: this method must operate on 'type'
             this.fileObjectType = type;
             this.cloudAccount = account;
 
-            // set active+token based on account type string
             try {
                 FileObjectType t = FileObjectType.valueOf(account.type);
                 setActive(t, account);
             } catch (Throwable ignore) {
-                // if DB stored unexpected string, still try to proceed with fileObjectType set above
             }
 
             onCloudConnection();
@@ -387,11 +396,9 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
         Bundle bundle = new Bundle();
         bundle.putSerializable("fileObjectType", fileObjectType);
 
-        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION,
-                LocalBroadcastManager.getInstance(App.getAppContext()), null);
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION, LocalBroadcastManager.getInstance(App.getAppContext()), null);
 
-        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT,
-                LocalBroadcastManager.getInstance(App.getAppContext()), bundle);
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT, LocalBroadcastManager.getInstance(App.getAppContext()), bundle);
 
         FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), fileObjectType);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.CLOUD_CACHE_DIR);
@@ -408,7 +415,7 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
     }
 
     // -------------------------------------------------------------------------
-    // Active mapping helpers (same semantics as your existing code)
+    // Active mapping helpers
     // -------------------------------------------------------------------------
     private static boolean sameKey(CloudAccountPOJO a, CloudAccountPOJO b) {
         return a != null && b != null
