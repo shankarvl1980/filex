@@ -34,6 +34,7 @@ import svl.kadatha.filex.EquallyDistributedDialogButtonsLayout;
 import svl.kadatha.filex.FileSelectorActivity;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.MainActivity;
+import svl.kadatha.filex.NetworkCloudTypeSelectDialog;
 import svl.kadatha.filex.PermissionsUtil;
 import svl.kadatha.filex.R;
 import svl.kadatha.filex.YesOrNoAlertDialog;
@@ -41,6 +42,7 @@ import svl.kadatha.filex.YesOrNoAlertDialog;
 public class NetworkAccountDetailsInputDialog extends DialogFragment {
 
     private static final String NETWORK_ACCOUNT_REPLACE_REQUEST_CODE = "network_account_replace_request_code";
+    private static final String HOST_REQUEST_CODE="host_request_code";
     private final ActivityResultLauncher<Intent> activityResultLauncher_file_select = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -190,6 +192,15 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
             }
         }
 
+        Button host_pick=v.findViewById(R.id.fragment_network_details_input_host);
+        //TextView host_pick=v.findViewById(R.id.fragment_network_details_input_host);
+        host_pick.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NetworkCloudTypeSelectDialog networkCloudTypeSelectDialog=NetworkCloudTypeSelectDialog.getInstance(NetworkCloudTypeSelectDialog.HOST,HOST_REQUEST_CODE);
+                networkCloudTypeSelectDialog.show(getParentFragmentManager(),"");
+            }
+        });
         server_tv = v.findViewById(R.id.fragment_network_details_input_server);
         port_tv = v.findViewById(R.id.fragment_network_details_input_port);
         mode_active_radio_btn = v.findViewById(R.id.fragment_network_details_input_mode_active);
@@ -306,6 +317,16 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
                     boolean whetherToConnect = result.getBoolean("whetherToConnect");
                     onOkButtonClick(whetherToConnect);
                 }
+            }
+        });
+
+        getParentFragmentManager().setFragmentResultListener(HOST_REQUEST_CODE, this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                host = result.getString("host");
+                port=result.getInt("port");
+                server_tv.setText(host);
+                port_tv.setText(String.valueOf(port));
             }
         });
         return v;

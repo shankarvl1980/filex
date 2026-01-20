@@ -49,16 +49,33 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <!--TextView
+                        android:id="@+id/fragment_network_details_input_host"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="4dp"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:labelFor="@id/fragment_network_details_input_server"
                         android:text="@string/host_asterisk"
                         android:textColor="?attr/recycler_second_text_color"
+                        android:textSize="17sp" /-->
+                    <Button
+                        android:id="@+id/fragment_network_details_input_host"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:labelFor="@id/fragment_network_details_input_server"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:text="@string/host_asterisk"
+                        android:textAllCaps="false"
+                        android:textColor="?attr/recycler_second_text_color"
                         android:textSize="17sp" />
+
 
                     <EditText
                         android:id="@+id/fragment_network_details_input_server"
