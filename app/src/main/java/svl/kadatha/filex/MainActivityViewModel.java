@@ -21,8 +21,6 @@ public class MainActivityViewModel extends AndroidViewModel {
     public Intent send_intent;
     private boolean isCancelled, show_usb_eject;
     private Future<?> future1, future2, future3, future4, future5, future6, future7, future8, future9, future10;
-    public boolean pendingPop = false;
-    public FileObjectType pendingPopType = null;
 
     public MainActivityViewModel(@NonNull Application application) {
         super(application);

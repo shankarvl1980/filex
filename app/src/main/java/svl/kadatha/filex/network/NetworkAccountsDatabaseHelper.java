@@ -10,204 +10,251 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import svl.kadatha.filex.cloud.TokenCrypto;
+
 public class NetworkAccountsDatabaseHelper extends SQLiteOpenHelper {
 
     static final String DATABASE = "NetworkAccountsDetails.db";
     static final String TABLE = "NetworkAccountsList";
     private static final int DATABASE_VERSION = 1;
 
+    // Columns
+    private static final String COL_HOST = "host";
+    private static final String COL_PORT = "port";
+    private static final String COL_USER_NAME = "user_name";
+    private static final String COL_PASSWORD = "password";
+    private static final String COL_ENCODING = "encoding";
+    private static final String COL_DISPLAY = "display";
+    private static final String COL_TYPE = "type";
+    private static final String COL_MODE = "mode";
+    private static final String COL_ANONYMOUS = "anonymous";
+    private static final String COL_USE_FTPS = "useFTPS";
+    private static final String COL_PRIVATE_KEY_PATH = "privateKeyPath";
+    private static final String COL_PRIVATE_KEY_PASSPHRASE = "privateKeyPassphrase";
+    private static final String COL_KNOWN_HOSTS_PATH = "knownHostsPath";
+    private static final String COL_BASE_PATH = "basePath";
+    private static final String COL_USE_HTTPS = "useHTTPS";
+    private static final String COL_DOMAIN = "domain";
+    private static final String COL_SHARE_NAME = "shareName";
+    private static final String COL_SMB_VERSION = "smbVersion";
+
+    private final Context appContext;
+
     public NetworkAccountsDatabaseHelper(Context context) {
         super(context, DATABASE, null, DATABASE_VERSION);
+        this.appContext = context.getApplicationContext();
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // Create table with all necessary fields including new ones
         db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE + " (" +
-                "host TEXT, " +
-                "port INTEGER, " +
-                "user_name TEXT, " +
-                "password TEXT, " +
-                "encoding TEXT, " +
-                "display TEXT, " +
-                "type TEXT, " +
-                "mode TEXT, " +
-                "anonymous INTEGER, " +
-                "useFTPS INTEGER, " +
-                "privateKeyPath TEXT, " +
-                "privateKeyPassphrase TEXT, " +
-                "knownHostsPath TEXT, " +
-                "basePath TEXT, " +
-                "useHTTPS INTEGER, " +
-                "domain TEXT, " +
-                "shareName TEXT, " +
-                "smbVersion TEXT, " +
-                "PRIMARY KEY (host, port, user_name, type)" +
+                COL_HOST + " TEXT, " +
+                COL_PORT + " INTEGER, " +
+                COL_USER_NAME + " TEXT, " +
+                COL_PASSWORD + " TEXT, " +
+                COL_ENCODING + " TEXT, " +
+                COL_DISPLAY + " TEXT, " +
+                COL_TYPE + " TEXT, " +
+                COL_MODE + " TEXT, " +
+                COL_ANONYMOUS + " INTEGER, " +
+                COL_USE_FTPS + " INTEGER, " +
+                COL_PRIVATE_KEY_PATH + " TEXT, " +
+                COL_PRIVATE_KEY_PASSPHRASE + " TEXT, " +
+                COL_KNOWN_HOSTS_PATH + " TEXT, " +
+                COL_BASE_PATH + " TEXT, " +
+                COL_USE_HTTPS + " INTEGER, " +
+                COL_DOMAIN + " TEXT, " +
+                COL_SHARE_NAME + " TEXT, " +
+                COL_SMB_VERSION + " TEXT, " +
+                "PRIMARY KEY (" + COL_HOST + ", " + COL_PORT + ", " + COL_USER_NAME + ", " + COL_TYPE + ")" +
                 ")");
 
-        // Create an index for faster lookups
         db.execSQL("CREATE INDEX idx_server_port_user_type ON " + TABLE +
-                " (host, port, user_name, type)");
+                " (" + COL_HOST + ", " + COL_PORT + ", " + COL_USER_NAME + ", " + COL_TYPE + ")");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // This method will be implemented in future versions when needed
+        // future migrations
     }
 
-    // Insert method
+    // Insert
     public long insert(NetworkAccountPOJO pojo) {
-        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
-        // Delete existing record if any
-        sqLiteDatabase.delete(TABLE, "host=? AND port=? AND user_name=? AND type=?",
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE, COL_HOST + "=? AND " + COL_PORT + "=? AND " + COL_USER_NAME + "=? AND " + COL_TYPE + "=?",
                 new String[]{pojo.host, String.valueOf(pojo.port), pojo.user_name, pojo.type});
-        ContentValues contentValues = createContentValues(pojo);
-        return sqLiteDatabase.insert(TABLE, null, contentValues);
+        ContentValues values = createContentValues(pojo);
+        return db.insert(TABLE, null, values);
     }
 
-    // UpdateOrInsert method
+    // UpdateOrInsert
     public long updateOrInsert(String original_host, int original_port, String original_user_name, String original_type,
                                NetworkAccountPOJO pojo) {
-        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
-        ContentValues contentValues = createContentValues(pojo);
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = createContentValues(pojo);
 
-        // Attempt to update the existing record
-        int rowsAffected = sqLiteDatabase.update(TABLE, contentValues,
-                "host=? AND port=? AND user_name=? AND type=?",
+        int rowsAffected = db.update(TABLE, values,
+                COL_HOST + "=? AND " + COL_PORT + "=? AND " + COL_USER_NAME + "=? AND " + COL_TYPE + "=?",
                 new String[]{original_host, String.valueOf(original_port), original_user_name, original_type});
 
         if (rowsAffected == 0) {
-            // No existing record found; insert a new one
             try {
-                return sqLiteDatabase.insert(TABLE, null, contentValues);
+                return db.insert(TABLE, null, values);
             } catch (SQLiteException e) {
-                return -1; // Indicate failure
+                return -1;
             }
-        } else {
-            // Update was successful; return the number of rows updated
-            return rowsAffected;
         }
+        return rowsAffected;
     }
 
-
-    // Delete method
+    // Delete
     public int delete(String host, int port, String user_name, String type) {
-        return getWritableDatabase().delete(TABLE, "host=? AND port=? AND user_name=? AND type=?",
+        return getWritableDatabase().delete(TABLE,
+                COL_HOST + "=? AND " + COL_PORT + "=? AND " + COL_USER_NAME + "=? AND " + COL_TYPE + "=?",
                 new String[]{host, String.valueOf(port), user_name, type});
     }
 
-    // Change display name method
+    // Change display name
     public int change_display(String host, int port, String user_name, String new_display_name, String type) {
-        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("display", new_display_name);
-        return sqLiteDatabase.update(TABLE, contentValues,
-                "host=? AND port=? AND user_name=? AND type=?",
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COL_DISPLAY, new_display_name);
+        return db.update(TABLE, values,
+                COL_HOST + "=? AND " + COL_PORT + "=? AND " + COL_USER_NAME + "=? AND " + COL_TYPE + "=?",
                 new String[]{host, String.valueOf(port), user_name, type});
     }
 
-    // Get all NetworkAccountPOJO (all types)
+    // Get all accounts
     public List<NetworkAccountPOJO> getAllNetworkAccountPOJOList() {
-        List<NetworkAccountPOJO> pojoList = new ArrayList<>();
-        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
-        Cursor cursor = null;
+        List<NetworkAccountPOJO> list = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor c = null;
         try {
-            cursor = sqLiteDatabase.query(TABLE, null,
-                    null, null, null, null,
-                    "type ASC, display COLLATE NOCASE ASC");
-            if (cursor != null && cursor.moveToFirst()) {
+            c = db.query(TABLE, null, null, null, null, null,
+                    COL_TYPE + " ASC, " + COL_DISPLAY + " COLLATE NOCASE ASC");
+            if (c != null && c.moveToFirst()) {
                 do {
-                    pojoList.add(createPojoFromCursor(cursor));
-                } while (cursor.moveToNext());
+                    list.add(createPojoFromCursor(c));
+                } while (c.moveToNext());
             }
-        } catch (Exception e) {
-            // no-op / log if needed
+        } catch (Exception ignored) {
         } finally {
-            if (cursor != null) cursor.close();
+            if (c != null) c.close();
         }
-        return pojoList;
+        return list;
     }
 
-    // Get NetworkAccountPOJO list by type
+    // Get by type
     public List<NetworkAccountPOJO> getNetworkAccountPOJOList(String type) {
-        List<NetworkAccountPOJO> pojoList = new ArrayList<>();
-        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
+        List<NetworkAccountPOJO> list = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor c = null;
         try {
-            String selection = "type = ?";
-            String[] selectionArgs = {type};
-            Cursor cursor = sqLiteDatabase.query(TABLE, null, selection, selectionArgs, null, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
+            c = db.query(TABLE, null, COL_TYPE + " = ?", new String[]{type},
+                    null, null, null);
+            if (c != null && c.moveToFirst()) {
                 do {
-                    NetworkAccountPOJO pojo = createPojoFromCursor(cursor);
-                    pojoList.add(pojo);
-                } while (cursor.moveToNext());
-                cursor.close();
+                    list.add(createPojoFromCursor(c));
+                } while (c.moveToNext());
             }
-        } catch (Exception e) {
-            String msg = e.getMessage();
+        } catch (Exception ignored) {
+        } finally {
+            if (c != null) c.close();
         }
-        return pojoList;
+        return list;
     }
 
-    // Get NetworkAccountPOJO
+    // Get specific account
     public NetworkAccountPOJO getNetworkAccountPOJO(String host, int port, String user_name, String type) {
-        NetworkAccountPOJO pojo = null;
-        SQLiteDatabase sqLiteDatabase = getReadableDatabase();
-        Cursor cursor = sqLiteDatabase.query(TABLE, null,
-                "host=? AND port=? AND user_name=? AND type=?",
-                new String[]{host, String.valueOf(port), user_name, type},
-                null, null, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            pojo = createPojoFromCursor(cursor);
-            cursor.close();
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor c = null;
+        try {
+            c = db.query(TABLE, null,
+                    COL_HOST + "=? AND " + COL_PORT + "=? AND " + COL_USER_NAME + "=? AND " + COL_TYPE + "=?",
+                    new String[]{host, String.valueOf(port), user_name, type},
+                    null, null, null);
+
+            if (c != null && c.moveToFirst()) {
+                return createPojoFromCursor(c);
+            }
+        } finally {
+            if (c != null) c.close();
         }
-        return pojo;
+        return null;
     }
 
-    // Helper method to create ContentValues from POJO
+    // -------------------- helpers --------------------
+
     private ContentValues createContentValues(NetworkAccountPOJO pojo) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("host", pojo.host);
-        contentValues.put("port", pojo.port);
-        contentValues.put("user_name", pojo.user_name);
-        contentValues.put("password", pojo.password);
-        contentValues.put("encoding", pojo.encoding);
-        contentValues.put("display", pojo.display);
-        contentValues.put("type", pojo.type);
-        contentValues.put("mode", pojo.mode);
-        contentValues.put("anonymous", pojo.anonymous ? 1 : 0);
-        contentValues.put("useFTPS", pojo.useFTPS ? 1 : 0);
-        contentValues.put("privateKeyPath", pojo.privateKeyPath);
-        contentValues.put("privateKeyPassphrase", pojo.privateKeyPassphrase);
-        contentValues.put("knownHostsPath", pojo.knownHostsPath);
-        contentValues.put("basePath", pojo.basePath);
-        contentValues.put("useHTTPS", pojo.useHTTPS ? 1 : 0);
-        contentValues.put("domain", pojo.domain);
-        contentValues.put("shareName", pojo.shareName);
-        contentValues.put("smbVersion", pojo.smbVersion);
-        return contentValues;
+        ContentValues v = new ContentValues();
+
+        v.put(COL_HOST, pojo.host);
+        v.put(COL_PORT, pojo.port);
+        v.put(COL_USER_NAME, pojo.user_name);
+
+        // Encrypt secrets at rest (TEXT + base64 payload)
+        try {
+            v.put(COL_PASSWORD, TokenCrypto.encrypt(appContext, pojo.password));
+            v.put(COL_PRIVATE_KEY_PASSPHRASE, TokenCrypto.encrypt(appContext, pojo.privateKeyPassphrase));
+        } catch (Exception e) {
+            // fail-open fallback: avoid breaking save; you can tighten later
+            v.put(COL_PASSWORD, pojo.password);
+            v.put(COL_PRIVATE_KEY_PASSPHRASE, pojo.privateKeyPassphrase);
+        }
+
+        v.put(COL_ENCODING, pojo.encoding);
+        v.put(COL_DISPLAY, pojo.display);
+        v.put(COL_TYPE, pojo.type);
+        v.put(COL_MODE, pojo.mode);
+        v.put(COL_ANONYMOUS, pojo.anonymous ? 1 : 0);
+        v.put(COL_USE_FTPS, pojo.useFTPS ? 1 : 0);
+        v.put(COL_PRIVATE_KEY_PATH, pojo.privateKeyPath);
+        v.put(COL_KNOWN_HOSTS_PATH, pojo.knownHostsPath);
+        v.put(COL_BASE_PATH, pojo.basePath);
+        v.put(COL_USE_HTTPS, pojo.useHTTPS ? 1 : 0);
+        v.put(COL_DOMAIN, pojo.domain);
+        v.put(COL_SHARE_NAME, pojo.shareName);
+        v.put(COL_SMB_VERSION, pojo.smbVersion);
+
+        return v;
     }
 
-    // Helper method to create POJO from Cursor
-    private NetworkAccountPOJO createPojoFromCursor(Cursor cursor) {
-        String host = cursor.getString(cursor.getColumnIndex("host"));
-        int port = cursor.getInt(cursor.getColumnIndex("port"));
-        String user_name = cursor.getString(cursor.getColumnIndex("user_name"));
-        String password = cursor.getString(cursor.getColumnIndex("password"));
-        String encoding = cursor.getString(cursor.getColumnIndex("encoding"));
-        String display = cursor.getString(cursor.getColumnIndex("display"));
-        String type = cursor.getString(cursor.getColumnIndex("type"));
-        String mode = cursor.getString(cursor.getColumnIndex("mode"));
-        boolean anonymous = cursor.getInt(cursor.getColumnIndex("anonymous")) != 0;
-        boolean useFTPS = cursor.getInt(cursor.getColumnIndex("useFTPS")) != 0;
-        String privateKeyPath = cursor.getString(cursor.getColumnIndex("privateKeyPath"));
-        String privateKeyPassphrase = cursor.getString(cursor.getColumnIndex("privateKeyPassphrase"));
-        String knownHostsPath = cursor.getString(cursor.getColumnIndex("knownHostsPath"));
-        String basePath = cursor.getString(cursor.getColumnIndex("basePath"));
-        boolean useHTTPS = cursor.getInt(cursor.getColumnIndex("useHTTPS")) != 0;
-        String domain = cursor.getString(cursor.getColumnIndex("domain"));
-        String shareName = cursor.getString(cursor.getColumnIndex("shareName"));
-        String smbVersion = cursor.getString(cursor.getColumnIndex("smbVersion"));
+    private NetworkAccountPOJO createPojoFromCursor(Cursor c) {
+        String host = c.getString(c.getColumnIndexOrThrow(COL_HOST));
+        int port = c.getInt(c.getColumnIndexOrThrow(COL_PORT));
+        String user_name = c.getString(c.getColumnIndexOrThrow(COL_USER_NAME));
+
+        String passwordPayload = c.getString(c.getColumnIndexOrThrow(COL_PASSWORD));
+        String passphrasePayload = c.getString(c.getColumnIndexOrThrow(COL_PRIVATE_KEY_PASSPHRASE));
+
+        String password;
+        String privateKeyPassphrase;
+        try {
+            password = TokenCrypto.decrypt(appContext, passwordPayload);
+            privateKeyPassphrase = TokenCrypto.decrypt(appContext, passphrasePayload);
+        } catch (Exception e) {
+            // Legacy/plaintext or corrupted fallback
+            password = passwordPayload;
+            privateKeyPassphrase = passphrasePayload;
+        }
+
+        String encoding = c.getString(c.getColumnIndexOrThrow(COL_ENCODING));
+        String display = c.getString(c.getColumnIndexOrThrow(COL_DISPLAY));
+        String type = c.getString(c.getColumnIndexOrThrow(COL_TYPE));
+        String mode = c.getString(c.getColumnIndexOrThrow(COL_MODE));
+        boolean anonymous = c.getInt(c.getColumnIndexOrThrow(COL_ANONYMOUS)) != 0;
+        boolean useFTPS = c.getInt(c.getColumnIndexOrThrow(COL_USE_FTPS)) != 0;
+
+        String privateKeyPath = c.getString(c.getColumnIndexOrThrow(COL_PRIVATE_KEY_PATH));
+        String knownHostsPath = c.getString(c.getColumnIndexOrThrow(COL_KNOWN_HOSTS_PATH));
+        String basePath = c.getString(c.getColumnIndexOrThrow(COL_BASE_PATH));
+        boolean useHTTPS = c.getInt(c.getColumnIndexOrThrow(COL_USE_HTTPS)) != 0;
+        String domain = c.getString(c.getColumnIndexOrThrow(COL_DOMAIN));
+        String shareName = c.getString(c.getColumnIndexOrThrow(COL_SHARE_NAME));
+        String smbVersion = c.getString(c.getColumnIndexOrThrow(COL_SMB_VERSION));
 
         return new NetworkAccountPOJO(
                 host, port, user_name, password,

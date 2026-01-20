@@ -583,12 +583,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        runPendingCloudPopIfSafe();
-    }
-
-    @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean("clear_cache", clear_cache);
@@ -610,33 +604,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         if (!isFinishing() && !isChangingConfigurations() && clear_cache) {
             clearCache();
         }
-    }
-
-    private void runPendingCloudPopIfSafe() {
-        if (!fileSelectorActivityViewModel.pendingPop) return;
-
-        // Only execute when Activity is in a safe lifecycle state
-        if (!getLifecycle().getCurrentState().isAtLeast(androidx.lifecycle.Lifecycle.State.RESUMED)) {
-            return;
-        }
-
-        // Also guard FragmentManager state
-        if (fm.isStateSaved()) {
-            return;
-        }
-
-        // optional: re-check condition
-        FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
-        if (fileSelectorFragment == null || fileSelectorActivityViewModel.pendingPopType == null || fileSelectorFragment.fileObjectType != fileSelectorActivityViewModel.pendingPopType) {
-            fileSelectorActivityViewModel.pendingPop = false;
-            fileSelectorActivityViewModel.pendingPopType = null;
-            return;
-        }
-
-        fileSelectorActivityViewModel.pendingPop = false;
-        fileSelectorActivityViewModel.pendingPopType = null;
-
-        onbackpressed(false); // now safe
     }
 
     public void setSearchBarVisibility(boolean visible) {
@@ -1108,9 +1075,10 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                     if (bundle != null) {
                         FileObjectType fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
                         if (fileSelectorFragment != null && fileObjectType != null && fileObjectType == fileSelectorFragment.fileObjectType) {
-                            fileSelectorActivityViewModel.pendingPop = true;
-                            fileSelectorActivityViewModel.pendingPopType = fileObjectType;
-                            runPendingCloudPopIfSafe();
+                            if (!getLifecycle().getCurrentState().isAtLeast(androidx.lifecycle.Lifecycle.State.RESUMED)) {
+                                return;
+                            }
+                            onbackpressed(false); // now safe
                         }
                     }
                     break;
