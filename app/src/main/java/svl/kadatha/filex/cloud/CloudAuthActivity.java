@@ -519,8 +519,8 @@ public class CloudAuthActivity extends BaseActivity {
                 type_display = "MediaFire";
             }
 
-
-            holder.cloud_account_user_id.setText(type_display + " • " + user_id);
+            holder.host.setText(type_display);
+            holder.cloud_account_user_id.setText(user_id);
 
             boolean item_selected = viewModel.mselecteditems.containsKey(position);
             holder.v.setSelected(item_selected);
@@ -548,7 +548,6 @@ public class CloudAuthActivity extends BaseActivity {
                 cloud_account_display = v.findViewById(R.id.network_list_recyclerview_display);
                 cloud_account_user_id = v.findViewById(R.id.network_list_recyclerview_user_name);
                 host = v.findViewById(R.id.network_list_recyclerview_host);
-                host.setVisibility(View.GONE);
                 cloud_account_select_indicator = v.findViewById(R.id.network_list_recyclerview_select_indicator);
                 green_dot = v.findViewById(R.id.network_list_recyclerview_connected_indicator);
 
