@@ -318,7 +318,7 @@ public class SmbFileModel implements FileModel {
             // Ensure parent dirs exist if your pipeline expects it
             // (Optional – keep if you want)
             String parent = new java.io.File(p).getParent();
-            if (parent != null && parent.length() > 0) {
+            if (parent != null && !parent.isEmpty()) {
                 // if parent doesn't exist, mkdirs style
                 // NOTE: folderExists uses share-relative paths
                 if (!share.folderExists(parent)) {

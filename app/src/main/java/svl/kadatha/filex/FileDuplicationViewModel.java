@@ -367,13 +367,8 @@ public class FileDuplicationViewModel extends ViewModel {
                         removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
                     }
                 } else if (fileOperationMode == FileOperationMode.RENAME) {
-                    if (apply_to_all) {
-                        files_selected_array.removeAll(not_to_be_replaced_files_path_array);
-                        removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
-                    } else {
-                        files_selected_array.removeAll(not_to_be_replaced_files_path_array);
-                        removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
-                    }
+                    files_selected_array.removeAll(not_to_be_replaced_files_path_array);
+                    removeNotTobeCopiedUris(context, data_list, not_to_be_replaced_files_path_array);
                 } else if (fileOperationMode == FileOperationMode.SKIP) {
                     if (apply_to_all) {
                         files_selected_array.removeAll(source_duplicate_file_path_array);

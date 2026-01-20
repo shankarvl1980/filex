@@ -16,7 +16,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -62,8 +61,14 @@ public final class MediaFireAuthProvider implements CloudAuthProvider {
     }
 
     private static String enc(String s) {
-        return URLEncoder.encode(s, StandardCharsets.UTF_8);
+        try {
+            return URLEncoder.encode(s, "UTF-8"); // API 21 safe
+        } catch (Exception e) {
+            return s;
+        }
     }
+
+
 
     private static long safeSecondsToMs(@Nullable String secondsStr) {
         try {
@@ -235,9 +240,11 @@ public final class MediaFireAuthProvider implements CloudAuthProvider {
     }
 
     private void clearCookies() {
-        CookieManager.getInstance().removeAllCookies(null);
-        CookieManager.getInstance().flush();
+        CookieManager cm = CookieManager.getInstance();
+        cm.removeAllCookies(value -> { /* no-op */ });
+        cm.flush();
     }
+
 
     private void postAuthSuccess(CloudAccountPOJO account) {
         new Handler(Looper.getMainLooper()).post(() -> {

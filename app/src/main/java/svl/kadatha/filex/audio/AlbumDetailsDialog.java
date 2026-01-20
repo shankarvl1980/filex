@@ -69,7 +69,6 @@ public class AlbumDetailsDialog extends DialogFragment {
     private TextView file_number_view;
     private TextView empty_audio_list_tv;
     private Toolbar bottom_toolbar;
-    private Button delete_btn, play_btn, add_list_btn, overflow_btn;
     private ArrayList<ListPopupWindowPOJO> list_popupwindowpojos;
     private boolean toolbar_visible;
     private int scroll_distance;
@@ -265,10 +264,10 @@ public class AlbumDetailsDialog extends DialogFragment {
         bottom_toolbar = v.findViewById(R.id.album_details_bottom_toolbar);
 
         bottom_toolbar.addView(tb_layout);
-        delete_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_1);
-        play_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_2);
-        add_list_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_3);
-        overflow_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_4);
+        Button delete_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_1);
+        Button play_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_2);
+        Button add_list_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_3);
+        Button overflow_btn = bottom_toolbar.findViewById(R.id.toolbar_btn_4);
 
         ToolbarButtonClickListener toolbarButtonClickListener = new ToolbarButtonClickListener();
         delete_btn.setOnClickListener(toolbarButtonClickListener);

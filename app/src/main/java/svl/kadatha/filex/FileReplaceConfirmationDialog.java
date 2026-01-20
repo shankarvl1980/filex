@@ -102,7 +102,6 @@ public class FileReplaceConfirmationDialog extends DialogFragment {
         TextView confirmation_message_textview = v.findViewById(R.id.dialog_fragment_replace_message);
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_replace_confirmation_button_layout);
 
-
         Button rename_button, skip_button;
         if (sourceFileObjectType.equals(destFileObjectType) && source_folder.equals(dest_folder)) {
             buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context, 2, Global.DIALOG_WIDTH, Global.DIALOG_WIDTH));

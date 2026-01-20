@@ -362,11 +362,10 @@ public class SftpFileModel implements FileModel {
         } catch (SftpException e) {
             if (e.id == ChannelSftp.SSH_FX_NO_SUCH_FILE) {
                 Timber.tag(TAG).d("SFTP file does not exist: %s", path);
-                return false;
             } else {
                 Timber.tag(TAG).e("Error checking if SFTP file exists: %s", e.getMessage());
-                return false;
             }
+            return false;
         } catch (JSchException e) {
             Timber.tag(TAG).e("Error getting SFTP channel: %s", e.getMessage());
             return false;

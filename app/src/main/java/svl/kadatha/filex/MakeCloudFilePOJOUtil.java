@@ -469,18 +469,25 @@ public class MakeCloudFilePOJOUtil {
                     @Override
                     protected java.text.SimpleDateFormat initialValue() {
                         java.text.SimpleDateFormat f =
-                                new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX", java.util.Locale.US);
+                                new java.text.SimpleDateFormat(
+                                        "yyyy-MM-dd'T'HH:mm:ss.SSSZ",
+                                        java.util.Locale.US
+                                );
                         f.setLenient(true);
                         f.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
                         return f;
                     }
                 };
+
         private static final ThreadLocal<java.text.SimpleDateFormat> RFC3339_NO_MILLIS =
                 new ThreadLocal<java.text.SimpleDateFormat>() {
                     @Override
                     protected java.text.SimpleDateFormat initialValue() {
                         java.text.SimpleDateFormat f =
-                                new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX", java.util.Locale.US);
+                                new java.text.SimpleDateFormat(
+                                        "yyyy-MM-dd'T'HH:mm:ssZ",
+                                        java.util.Locale.US
+                                );
                         f.setLenient(true);
                         f.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
                         return f;
@@ -495,10 +502,18 @@ public class MakeCloudFilePOJOUtil {
             s = s.trim();
             if (s.isEmpty()) return null;
 
+            // Normalize RFC3339 timezone to SimpleDateFormat-friendly form
+            // 2024-01-01T10:20:30.123Z      -> Z
+            // 2024-01-01T10:20:30.123+05:30 -> +0530
+            s = normalizeTimezone(s);
+
             try {
-                if (s.indexOf('.') >= 0) return RFC3339_MILLIS.get().parse(s);
+                if (s.indexOf('.') >= 0) {
+                    return RFC3339_MILLIS.get().parse(s);
+                }
                 return RFC3339_NO_MILLIS.get().parse(s);
             } catch (Exception e) {
+                // Defensive fallback
                 try {
                     return RFC3339_MILLIS.get().parse(s);
                 } catch (Exception ignored) {
@@ -509,6 +524,26 @@ public class MakeCloudFilePOJOUtil {
                 }
                 return null;
             }
+        }
+
+        private static String normalizeTimezone(String s) {
+            // Handle trailing 'Z'
+            if (s.endsWith("Z")) {
+                return s.substring(0, s.length() - 1) + "+0000";
+            }
+
+            // Handle +HH:MM or -HH:MM
+            int len = s.length();
+            if (len >= 6) {
+                char sign = s.charAt(len - 6);
+                if ((sign == '+' || sign == '-') && s.charAt(len - 3) == ':') {
+                    return s.substring(0, len - 6)
+                            + sign
+                            + s.substring(len - 5, len - 3)
+                            + s.substring(len - 2);
+                }
+            }
+            return s;
         }
 
         static DatePair toDatePair(String rfc3339) {
