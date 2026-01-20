@@ -36,27 +36,27 @@ import svl.kadatha.filex.usb.ReadAccess;
 import svl.kadatha.filex.usb.UsbFileRootSingleton;
 
 public final class SubFileCountUtil {
-    private static final int cap=100;
+    private static final int cap = 100;
     private static final OkHttpClient CLOUD_HTTP = new OkHttpClient();
     private static final Gson CLOUD_GSON = new Gson();
 
     public static void ensureSubFileCount(FilePOJO pojo, Callback cb) {
-        if(pojo==null)return;
+        if (pojo == null) return;
         if (!pojo.getIsDirectory()) return;
 
         // If you added dedicated fields:
         if (pojo.getSize() != null && !pojo.getSize().isEmpty()) return;
         int count = computeSubFileCountBlocking(pojo);
         String si;
-        if(Global.CLOUD_FILE_OBJECT_TYPES.contains(pojo.getFileObjectType())){
+        if (Global.CLOUD_FILE_OBJECT_TYPES.contains(pojo.getFileObjectType())) {
             int limitSignal = cap + 1;
             si = (count >= limitSignal) ? "(" + cap + "+)" : "(" + count + ")";
-        } else{
+        } else {
             si = "(" + count + ")";
         }
 
         pojo.setSize(si);
-        if(cb!=null){
+        if (cb != null) {
             cb.onSubFileCountReady(pojo, count);
         }
     }
@@ -190,15 +190,15 @@ public final class SubFileCountUtil {
     }
 
     private static int countSmbChildren(String path) throws IOException {
-        SmbClientRepository smbClientRepository= SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+        SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
         SmbClientRepository.ShareHandle h = null;
         try {
             h = smbClientRepository.acquireShare();
             DiskShare share = h.share;
-                String adj = path.startsWith("/") ? path.substring(1) : path;
-                List<FileIdBothDirectoryInformation> list = share.list(adj);
-                // minus 2 for "." and ".."
-                return list != null ? Math.max(0, list.size() - 2) : 0;
+            String adj = path.startsWith("/") ? path.substring(1) : path;
+            List<FileIdBothDirectoryInformation> list = share.list(adj);
+            // minus 2 for "." and ".."
+            return list != null ? Math.max(0, list.size() - 2) : 0;
 
         } finally {
             if (smbClientRepository != null) smbClientRepository.releaseShare(h);
@@ -318,11 +318,12 @@ public final class SubFileCountUtil {
         }
     }
 
+    public interface Callback {
+        void onSubFileCountReady(FilePOJO pojo, int subFileCount);
+    }
+
     private static final class YandexTotalResponse {
         YandexEmbedded _embedded;
-    }
-    private static final class YandexEmbedded {
-        int total;
     }
 
 //    private static int countOneDriveChildrenCapped(FilePOJO pojo, String bearerToken, int capPlusOne) {
@@ -378,9 +379,8 @@ public final class SubFileCountUtil {
 //        String id;
 //    }
 
-
-    public interface Callback {
-        void onSubFileCountReady(FilePOJO pojo, int subFileCount);
+    private static final class YandexEmbedded {
+        int total;
     }
 }
 

@@ -57,27 +57,47 @@ public class SmbClientRepository {
         return instance;
     }
 
-    /** Handle for share + session. Always close() it (or call releaseShare). */
-    public static final class ShareHandle implements AutoCloseable {
-        public final Session session;
-        public final DiskShare share;
+    // Your SMB version mapping, kept here
+    private static SmbConfig buildConfigFromPojo(NetworkAccountPOJO pojo) {
+        SmbConfig.Builder b = SmbConfig.builder()
+                .withTimeout(60, TimeUnit.SECONDS)
+                .withSoTimeout(60, TimeUnit.SECONDS);
 
-        // pooled=false means dedicated session for streaming
-        private final boolean pooled;
-        private final SmbClientRepository repo;
-        private boolean closed;
-
-        private ShareHandle(SmbClientRepository repo, Session session, DiskShare share, boolean pooled) {
-            this.repo = repo;
-            this.session = session;
-            this.share = share;
-            this.pooled = pooled;
+        if (pojo.smbVersion != null && !pojo.smbVersion.trim().isEmpty()) {
+            List<SMB2Dialect> dialects = getDialectsFromVersion(pojo.smbVersion.trim());
+            if (!dialects.isEmpty()) {
+                b.withDialects(dialects.toArray(new SMB2Dialect[0]));
+            }
         }
+        return b.build();
+    }
 
-        @Override
-        public void close() {
-            repo.releaseShare(this);
+    private static List<SMB2Dialect> getDialectsFromVersion(String smbVersion) {
+        List<SMB2Dialect> dialects = new ArrayList<>();
+        switch (smbVersion) {
+            case "SMB2":
+                dialects.add(SMB2Dialect.SMB_2_0_2);
+                dialects.add(SMB2Dialect.SMB_2_1);
+                break;
+            case "SMB3":
+                dialects.add(SMB2Dialect.SMB_3_0);
+                dialects.add(SMB2Dialect.SMB_3_0_2);
+                dialects.add(SMB2Dialect.SMB_3_1_1);
+                break;
+            case "SMB1":
+                // SMBJ doesn’t support SMB1
+                break;
+            default:
+                dialects.addAll(Arrays.asList(SMB2Dialect.values()));
+                break;
         }
+        return dialects;
+    }
+
+    // Convenience for callers that need sanitized paths
+    public static String stripLeadingSlash(String p) {
+        if (p == null) return "";
+        return p.startsWith("/") ? p.substring(1) : p;
     }
 
     /**
@@ -130,12 +150,17 @@ public class SmbClientRepository {
         throw last != null ? last : new IOException("acquireShareForStreaming failed");
     }
 
-    /** Release handle. Prefer h.close() via try-with-resources. */
+    /**
+     * Release handle. Prefer h.close() via try-with-resources.
+     */
     public void releaseShare(ShareHandle h) {
         if (h == null || h.closed) return;
         h.closed = true;
 
-        try { if (h.share != null) h.share.close(); } catch (Exception ignored) {}
+        try {
+            if (h.share != null) h.share.close();
+        } catch (Exception ignored) {
+        }
 
         if (h.pooled) {
             // return session to pool if still connected
@@ -151,7 +176,9 @@ public class SmbClientRepository {
         }
     }
 
-    /** Cheap connection test (uses pooled acquire). */
+    /**
+     * Cheap connection test (uses pooled acquire).
+     */
     public boolean testConnection() {
         ShareHandle h = null;
         try {
@@ -174,7 +201,10 @@ public class SmbClientRepository {
         }
         lastUsedTimes.clear();
 
-        try { smbClient.close(); } catch (Exception ignored) {}
+        try {
+            smbClient.close();
+        } catch (Exception ignored) {
+        }
         instance = null;
         NetworkAccountDetailsViewModel.clearNetworkFileObjectType(FileObjectType.SMB_TYPE);
     }
@@ -206,7 +236,8 @@ public class SmbClientRepository {
 
     private Session createFreshSession() throws IOException {
         Connection c;
-        if (networkAccountPOJO.port > 0) c = smbClient.connect(networkAccountPOJO.host, networkAccountPOJO.port);
+        if (networkAccountPOJO.port > 0)
+            c = smbClient.connect(networkAccountPOJO.host, networkAccountPOJO.port);
         else c = smbClient.connect(networkAccountPOJO.host);
 
         AuthenticationContext ac = getAuthenticationContext();
@@ -282,13 +313,20 @@ public class SmbClientRepository {
         if (s == null) return;
         lastUsedTimes.remove(s);
 
-        try { s.close(); } catch (Exception ignored) {}
+        try {
+            s.close();
+        } catch (Exception ignored) {
+        }
         try {
             Connection c = s.getConnection();
             if (c != null) {
-                try { c.close(); } catch (Exception ignored) {}
+                try {
+                    c.close();
+                } catch (Exception ignored) {
+                }
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     private IOException asIo(Exception e, String msg) {
@@ -302,50 +340,32 @@ public class SmbClientRepository {
         return new IOException(msg, e);
     }
 
-    // Your SMB version mapping, kept here
-    private static SmbConfig buildConfigFromPojo(NetworkAccountPOJO pojo) {
-        SmbConfig.Builder b = SmbConfig.builder()
-                .withTimeout(60, TimeUnit.SECONDS)
-                .withSoTimeout(60, TimeUnit.SECONDS);
-
-        if (pojo.smbVersion != null && !pojo.smbVersion.trim().isEmpty()) {
-            List<SMB2Dialect> dialects = getDialectsFromVersion(pojo.smbVersion.trim());
-            if (!dialects.isEmpty()) {
-                b.withDialects(dialects.toArray(new SMB2Dialect[0]));
-            }
-        }
-        return b.build();
-    }
-
-    private static List<SMB2Dialect> getDialectsFromVersion(String smbVersion) {
-        List<SMB2Dialect> dialects = new ArrayList<>();
-        switch (smbVersion) {
-            case "SMB2":
-                dialects.add(SMB2Dialect.SMB_2_0_2);
-                dialects.add(SMB2Dialect.SMB_2_1);
-                break;
-            case "SMB3":
-                dialects.add(SMB2Dialect.SMB_3_0);
-                dialects.add(SMB2Dialect.SMB_3_0_2);
-                dialects.add(SMB2Dialect.SMB_3_1_1);
-                break;
-            case "SMB1":
-                // SMBJ doesn’t support SMB1
-                break;
-            default:
-                dialects.addAll(Arrays.asList(SMB2Dialect.values()));
-                break;
-        }
-        return dialects;
-    }
-
-    // Convenience for callers that need sanitized paths
-    public static String stripLeadingSlash(String p) {
-        if (p == null) return "";
-        return p.startsWith("/") ? p.substring(1) : p;
-    }
-
     public String getShareName() {
         return shareName;
+    }
+
+    /**
+     * Handle for share + session. Always close() it (or call releaseShare).
+     */
+    public static final class ShareHandle implements AutoCloseable {
+        public final Session session;
+        public final DiskShare share;
+
+        // pooled=false means dedicated session for streaming
+        private final boolean pooled;
+        private final SmbClientRepository repo;
+        private boolean closed;
+
+        private ShareHandle(SmbClientRepository repo, Session session, DiskShare share, boolean pooled) {
+            this.repo = repo;
+            this.session = session;
+            this.share = share;
+            this.pooled = pooled;
+        }
+
+        @Override
+        public void close() {
+            repo.releaseShare(this);
+        }
     }
 }

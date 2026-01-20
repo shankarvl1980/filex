@@ -22,7 +22,7 @@ import svl.kadatha.filex.network.NetworkAccountDetailsViewModel;
 import svl.kadatha.filex.network.WebDavClientRepository;
 import timber.log.Timber;
 
-public class WebDavFileModel implements FileModel, StreamUploadFileModel{
+public class WebDavFileModel implements FileModel, StreamUploadFileModel {
 
     private static final String TAG = "WebDavFileModel";
     private final String path;
@@ -54,13 +54,26 @@ public class WebDavFileModel implements FileModel, StreamUploadFileModel{
         }
     }
 
-    @Override public String getName() { return new File(path).getName(); }
-    @Override public String getParentName() {
+    @Override
+    public String getName() {
+        return new File(path).getName();
+    }
+
+    @Override
+    public String getParentName() {
         File parent = new File(path).getParentFile();
         return (parent != null) ? parent.getName() : null;
     }
-    @Override public String getPath() { return path; }
-    @Override public String getParentPath() { return new File(path).getParent(); }
+
+    @Override
+    public String getPath() {
+        return path;
+    }
+
+    @Override
+    public String getParentPath() {
+        return new File(path).getParent();
+    }
 
     @Override
     public boolean isDirectory() {
@@ -169,7 +182,10 @@ public class WebDavFileModel implements FileModel, StreamUploadFileModel{
             url = repo.buildUrl(filePath);
         } catch (Exception e) {
             Timber.tag(TAG).e(e, "putChildFromStream init failed");
-            try { in.close(); } catch (Exception ignored) {}
+            try {
+                in.close();
+            } catch (Exception ignored) {
+            }
             return false;
         }
 
@@ -230,7 +246,10 @@ public class WebDavFileModel implements FileModel, StreamUploadFileModel{
 
         } finally {
             // Upload owns the stream: close it once the call finishes (success/fail).
-            try { in.close(); } catch (Exception ignored) {}
+            try {
+                in.close();
+            } catch (Exception ignored) {
+            }
         }
     }
 

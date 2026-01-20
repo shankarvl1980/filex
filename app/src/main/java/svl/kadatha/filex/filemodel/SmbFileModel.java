@@ -9,7 +9,6 @@ import com.hierynomus.mssmb2.SMB2CreateDisposition;
 import com.hierynomus.mssmb2.SMB2ShareAccess;
 import com.hierynomus.mssmb2.SMBApiException;
 import com.hierynomus.smbj.common.SMBRuntimeException;
-import com.hierynomus.smbj.session.Session;
 import com.hierynomus.smbj.share.DiskShare;
 import com.hierynomus.smbj.share.File;
 
@@ -58,8 +57,7 @@ public class SmbFileModel implements FileModel {
             Timber.tag(TAG).e("Error creating SMB directory: %s", e.getMessage());
             return false;
         } finally {
-            if(smbClientRepository!=null)
-            {
+            if (smbClientRepository != null) {
                 smbClientRepository.releaseShare(h);
                 Timber.tag(TAG).d("SMB session released");
             }
@@ -82,6 +80,27 @@ public class SmbFileModel implements FileModel {
         }
         Timber.tag(TAG).d("Successfully created multiple SMB directories");
         return true;
+    }
+
+    /**
+     * share-relative mkdirs helper (no leading slash)
+     */
+    private static void mkdirsOnShare(DiskShare share, String shareRelativeDir) {
+        if (shareRelativeDir == null || shareRelativeDir.isEmpty()) return;
+
+        String[] parts = shareRelativeDir.split("/");
+        String cur = "";
+        for (String part : parts) {
+            if (part == null || part.isEmpty()) continue;
+            cur = cur.isEmpty() ? part : (cur + "/" + part);
+            try {
+                if (!share.folderExists(cur)) {
+                    share.mkdir(cur);
+                }
+            } catch (Exception ignored) {
+                // If it already exists or races with another thread, ignore.
+            }
+        }
     }
 
     @Override
@@ -183,7 +202,6 @@ public class SmbFileModel implements FileModel {
         }
     }
 
-
     @Override
     public boolean delete() {
         Timber.tag(TAG).d("Attempting to delete SMB directory: %s", path);
@@ -274,13 +292,14 @@ public class SmbFileModel implements FileModel {
         } catch (Exception e) {
             Timber.tag(TAG).e(e, "Failed to get InputStream for path: %s", path);
             if (h != null) {
-                try { h.close(); } catch (Exception ignored) {}
+                try {
+                    h.close();
+                } catch (Exception ignored) {
+                }
             }
             return null;
         }
     }
-
-
 
     @Override
     public OutputStream getChildOutputStream(String child_name, long source_length) {
@@ -323,35 +342,19 @@ public class SmbFileModel implements FileModel {
         } catch (Exception e) {
             Timber.tag(TAG).e(e, "Failed to get OutputStream for path: %s", filePath);
             if (h != null) {
-                try { h.close(); } catch (Exception ignored) {}
+                try {
+                    h.close();
+                } catch (Exception ignored) {
+                }
             }
             return null;
-        }
-    }
-
-    /** share-relative mkdirs helper (no leading slash) */
-    private static void mkdirsOnShare(DiskShare share, String shareRelativeDir) {
-        if (shareRelativeDir == null || shareRelativeDir.isEmpty()) return;
-
-        String[] parts = shareRelativeDir.split("/");
-        String cur = "";
-        for (String part : parts) {
-            if (part == null || part.isEmpty()) continue;
-            cur = cur.isEmpty() ? part : (cur + "/" + part);
-            try {
-                if (!share.folderExists(cur)) {
-                    share.mkdir(cur);
-                }
-            } catch (Exception ignored) {
-                // If it already exists or races with another thread, ignore.
-            }
         }
     }
 
     @Override
     public FileModel[] list() {
         Timber.tag(TAG).d("Attempting to list files for path: %s", path);
-        SmbClientRepository smbClientRepository= SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+        SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
         SmbClientRepository.ShareHandle h = null;
         try {
             h = smbClientRepository.acquireShare();
@@ -532,8 +535,14 @@ public class SmbFileModel implements FileModel {
                 first = e;
             }
 
-            try { if (smbFile != null) smbFile.close(); } catch (Exception ignored) {}
-            try { if (handle != null) handle.close(); } catch (Exception ignored) {}
+            try {
+                if (smbFile != null) smbFile.close();
+            } catch (Exception ignored) {
+            }
+            try {
+                if (handle != null) handle.close();
+            } catch (Exception ignored) {
+            }
 
             if (first != null) throw first;
         }
@@ -568,8 +577,14 @@ public class SmbFileModel implements FileModel {
                 if (first == null) first = e;
             }
 
-            try { if (smbFile != null) smbFile.close(); } catch (Exception ignored) {}
-            try { if (handle != null) handle.close(); } catch (Exception ignored) {}
+            try {
+                if (smbFile != null) smbFile.close();
+            } catch (Exception ignored) {
+            }
+            try {
+                if (handle != null) handle.close();
+            } catch (Exception ignored) {
+            }
 
             if (first != null) throw first;
         }

@@ -24,8 +24,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okio.BufferedSink;
-import okio.Okio;
-import okio.Source;
 import svl.kadatha.filex.MakeCloudFilePOJOUtil;
 import timber.log.Timber;
 
@@ -41,18 +39,17 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
     private static final MediaType OCTET = MediaType.parse("application/octet-stream");
 
     private static final SimpleDateFormat RFC3339_FORMAT;
+    private static final SimpleDateFormat RFC3339_Z =
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
+    private static final SimpleDateFormat RFC3339_Z_MS =
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
+
     static {
         // Many Yandex timestamps are RFC3339 with timezone offsets too.
         // We'll try this "Z" format first, then fallback to java parsing best-effort.
         RFC3339_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
         RFC3339_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
-    private static final SimpleDateFormat RFC3339_Z =
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
-
-    private static final SimpleDateFormat RFC3339_Z_MS =
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
-
 
     private final String accessToken;
     private final String path; // app-level path: "/" or "/Folder/File"
@@ -92,6 +89,25 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
         return p;
     }
 
+    private static String normalizeRfc3339(String s) {
+        if (s == null) return null;
+
+        // Convert "+03:00" → "+0300"
+        // Convert "-05:30" → "-0530"
+        if (s.length() >= 6) {
+            char c = s.charAt(s.length() - 6);
+            if (c == '+' || c == '-') {
+                return s.substring(0, s.length() - 3)
+                        + s.substring(s.length() - 2);
+            }
+        }
+        return s;
+    }
+
+    // -----------------------------
+    // FileModel basics
+    // -----------------------------
+
     private MakeCloudFilePOJOUtil.YandexResource fetchMetadata(String p) throws IOException {
         HttpUrl url = HttpUrl.parse(BASE_URL)
                 .newBuilder()
@@ -112,10 +128,6 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
             return null;
         }
     }
-
-    // -----------------------------
-    // FileModel basics
-    // -----------------------------
 
     @Override
     public String getName() {
@@ -186,7 +198,10 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
             }
             // Yandex move can be async; metadata might not be instantly available.
             // Best-effort refresh:
-            try { this.metadata = fetchMetadata(newPath); } catch (Exception ignored) {}
+            try {
+                this.metadata = fetchMetadata(newPath);
+            } catch (Exception ignored) {
+            }
             return true;
         } catch (IOException e) {
             return false;
@@ -401,8 +416,11 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
     public boolean exists() {
         if ("/".equals(path)) return true;
         if (metadata != null) return true;
-        try { return fetchMetadata(path) != null; }
-        catch (IOException e) { return false; }
+        try {
+            return fetchMetadata(path) != null;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     @Override
@@ -425,22 +443,6 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
             return 0;
         }
     }
-
-    private static String normalizeRfc3339(String s) {
-        if (s == null) return null;
-
-        // Convert "+03:00" → "+0300"
-        // Convert "-05:30" → "-0530"
-        if (s.length() >= 6) {
-            char c = s.charAt(s.length() - 6);
-            if (c == '+' || c == '-') {
-                return s.substring(0, s.length() - 3)
-                        + s.substring(s.length() - 2);
-            }
-        }
-        return s;
-    }
-
 
     @Override
     public boolean isHidden() {
@@ -532,7 +534,10 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
             }
 
             // 3) refresh metadata best-effort (Yandex can be async sometimes)
-            try { this.metadata = fetchMetadata(childPath); } catch (Exception ignored) {}
+            try {
+                this.metadata = fetchMetadata(childPath);
+            } catch (Exception ignored) {
+            }
 
             // strict length check if known
             if (contentLengthOrMinus1 > 0 && bytesRead != null && bytesRead.length > 0) {

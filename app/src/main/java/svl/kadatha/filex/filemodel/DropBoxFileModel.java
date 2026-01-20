@@ -4,6 +4,7 @@ import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.NetworkIOException;
 import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.CommitInfo;
 import com.dropbox.core.v2.files.CreateFolderErrorException;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.FolderMetadata;
@@ -15,7 +16,6 @@ import com.dropbox.core.v2.files.UploadSessionCursor;
 import com.dropbox.core.v2.files.UploadSessionFinishErrorException;
 import com.dropbox.core.v2.files.UploadSessionStartResult;
 import com.dropbox.core.v2.files.WriteMode;
-import com.dropbox.core.v2.files.CommitInfo;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -46,6 +46,7 @@ public class DropBoxFileModel implements FileModel, StreamUploadFileModel {
         this.path = normalizePath(path);
         this.metadata = fetchMetadataOrRoot(this.path);
     }
+
     private DropBoxFileModel(String accessToken, DbxClientV2 client, String path, Metadata meta) {
         this.accessToken = accessToken;
         this.dbxClient = client;
@@ -71,6 +72,28 @@ public class DropBoxFileModel implements FileModel, StreamUploadFileModel {
         return "/".equals(normalizedPath) ? "" : normalizedPath;
     }
 
+    /**
+     * Reads up to max bytes. Returns number of bytes read, or -1 if EOF immediately.
+     * This prevents "tiny reads" from PipedInputStream etc. causing too many small chunks.
+     */
+    private static int readFullyUpTo(InputStream in, byte[] buf, int max) throws IOException {
+        int total = 0;
+        while (total < max) {
+            int n = in.read(buf, total, max - total);
+            if (n == -1) {
+                return (total == 0) ? -1 : total;
+            }
+            total += n;
+
+            // If we got "some" bytes, allow more reads to fill the chunk,
+            // but don't spin forever on slow streams: break once we got a decent amount.
+            if (total >= 256 * 1024) { // 256KB threshold
+                break;
+            }
+        }
+        return total;
+    }
+
     private Metadata fetchMetadataOrRoot(String normalizedPath) throws DbxException {
         if ("/".equals(normalizedPath)) {
             return null; // root is virtual; treat via path checks
@@ -83,7 +106,6 @@ public class DropBoxFileModel implements FileModel, StreamUploadFileModel {
         if ("/".equals(path)) return "/";
         return (metadata != null) ? metadata.getName() : new java.io.File(path).getName();
     }
-
 
     @Override
     public String getParentName() {
@@ -159,7 +181,6 @@ public class DropBoxFileModel implements FileModel, StreamUploadFileModel {
         }
     }
 
-
     /**
      * 🚫 Do not use OutputStream abstraction for Dropbox uploads.
      * Use putChildFromStream() instead (upload sessions).
@@ -218,7 +239,10 @@ public class DropBoxFileModel implements FileModel, StreamUploadFileModel {
                         .uploadSessionFinish(cursor, commit)
                         .uploadAndFinish(new ByteArrayInputStream(new byte[0]));
 
-                try { this.metadata = dbxClient.files().getMetadata(destPath); } catch (Exception ignored) {}
+                try {
+                    this.metadata = dbxClient.files().getMetadata(destPath);
+                } catch (Exception ignored) {
+                }
                 return (contentLengthOrMinus1 <= 0) || (uploaded == contentLengthOrMinus1);
             }
 
@@ -242,9 +266,13 @@ public class DropBoxFileModel implements FileModel, StreamUploadFileModel {
                     uploaded += pendingLen;
                     if (bytesRead != null && bytesRead.length > 0) bytesRead[0] = uploaded;
 
-                    try { this.metadata = dbxClient.files().getMetadata(destPath); } catch (Exception ignored) {}
+                    try {
+                        this.metadata = dbxClient.files().getMetadata(destPath);
+                    } catch (Exception ignored) {
+                    }
 
-                    if (contentLengthOrMinus1 > 0 && uploaded != contentLengthOrMinus1) return false;
+                    if (contentLengthOrMinus1 > 0 && uploaded != contentLengthOrMinus1)
+                        return false;
                     return true;
                 }
 
@@ -271,30 +299,6 @@ public class DropBoxFileModel implements FileModel, StreamUploadFileModel {
             return false;
         }
     }
-
-    /**
-     * Reads up to max bytes. Returns number of bytes read, or -1 if EOF immediately.
-     * This prevents "tiny reads" from PipedInputStream etc. causing too many small chunks.
-     */
-    private static int readFullyUpTo(InputStream in, byte[] buf, int max) throws IOException {
-        int total = 0;
-        while (total < max) {
-            int n = in.read(buf, total, max - total);
-            if (n == -1) {
-                return (total == 0) ? -1 : total;
-            }
-            total += n;
-
-            // If we got "some" bytes, allow more reads to fill the chunk,
-            // but don't spin forever on slow streams: break once we got a decent amount.
-            if (total >= 256 * 1024) { // 256KB threshold
-                break;
-            }
-        }
-        return total;
-    }
-
-
 
     private boolean uploadEmptyFile(String destPath) {
         try (InputStream empty = new ByteArrayInputStream(new byte[0])) {

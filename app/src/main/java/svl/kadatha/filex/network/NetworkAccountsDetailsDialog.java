@@ -50,6 +50,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
     public final static String WebDAV = "webdav";
     public final static String SMB = "smb";
     public final static String NETWORK_ACCOUNT_INPUT_DETAILS_REQUEST_CODE = "network_account_input_details_request_code";
+    public final static String ALL = "all";
     private final static String NETWORK_ACCOUNT_DELETE_REQUEST_CODE = "network_account_delete_request_code";
     private final static String NETWORK_ACCOUNT_RENAME_REQUEST_CODE = "network_account_rename_request_code";
     private final static String NETWORK_ACCOUNT_TYPE_REQUEST_CODE = "network_account_type_request_code";
@@ -69,8 +70,6 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
     private TextView network_number_text_view, empty_network_account_list_tv;
     private NetworkAccountDetailsViewModel viewModel;
     private NetworkAccountPOJO connected_network_account_pojo = null;
-
-    public final static String ALL = "all";
 
     public static NetworkAccountsDetailsDialog getInstance(String type) {
         Bundle bundle = new Bundle();
@@ -451,8 +450,8 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
         getParentFragmentManager().setFragmentResultListener(NETWORK_ACCOUNT_TYPE_REQUEST_CODE, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                if(requestKey.equals(NETWORK_ACCOUNT_TYPE_REQUEST_CODE)){
-                    String type=result.getString("type");
+                if (requestKey.equals(NETWORK_ACCOUNT_TYPE_REQUEST_CODE)) {
+                    String type = result.getString("type");
                     NetworkAccountDetailsInputDialog networkAccountDetailsInputDialog = NetworkAccountDetailsInputDialog.getInstance(NETWORK_ACCOUNT_INPUT_DETAILS_REQUEST_CODE, type, null);
                     networkAccountDetailsInputDialog.show(getParentFragmentManager(), "");
                 }
@@ -680,8 +679,8 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
             if (id == R.id.toolbar_btn_1) {
                 clear_selection();
                 if (type.equals(ALL)) {
-                    NetworkCloudTypeSelectDialog networkCloudTypeSelectDialog=NetworkCloudTypeSelectDialog.getInstance(NetworkCloudTypeSelectDialog.NETWORK,NETWORK_ACCOUNT_TYPE_REQUEST_CODE);
-                    networkCloudTypeSelectDialog.show(getParentFragmentManager(),"");
+                    NetworkCloudTypeSelectDialog networkCloudTypeSelectDialog = NetworkCloudTypeSelectDialog.getInstance(NetworkCloudTypeSelectDialog.NETWORK, NETWORK_ACCOUNT_TYPE_REQUEST_CODE);
+                    networkCloudTypeSelectDialog.show(getParentFragmentManager(), "");
                 } else {
                     NetworkAccountDetailsInputDialog networkAccountDetailsInputDialog = NetworkAccountDetailsInputDialog.getInstance(NETWORK_ACCOUNT_INPUT_DETAILS_REQUEST_CODE, viewModel.type, null);
                     networkAccountDetailsInputDialog.show(getParentFragmentManager(), "");

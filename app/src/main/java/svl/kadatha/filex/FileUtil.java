@@ -139,7 +139,8 @@ public final class FileUtil {
                 long len = afd.getLength();
                 if (len > 0) return len;
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
         // 2) OpenableColumns.SIZE (works for many document providers)
         Cursor c = null;
@@ -189,7 +190,7 @@ public final class FileUtil {
                 long[] bytes_read_per_file = new long[1];
                 boolean ok = ((StreamUploadFileModel) destFileModel)
                         .putChildFromStream(child_name, fileInputStream, len > 0 ? len : -1, bytes_read_per_file);
-                bytes_read[0]+= bytes_read_per_file[0];
+                bytes_read[0] += bytes_read_per_file[0];
                 if (ok && cut) sourceFile.delete();
                 return ok;
             }
@@ -210,8 +211,14 @@ public final class FileUtil {
             return false;
 
         } finally {
-                try { if (fileInputStream != null) fileInputStream.close(); } catch (Exception ignored) {}
-                try { if (outputStream != null) outputStream.close(); } catch (Exception ignored) {}
+            try {
+                if (fileInputStream != null) fileInputStream.close();
+            } catch (Exception ignored) {
+            }
+            try {
+                if (outputStream != null) outputStream.close();
+            } catch (Exception ignored) {
+            }
         }
     }
 
@@ -233,14 +240,18 @@ public final class FileUtil {
                 try {
                     len = sourceFileModel.getLength(); // may be 0/-1 depending on model; ok
                     if (len <= 0) len = -1;
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
                 long[] bytes_read_per_file = new long[1];
                 boolean ok = ((StreamUploadFileModel) destFileModel)
                         .putChildFromStream(child_name, inputStream, len, bytes_read_per_file);
-                bytes_read[0]+= bytes_read_per_file[0];
+                bytes_read[0] += bytes_read_per_file[0];
 
                 if (ok && cut) {
-                    try { sourceFileModel.delete(); } catch (Exception ignored) {}
+                    try {
+                        sourceFileModel.delete();
+                    } catch (Exception ignored) {
+                    }
                 }
                 return ok;
             }
@@ -267,8 +278,14 @@ public final class FileUtil {
             return false;
 
         } finally {
-                try { if (inputStream != null) inputStream.close(); } catch (Exception ignored) {}
-                try { if (outputStream != null) outputStream.close(); } catch (Exception ignored) {}
+            try {
+                if (inputStream != null) inputStream.close();
+            } catch (Exception ignored) {
+            }
+            try {
+                if (outputStream != null) outputStream.close();
+            } catch (Exception ignored) {
+            }
         }
     }
 
@@ -287,9 +304,9 @@ public final class FileUtil {
             if (destFileModel instanceof StreamUploadFileModel) {
                 long len = tryGetUriLength(App.getAppContext(), data); // -1 if unknown
                 long[] bytes_read_per_file = new long[1];
-                boolean ok= ((StreamUploadFileModel) destFileModel)
+                boolean ok = ((StreamUploadFileModel) destFileModel)
                         .putChildFromStream(file_name, inStream, len, bytes_read_per_file);
-                bytes_read[0]+= bytes_read_per_file[0];
+                bytes_read[0] += bytes_read_per_file[0];
                 return ok;
             }
 
@@ -309,8 +326,14 @@ public final class FileUtil {
             return false;
 
         } finally {
-                try { if (inStream != null) inStream.close(); } catch (Exception ignored) {}
-                try { if (fileOutStream != null) fileOutStream.close(); } catch (Exception ignored) {}
+            try {
+                if (inStream != null) inStream.close();
+            } catch (Exception ignored) {
+            }
+            try {
+                if (fileOutStream != null) fileOutStream.close();
+            } catch (Exception ignored) {
+            }
         }
     }
 
@@ -343,7 +366,7 @@ public final class FileUtil {
 
                 boolean ok = ((StreamUploadFileModel) destFileModel)
                         .putChildFromStream(fileName, inStream, len, bytes_read_per_file);
-                bytesRead[0]+= bytes_read_per_file[0];
+                bytesRead[0] += bytes_read_per_file[0];
                 return ok;
             }
 
@@ -363,11 +386,20 @@ public final class FileUtil {
             return false;
 
         } finally {
-                try { if (inStream != null) inStream.close(); } catch (Exception ignored) {}
-                try { if (outStream != null) outStream.close(); } catch (Exception ignored) {}
+            try {
+                if (inStream != null) inStream.close();
+            } catch (Exception ignored) {
+            }
+            try {
+                if (outStream != null) outStream.close();
+            } catch (Exception ignored) {
+            }
 
             if (connection != null) {
-                try { connection.disconnect(); } catch (Exception ignored) {}
+                try {
+                    connection.disconnect();
+                } catch (Exception ignored) {
+                }
             }
         }
     }
@@ -383,13 +415,15 @@ public final class FileUtil {
                     return (len > 0) ? len : -1L;
                 }
             }
-        } catch (Throwable ignored) {}
+        } catch (Throwable ignored) {
+        }
 
         // 2) Fallback to int-based API (may overflow for >2GB)
         try {
             int lenInt = conn.getContentLength();
             if (lenInt > 0) return (long) lenInt;
-        } catch (Throwable ignored) {}
+        } catch (Throwable ignored) {
+        }
 
         return -1L;
     }
@@ -482,6 +516,7 @@ public final class FileUtil {
         }
         return null;
     }
+
     public static ChannelSftp.LsEntry getSftpEntry(ChannelSftp channelSftp, String path) {
         try {
             // Special handling for root directory
@@ -884,7 +919,7 @@ public final class FileUtil {
         try (InputStream in = inputStream; OutputStream out = outputStream) {
             while ((count = in.read(buffer)) != -1) {
                 out.write(buffer, 0, count);
-                bytes_read[0]+=count;
+                bytes_read[0] += count;
             }
             out.flush();
         }

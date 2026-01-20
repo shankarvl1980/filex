@@ -92,7 +92,6 @@ public class Global {
     public static final int IMAGE_VIEW_DIMENSION_MULTIPLIER_SMALL = 8;
     public static final int IMAGE_VIEW_DIMENSION_MULTIPLIER_MEDIUM = 9;
     public static final int IMAGE_VIEW_DIMENSION_MULTIPLIER_LARGE = 10;
-    static final HashMap<String, List<LibraryAlbumSelectDialog.LibraryDirPOJO>> LIBRARY_FILTER_HASHMAP = new HashMap<>();
     public static final Set<String> IMAGE_EXT_SET = Set.of(
             "png", "jpg", "jpeg", "svg", "gif", "tif", "webp", "avif"
     );
@@ -136,6 +135,7 @@ public class Global {
             "db"
     );
     public static final Set<String> OTHER_EXT_SET = Set.of("");
+    static final HashMap<String, List<LibraryAlbumSelectDialog.LibraryDirPOJO>> LIBRARY_FILTER_HASHMAP = new HashMap<>();
     static final Set<String> SORT_CODE_SET = new HashSet<>(Arrays.asList("d_name_asc", "d_name_desc", "d_date_asc", "d_date_desc", "d_size_asc", "d_size_desc",
             "f_name_asc", "f_name_desc", "f_date_asc", "f_date_desc", "f_size_asc", "f_size_desc"));
     static final Set<String> THEME_CODE_SET = new HashSet<>(Arrays.asList("system", "light", "dark"));

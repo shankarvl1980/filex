@@ -177,7 +177,7 @@ public class StorageUtil {
             int idx = name.lastIndexOf(".");
             if (idx > 0) {
                 file_ext = name.substring(idx + 1);
-                String lower_file_ext=file_ext.toLowerCase(Locale.ROOT);
+                String lower_file_ext = file_ext.toLowerCase(Locale.ROOT);
                 if (Global.VIDEO_EXT_SET.contains(lower_file_ext)) {
                     play_overlay_visible = View.VISIBLE;
                 } else if (Global.PDF_EXT_SET.contains(lower_file_ext)) {

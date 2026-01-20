@@ -61,6 +61,20 @@ public final class MediaFireAuthProvider implements CloudAuthProvider {
         this.gson = new Gson();
     }
 
+    private static String enc(String s) {
+        return URLEncoder.encode(s, StandardCharsets.UTF_8);
+    }
+
+    private static long safeSecondsToMs(@Nullable String secondsStr) {
+        try {
+            long sec = Long.parseLong(secondsStr);
+            // Keep a minimum to avoid “already expired” from weird server values
+            return Math.max(60, sec) * 1000L;
+        } catch (Exception e) {
+            return 3600_000L;
+        }
+    }
+
     @Override
     public void authenticate(AuthCallback callback) {
         this.authCallback = callback;
@@ -112,11 +126,13 @@ public final class MediaFireAuthProvider implements CloudAuthProvider {
 
         Request req = new Request.Builder().url(url).get().build();
         http.newCall(req).enqueue(new Callback() {
-            @Override public void onFailure(@NonNull Call call, @NonNull IOException e) {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 postAuthError(e);
             }
 
-            @Override public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     postAuthError(new Exception("MediaFire token exchange failed: " + response.code()));
                     return;
@@ -176,11 +192,13 @@ public final class MediaFireAuthProvider implements CloudAuthProvider {
 
         Request req = new Request.Builder().url(url).get().build();
         http.newCall(req).enqueue(new Callback() {
-            @Override public void onFailure(@NonNull Call call, @NonNull IOException e) {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 postToCallbackError(callback, e);
             }
 
-            @Override public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     postToCallbackError(callback, new Exception("MediaFire renew failed: " + response.code()));
                     return;
@@ -221,20 +239,6 @@ public final class MediaFireAuthProvider implements CloudAuthProvider {
         CookieManager.getInstance().flush();
     }
 
-    private static String enc(String s) {
-        return URLEncoder.encode(s, StandardCharsets.UTF_8);
-    }
-
-    private static long safeSecondsToMs(@Nullable String secondsStr) {
-        try {
-            long sec = Long.parseLong(secondsStr);
-            // Keep a minimum to avoid “already expired” from weird server values
-            return Math.max(60, sec) * 1000L;
-        } catch (Exception e) {
-            return 3600_000L;
-        }
-    }
-
     private void postAuthSuccess(CloudAccountPOJO account) {
         new Handler(Looper.getMainLooper()).post(() -> {
             if (authCallback != null) authCallback.onSuccess(account);
@@ -263,11 +267,16 @@ public final class MediaFireAuthProvider implements CloudAuthProvider {
         ResponseData response;
 
         static final class ResponseData {
-            @SerializedName("session_token") String session_token;
-            @SerializedName("time_remaining") String time_remaining;
-            @SerializedName("email") String email;
-            @SerializedName("display_name") String display_name;
-            @SerializedName("user_id") String user_id;
+            @SerializedName("session_token")
+            String session_token;
+            @SerializedName("time_remaining")
+            String time_remaining;
+            @SerializedName("email")
+            String email;
+            @SerializedName("display_name")
+            String display_name;
+            @SerializedName("user_id")
+            String user_id;
         }
     }
 }

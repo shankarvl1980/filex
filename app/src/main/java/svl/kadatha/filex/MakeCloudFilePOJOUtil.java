@@ -23,16 +23,16 @@ import svl.kadatha.filex.filemodel.GoogleDriveFileModel;
 
 /**
  * Drop-in MakeCloudFilePOJOUtil
- *
+ * <p>
  * Key upgrades:
  * 1) Drive: build FilePOJO directly from already-listed metadata (ID-based)
- *    - sets cloudId, parentCloudId, driveMimeType
- *    - avoids the unsafe "query by name" problem for listing flows
- *
+ * - sets cloudId, parentCloudId, driveMimeType
+ * - avoids the unsafe "query by name" problem for listing flows
+ * <p>
  * 2) Drive root POJO includes cloudId="root"
- *
+ * <p>
  * 3) Dropbox: opportunistically stores Dropbox id (if available)
- *
+ * <p>
  * 4) Yandex: path-based, no stable id stored (fields left null)
  */
 public class MakeCloudFilePOJOUtil {
@@ -462,29 +462,12 @@ public class MakeCloudFilePOJOUtil {
         boolean templated;
     }
 
-    public class YandexResource {
-        public String name;
-        public String path;       // e.g. "disk:/Folder/File.txt"
-        public String modified;   // RFC3339
-        public Long size;
-        public YandexResourceEmbedded _embedded;
-        String type;              // "file" or "dir"
-
-        boolean isFile() { return "file".equals(type); }
-        public boolean isDir() { return "dir".equals(type); }
-    }
-
-    public class YandexResourceEmbedded {
-        public java.util.List<YandexResource> items;
-    }
-
     static final class CloudDateUtil {
-
-        private CloudDateUtil() {}
 
         private static final ThreadLocal<java.text.SimpleDateFormat> RFC3339_MILLIS =
                 new ThreadLocal<java.text.SimpleDateFormat>() {
-                    @Override protected java.text.SimpleDateFormat initialValue() {
+                    @Override
+                    protected java.text.SimpleDateFormat initialValue() {
                         java.text.SimpleDateFormat f =
                                 new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX", java.util.Locale.US);
                         f.setLenient(true);
@@ -492,10 +475,10 @@ public class MakeCloudFilePOJOUtil {
                         return f;
                     }
                 };
-
         private static final ThreadLocal<java.text.SimpleDateFormat> RFC3339_NO_MILLIS =
                 new ThreadLocal<java.text.SimpleDateFormat>() {
-                    @Override protected java.text.SimpleDateFormat initialValue() {
+                    @Override
+                    protected java.text.SimpleDateFormat initialValue() {
                         java.text.SimpleDateFormat f =
                                 new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX", java.util.Locale.US);
                         f.setLenient(true);
@@ -503,6 +486,9 @@ public class MakeCloudFilePOJOUtil {
                         return f;
                     }
                 };
+
+        private CloudDateUtil() {
+        }
 
         static java.util.Date parseRfc3339(String s) {
             if (s == null) return null;
@@ -513,8 +499,14 @@ public class MakeCloudFilePOJOUtil {
                 if (s.indexOf('.') >= 0) return RFC3339_MILLIS.get().parse(s);
                 return RFC3339_NO_MILLIS.get().parse(s);
             } catch (Exception e) {
-                try { return RFC3339_MILLIS.get().parse(s); } catch (Exception ignored) {}
-                try { return RFC3339_NO_MILLIS.get().parse(s); } catch (Exception ignored) {}
+                try {
+                    return RFC3339_MILLIS.get().parse(s);
+                } catch (Exception ignored) {
+                }
+                try {
+                    return RFC3339_NO_MILLIS.get().parse(s);
+                } catch (Exception ignored) {
+                }
                 return null;
             }
         }
@@ -528,10 +520,32 @@ public class MakeCloudFilePOJOUtil {
         static final class DatePair {
             final long epochMillis;
             final String ui;
+
             DatePair(long epochMillis, String ui) {
                 this.epochMillis = epochMillis;
                 this.ui = ui;
             }
         }
+    }
+
+    public class YandexResource {
+        public String name;
+        public String path;       // e.g. "disk:/Folder/File.txt"
+        public String modified;   // RFC3339
+        public Long size;
+        public YandexResourceEmbedded _embedded;
+        String type;              // "file" or "dir"
+
+        boolean isFile() {
+            return "file".equals(type);
+        }
+
+        public boolean isDir() {
+            return "dir".equals(type);
+        }
+    }
+
+    public class YandexResourceEmbedded {
+        public java.util.List<YandexResource> items;
     }
 }

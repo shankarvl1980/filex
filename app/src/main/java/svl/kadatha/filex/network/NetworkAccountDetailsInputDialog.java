@@ -357,7 +357,7 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
 
 
         bundle.putBoolean("whetherToConnect", whetherToConnect);
-        if (!update && whetherNetworkAccountPOJOAlreadyExists(host,port, user_name, type) && !replace) {
+        if (!update && whetherNetworkAccountPOJOAlreadyExists(host, port, user_name, type) && !replace) {
             YesOrNoAlertDialog ftpServerCloseAlertDialog = YesOrNoAlertDialog.getInstance(NETWORK_ACCOUNT_REPLACE_REQUEST_CODE, R.string.network_account_setting_already_exists_want_to_replace_it, bundle);
             ftpServerCloseAlertDialog.show(getParentFragmentManager(), "");
         } else {

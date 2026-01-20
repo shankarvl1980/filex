@@ -42,6 +42,9 @@ import svl.kadatha.filex.network.DeleteNetworkAccountAlertDialog;
 public class CloudAuthActivity extends BaseActivity {
     private static final String CLOUD_ACCOUNT_DELETE_REQUEST_CODE = "cloud_account_delete_request_code";
     private static final String CLOUD_ACCOUNT_TYPE_REQUEST_CODE = "cloud_account_type_request_code";
+    private final List<CloudAccountPOJO> cloudAccountPOJO_selected_for_delete = new ArrayList<>();
+    public boolean clear_cache;
+    public CloudAuthActivityViewModel viewModel;
     private Context context;
     private PermissionsUtil permissionsUtil;
     private Toolbar bottom_toolbar;
@@ -52,12 +55,8 @@ public class CloudAuthActivity extends BaseActivity {
     private boolean toolbar_visible = true;
     private int scroll_distance;
     private int num_all_network_account = 0;
-
-    public boolean clear_cache;
-    public CloudAuthActivityViewModel viewModel;
     private CloudAccountPojoListAdapter cloudAccountPojoListAdapter;
     private FileObjectType fileObjectType;
-    private final List<CloudAccountPOJO> cloudAccountPOJO_selected_for_delete = new ArrayList<>();
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -102,9 +101,9 @@ public class CloudAuthActivity extends BaseActivity {
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                if(!viewModel.mselecteditems.isEmpty()){
+                if (!viewModel.mselecteditems.isEmpty()) {
                     clear_selection();
-                } else{
+                } else {
                     finish();
                 }
             }
@@ -485,6 +484,7 @@ public class CloudAuthActivity extends BaseActivity {
         disconnect_btn.setEnabled(enable && enableDisconnect);
         disconnect_btn.setAlpha((enable && enableDisconnect) ? Global.ENABLE_ALFA : Global.DISABLE_ALFA);
     }
+
     public void clear_selection() {
         viewModel.mselecteditems = new IndexedLinkedHashMap<>();
         if (cloudAccountPojoListAdapter != null) cloudAccountPojoListAdapter.notifyDataSetChanged();

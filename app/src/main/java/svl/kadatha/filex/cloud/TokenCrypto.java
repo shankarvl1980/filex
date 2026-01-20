@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -46,11 +45,14 @@ public final class TokenCrypto {
 
     private static final String ENC_VERSION = "v1";
 
-    private TokenCrypto() {}
+    private TokenCrypto() {
+    }
 
     // -------------------- Public API --------------------
 
-    /** Encrypts plaintext into Base64 TEXT payload. Returns null if input null/empty. */
+    /**
+     * Encrypts plaintext into Base64 TEXT payload. Returns null if input null/empty.
+     */
     @Nullable
     public static String encrypt(@NonNull Context ctx, @Nullable String plaintext) throws Exception {
         if (plaintext == null || plaintext.isEmpty()) return null;
@@ -70,7 +72,9 @@ public final class TokenCrypto {
                 + Base64.encodeToString(ct, Base64.NO_WRAP);
     }
 
-    /** Decrypts Base64 TEXT payload. Returns null if input null/empty. */
+    /**
+     * Decrypts Base64 TEXT payload. Returns null if input null/empty.
+     */
     @Nullable
     public static String decrypt(@NonNull Context ctx, @Nullable String payload) throws Exception {
         if (payload == null || payload.isEmpty()) return null;
@@ -95,7 +99,9 @@ public final class TokenCrypto {
         return new String(pt, StandardCharsets.UTF_8);
     }
 
-    /** If you ever want to force reset (logout all): deletes wrapped AES key. */
+    /**
+     * If you ever want to force reset (logout all): deletes wrapped AES key.
+     */
     public static void clear(@NonNull Context ctx) {
         SharedPreferences sp = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         sp.edit().remove(PREF_WRAPPED_AES).apply();
@@ -168,7 +174,8 @@ public final class TokenCrypto {
         KeyStore ks = KeyStore.getInstance(ANDROID_KEY_STORE);
         ks.load(null);
         Certificate cert = ks.getCertificate(RSA_ALIAS);
-        if (cert == null) throw new IllegalStateException("RSA cert missing for alias " + RSA_ALIAS);
+        if (cert == null)
+            throw new IllegalStateException("RSA cert missing for alias " + RSA_ALIAS);
         return cert.getPublicKey();
     }
 

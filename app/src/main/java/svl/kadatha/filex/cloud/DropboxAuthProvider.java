@@ -36,7 +36,7 @@ import svl.kadatha.filex.MyExecutorService;
 public final class DropboxAuthProvider implements CloudAuthProvider {
 
     // Dropbox OAuth endpoints
-    private static final Uri AUTH_ENDPOINT  = Uri.parse("https://www.dropbox.com/oauth2/authorize");
+    private static final Uri AUTH_ENDPOINT = Uri.parse("https://www.dropbox.com/oauth2/authorize");
     private static final Uri TOKEN_ENDPOINT = Uri.parse("https://api.dropboxapi.com/oauth2/token");
 
     // Dropbox App Key (client_id)
@@ -54,7 +54,7 @@ public final class DropboxAuthProvider implements CloudAuthProvider {
     // - files.metadata.read
     // - files.content.read
     // - files.content.write
-    private static final String[] SCOPES = new String[] {
+    private static final String[] SCOPES = new String[]{
             "account_info.read",
             "files.metadata.read",
             "files.content.read",
@@ -111,7 +111,8 @@ public final class DropboxAuthProvider implements CloudAuthProvider {
         if (requestCode != REQ_AUTH) return;
 
         if (data == null) {
-            if (authCallback != null) authCallback.onError(new Exception("Authorization cancelled"));
+            if (authCallback != null)
+                authCallback.onError(new Exception("Authorization cancelled"));
             return;
         }
 
@@ -119,13 +120,15 @@ public final class DropboxAuthProvider implements CloudAuthProvider {
         AuthorizationException ex = AuthorizationException.fromIntent(data);
 
         if (resp == null) {
-            if (authCallback != null) authCallback.onError(ex != null ? ex : new Exception("Authorization failed"));
+            if (authCallback != null)
+                authCallback.onError(ex != null ? ex : new Exception("Authorization failed"));
             return;
         }
 
         authService.performTokenRequest(resp.createTokenExchangeRequest(), (tokenResp, tokenEx) -> {
             if (tokenResp == null || tokenResp.accessToken == null) {
-                if (authCallback != null) authCallback.onError(tokenEx != null ? tokenEx : new Exception("Token exchange failed"));
+                if (authCallback != null)
+                    authCallback.onError(tokenEx != null ? tokenEx : new Exception("Token exchange failed"));
                 return;
             }
 
@@ -138,7 +141,8 @@ public final class DropboxAuthProvider implements CloudAuthProvider {
 
             fetchCurrentAccount(accessToken, (acct, acctEx) -> {
                 if (acct == null) {
-                    if (authCallback != null) authCallback.onError(acctEx != null ? acctEx : new Exception("Failed to fetch Dropbox account"));
+                    if (authCallback != null)
+                        authCallback.onError(acctEx != null ? acctEx : new Exception("Failed to fetch Dropbox account"));
                     return;
                 }
 
@@ -184,7 +188,8 @@ public final class DropboxAuthProvider implements CloudAuthProvider {
 
         authService.performTokenRequest(req, (resp, ex) -> {
             if (resp == null || resp.accessToken == null) {
-                if (callback != null) callback.onError(ex != null ? ex : new Exception("Token refresh failed"));
+                if (callback != null)
+                    callback.onError(ex != null ? ex : new Exception("Token refresh failed"));
                 return;
             }
 
@@ -226,10 +231,6 @@ public final class DropboxAuthProvider implements CloudAuthProvider {
     // -------- Dropbox account lookup --------
     // POST https://api.dropboxapi.com/2/users/get_current_account with Bearer token :contentReference[oaicite:4]{index=4}
 
-    private interface CurrentAccountCallback {
-        void onFetched(@Nullable DropboxCurrentAccount acct, @Nullable Exception e);
-    }
-
     private void fetchCurrentAccount(@NonNull String accessToken, @NonNull CurrentAccountCallback cb) {
         bg.execute(() -> {
             try {
@@ -254,17 +255,25 @@ public final class DropboxAuthProvider implements CloudAuthProvider {
         });
     }
 
-    private static final class DropboxCurrentAccount {
-        @SerializedName("account_id") String accountId;
-        @SerializedName("email") String email;
-        @SerializedName("name") Name name;
-
-        static final class Name {
-            @SerializedName("display_name") String displayName;
-        }
-    }
-
     public void dispose() {
         authService.dispose();
+    }
+
+    private interface CurrentAccountCallback {
+        void onFetched(@Nullable DropboxCurrentAccount acct, @Nullable Exception e);
+    }
+
+    private static final class DropboxCurrentAccount {
+        @SerializedName("account_id")
+        String accountId;
+        @SerializedName("email")
+        String email;
+        @SerializedName("name")
+        Name name;
+
+        static final class Name {
+            @SerializedName("display_name")
+            String displayName;
+        }
     }
 }

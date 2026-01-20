@@ -376,7 +376,7 @@ public class ArchiveSetUpDialog extends DialogFragment {
                             }
                         }
 
-                        if(Global.CLOUD_FILE_OBJECT_TYPES.contains(destFileObjectType)){
+                        if (Global.CLOUD_FILE_OBJECT_TYPES.contains(destFileObjectType)) {
                             Global.print(context, getString(R.string.not_supported));
                             return;
                         }
@@ -424,7 +424,7 @@ public class ArchiveSetUpDialog extends DialogFragment {
                             }
                         }
 
-                        if(Global.CLOUD_FILE_OBJECT_TYPES.contains(destFileObjectType) || Global.CLOUD_FILE_OBJECT_TYPES.contains(sourceFileObjectType)){
+                        if (Global.CLOUD_FILE_OBJECT_TYPES.contains(destFileObjectType) || Global.CLOUD_FILE_OBJECT_TYPES.contains(sourceFileObjectType)) {
                             Global.print(context, getString(R.string.not_supported));
                             return;
                         }

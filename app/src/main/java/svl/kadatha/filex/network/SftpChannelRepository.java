@@ -1,15 +1,10 @@
 package svl.kadatha.filex.network;
 
-import android.os.Bundle;
-
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,14 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import svl.kadatha.filex.App;
 import svl.kadatha.filex.FileObjectType;
-import svl.kadatha.filex.FilePOJO;
-import svl.kadatha.filex.FilePOJOUtil;
-import svl.kadatha.filex.FileSelectorActivity;
-import svl.kadatha.filex.Global;
-import svl.kadatha.filex.MainActivity;
-import svl.kadatha.filex.RepositoryClass;
 import timber.log.Timber;
 
 public class SftpChannelRepository {
@@ -178,12 +166,14 @@ public class SftpChannelRepository {
         try {
             try {
                 if (channel.isConnected()) channel.disconnect();
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
 
             try {
                 Session session = channel.getSession();
                 if (session != null && session.isConnected()) session.disconnect();
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         } finally {
             lastUsedTimes.remove(channel);
         }

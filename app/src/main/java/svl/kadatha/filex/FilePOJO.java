@@ -152,80 +152,200 @@ public class FilePOJO implements Parcelable {
     // -----------------------------
     // Existing getters/setters
     // -----------------------------
-    public FileObjectType getFileObjectType() { return this.fileObjectType; }
-    public void setFileObjectType(FileObjectType f) { this.fileObjectType = f; }
+    public FileObjectType getFileObjectType() {
+        return this.fileObjectType;
+    }
 
-    public String getName() { return this.name; }
-    public void setName(String n) { this.name = n; }
+    public void setFileObjectType(FileObjectType f) {
+        this.fileObjectType = f;
+    }
 
-    public String getLowerName() { return lower_name; }
-    public String getPackage_name() { return this.package_name; }
+    public String getName() {
+        return this.name;
+    }
 
-    public String getPath() { return this.path; }
-    public void setPath(String p) { this.path = p; }
+    public void setName(String n) {
+        this.name = n;
+    }
 
-    public boolean getIsDirectory() { return this.isDirectory; }
-    public void setIsDirectory(boolean dir) { this.isDirectory = dir; }
+    public String getLowerName() {
+        return lower_name;
+    }
 
-    public long getDateLong() { return this.dateLong; }
-    public void setDateLong(long dl) { this.dateLong = dl; }
+    public String getPackage_name() {
+        return this.package_name;
+    }
 
-    public String getDate() { return this.date; }
-    public void setDate(String d) { this.date = d; }
+    public String getPath() {
+        return this.path;
+    }
 
-    public long getSizeLong() { return this.sizeLong; }
-    public void setSizeLong(long sl) { this.sizeLong = sl; }
+    public void setPath(String p) {
+        this.path = p;
+    }
 
-    public String getSize() { return this.size; }
-    public void setSize(String s) { this.size = s; }
+    public boolean getIsDirectory() {
+        return this.isDirectory;
+    }
 
-    public int getType() { return this.type; }
-    public void setType(int t) { this.type = t; }
+    public void setIsDirectory(boolean dir) {
+        this.isDirectory = dir;
+    }
 
-    public String getExt() { return this.ext; }
-    public void setExt(String ext) { this.ext = ext; }
+    public long getDateLong() {
+        return this.dateLong;
+    }
 
-    public float getAlfa() { return this.alfa; }
-    public void setAlfa(float alfa) { this.alfa = alfa; }
+    public void setDateLong(long dl) {
+        this.dateLong = dl;
+    }
 
-    public int getPlayOverlayVisibility() { return this.play_overlay_visible; }
-    public void setPlayOverlayVisibility(int play_overlay_visible) { this.play_overlay_visible = play_overlay_visible; }
+    public String getDate() {
+        return this.date;
+    }
 
-    public int getPdfOverlayVisibility() { return this.pdf_overlay_visible; }
-    public void setPdfOverlayVisibility(int pdf_overlay_visible) { this.pdf_overlay_visible = pdf_overlay_visible; }
+    public void setDate(String d) {
+        this.date = d;
+    }
 
-    public int getTotalFiles() { return this.totalFiles; }
-    public void setTotalFiles(int totalFiles) { this.totalFiles = totalFiles; }
+    public long getSizeLong() {
+        return this.sizeLong;
+    }
 
-    public long getTotalSizeLong() { return this.totalSizeLong; }
-    public void setTotalSizeLong(long totalSizeLong) { this.totalSizeLong = totalSizeLong; }
+    public void setSizeLong(long sl) {
+        this.sizeLong = sl;
+    }
 
-    public String getTotalSize() { return this.totalSize; }
-    public void setTotalSize(String totalSize) { this.totalSize = totalSize; }
+    public String getSize() {
+        return this.size;
+    }
 
-    public double getTotalSizePercentageDouble() { return this.totalSizePercentageDouble; }
-    public void setTotalSizePercentageDouble(double totalSizePercentageDouble) { this.totalSizePercentageDouble = totalSizePercentageDouble; }
+    public void setSize(String s) {
+        this.size = s;
+    }
 
-    public String getTotalSizePercentage() { return this.totalSizePercentage; }
-    public void setTotalSizePercentage(String totalSizePercentage) { this.totalSizePercentage = totalSizePercentage; }
+    public int getType() {
+        return this.type;
+    }
 
-    public String getChecksum() { return checksum; }
-    public void setChecksum(String checksum) { this.checksum = checksum; }
+    public void setType(int t) {
+        this.type = t;
+    }
 
-    public boolean getWhetherExternal() { return whetherExternal; }
-    public void setWhetherExternal(boolean whetherExternal) { this.whetherExternal = whetherExternal; }
+    public String getExt() {
+        return this.ext;
+    }
+
+    public void setExt(String ext) {
+        this.ext = ext;
+    }
+
+    public float getAlfa() {
+        return this.alfa;
+    }
+
+    public void setAlfa(float alfa) {
+        this.alfa = alfa;
+    }
+
+    public int getPlayOverlayVisibility() {
+        return this.play_overlay_visible;
+    }
+
+    public void setPlayOverlayVisibility(int play_overlay_visible) {
+        this.play_overlay_visible = play_overlay_visible;
+    }
+
+    public int getPdfOverlayVisibility() {
+        return this.pdf_overlay_visible;
+    }
+
+    public void setPdfOverlayVisibility(int pdf_overlay_visible) {
+        this.pdf_overlay_visible = pdf_overlay_visible;
+    }
+
+    public int getTotalFiles() {
+        return this.totalFiles;
+    }
+
+    public void setTotalFiles(int totalFiles) {
+        this.totalFiles = totalFiles;
+    }
+
+    public long getTotalSizeLong() {
+        return this.totalSizeLong;
+    }
+
+    public void setTotalSizeLong(long totalSizeLong) {
+        this.totalSizeLong = totalSizeLong;
+    }
+
+    public String getTotalSize() {
+        return this.totalSize;
+    }
+
+    public void setTotalSize(String totalSize) {
+        this.totalSize = totalSize;
+    }
+
+    public double getTotalSizePercentageDouble() {
+        return this.totalSizePercentageDouble;
+    }
+
+    public void setTotalSizePercentageDouble(double totalSizePercentageDouble) {
+        this.totalSizePercentageDouble = totalSizePercentageDouble;
+    }
+
+    public String getTotalSizePercentage() {
+        return this.totalSizePercentage;
+    }
+
+    public void setTotalSizePercentage(String totalSizePercentage) {
+        this.totalSizePercentage = totalSizePercentage;
+    }
+
+    public String getChecksum() {
+        return checksum;
+    }
+
+    public void setChecksum(String checksum) {
+        this.checksum = checksum;
+    }
+
+    public boolean getWhetherExternal() {
+        return whetherExternal;
+    }
+
+    public void setWhetherExternal(boolean whetherExternal) {
+        this.whetherExternal = whetherExternal;
+    }
 
     // -----------------------------
     // ✅ NEW getters/setters
     // -----------------------------
-    public String getCloudId() { return cloudId; }
-    public void setCloudId(String cloudId) { this.cloudId = cloudId; }
+    public String getCloudId() {
+        return cloudId;
+    }
 
-    public String getParentCloudId() { return parentCloudId; }
-    public void setParentCloudId(String parentCloudId) { this.parentCloudId = parentCloudId; }
+    public void setCloudId(String cloudId) {
+        this.cloudId = cloudId;
+    }
 
-    public String getDriveMimeType() { return driveMimeType; }
-    public void setDriveMimeType(String driveMimeType) { this.driveMimeType = driveMimeType; }
+    public String getParentCloudId() {
+        return parentCloudId;
+    }
+
+    public void setParentCloudId(String parentCloudId) {
+        this.parentCloudId = parentCloudId;
+    }
+
+    public String getDriveMimeType() {
+        return driveMimeType;
+    }
+
+    public void setDriveMimeType(String driveMimeType) {
+        this.driveMimeType = driveMimeType;
+    }
 
     // Optional convenience (Drive-specific folder check)
     public boolean isDriveFolder() {

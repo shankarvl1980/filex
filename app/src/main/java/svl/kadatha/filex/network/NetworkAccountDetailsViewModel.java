@@ -36,6 +36,7 @@ import svl.kadatha.filex.RepositoryClass;
 
 public class NetworkAccountDetailsViewModel extends AndroidViewModel {
 
+    public static final String TYPE_ALL = "all";
     private static final String TAG = "NetworkAccountViewModel";
     public static NetworkAccountPOJO FTP_NETWORK_ACCOUNT_POJO;
     public static NetworkAccountPOJO SFTP_NETWORK_ACCOUNT_POJO;
@@ -79,6 +80,102 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         super(application);
         this.application = application;
         networkAccountsDatabaseHelper = new NetworkAccountsDatabaseHelper(application);
+    }
+
+    // "connected" check for a row (per type)
+    public static boolean isPojoConnected(NetworkAccountPOJO pojo) {
+        if (pojo == null) return false;
+        switch (pojo.type) {
+            case NetworkAccountsDetailsDialog.FTP:
+                return FTP_NETWORK_ACCOUNT_POJO != null
+                        && sameKey(pojo, FTP_NETWORK_ACCOUNT_POJO);
+            case NetworkAccountsDetailsDialog.SFTP:
+                return SFTP_NETWORK_ACCOUNT_POJO != null
+                        && sameKey(pojo, SFTP_NETWORK_ACCOUNT_POJO);
+            case NetworkAccountsDetailsDialog.WebDAV:
+                return WEBDAV_NETWORK_ACCOUNT_POJO != null
+                        && sameKey(pojo, WEBDAV_NETWORK_ACCOUNT_POJO);
+            case NetworkAccountsDetailsDialog.SMB:
+                return SMB_NETWORK_ACCOUNT_POJO != null
+                        && sameKey(pojo, SMB_NETWORK_ACCOUNT_POJO);
+            default:
+                return false;
+        }
+    }
+
+    private static boolean sameKey(NetworkAccountPOJO a, NetworkAccountPOJO b) {
+        return a.host.equals(b.host)
+                && a.port == b.port
+                && a.user_name.equals(b.user_name)
+                && a.type.equals(b.type);
+    }
+
+    public static void clearNetworkFileObjectType(@NonNull FileObjectType type) {
+
+        // Remove from storage_dir
+        RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
+        Iterator<FilePOJO> iterator = repositoryClass.storage_dir.iterator();
+        while (iterator.hasNext()) {
+            if (iterator.next().getFileObjectType() == type) {
+                iterator.remove();
+            }
+        }
+
+        // Remove from MainActivity RECENT
+        Iterator<FilePOJO> iterator1 = MainActivity.RECENT.iterator();
+        while (iterator1.hasNext()) {
+            if (iterator1.next().getFileObjectType() == type) {
+                iterator1.remove();
+            }
+        }
+
+        // Remove from FileSelectorActivity RECENT
+        Iterator<FilePOJO> iterator2 = FileSelectorActivity.RECENT.iterator();
+        while (iterator2.hasNext()) {
+            if (iterator2.next().getFileObjectType() == type) {
+                iterator2.remove();
+            }
+        }
+
+        // Broadcast refresh + popup action
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("fileObjectType", type);
+
+        LocalBroadcastManager lbm =
+                LocalBroadcastManager.getInstance(App.getAppContext());
+
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION, lbm, null);
+
+        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT, lbm, bundle);
+
+        // Cleanup child hashmap
+        FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), type);
+
+        // Delete cache dir based on type (includes SMB)
+        switch (type) {
+            case FTP_TYPE:
+                Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.FTP_CACHE_DIR);
+                break;
+
+            case SFTP_TYPE:
+                Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.SFTP_CACHE_DIR);
+                break;
+
+            case WEBDAV_TYPE:
+                Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.WEBDAV_CACHE_DIR);
+                break;
+
+            case SMB_TYPE:
+                Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.SMB_CACHE_DIR);
+                break;
+
+            default:
+                // No-op: unknown/unsupported type
+                break;
+        }
+        if (Global.CLOUD_FILE_OBJECT_TYPES.contains(type)) {
+            Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.CLOUD_CACHE_DIR);
+        }
     }
 
     @Override
@@ -126,42 +223,12 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         return isCancelled;
     }
 
-    public static final String TYPE_ALL = "all";
-
     private void reloadList() {
         if (TYPE_ALL.equals(type)) {
             networkAccountPOJOList = networkAccountsDatabaseHelper.getAllNetworkAccountPOJOList();
         } else {
             networkAccountPOJOList = networkAccountsDatabaseHelper.getNetworkAccountPOJOList(type);
         }
-    }
-
-    // "connected" check for a row (per type)
-    public static boolean isPojoConnected(NetworkAccountPOJO pojo) {
-        if (pojo == null) return false;
-        switch (pojo.type) {
-            case NetworkAccountsDetailsDialog.FTP:
-                return FTP_NETWORK_ACCOUNT_POJO != null
-                        && sameKey(pojo, FTP_NETWORK_ACCOUNT_POJO);
-            case NetworkAccountsDetailsDialog.SFTP:
-                return SFTP_NETWORK_ACCOUNT_POJO != null
-                        && sameKey(pojo, SFTP_NETWORK_ACCOUNT_POJO);
-            case NetworkAccountsDetailsDialog.WebDAV:
-                return WEBDAV_NETWORK_ACCOUNT_POJO != null
-                        && sameKey(pojo, WEBDAV_NETWORK_ACCOUNT_POJO);
-            case NetworkAccountsDetailsDialog.SMB:
-                return SMB_NETWORK_ACCOUNT_POJO != null
-                        && sameKey(pojo, SMB_NETWORK_ACCOUNT_POJO);
-            default:
-                return false;
-        }
-    }
-
-    private static boolean sameKey(NetworkAccountPOJO a, NetworkAccountPOJO b) {
-        return a.host.equals(b.host)
-                && a.port == b.port
-                && a.user_name.equals(b.user_name)
-                && a.type.equals(b.type);
     }
 
     public synchronized void fetchNetworkAccountPojoList(String type) {
@@ -458,7 +525,6 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         });
     }
 
-
     public synchronized void changeNetworkAccountPojoDisplay(String host, int port, String user_name, String new_name, String type) {
         if (changeNetworkAccountDisplayAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
             return;
@@ -541,8 +607,10 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                         if (!isPojoConnected(pojo)) continue;
 
                         if (NetworkAccountsDetailsDialog.FTP.equals(pojo.type)) wantFtp = true;
-                        else if (NetworkAccountsDetailsDialog.SFTP.equals(pojo.type)) wantSftp = true;
-                        else if (NetworkAccountsDetailsDialog.WebDAV.equals(pojo.type)) wantWebdav = true;
+                        else if (NetworkAccountsDetailsDialog.SFTP.equals(pojo.type))
+                            wantSftp = true;
+                        else if (NetworkAccountsDetailsDialog.WebDAV.equals(pojo.type))
+                            wantWebdav = true;
                         else if (NetworkAccountsDetailsDialog.SMB.equals(pojo.type)) wantSmb = true;
                     }
                 }
@@ -560,7 +628,10 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                 }
 
                 if (wantWebdav && WEBDAV_NETWORK_ACCOUNT_POJO != null) {
-                    try { WebDavClientRepository.getInstance(WEBDAV_NETWORK_ACCOUNT_POJO).shutdown(); } catch (IOException ignored) {}
+                    try {
+                        WebDavClientRepository.getInstance(WEBDAV_NETWORK_ACCOUNT_POJO).shutdown();
+                    } catch (IOException ignored) {
+                    }
                     WEBDAV_NETWORK_ACCOUNT_POJO = null;
                     WEBDAV_WORKING_DIR_PATH = null;
                 }
@@ -603,7 +674,10 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                 } else if (NetworkAccountsDetailsDialog.WebDAV.equals(t)) {
                     NetworkAccountPOJO active = WEBDAV_NETWORK_ACCOUNT_POJO != null ? WEBDAV_NETWORK_ACCOUNT_POJO : pojo;
                     if (active != null) {
-                        try { WebDavClientRepository.getInstance(active).shutdown(); } catch (IOException ignored) {}
+                        try {
+                            WebDavClientRepository.getInstance(active).shutdown();
+                        } catch (IOException ignored) {
+                        }
                     }
                     WEBDAV_NETWORK_ACCOUNT_POJO = null;
                     WEBDAV_WORKING_DIR_PATH = null;
@@ -620,74 +694,6 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                 disconnectNetworkConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
-    }
-
-    public static void clearNetworkFileObjectType(@NonNull FileObjectType type) {
-
-        // Remove from storage_dir
-        RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
-        Iterator<FilePOJO> iterator = repositoryClass.storage_dir.iterator();
-        while (iterator.hasNext()) {
-            if (iterator.next().getFileObjectType() == type) {
-                iterator.remove();
-            }
-        }
-
-        // Remove from MainActivity RECENT
-        Iterator<FilePOJO> iterator1 = MainActivity.RECENT.iterator();
-        while (iterator1.hasNext()) {
-            if (iterator1.next().getFileObjectType() == type) {
-                iterator1.remove();
-            }
-        }
-
-        // Remove from FileSelectorActivity RECENT
-        Iterator<FilePOJO> iterator2 = FileSelectorActivity.RECENT.iterator();
-        while (iterator2.hasNext()) {
-            if (iterator2.next().getFileObjectType() == type) {
-                iterator2.remove();
-            }
-        }
-
-        // Broadcast refresh + popup action
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("fileObjectType", type);
-
-        LocalBroadcastManager lbm =
-                LocalBroadcastManager.getInstance(App.getAppContext());
-
-        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION, lbm, null);
-
-        Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT, lbm, bundle);
-
-        // Cleanup child hashmap
-        FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), type);
-
-        // Delete cache dir based on type (includes SMB)
-        switch (type) {
-            case FTP_TYPE:
-                Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.FTP_CACHE_DIR);
-                break;
-
-            case SFTP_TYPE:
-                Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.SFTP_CACHE_DIR);
-                break;
-
-            case WEBDAV_TYPE:
-                Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.WEBDAV_CACHE_DIR);
-                break;
-
-            case SMB_TYPE:
-                Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.SMB_CACHE_DIR);
-                break;
-
-            default:
-                // No-op: unknown/unsupported type
-                break;
-        }
-         if(Global.CLOUD_FILE_OBJECT_TYPES.contains(type)){
-             Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.CLOUD_CACHE_DIR);
-         }
     }
 }
 

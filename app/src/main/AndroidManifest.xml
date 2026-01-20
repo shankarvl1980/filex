@@ -249,20 +249,21 @@
             <!-- MediaFire OAuth redirect -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="mf-svl.kadatha.filex-1980"
-                    android:host="callback" />
+                    android:host="callback"
+                    android:scheme="mf-svl.kadatha.filex-1980" />
             </intent-filter>
         </activity>
 
         <activity
             android:name="net.openid.appauth.AuthorizationManagementActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:exported="false"
             android:launchMode="singleTask"
-            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:theme="@style/Theme.AppCompat.Translucent.NoTitleBar" />
 
         <activity
@@ -272,31 +273,37 @@
             <!-- Google -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
-                    android:scheme="com.googleusercontent.apps.603518003549-8m2h1s1blonbo7s3rvok93uf40ipb3cs"
-                    android:path="/oauth2redirect" />
+                    android:path="/oauth2redirect"
+                    android:scheme="com.googleusercontent.apps.603518003549-8m2h1s1blonbo7s3rvok93uf40ipb3cs" />
             </intent-filter>
 
             <!-- Dropbox -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
-                    android:scheme="svl.kadatha.filex.dropbox"
-                    android:host="oauth2redirect" />
+                    android:host="oauth2redirect"
+                    android:scheme="svl.kadatha.filex.dropbox" />
             </intent-filter>
 
             <!-- Yandex -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
-                    android:scheme="yandex-your_client_id"
-                    android:host="callback" />
+                    android:host="callback"
+                    android:scheme="yandex-your_client_id" />
             </intent-filter>
 
         </activity>

@@ -1,6 +1,5 @@
 package svl.kadatha.filex.audio;
 
-import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -8,7 +7,6 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -27,13 +25,8 @@ import android.os.Message;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyCallback;
-import android.telephony.TelephonyManager;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -143,6 +136,7 @@ public class AudioPlayerService extends Service {
         }
         return START_NOT_STICKY;
     }
+
     public void setMediaPlayerPrepareListener(MediaPlayerServicePrepareListener listener) {
         mediaPlayerServicePrepareListener = listener;
     }
@@ -313,6 +307,7 @@ public class AudioPlayerService extends Service {
                             position, 1.0f);
             mediaSession.setPlaybackState(stateBuilder.build());
         }
+
         private void start_() {
             if (prepared) {
                 if (request_focus()) {
@@ -334,6 +329,7 @@ public class AudioPlayerService extends Service {
             updatePlaybackState();
             nPanel.updatePlayPauseAction(true);
         }
+
         private void pause() {
             if (prepared) {
                 mp.pause();

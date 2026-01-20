@@ -38,50 +38,34 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
     public static CloudAccountPOJO DROPBOX_ACCOUNT;
     public static CloudAccountPOJO MEDIAFIRE_ACCOUNT;
     public static CloudAccountPOJO YANDEX_ACCOUNT;
-
-    private final CloudAccountsDatabaseHelper cloudAccountsDatabaseHelper;
-
-    // Provider set by Activity for connect/auth flows (OAuth etc.)
-    public CloudAuthProvider authProvider;
-    public FileObjectType fileObjectType;
-
-    public List<CloudAccountPOJO> cloudAccountPOJOList;
-    public IndexedLinkedHashMap<Integer, CloudAccountPOJO> mselecteditems = new IndexedLinkedHashMap<>();
-
     public final MutableLiveData<AsyncTaskStatus> asyncTaskStatus =
             new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> deleteAsyncTaskStatus =
             new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-
     public final MutableLiveData<AsyncTaskStatus> cloudAccountConnectionAsyncTaskStatus =
             new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
     public final MutableLiveData<AsyncTaskStatus> cloudAccountStorageDirFillAsyncTaskStatus =
             new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-
     // Toolbar/batch disconnect status
     public final MutableLiveData<AsyncTaskStatus> disconnectCloudConnectionAsyncTaskStatus =
             new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-
     // Row-click disconnect status (disconnect -> then Activity connects)
     public final MutableLiveData<AsyncTaskStatus> rowDisconnectAsyncTaskStatus =
             new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-
+    private final CloudAccountsDatabaseHelper cloudAccountsDatabaseHelper;
+    // -------------------------------------------------------------------------
+    // Sequential disconnect queue (BATCH only)
+    // -------------------------------------------------------------------------
+    private final java.util.ArrayDeque<FileObjectType> disconnectQueue = new java.util.ArrayDeque<>();
+    // Provider set by Activity for connect/auth flows (OAuth etc.)
+    public CloudAuthProvider authProvider;
+    public FileObjectType fileObjectType;
+    public List<CloudAccountPOJO> cloudAccountPOJOList;
+    public IndexedLinkedHashMap<Integer, CloudAccountPOJO> mselecteditems = new IndexedLinkedHashMap<>();
+    public boolean connected;
     // pending connect (row click flow only)
     private volatile PendingConnect rowPendingConnect = null;
-
-    public static final class PendingConnect {
-        public final FileObjectType type;
-        public final CloudAccountPOJO account;
-
-        public PendingConnect(FileObjectType type, CloudAccountPOJO account) {
-            this.type = type;
-            this.account = account;
-        }
-    }
-
     private CloudAccountPOJO cloudAccount;
-    public boolean connected;
-
     // futures
     private Future<?> future1;
     private Future<?> future2;
@@ -91,15 +75,100 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
     // Use separate future refs so cancelling one doesn't kill the other flow unexpectedly
     private Future<?> futureDisconnectBatch;
     private Future<?> futureDisconnectRow;
+    private volatile ProviderFactory providerFactory;
+    private boolean disconnectInFlight = false;
 
     // -------------------------------------------------------------------------
-    // Provider factory (Activity supplies "new Provider(Activity)" safely)
+    // ctor / lifecycle
     // -------------------------------------------------------------------------
-    public interface ProviderFactory {
-        CloudAuthProvider create(FileObjectType type);
+    public CloudAuthActivityViewModel(@NonNull Application application) {
+        super(application);
+        cloudAccountsDatabaseHelper = new CloudAccountsDatabaseHelper(application);
     }
 
-    private volatile ProviderFactory providerFactory;
+    // -------------------------------------------------------------------------
+    // Active mapping helpers
+    // -------------------------------------------------------------------------
+    private static boolean sameKey(CloudAccountPOJO a, CloudAccountPOJO b) {
+        return a != null && b != null
+                && a.type != null && b.type != null
+                && a.userId != null && b.userId != null
+                && a.type.equals(b.type)
+                && a.userId.equals(b.userId);
+    }
+
+    public static boolean isPojoConnected(CloudAccountPOJO pojo) {
+        if (pojo == null || pojo.type == null) return false;
+        switch (pojo.type) {
+            case "GOOGLE_DRIVE_TYPE":
+                return GOOGLE_DRIVE_ACCOUNT != null && sameKey(pojo, GOOGLE_DRIVE_ACCOUNT);
+            case "DROP_BOX_TYPE":
+                return DROPBOX_ACCOUNT != null && sameKey(pojo, DROPBOX_ACCOUNT);
+            case "MEDIA_FIRE_TYPE":
+                return MEDIAFIRE_ACCOUNT != null && sameKey(pojo, MEDIAFIRE_ACCOUNT);
+            case "YANDEX_TYPE":
+                return YANDEX_ACCOUNT != null && sameKey(pojo, YANDEX_ACCOUNT);
+            default:
+                return false;
+        }
+    }
+
+    public static CloudAccountPOJO getActiveForType(FileObjectType t) {
+        switch (t) {
+            case GOOGLE_DRIVE_TYPE:
+                return GOOGLE_DRIVE_ACCOUNT;
+            case DROP_BOX_TYPE:
+                return DROPBOX_ACCOUNT;
+            case MEDIA_FIRE_TYPE:
+                return MEDIAFIRE_ACCOUNT;
+            case YANDEX_TYPE:
+                return YANDEX_ACCOUNT;
+            default:
+                return null;
+        }
+    }
+
+    public static void setActive(FileObjectType t, CloudAccountPOJO a) {
+        switch (t) {
+            case GOOGLE_DRIVE_TYPE:
+                GOOGLE_DRIVE_ACCOUNT = a;
+                GOOGLE_DRIVE_ACCESS_TOKEN = a.accessToken;
+                break;
+            case DROP_BOX_TYPE:
+                DROPBOX_ACCOUNT = a;
+                DROP_BOX_ACCESS_TOKEN = a.accessToken;
+                break;
+            case MEDIA_FIRE_TYPE:
+                MEDIAFIRE_ACCOUNT = a;
+                MEDIA_FIRE_ACCESS_TOKEN = a.accessToken;
+                break;
+            case YANDEX_TYPE:
+                YANDEX_ACCOUNT = a;
+                YANDEX_ACCESS_TOKEN = a.accessToken;
+                break;
+        }
+    }
+
+    public static void clearActive(FileObjectType t) {
+        switch (t) {
+            case GOOGLE_DRIVE_TYPE:
+                GOOGLE_DRIVE_ACCOUNT = null;
+                GOOGLE_DRIVE_ACCESS_TOKEN = null;
+                break;
+            case DROP_BOX_TYPE:
+                DROPBOX_ACCOUNT = null;
+                DROP_BOX_ACCESS_TOKEN = null;
+                break;
+            case MEDIA_FIRE_TYPE:
+                MEDIAFIRE_ACCOUNT = null;
+                MEDIA_FIRE_ACCESS_TOKEN = null;
+                break;
+            case YANDEX_TYPE:
+                YANDEX_ACCOUNT = null;
+                YANDEX_ACCESS_TOKEN = null;
+                break;
+        }
+    }
 
     public void attachProviderFactory(@NonNull ProviderFactory factory) {
         this.providerFactory = factory;
@@ -110,15 +179,10 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
         ProviderFactory f = providerFactory;
         if (f == null) throw new IllegalStateException("ProviderFactory not attached to ViewModel");
         CloudAuthProvider p = f.create(type);
-        if (p == null) throw new IllegalStateException("ProviderFactory returned null provider for " + type);
+        if (p == null)
+            throw new IllegalStateException("ProviderFactory returned null provider for " + type);
         return p;
     }
-
-    // -------------------------------------------------------------------------
-    // Sequential disconnect queue (BATCH only)
-    // -------------------------------------------------------------------------
-    private final java.util.ArrayDeque<FileObjectType> disconnectQueue = new java.util.ArrayDeque<>();
-    private boolean disconnectInFlight = false;
 
     private synchronized void enqueueDisconnect(@NonNull FileObjectType type) {
         // avoid duplicates so toolbar selection doesn't enqueue same type twice
@@ -131,10 +195,14 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
         disconnectCloudConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.STARTED);
         scheduleDrainStep();
     }
+
     public CloudAuthProvider getAuthProvider() {
         return authProvider;
     }
 
+    public void setAuthProvider(CloudAuthProvider provider) {
+        this.authProvider = provider;
+    }
 
     private void scheduleDrainStep() {
         ExecutorService executorService = MyExecutorService.getExecutorService();
@@ -190,14 +258,6 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
         NetworkAccountDetailsViewModel.clearNetworkFileObjectType(type);
     }
 
-    // -------------------------------------------------------------------------
-    // ctor / lifecycle
-    // -------------------------------------------------------------------------
-    public CloudAuthActivityViewModel(@NonNull Application application) {
-        super(application);
-        cloudAccountsDatabaseHelper = new CloudAccountsDatabaseHelper(application);
-    }
-
     @Override
     protected void onCleared() {
         super.onCleared();
@@ -223,10 +283,6 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
 
     public void setCloudAccount(CloudAccountPOJO account) {
         this.cloudAccount = account;
-    }
-
-    public void setAuthProvider(CloudAuthProvider provider) {
-        this.authProvider = provider;
     }
 
     // -------------------------------------------------------------------------
@@ -333,9 +389,11 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
     }
 
     public synchronized void authenticate() {
-        if (cloudAccountConnectionAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (cloudAccountConnectionAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED)
+            return;
         ensureType();
-        if (authProvider == null) throw new IllegalStateException("authProvider not set before authenticate()");
+        if (authProvider == null)
+            throw new IllegalStateException("authProvider not set before authenticate()");
 
         cloudAccountConnectionAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         connected = false;
@@ -367,7 +425,8 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
     }
 
     public synchronized void populateStorageDir(FileObjectType type, CloudAccountPOJO account) {
-        if (cloudAccountStorageDirFillAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (cloudAccountStorageDirFillAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED)
+            return;
 
         cloudAccountStorageDirFillAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         connected = false;
@@ -419,86 +478,19 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
     }
 
     // -------------------------------------------------------------------------
-    // Active mapping helpers
+    // Provider factory (Activity supplies "new Provider(Activity)" safely)
     // -------------------------------------------------------------------------
-    private static boolean sameKey(CloudAccountPOJO a, CloudAccountPOJO b) {
-        return a != null && b != null
-                && a.type != null && b.type != null
-                && a.userId != null && b.userId != null
-                && a.type.equals(b.type)
-                && a.userId.equals(b.userId);
+    public interface ProviderFactory {
+        CloudAuthProvider create(FileObjectType type);
     }
 
-    public static boolean isPojoConnected(CloudAccountPOJO pojo) {
-        if (pojo == null || pojo.type == null) return false;
-        switch (pojo.type) {
-            case "GOOGLE_DRIVE_TYPE":
-                return GOOGLE_DRIVE_ACCOUNT != null && sameKey(pojo, GOOGLE_DRIVE_ACCOUNT);
-            case "DROP_BOX_TYPE":
-                return DROPBOX_ACCOUNT != null && sameKey(pojo, DROPBOX_ACCOUNT);
-            case "MEDIA_FIRE_TYPE":
-                return MEDIAFIRE_ACCOUNT != null && sameKey(pojo, MEDIAFIRE_ACCOUNT);
-            case "YANDEX_TYPE":
-                return YANDEX_ACCOUNT != null && sameKey(pojo, YANDEX_ACCOUNT);
-            default:
-                return false;
-        }
-    }
+    public static final class PendingConnect {
+        public final FileObjectType type;
+        public final CloudAccountPOJO account;
 
-    public static CloudAccountPOJO getActiveForType(FileObjectType t) {
-        switch (t) {
-            case GOOGLE_DRIVE_TYPE:
-                return GOOGLE_DRIVE_ACCOUNT;
-            case DROP_BOX_TYPE:
-                return DROPBOX_ACCOUNT;
-            case MEDIA_FIRE_TYPE:
-                return MEDIAFIRE_ACCOUNT;
-            case YANDEX_TYPE:
-                return YANDEX_ACCOUNT;
-            default:
-                return null;
-        }
-    }
-
-    public static void setActive(FileObjectType t, CloudAccountPOJO a) {
-        switch (t) {
-            case GOOGLE_DRIVE_TYPE:
-                GOOGLE_DRIVE_ACCOUNT = a;
-                GOOGLE_DRIVE_ACCESS_TOKEN = a.accessToken;
-                break;
-            case DROP_BOX_TYPE:
-                DROPBOX_ACCOUNT = a;
-                DROP_BOX_ACCESS_TOKEN = a.accessToken;
-                break;
-            case MEDIA_FIRE_TYPE:
-                MEDIAFIRE_ACCOUNT = a;
-                MEDIA_FIRE_ACCESS_TOKEN = a.accessToken;
-                break;
-            case YANDEX_TYPE:
-                YANDEX_ACCOUNT = a;
-                YANDEX_ACCESS_TOKEN = a.accessToken;
-                break;
-        }
-    }
-
-    public static void clearActive(FileObjectType t) {
-        switch (t) {
-            case GOOGLE_DRIVE_TYPE:
-                GOOGLE_DRIVE_ACCOUNT = null;
-                GOOGLE_DRIVE_ACCESS_TOKEN = null;
-                break;
-            case DROP_BOX_TYPE:
-                DROPBOX_ACCOUNT = null;
-                DROP_BOX_ACCESS_TOKEN = null;
-                break;
-            case MEDIA_FIRE_TYPE:
-                MEDIAFIRE_ACCOUNT = null;
-                MEDIA_FIRE_ACCESS_TOKEN = null;
-                break;
-            case YANDEX_TYPE:
-                YANDEX_ACCOUNT = null;
-                YANDEX_ACCESS_TOKEN = null;
-                break;
+        public PendingConnect(FileObjectType type, CloudAccountPOJO account) {
+            this.type = type;
+            this.account = account;
         }
     }
 }

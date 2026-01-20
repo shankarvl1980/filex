@@ -1,32 +1,18 @@
 package svl.kadatha.filex.network;
 
-import android.os.Bundle;
-
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import com.thegrizzlylabs.sardineandroid.DavResource;
 import com.thegrizzlylabs.sardineandroid.Sardine;
 import com.thegrizzlylabs.sardineandroid.impl.OkHttpSardine;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
-import svl.kadatha.filex.App;
 import svl.kadatha.filex.FileObjectType;
-import svl.kadatha.filex.FilePOJO;
-import svl.kadatha.filex.FilePOJOUtil;
-import svl.kadatha.filex.FileSelectorActivity;
-import svl.kadatha.filex.Global;
-import svl.kadatha.filex.MainActivity;
-import svl.kadatha.filex.RepositoryClass;
 import timber.log.Timber;
 
 public class WebDavClientRepository {

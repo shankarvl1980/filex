@@ -10,7 +10,6 @@ import com.hierynomus.msfscc.FileAttributes;
 import com.hierynomus.msfscc.fileinformation.FileAllInformation;
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
 import com.hierynomus.mssmb2.SMBApiException;
-import com.hierynomus.smbj.session.Session;
 import com.hierynomus.smbj.share.DiskShare;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
@@ -225,7 +224,7 @@ public class FileCountSize {
                     }
                 } else if (sourceFileObjectType == FileObjectType.SMB_TYPE) {
                     Timber.tag(TAG).d("Starting file count for SMB files");
-                    SmbClientRepository smbClientRepository= SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+                    SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
                     SmbClientRepository.ShareHandle h = null;
                     try {
                         h = smbClientRepository.acquireShare();

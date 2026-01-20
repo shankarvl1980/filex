@@ -635,29 +635,29 @@ public class FilePOJOUtil {
                 }
 
             } else if (fileObjectType == FileObjectType.SMB_TYPE) {
-                SmbClientRepository smbClientRepository= SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+                SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
                 SmbClientRepository.ShareHandle h = null;
                 try {
                     h = smbClientRepository.acquireShare();
                     DiskShare share = h.share;
-                        String adjustedPath = fileclickselected.startsWith("/") ? fileclickselected.substring(1) : fileclickselected;
-                        List<FileIdBothDirectoryInformation> fileList = share.list(adjustedPath);
-                        for (FileIdBothDirectoryInformation info : fileList) {
-                            try {
-                                String name = info.getFileName();
-                                if (".".equals(name) || "..".equals(name)) continue;
-                                String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
-                                MakeFilePOJOUtil.SmbFileInfo smbFileInfo = new MakeFilePOJOUtil.SmbFileInfo(
-                                        name, path, info.getFileAttributes(), info.getEndOfFile(),
-                                        info.getCreationTime().toEpochMillis(), info.getLastAccessTime().toEpochMillis(),
-                                        info.getLastWriteTime().toEpochMillis(), info.getChangeTime().toEpochMillis());
-                                FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(smbFileInfo, false, fileObjectType);
-                                filePOJOS_filtered.add(filePOJO);
-                                filePOJOS.add(filePOJO);
-                            } catch (Exception itemEx) {
-                                Timber.tag(Global.TAG).w(itemEx, "SMB item skipped");
-                            }
+                    String adjustedPath = fileclickselected.startsWith("/") ? fileclickselected.substring(1) : fileclickselected;
+                    List<FileIdBothDirectoryInformation> fileList = share.list(adjustedPath);
+                    for (FileIdBothDirectoryInformation info : fileList) {
+                        try {
+                            String name = info.getFileName();
+                            if (".".equals(name) || "..".equals(name)) continue;
+                            String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
+                            MakeFilePOJOUtil.SmbFileInfo smbFileInfo = new MakeFilePOJOUtil.SmbFileInfo(
+                                    name, path, info.getFileAttributes(), info.getEndOfFile(),
+                                    info.getCreationTime().toEpochMillis(), info.getLastAccessTime().toEpochMillis(),
+                                    info.getLastWriteTime().toEpochMillis(), info.getChangeTime().toEpochMillis());
+                            FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(smbFileInfo, false, fileObjectType);
+                            filePOJOS_filtered.add(filePOJO);
+                            filePOJOS.add(filePOJO);
+                        } catch (Exception itemEx) {
+                            Timber.tag(Global.TAG).w(itemEx, "SMB item skipped");
                         }
+                    }
 
                 } catch (Exception e) {
                     Timber.tag(Global.TAG).w(e, "SMB_TYPE listing failed: %s", fileclickselected);
@@ -822,129 +822,127 @@ public class FilePOJOUtil {
 //                } catch (Exception e) {
 //                    Timber.tag(Global.TAG).w(e, "ONE_DRIVE_TYPE listing failed: %s", fileclickselected);
 //                }
-        } else{
-            try {
-                FileModel fileModel = FileModelFactory.getFileModel(fileclickselected, fileObjectType, null, null);
-                FileModel[] fileModels = fileModel.list();
-                int size = fileModels.length;
-                for (int i = 0; i < size; ++i) {
-                    FileModel f = fileModels[i];
-                    try {
-                        String name = f.getName();
-                        String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
-                        FileModel childFileModel = FileModelFactory.getFileModel(path, fileObjectType, null, null);
-                        FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(childFileModel, false, fileObjectType);
-                        filePOJOS_filtered.add(filePOJO);
-                        filePOJOS.add(filePOJO);
-                    } catch (Exception itemEx) {
-                        Timber.tag(Global.TAG).w(itemEx, "GEN item skipped");
-                    }
-                }
-            } catch (Exception e) {
-                Timber.tag(Global.TAG).w(e, "GENERIC listing failed: %s", fileclickselected);
-            }
-        }
-
-    } finally
-
-    {
-        RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
-        repositoryClass.hashmap_file_pojo.put(fileObjectType + fileclickselected, new ArrayList<>(filePOJOS));
-        repositoryClass.hashmap_file_pojo_filtered.put(fileObjectType + fileclickselected, new ArrayList<>(filePOJOS_filtered));
-    }
-}
-
-private static void file_type_fill_filePOJO(File file, FileObjectType fileObjectType, List<FilePOJO> filePOJOS, List<FilePOJO> filePOJOS_filtered) {
-    File[] file_array;
-    if ((file_array = file.listFiles()) != null) {
-        int size = file_array.length;
-        for (int i = 0; i < size; ++i) {
-            File f = file_array[i];
-            FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(f, true, fileObjectType);
-            if (!filePOJO.getName().startsWith(".")) {
-                filePOJOS_filtered.add(filePOJO);
-            }
-            filePOJOS.add(filePOJO);
-        }
-    }
-}
-
-private static void file_type_fill_filePOJO_zip(File file, FileObjectType fileObjectType, List<FilePOJO> filePOJOS, List<FilePOJO> filePOJOS_filtered) {
-    File[] file_array;
-    if ((file_array = file.listFiles()) != null) {
-        int size = file_array.length;
-        for (int i = 0; i < size; ++i) {
-            File f = file_array[i];
-            FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO_ZIP(f, true, fileObjectType);
-            if (!filePOJO.getName().startsWith(".")) {
-                filePOJOS_filtered.add(filePOJO);
-            }
-            filePOJOS.add(filePOJO);
-        }
-    }
-}
-
-
-public static String getFileIdByPath(String file_path, String oauthToken) throws IOException {
-    // Create the OkHttpClient and Gson instances here
-    OkHttpClient httpClient = new OkHttpClient();
-    Gson gson = new Gson();
-
-    // Normalize path
-    if (!file_path.startsWith("/")) {
-        file_path = "/" + file_path;
-    }
-
-    // If the path is just root "/"
-    if (file_path.equals("/")) {
-        return "root";
-    }
-
-    String[] parts = file_path.split("/");
-    String currentFolderId = "root"; // Start from root
-
-    for (int i = 1; i < parts.length; i++) {
-        String name = parts[i].trim();
-        if (name.isEmpty()) {
-            // Skip empty components (e.g. if path ends with "/")
-            continue;
-        }
-
-        // Escape single quotes in the name
-        String escapedName = name.replace("'", "\\'");
-
-        // Search for a child with the given name under the current folder
-        String query = "name = '" + escapedName + "' and '" + currentFolderId + "' in parents and trashed = false";
-        HttpUrl url = HttpUrl.parse("https://www.googleapis.com/drive/v3/files")
-                .newBuilder()
-                .addQueryParameter("q", query)
-                .addQueryParameter("fields", "files(id, name)")
-                .build();
-
-        Request request = new Request.Builder()
-                .url(url)
-                .addHeader("Authorization", "Bearer " + oauthToken)
-                .get()
-                .build();
-
-        try (Response response = httpClient.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                throw new IOException("Failed to retrieve file ID: " + response.code() + " - " + response.message());
-            }
-
-            String responseBody = response.body().string();
-            GoogleDriveFileModel.DriveFilesListResponse filesListResponse = gson.fromJson(responseBody, GoogleDriveFileModel.DriveFilesListResponse.class);
-
-            if (filesListResponse.files != null && !filesListResponse.files.isEmpty()) {
-                // Take the first matching file/folder
-                currentFolderId = filesListResponse.files.get(0).id;
             } else {
-                // Item not found
-                return null;
+                try {
+                    FileModel fileModel = FileModelFactory.getFileModel(fileclickselected, fileObjectType, null, null);
+                    FileModel[] fileModels = fileModel.list();
+                    int size = fileModels.length;
+                    for (int i = 0; i < size; ++i) {
+                        FileModel f = fileModels[i];
+                        try {
+                            String name = f.getName();
+                            String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
+                            FileModel childFileModel = FileModelFactory.getFileModel(path, fileObjectType, null, null);
+                            FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(childFileModel, false, fileObjectType);
+                            filePOJOS_filtered.add(filePOJO);
+                            filePOJOS.add(filePOJO);
+                        } catch (Exception itemEx) {
+                            Timber.tag(Global.TAG).w(itemEx, "GEN item skipped");
+                        }
+                    }
+                } catch (Exception e) {
+                    Timber.tag(Global.TAG).w(e, "GENERIC listing failed: %s", fileclickselected);
+                }
+            }
+
+        } finally {
+            RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
+            repositoryClass.hashmap_file_pojo.put(fileObjectType + fileclickselected, new ArrayList<>(filePOJOS));
+            repositoryClass.hashmap_file_pojo_filtered.put(fileObjectType + fileclickselected, new ArrayList<>(filePOJOS_filtered));
+        }
+    }
+
+    private static void file_type_fill_filePOJO(File file, FileObjectType fileObjectType, List<FilePOJO> filePOJOS, List<FilePOJO> filePOJOS_filtered) {
+        File[] file_array;
+        if ((file_array = file.listFiles()) != null) {
+            int size = file_array.length;
+            for (int i = 0; i < size; ++i) {
+                File f = file_array[i];
+                FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(f, true, fileObjectType);
+                if (!filePOJO.getName().startsWith(".")) {
+                    filePOJOS_filtered.add(filePOJO);
+                }
+                filePOJOS.add(filePOJO);
             }
         }
     }
 
-    return currentFolderId;
-}
+    private static void file_type_fill_filePOJO_zip(File file, FileObjectType fileObjectType, List<FilePOJO> filePOJOS, List<FilePOJO> filePOJOS_filtered) {
+        File[] file_array;
+        if ((file_array = file.listFiles()) != null) {
+            int size = file_array.length;
+            for (int i = 0; i < size; ++i) {
+                File f = file_array[i];
+                FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO_ZIP(f, true, fileObjectType);
+                if (!filePOJO.getName().startsWith(".")) {
+                    filePOJOS_filtered.add(filePOJO);
+                }
+                filePOJOS.add(filePOJO);
+            }
+        }
+    }
+
+
+    public static String getFileIdByPath(String file_path, String oauthToken) throws IOException {
+        // Create the OkHttpClient and Gson instances here
+        OkHttpClient httpClient = new OkHttpClient();
+        Gson gson = new Gson();
+
+        // Normalize path
+        if (!file_path.startsWith("/")) {
+            file_path = "/" + file_path;
+        }
+
+        // If the path is just root "/"
+        if (file_path.equals("/")) {
+            return "root";
+        }
+
+        String[] parts = file_path.split("/");
+        String currentFolderId = "root"; // Start from root
+
+        for (int i = 1; i < parts.length; i++) {
+            String name = parts[i].trim();
+            if (name.isEmpty()) {
+                // Skip empty components (e.g. if path ends with "/")
+                continue;
+            }
+
+            // Escape single quotes in the name
+            String escapedName = name.replace("'", "\\'");
+
+            // Search for a child with the given name under the current folder
+            String query = "name = '" + escapedName + "' and '" + currentFolderId + "' in parents and trashed = false";
+            HttpUrl url = HttpUrl.parse("https://www.googleapis.com/drive/v3/files")
+                    .newBuilder()
+                    .addQueryParameter("q", query)
+                    .addQueryParameter("fields", "files(id, name)")
+                    .build();
+
+            Request request = new Request.Builder()
+                    .url(url)
+                    .addHeader("Authorization", "Bearer " + oauthToken)
+                    .get()
+                    .build();
+
+            try (Response response = httpClient.newCall(request).execute()) {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Failed to retrieve file ID: " + response.code() + " - " + response.message());
+                }
+
+                String responseBody = response.body().string();
+                GoogleDriveFileModel.DriveFilesListResponse filesListResponse = gson.fromJson(responseBody, GoogleDriveFileModel.DriveFilesListResponse.class);
+
+                if (filesListResponse.files != null && !filesListResponse.files.isEmpty()) {
+                    // Take the first matching file/folder
+                    currentFolderId = filesListResponse.files.get(0).id;
+                } else {
+                    // Item not found
+                    return null;
+                }
+            }
+        }
+
+        return currentFolderId;
+    }
 }

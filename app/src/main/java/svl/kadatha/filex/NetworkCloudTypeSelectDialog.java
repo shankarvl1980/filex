@@ -28,12 +28,13 @@ import java.util.List;
 import java.util.Locale;
 
 public class NetworkCloudTypeSelectDialog extends DialogFragment {
-    private Context context;
     public static final String NETWORK = "network";
     public static final String CLOUD = "cloud";
+    private Context context;
     private String request_code, what_type_network_cloud;
 
-    private NetworkCloudTypeSelectDialog() {}
+    private NetworkCloudTypeSelectDialog() {
+    }
 
     public static NetworkCloudTypeSelectDialog getInstance(String what_type_network_cloud, String request_code) {
         NetworkCloudTypeSelectDialog dialog = new NetworkCloudTypeSelectDialog();
@@ -62,7 +63,7 @@ public class NetworkCloudTypeSelectDialog extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_network_cloud_type_select, container, false);
-        TextView label=v.findViewById(R.id.network_cloud_label);
+        TextView label = v.findViewById(R.id.network_cloud_label);
         label.setText("Select Server");
         FrameLayout progress_bar = v.findViewById(R.id.fragment_network_cloud_type_select_progressbar);
         progress_bar.setVisibility(View.GONE);
@@ -141,8 +142,10 @@ public class NetworkCloudTypeSelectDialog extends DialogFragment {
      * - fileObjectType is optional and used only on click (cloud case)
      */
     private static class PickerItem implements Serializable {
-        @DrawableRes final int iconResId;
-        @NonNull final String title;
+        @DrawableRes
+        final int iconResId;
+        @NonNull
+        final String title;
         final FileObjectType fileObjectType; // may be null
 
         PickerItem(@DrawableRes int iconResId, @NonNull String title, FileObjectType fileObjectType) {

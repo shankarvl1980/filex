@@ -147,8 +147,14 @@ public class ArchiveAsyncTask extends AlternativeAsyncTask<Void, Void, Boolean> 
             return false;
 
         } finally {
-            try { if (zipOutputStream != null) zipOutputStream.close(); } catch (Exception ignored) {}
-            try { if (outStream != null) outStream.close(); } catch (Exception ignored) {}
+            try {
+                if (zipOutputStream != null) zipOutputStream.close();
+            } catch (Exception ignored) {
+            }
+            try {
+                if (outStream != null) outStream.close();
+            } catch (Exception ignored) {
+            }
         }
     }
 

@@ -31,7 +31,7 @@ import svl.kadatha.filex.MyExecutorService;
 
 public final class YandexAuthProvider implements CloudAuthProvider {
 
-    private static final Uri AUTH_ENDPOINT  = Uri.parse("https://oauth.yandex.com/authorize");
+    private static final Uri AUTH_ENDPOINT = Uri.parse("https://oauth.yandex.com/authorize");
     private static final Uri TOKEN_ENDPOINT = Uri.parse("https://oauth.yandex.com/token");
 
     // TODO: put your real client id here
@@ -43,7 +43,7 @@ public final class YandexAuthProvider implements CloudAuthProvider {
 
     // Pick minimal scopes. For Disk, typical ones are like cloud_api:disk.read / write.
     // Use only what you need.
-    private static final String[] SCOPES = new String[] {
+    private static final String[] SCOPES = new String[]{
             "login:info",
             "cloud_api:disk.read"
             // "cloud_api:disk.write" // if you need uploads/changes
@@ -93,7 +93,8 @@ public final class YandexAuthProvider implements CloudAuthProvider {
         if (requestCode != REQ_AUTH) return;
 
         if (data == null) {
-            if (authCallback != null) authCallback.onError(new Exception("Authorization cancelled"));
+            if (authCallback != null)
+                authCallback.onError(new Exception("Authorization cancelled"));
             return;
         }
 
@@ -101,13 +102,15 @@ public final class YandexAuthProvider implements CloudAuthProvider {
         AuthorizationException ex = AuthorizationException.fromIntent(data);
 
         if (resp == null) {
-            if (authCallback != null) authCallback.onError(ex != null ? ex : new Exception("Authorization failed"));
+            if (authCallback != null)
+                authCallback.onError(ex != null ? ex : new Exception("Authorization failed"));
             return;
         }
 
         authService.performTokenRequest(resp.createTokenExchangeRequest(), (tokenResp, tokenEx) -> {
             if (tokenResp == null || tokenResp.accessToken == null) {
-                if (authCallback != null) authCallback.onError(tokenEx != null ? tokenEx : new Exception("Token exchange failed"));
+                if (authCallback != null)
+                    authCallback.onError(tokenEx != null ? tokenEx : new Exception("Token exchange failed"));
                 return;
             }
 
@@ -119,7 +122,8 @@ public final class YandexAuthProvider implements CloudAuthProvider {
 
             fetchUserInfo(accessToken, (info, infoEx) -> {
                 if (info == null) {
-                    if (authCallback != null) authCallback.onError(infoEx != null ? infoEx : new Exception("Failed to fetch user info"));
+                    if (authCallback != null)
+                        authCallback.onError(infoEx != null ? infoEx : new Exception("Failed to fetch user info"));
                     return;
                 }
 
@@ -165,7 +169,8 @@ public final class YandexAuthProvider implements CloudAuthProvider {
 
         authService.performTokenRequest(req, (resp, ex) -> {
             if (resp == null || resp.accessToken == null) {
-                if (callback != null) callback.onError(ex != null ? ex : new Exception("Token refresh failed"));
+                if (callback != null)
+                    callback.onError(ex != null ? ex : new Exception("Token refresh failed"));
                 return;
             }
 
@@ -208,10 +213,6 @@ public final class YandexAuthProvider implements CloudAuthProvider {
         if (callback != null) callback.onSuccess(null);
     }
 
-    private interface UserInfoCallback {
-        void onFetched(@Nullable UserInfo info, @Nullable Exception e);
-    }
-
     private void fetchUserInfo(@NonNull String accessToken, @NonNull UserInfoCallback cb) {
         bg.execute(() -> {
             try {
@@ -236,13 +237,20 @@ public final class YandexAuthProvider implements CloudAuthProvider {
         });
     }
 
-    private static final class UserInfo {
-        @SerializedName("id") String id;                 // unique Yandex user id :contentReference[oaicite:9]{index=9}
-        @SerializedName("login") String login;           // username :contentReference[oaicite:10]{index=10}
-        @SerializedName("display_name") String displayName;
-    }
-
     public void dispose() {
         authService.dispose();
+    }
+
+    private interface UserInfoCallback {
+        void onFetched(@Nullable UserInfo info, @Nullable Exception e);
+    }
+
+    private static final class UserInfo {
+        @SerializedName("id")
+        String id;                 // unique Yandex user id :contentReference[oaicite:9]{index=9}
+        @SerializedName("login")
+        String login;           // username :contentReference[oaicite:10]{index=10}
+        @SerializedName("display_name")
+        String displayName;
     }
 }

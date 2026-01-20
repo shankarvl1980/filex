@@ -688,35 +688,35 @@ public class MakeFilePOJOUtil {
                 Timber.tag(TAG).e("Error creating FilePOJO for WebDAV resource: %s", e.getMessage());
             }
         } else if (fileObjectType == FileObjectType.SMB_TYPE) {
-            SmbClientRepository smbClientRepository= SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
+            SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
             SmbClientRepository.ShareHandle h = null;
             try {
                 h = smbClientRepository.acquireShare();
                 DiskShare share = h.share;
-                    // Adjust file_path if necessary (e.g., remove leading "/")
-                    String adjustedPath = file_path.startsWith("/") ? file_path.substring(1) : file_path;
+                // Adjust file_path if necessary (e.g., remove leading "/")
+                String adjustedPath = file_path.startsWith("/") ? file_path.substring(1) : file_path;
 
-                    // Check if the path is root
-                    if (adjustedPath.isEmpty()) {
-                        filePOJO = new FilePOJO(fileObjectType, "/", null, "/", true, 0L, null, 0L, null, R.drawable.folder_icon, null, Global.ENABLE_ALFA, View.INVISIBLE, View.INVISIBLE);
-                    } else if (share.folderExists(adjustedPath) || share.fileExists(adjustedPath)) {
-                        // Get file information
-                        FileAllInformation fileInfo = share.getFileInformation(adjustedPath);
+                // Check if the path is root
+                if (adjustedPath.isEmpty()) {
+                    filePOJO = new FilePOJO(fileObjectType, "/", null, "/", true, 0L, null, 0L, null, R.drawable.folder_icon, null, Global.ENABLE_ALFA, View.INVISIBLE, View.INVISIBLE);
+                } else if (share.folderExists(adjustedPath) || share.fileExists(adjustedPath)) {
+                    // Get file information
+                    FileAllInformation fileInfo = share.getFileInformation(adjustedPath);
 
-                        // Create SmbFileInfo object
-                        SmbFileInfo smbFileInfo = new SmbFileInfo(
-                                adjustedPath.substring(adjustedPath.lastIndexOf('/') + 1),
-                                file_path,
-                                fileInfo.getBasicInformation().getFileAttributes(),
-                                fileInfo.getStandardInformation().getEndOfFile(),
-                                fileInfo.getBasicInformation().getCreationTime().toEpochMillis(),
-                                fileInfo.getBasicInformation().getLastAccessTime().toEpochMillis(),
-                                fileInfo.getBasicInformation().getLastWriteTime().toEpochMillis(),
-                                fileInfo.getBasicInformation().getChangeTime().toEpochMillis()
-                        );
+                    // Create SmbFileInfo object
+                    SmbFileInfo smbFileInfo = new SmbFileInfo(
+                            adjustedPath.substring(adjustedPath.lastIndexOf('/') + 1),
+                            file_path,
+                            fileInfo.getBasicInformation().getFileAttributes(),
+                            fileInfo.getStandardInformation().getEndOfFile(),
+                            fileInfo.getBasicInformation().getCreationTime().toEpochMillis(),
+                            fileInfo.getBasicInformation().getLastAccessTime().toEpochMillis(),
+                            fileInfo.getBasicInformation().getLastWriteTime().toEpochMillis(),
+                            fileInfo.getBasicInformation().getChangeTime().toEpochMillis()
+                    );
 
-                        filePOJO = MAKE_FilePOJO(smbFileInfo, false, fileObjectType);
-                    }
+                    filePOJO = MAKE_FilePOJO(smbFileInfo, false, fileObjectType);
+                }
 
             } catch (IOException | SMBRuntimeException e) {
                 Timber.tag(TAG).e("Error creating FilePOJO for SMB file: %s", e.getMessage());

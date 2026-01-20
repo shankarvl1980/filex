@@ -2,32 +2,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/select_list_popupwindow"
+    android:elevation="6dp"
     android:orientation="horizontal"
     android:paddingStart="@dimen/ten_dp"
     android:paddingTop="@dimen/layout_margin"
     android:paddingEnd="@dimen/ten_dp"
-    android:paddingBottom="@dimen/layout_margin"
-    android:elevation="6dp">
+    android:paddingBottom="@dimen/layout_margin">
 
 
+    <ImageView
 
-        <ImageView
+        android:id="@+id/list_popupwindow_layout_iv"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="4dp" />
 
-            android:id="@+id/list_popupwindow_layout_iv"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginEnd="4dp"/>
+    <TextView
+        android:id="@+id/list_popupwindow_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/layout_margin"
+        android:gravity="center_vertical"
+        android:minHeight="36dp"
+        android:textColor="?attr/toolbar_text_color"
+        android:textSize="17sp" />
 
-        <TextView
-            android:id="@+id/list_popupwindow_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/layout_margin"
-            android:gravity="center_vertical"
-            android:minHeight="36dp"
-            android:textColor="?attr/toolbar_text_color"
-            android:textSize="17sp" />
-
-    </LinearLayout>
+</LinearLayout>
 

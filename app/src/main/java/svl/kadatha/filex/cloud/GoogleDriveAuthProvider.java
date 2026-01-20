@@ -44,7 +44,7 @@ public final class GoogleDriveAuthProvider implements CloudAuthProvider {
     private static final Uri REDIRECT_URI =
             Uri.parse("com.googleusercontent.apps." + CLIENT_ID_SHORT + ":/oauth2redirect");
 
-    private static final String[] SCOPES = new String[] {
+    private static final String[] SCOPES = new String[]{
             "openid",
             "email",
             "profile",
@@ -99,7 +99,8 @@ public final class GoogleDriveAuthProvider implements CloudAuthProvider {
         if (requestCode != REQ_AUTH) return;
 
         if (data == null) {
-            if (authCallback != null) authCallback.onError(new Exception("Authorization cancelled"));
+            if (authCallback != null)
+                authCallback.onError(new Exception("Authorization cancelled"));
             return;
         }
 
@@ -107,13 +108,15 @@ public final class GoogleDriveAuthProvider implements CloudAuthProvider {
         AuthorizationException ex = AuthorizationException.fromIntent(data);
 
         if (resp == null) {
-            if (authCallback != null) authCallback.onError(ex != null ? ex : new Exception("Authorization failed"));
+            if (authCallback != null)
+                authCallback.onError(ex != null ? ex : new Exception("Authorization failed"));
             return;
         }
 
         authService.performTokenRequest(resp.createTokenExchangeRequest(), (tokenResp, tokenEx) -> {
             if (tokenResp == null || tokenResp.accessToken == null) {
-                if (authCallback != null) authCallback.onError(tokenEx != null ? tokenEx : new Exception("Token exchange failed"));
+                if (authCallback != null)
+                    authCallback.onError(tokenEx != null ? tokenEx : new Exception("Token exchange failed"));
                 return;
             }
 
@@ -125,7 +128,8 @@ public final class GoogleDriveAuthProvider implements CloudAuthProvider {
 
             fetchUserInfo(accessToken, (userInfo, userInfoEx) -> {
                 if (userInfo == null) {
-                    if (authCallback != null) authCallback.onError(userInfoEx != null ? userInfoEx : new Exception("Failed to fetch user info"));
+                    if (authCallback != null)
+                        authCallback.onError(userInfoEx != null ? userInfoEx : new Exception("Failed to fetch user info"));
                     return;
                 }
 
@@ -155,8 +159,8 @@ public final class GoogleDriveAuthProvider implements CloudAuthProvider {
     }
 
     @Override
-    public void refreshToken(CloudAccountPOJO cloudAccount,AuthCallback callback) {
-        this.cloudAccount=cloudAccount;
+    public void refreshToken(CloudAccountPOJO cloudAccount, AuthCallback callback) {
+        this.cloudAccount = cloudAccount;
         if (cloudAccount == null || cloudAccount.refreshToken == null) {
             if (callback != null) callback.onError(new Exception("No refresh token available"));
             return;
@@ -172,7 +176,8 @@ public final class GoogleDriveAuthProvider implements CloudAuthProvider {
 
         authService.performTokenRequest(req, (resp, ex) -> {
             if (resp == null || resp.accessToken == null) {
-                if (callback != null) callback.onError(ex != null ? ex : new Exception("Token refresh failed"));
+                if (callback != null)
+                    callback.onError(ex != null ? ex : new Exception("Token refresh failed"));
                 return;
             }
 
@@ -187,13 +192,13 @@ public final class GoogleDriveAuthProvider implements CloudAuthProvider {
 
     @Override
     public String getAccessToken(CloudAccountPOJO cloudAccountPOJO) {
-        this.cloudAccount=cloudAccountPOJO;
+        this.cloudAccount = cloudAccountPOJO;
         return cloudAccount != null ? cloudAccount.accessToken : null;
     }
 
     @Override
     public boolean isAccessTokenValid(CloudAccountPOJO cloudAccountPOJO) {
-        this.cloudAccount=cloudAccountPOJO;
+        this.cloudAccount = cloudAccountPOJO;
         return cloudAccount != null && cloudAccount.accessToken != null
                 && System.currentTimeMillis() < cloudAccount.tokenExpiryTime;
     }
@@ -207,10 +212,6 @@ public final class GoogleDriveAuthProvider implements CloudAuthProvider {
     public void logout(AuthCallback callback) {
         cloudAccount = null;
         if (callback != null) callback.onSuccess(null);
-    }
-
-    private interface UserInfoCallback {
-        void onFetched(@Nullable UserInfo info, @Nullable Exception e);
     }
 
     private void fetchUserInfo(@NonNull String accessToken, @NonNull UserInfoCallback cb) {
@@ -236,14 +237,22 @@ public final class GoogleDriveAuthProvider implements CloudAuthProvider {
         });
     }
 
-    private static final class UserInfo {
-        @SerializedName("sub") String id;
-        @SerializedName("name") String name;
-        @SerializedName("email") String email;
-        @SerializedName("picture") String picture;
-    }
-
     public void dispose() {
         authService.dispose();
+    }
+
+    private interface UserInfoCallback {
+        void onFetched(@Nullable UserInfo info, @Nullable Exception e);
+    }
+
+    private static final class UserInfo {
+        @SerializedName("sub")
+        String id;
+        @SerializedName("name")
+        String name;
+        @SerializedName("email")
+        String email;
+        @SerializedName("picture")
+        String picture;
     }
 }

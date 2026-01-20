@@ -12,7 +12,8 @@ public interface CloudAuthProvider {
 
     void handleAuthorizationResponse(Intent intent);
 
-    default void onActivityResult(int requestCode, int resultCode, Intent data) {}
+    default void onActivityResult(int requestCode, int resultCode, Intent data) {
+    }
 
     // ✅ Account-based refresh (works with DB-loaded accounts)
     void refreshToken(CloudAccountPOJO account, AuthCallback callback);
@@ -34,6 +35,7 @@ public interface CloudAuthProvider {
 
     interface AuthCallback {
         void onSuccess(CloudAccountPOJO account);
+
         void onError(Exception e);
     }
 }

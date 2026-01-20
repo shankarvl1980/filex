@@ -1,9 +1,6 @@
 package svl.kadatha.filex.network;
 
 import android.os.Build;
-import android.os.Bundle;
-
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -12,7 +9,6 @@ import org.apache.commons.net.ftp.FTPSClient;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,14 +17,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import svl.kadatha.filex.App;
 import svl.kadatha.filex.FileObjectType;
-import svl.kadatha.filex.FilePOJO;
-import svl.kadatha.filex.FilePOJOUtil;
-import svl.kadatha.filex.FileSelectorActivity;
-import svl.kadatha.filex.Global;
-import svl.kadatha.filex.MainActivity;
-import svl.kadatha.filex.RepositoryClass;
 import timber.log.Timber;
 
 public class FtpClientRepository {
