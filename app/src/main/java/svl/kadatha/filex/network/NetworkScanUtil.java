@@ -6,118 +6,305 @@ import android.net.LinkAddress;
 import android.net.LinkProperties;
 import android.net.Network;
 import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import svl.kadatha.filex.NetworkCloudHostPickerDialogViewModel;
 
 public final class NetworkScanUtil {
 
     private NetworkScanUtil() {}
 
-    // API 21+ : get Wi-Fi/Ethernet IPv4 as int (big-endian)
-    public static int getMyIpv4IntCompat(Context context) {
+    // ---- Contracts ----
+    public interface CancelledSupplier { boolean isCancelled(); }
+    public interface HitConsumer { void onHit(ScanHit hit); }
+
+    // ---- Outputs ----
+    public static final class ScanHit {
+        public final String host;
+        public final int port;
+        public final String serviceName;
+
+        public ScanHit(String host, int port, String serviceName) {
+            this.host = host;
+            this.port = port;
+            this.serviceName = serviceName;
+        }
+    }
+
+    public static final class NetContext {
+        public final int myIpInt;
+        public final int prefixLength;
+
+        public NetContext(int myIpInt, int prefixLength) {
+            this.myIpInt = myIpInt;
+            this.prefixLength = prefixLength;
+        }
+    }
+
+    // ---- Service -> ports mapping ----
+    public static int[] portsForFilter(NetworkCloudHostPickerDialogViewModel.ServiceFilter filter) {
+        switch (filter) {
+            case FTP:    return new int[]{21};
+            case SFTP:   return new int[]{22};
+            case WEBDAV: return new int[]{80, 443};   // common WebDAV HTTP/HTTPS
+            case SMB:    return new int[]{445};
+            case ANY:
+            default:
+                return new int[]{21, 22, 445, 80, 443};
+        }
+    }
+
+    public static String serviceNameForPort(int port) {
+        switch (port) {
+            case 21: return "FTP";
+            case 22: return "SFTP";
+            case 80: return "HTTP/WebDAV";
+            case 443: return "HTTPS/WebDAV";
+            case 445: return "SMB";
+            default: return "PORT-" + port;
+        }
+    }
+
+    // ---- LAN context resolution (private IPv4 only) ----
+    @Nullable
+    public static NetContext resolveLanContext(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null) return null;
+
+        Network[] networks = cm.getAllNetworks();
+        if (networks == null) return null;
+
+        // Prefer Wi-Fi/Ethernet and private IPv4
+        for (Network n : networks) {
+            if (n == null) continue;
+
+            NetworkCapabilities caps = cm.getNetworkCapabilities(n);
+            if (caps == null) continue;
+
+            boolean isLan = caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+                    || caps.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET);
+
+            if (!isLan) continue;
+
+            LinkProperties lp = cm.getLinkProperties(n);
+            if (lp == null) continue;
+
+            for (LinkAddress la : lp.getLinkAddresses()) {
+                InetAddress addr = la.getAddress();
+                if (!(addr instanceof Inet4Address)) continue;
+
+                String ipStr = addr.getHostAddress();
+                if (!isPrivateLanIpv4(ipStr)) continue;
+
+                int ipInt = ipv4ToInt(ipStr);
+                if (ipInt == 0) continue;
+
+                int prefix = la.getPrefixLength();
+                return new NetContext(ipInt, prefix);
+            }
+        }
+
+        // Fallback: scan interfaces
+        int any = getAnyPrivateIpv4Int();
+        if (any != 0) return new NetContext(any, 24);
+
+        return null;
+    }
+
+    private static boolean isPrivateLanIpv4(String ip) {
+        if (ip == null) return false;
+
+        if (ip.startsWith("10.")) return true;
+        if (ip.startsWith("192.168.")) return true;
+
+        if (ip.startsWith("172.")) {
+            String[] p = ip.split("\\.");
+            if (p.length >= 2) {
+                try {
+                    int second = Integer.parseInt(p[1]);
+                    return second >= 16 && second <= 31;
+                } catch (Exception ignored) {}
+            }
+        }
+        return false;
+    }
+
+    // ---- Scan engine ----
+    public static void runScanWithPool(
+            ExecutorService pool,
+            int[] candidates,
+            int[] ports,
+            long startMs,
+            long timeLimitMs,
+            int timeoutMs,
+            int maxResults,
+            CancelledSupplier cancelled,
+            HitConsumer consumer
+    ) {
+        if (pool == null || candidates == null || ports == null) return;
+
+        final java.util.concurrent.atomic.AtomicInteger found =
+                new java.util.concurrent.atomic.AtomicInteger(0);
+
+        for (int ipInt : candidates) {
+            if (cancelled.isCancelled()) break;
+            if ((System.currentTimeMillis() - startMs) > timeLimitMs) break;
+            if (found.get() >= maxResults) break;
+
+            final String ipStr = intToIpv4(ipInt);
+
+            pool.submit(() -> {
+                if (cancelled.isCancelled()) return;
+                if ((System.currentTimeMillis() - startMs) > timeLimitMs) return;
+                if (found.get() >= maxResults) return;
+
+                // First open port among filter ports
+                int open = firstOpenPort(ipStr, ports, timeoutMs);
+                if (open > 0) {
+                    int now = found.incrementAndGet();
+                    consumer.onHit(new ScanHit(ipStr, open, serviceNameForPort(open)));
+                    if (now >= maxResults) return;
+                }
+            });
+        }
+
+        // Wait bounded by remaining time
         try {
-            ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            if (cm == null) return 0;
+            long remaining = Math.max(1, timeLimitMs - (System.currentTimeMillis() - startMs));
+            pool.shutdown();
+            pool.awaitTermination(remaining, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException ignored) {
+            Thread.currentThread().interrupt();
+        }
+    }
 
-            Network[] networks = cm.getAllNetworks(); // API 21+
-            if (networks == null) return 0;
+    // returns first open port from list, or -1
+    public static int firstOpenPort(@NonNull String host, @NonNull int[] ports, int timeoutMs) {
+        for (int p : ports) {
+            if (isTcpOpen(host, p, timeoutMs)) return p;
+        }
+        return -1;
+    }
 
-            for (Network n : networks) {
-                if (n == null) continue;
+    public static boolean isTcpOpen(String host, int port, int timeoutMs) {
+        Socket s = null;
+        try {
+            s = new Socket();
+            s.connect(new InetSocketAddress(host, port), timeoutMs);
+            return true;
+        } catch (Exception ignored) {
+            return false;
+        } finally {
+            if (s != null) try { s.close(); } catch (Exception ignored2) {}
+        }
+    }
 
-                NetworkCapabilities caps = cm.getNetworkCapabilities(n); // API 21+
-                if (caps == null) continue;
+    // ---- Candidates: ARP + subnet ----
+    public static List<Integer> readArpIpv4Ints() {
+        Set<Integer> out = new LinkedHashSet<>();
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader("/proc/net/arp"));
+            String line;
+            boolean first = true;
+            while ((line = br.readLine()) != null) {
+                if (first) { first = false; continue; }
+                String[] parts = line.trim().split("\\s+");
+                if (parts.length >= 1) {
+                    int ip = ipv4ToInt(parts[0]);
+                    if (ip != 0) out.add(ip);
+                }
+            }
+        } catch (Exception ignored) {
+        } finally {
+            if (br != null) try { br.close(); } catch (Exception ignored2) {}
+        }
+        return new ArrayList<>(out);
+    }
 
-                boolean isLan = caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-                        || caps.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET);
-                if (!isLan) continue;
+    /**
+     * Safe subnet sweep (unsigned math). cap keeps it sane.
+     */
+    public static int[] buildSubnetCandidates(int myIpInt, int prefixLen, int cap) {
+        if (myIpInt == 0) return new int[0];
+        if (prefixLen <= 0 || prefixLen > 32) prefixLen = 24;
 
-                NetworkInfo ni = cm.getNetworkInfo(n); // deprecated but OK on API21-22
-                if (ni == null || !ni.isConnected()) continue;
+        long ip = myIpInt & 0xFFFFFFFFL;
+        long mask = prefixLen == 0 ? 0L : (0xFFFFFFFFL << (32 - prefixLen)) & 0xFFFFFFFFL;
 
-                LinkProperties lp = cm.getLinkProperties(n); // API 21+
-                if (lp == null) continue;
+        long network = ip & mask;
+        long broadcast = network | (~mask & 0xFFFFFFFFL);
 
-                for (LinkAddress la : lp.getLinkAddresses()) {
-                    InetAddress addr = la.getAddress();
-                    if (addr instanceof Inet4Address) {
-                        byte[] b = addr.getAddress();
-                        return ((b[0] & 0xFF) << 24)
-                                | ((b[1] & 0xFF) << 16)
-                                | ((b[2] & 0xFF) << 8)
-                                | (b[3] & 0xFF);
-                    }
+        List<Integer> ips = new ArrayList<>();
+
+        for (long host = network + 1; host < broadcast; host++) {
+            int hostInt = (int) host;
+            if (hostInt == myIpInt) continue;
+            ips.add(hostInt);
+            if (cap > 0 && ips.size() >= cap) break;
+        }
+
+        int[] arr = new int[ips.size()];
+        for (int i = 0; i < ips.size(); i++) arr[i] = ips.get(i);
+        return arr;
+    }
+
+    // ---- Fallback: interface scan ----
+    public static int getAnyPrivateIpv4Int() {
+        try {
+            for (NetworkInterface ni : java.util.Collections.list(NetworkInterface.getNetworkInterfaces())) {
+                if (ni == null) continue;
+                if (!ni.isUp() || ni.isLoopback()) continue;
+
+                for (InetAddress addr : java.util.Collections.list(ni.getInetAddresses())) {
+                    if (!(addr instanceof Inet4Address)) continue;
+
+                    String ip = addr.getHostAddress();
+                    if (!isPrivateLanIpv4(ip)) continue;
+
+                    int ipInt = ipv4ToInt(ip);
+                    if (ipInt != 0) return ipInt;
                 }
             }
         } catch (Exception ignored) {}
         return 0;
     }
 
-    public static String intToIpv4(int ip) {
-        return ((ip >> 24) & 0xFF) + "." +
-                ((ip >> 16) & 0xFF) + "." +
-                ((ip >> 8) & 0xFF) + "." +
-                (ip & 0xFF);
-    }
-
-    public static boolean isPortOpen(String host, int port, int timeoutMs) {
-        Socket socket = null;
+    // ---- IPv4 helpers ----
+    public static int ipv4ToInt(String ip) {
         try {
-            socket = new Socket();
-            socket.connect(new InetSocketAddress(host, port), timeoutMs);
-            return true;
+            String[] p = ip.split("\\.");
+            if (p.length != 4) return 0;
+            int a = Integer.parseInt(p[0]) & 0xFF;
+            int b = Integer.parseInt(p[1]) & 0xFF;
+            int c = Integer.parseInt(p[2]) & 0xFF;
+            int d = Integer.parseInt(p[3]) & 0xFF;
+            return (a << 24) | (b << 16) | (c << 8) | d;
         } catch (Exception e) {
-            return false;
-        } finally {
-            if (socket != null) {
-                try { socket.close(); } catch (Exception ignored) {}
-            }
+            return 0;
         }
     }
 
-    public static int firstOpenPort(String host, int[] ports, int timeoutMs) {
-        if (ports == null) return 0;
-        for (int p : ports) {
-            if (isPortOpen(host, p, timeoutMs)) return p;
-        }
-        return 0;
-    }
-
-    // Pick at most 24 IPs around your phone's last octet in the same /24
-    public static int[] pickNeighborHosts(int myIp, int hostCap) {
-        int base = myIp & 0xFFFFFF00;
-        int last = myIp & 0xFF;
-
-        int half = Math.max(1, hostCap / 2);
-        int start = Math.max(1, last - half);
-        int end = Math.min(254, start + hostCap - 1);
-        start = Math.max(1, end - hostCap + 1);
-
-        int size = end - start + 1;
-        int[] out = new int[size];
-        int idx = 0;
-        for (int i = start; i <= end; i++) out[idx++] = base | i;
-        return out;
-    }
-
-    // Optional: nice label by port
-    public static String protocolByPort(int port) {
-        switch (port) {
-            case 21:  return "FTP";
-            case 22:  return "SFTP";
-            case 80:  return "WebDAV";
-            case 443: return "WebDAV(HTTPS)";
-            case 445: return "SMB";
-            case 8080:return "WebDAV";
-            case 8443:return "WebDAV(HTTPS)";
-            case 2121:return "FTP";
-            case 2222:return "SFTP";
-            case 2200:return "SFTP";
-            default:  return "LAN";
-        }
+    public static String intToIpv4(int ip) {
+        return ((ip >> 24) & 0xFF) + "."
+                + ((ip >> 16) & 0xFF) + "."
+                + ((ip >> 8) & 0xFF) + "."
+                + (ip & 0xFF);
     }
 }

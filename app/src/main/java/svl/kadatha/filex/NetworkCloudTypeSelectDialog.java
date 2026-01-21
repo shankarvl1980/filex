@@ -81,10 +81,9 @@ public class NetworkCloudTypeSelectDialog extends DialogFragment {
         cancel.setText(R.string.cancel);
         cancel.setOnClickListener(p1 -> dismissAllowingStateLoss());
         viewModel = new ViewModelProvider(this).get(NetworkCloudHostPickerDialogViewModel.class);
-        adapter = new NetworkCloudRecyclerAdapter(viewModel.items);
-        recyclerview.setAdapter(adapter);
+
         if (HOST.equals(what_type_network_cloud)) {
-            viewModel.scanStandardPorts(requireContext().getApplicationContext());
+            viewModel.scanHosts(requireContext().getApplicationContext(), NetworkCloudHostPickerDialogViewModel.ServiceFilter.SMB);
         } else {
             viewModel.populateNetworkCloudServers(what_type_network_cloud);
         }
@@ -95,7 +94,8 @@ public class NetworkCloudTypeSelectDialog extends DialogFragment {
                 if(viewModel.populateNetworkCloudServersAsyncStatus.getValue()==AsyncTaskStatus.STARTED){
                     progress_bar.setVisibility(View.VISIBLE);
                 } else if (viewModel.populateNetworkCloudServersAsyncStatus.getValue()==AsyncTaskStatus.COMPLETED){
-                    adapter.notifyDataSetChanged();
+                    adapter = new NetworkCloudRecyclerAdapter(viewModel.items);
+                    recyclerview.setAdapter(adapter);
                     progress_bar.setVisibility(View.GONE);
                 }
             }
@@ -108,6 +108,8 @@ public class NetworkCloudTypeSelectDialog extends DialogFragment {
                 progress_bar.setVisibility(View.VISIBLE);
             } else if (st == AsyncTaskStatus.COMPLETED) {
                 label.setText(R.string.select_server);
+                adapter = new NetworkCloudRecyclerAdapter(viewModel.items);
+                recyclerview.setAdapter(adapter);
                 if (viewModel.items.isEmpty()) {
                     nothing_tv.setVisibility(View.VISIBLE);
                     recyclerview.setVisibility(View.GONE);
@@ -116,12 +118,6 @@ public class NetworkCloudTypeSelectDialog extends DialogFragment {
             }
         });
 
-        viewModel.newResult.observe(getViewLifecycleOwner(), r -> {
-            if (!HOST.equals(what_type_network_cloud) || r == null) return;
-            int pos = viewModel.items.size();
-            viewModel.items.add(PickerItem.forHost(r.display, r.host, r.port));
-            adapter.notifyItemInserted(pos);
-        });
         return v;
     }
 
