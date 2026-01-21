@@ -108,7 +108,6 @@ public class CloudAuthActivity extends BaseActivity {
                 }
             }
         });
-
     }
 
     private void setupToolbar() {

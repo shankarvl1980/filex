@@ -18,6 +18,7 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,7 +35,7 @@ public class NetworkCloudTypeSelectDialog extends DialogFragment {
     public static final String HOST = "host";
     private Context context;
     private String request_code, what_type_network_cloud;
-    private final ArrayList<PickerItem> items = new ArrayList<>();
+
     private NetworkCloudRecyclerAdapter adapter;
 
     private NetworkCloudHostPickerDialogViewModel viewModel;
@@ -70,7 +71,6 @@ public class NetworkCloudTypeSelectDialog extends DialogFragment {
         TextView nothing_tv = v.findViewById(R.id.fragment_network_cloud_type_select_nothing_found_tv);
         label.setText(R.string.select_server);
         FrameLayout progress_bar = v.findViewById(R.id.fragment_network_cloud_type_select_progressbar);
-        progress_bar.setVisibility(View.GONE);
 
         RecyclerView recyclerview = v.findViewById(R.id.fragment_network_cloud_type_recyclerView);
         recyclerview.addItemDecoration(Global.DIVIDERITEMDECORATION);
@@ -80,75 +80,52 @@ public class NetworkCloudTypeSelectDialog extends DialogFragment {
         Button cancel = button_layout.findViewById(R.id.first_button);
         cancel.setText(R.string.cancel);
         cancel.setOnClickListener(p1 -> dismissAllowingStateLoss());
-        adapter = new NetworkCloudRecyclerAdapter(items);
-        recyclerview.setAdapter(adapter);
-
         viewModel = new ViewModelProvider(this).get(NetworkCloudHostPickerDialogViewModel.class);
-
+        adapter = new NetworkCloudRecyclerAdapter(viewModel.items);
+        recyclerview.setAdapter(adapter);
         if (HOST.equals(what_type_network_cloud)) {
-            items.clear();
-            adapter.notifyDataSetChanged();
             viewModel.scanStandardPorts(requireContext().getApplicationContext());
         } else {
-            items.clear();
-            items.addAll(buildPickerItems());
-            adapter.notifyDataSetChanged();
+            viewModel.populateNetworkCloudServers(what_type_network_cloud);
         }
+
+        viewModel.populateNetworkCloudServersAsyncStatus.observe(this, new Observer<AsyncTaskStatus>() {
+            @Override
+            public void onChanged(AsyncTaskStatus asyncTaskStatus) {
+                if(viewModel.populateNetworkCloudServersAsyncStatus.getValue()==AsyncTaskStatus.STARTED){
+                    progress_bar.setVisibility(View.VISIBLE);
+                } else if (viewModel.populateNetworkCloudServersAsyncStatus.getValue()==AsyncTaskStatus.COMPLETED){
+                    adapter.notifyDataSetChanged();
+                    progress_bar.setVisibility(View.GONE);
+                }
+            }
+        });
 
         viewModel.scanHostAsyncTaskStatus.observe(getViewLifecycleOwner(), st -> {
             if (!HOST.equals(what_type_network_cloud)) return;
             if (st == AsyncTaskStatus.STARTED) {
                 label.setText(R.string.scanning);
+                progress_bar.setVisibility(View.VISIBLE);
             } else if (st == AsyncTaskStatus.COMPLETED) {
                 label.setText(R.string.select_server);
-                if (items.isEmpty()) {
+                if (viewModel.items.isEmpty()) {
                     nothing_tv.setVisibility(View.VISIBLE);
-                    recyclerview.setItemViewCacheSize(View.GONE);
+                    recyclerview.setVisibility(View.GONE);
                 }
+                progress_bar.setVisibility(View.GONE);
             }
         });
 
         viewModel.newResult.observe(getViewLifecycleOwner(), r -> {
             if (!HOST.equals(what_type_network_cloud) || r == null) return;
-            int pos = items.size();
-            items.add(PickerItem.forHost(r.display, r.host, r.port));
+            int pos = viewModel.items.size();
+            viewModel.items.add(PickerItem.forHost(r.display, r.host, r.port));
             adapter.notifyItemInserted(pos);
         });
-
         return v;
     }
 
-    private List<PickerItem> buildPickerItems() {
-        if (NETWORK.equals(what_type_network_cloud)) {
-            List<String> networkTypes = Arrays.asList(getResources().getStringArray(R.array.network_types));
-            List<PickerItem> out = new ArrayList<>(networkTypes.size());
-            for (String s : networkTypes) out.add(new PickerItem(R.drawable.network_icon, s, null));
-            return out;
-        } else if (CLOUD.equals(what_type_network_cloud)) {
-            List<String> cloudTypes = Arrays.asList(getResources().getStringArray(R.array.cloud_types));
-            List<PickerItem> out = new ArrayList<>(cloudTypes.size());
-            for (String s : cloudTypes) {
-                FileObjectType fot = null;
-                switch (s) {
-                    case "Google Drive":
-                        fot = FileObjectType.GOOGLE_DRIVE_TYPE;
-                        break;
-                    case "Drop Box":
-                        fot = FileObjectType.DROP_BOX_TYPE;
-                        break;
-                    case "MediaFire":
-                        fot = FileObjectType.MEDIA_FIRE_TYPE;
-                        break;
-                    case "Yandex":
-                        fot = FileObjectType.YANDEX_TYPE;
-                        break;
-                }
-                out.add(new PickerItem(R.drawable.cloud_icon, s, fot));
-            }
-            return out;
-        }
-        return new ArrayList<>();
-    }
+
 
     @Override
     public void onResume() {
@@ -164,8 +141,7 @@ public class NetworkCloudTypeSelectDialog extends DialogFragment {
         if (viewModel != null) viewModel.cancel(true);
     }
 
-
-    private static class PickerItem implements Serializable {
+    public static class PickerItem implements Serializable {
         @DrawableRes
         final int iconResId;
         @NonNull
@@ -227,7 +203,6 @@ public class NetworkCloudTypeSelectDialog extends DialogFragment {
                 holder.imageview.setImageDrawable(ContextCompat.getDrawable(context, item.iconResId));
             }
         }
-
 
         @Override
         public int getItemCount() {
