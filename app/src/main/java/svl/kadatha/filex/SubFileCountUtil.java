@@ -37,8 +37,8 @@ import svl.kadatha.filex.usb.UsbFileRootSingleton;
 
 public final class SubFileCountUtil {
     private static final int cap = 100;
-    private static final OkHttpClient CLOUD_HTTP = new OkHttpClient();
-    private static final Gson CLOUD_GSON = new Gson();
+    public static final OkHttpClient CLOUD_HTTP = new OkHttpClient();
+    public static final Gson CLOUD_GSON = new Gson();
 
     public static void ensureSubFileCount(FilePOJO pojo, Callback cb) {
         if (pojo == null) return;

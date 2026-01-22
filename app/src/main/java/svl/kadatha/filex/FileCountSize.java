@@ -1,11 +1,17 @@
 package svl.kadatha.filex;
 
+
+
+import static svl.kadatha.filex.SubFileCountUtil.CLOUD_GSON;
+import static svl.kadatha.filex.SubFileCountUtil.CLOUD_HTTP;
+
 import android.content.Context;
 import android.net.Uri;
 
 import androidx.core.util.Pair;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.gson.Gson;
 import com.hierynomus.msfscc.FileAttributes;
 import com.hierynomus.msfscc.fileinformation.FileAllInformation;
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
@@ -30,7 +36,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import svl.kadatha.filex.asynctasks.CopyToAsyncTask;
+import svl.kadatha.filex.cloud.CloudAuthActivityViewModel;
+import svl.kadatha.filex.cloud.GoogleDriveAuthProvider;
 import svl.kadatha.filex.network.FtpClientRepository;
 import svl.kadatha.filex.network.NetworkAccountDetailsViewModel;
 import svl.kadatha.filex.network.SftpChannelRepository;
@@ -41,7 +53,7 @@ import svl.kadatha.filex.usb.UsbFileRootSingleton;
 import timber.log.Timber;
 
 public class FileCountSize {
-    private static final String TAG = "Ftp-FileCountSize";
+    private static final String TAG = "FileCountSize";
     final Context context;
     final MutableLiveData<String> mutable_size_of_files_to_be_archived_copied = new MutableLiveData<>();
     final MutableLiveData<Integer> mutable_total_no_of_files = new MutableLiveData<>();
@@ -287,8 +299,70 @@ public class FileCountSize {
                             Timber.tag(TAG).d("SMB session released");
                         }
                     }
-                }
+                } else if (sourceFileObjectType == FileObjectType.GOOGLE_DRIVE_TYPE) {
 
+                    // ---- You must supply token here (wherever you keep it) ----
+                    // Example: from your Drive account POJO / ViewModel
+                    final String oauthToken = CloudAuthActivityViewModel.GOOGLE_DRIVE_ACCESS_TOKEN; // <-- replace
+
+                    // Reasonable caps (tune as you like)
+                    final int CAP = 100;           // show "100000+"
+                    final int capPlusOne = CAP + 1;
+
+                    // Traverse each selected id
+                    for (String sel : files_selected_array) {
+                        if (isCancelled()) return;
+
+                        String rootId = extractDriveId(sel);
+                        if (rootId == null || rootId.isEmpty()) continue;
+
+                        // Fetch root metadata to know if it's folder or file
+                        DriveFileMeta rootMeta = driveGetMeta(rootId, oauthToken);
+                        if (rootMeta == null) continue;
+
+                        boolean isFolder = DriveMime.FOLDER.equals(rootMeta.mimeType);
+
+                        if (isFolder) {
+                            // Count the folder itself if include_folder
+                            if (include_folder) {
+                                total_no_of_files += 1;
+                                if (total_no_of_files >= capPlusOne) {
+                                    // capped
+                                    mutable_total_no_of_files.postValue(capPlusOne);
+                                    mutable_size_of_files_to_be_archived_copied.postValue(
+                                            FileUtil.humanReadableByteCount(total_size_of_files) + "+"
+                                    );
+                                    return;
+                                }
+                                mutable_total_no_of_files.postValue(total_no_of_files);
+                            }
+
+                            // Traverse all descendants
+                            drivePopulateFolderTreeCapped(rootId, oauthToken, include_folder, capPlusOne);
+
+                            if (total_no_of_files >= capPlusOne) {
+                                // capped already inside populate
+                                return;
+                            }
+
+                        } else {
+                            // Single file
+                            total_no_of_files += 1;
+                            total_size_of_files += safeSize(rootMeta.size);
+
+                            if (total_no_of_files >= capPlusOne) {
+                                mutable_total_no_of_files.postValue(capPlusOne);
+                                mutable_size_of_files_to_be_archived_copied.postValue(
+                                        FileUtil.humanReadableByteCount(total_size_of_files) + "+"
+                                );
+                                return;
+                            }
+
+                            mutable_total_no_of_files.postValue(total_no_of_files);
+                            mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
+                        }
+                    }
+                }
             }
         });
     }
@@ -663,4 +737,158 @@ public class FileCountSize {
         }
         return dir + file;
     }
+
+    // ---- Drive constants ----
+    private static final class DriveMime {
+        static final String FOLDER = "application/vnd.google-apps.folder";
+    }
+
+    // If your selection string is not a pure id, adjust this.
+    private static String extractDriveId(String sel) {
+        if (sel == null) return null;
+        sel = sel.trim();
+        if (sel.isEmpty()) return null;
+
+        // Common case: already an id
+        // If you store like "id=xxxx" or "drive://xxxx", parse here.
+        return sel;
+    }
+
+    private static long safeSize(Long size) {
+        return (size == null || size < 0) ? 0L : size;
+    }
+
+    // Minimal meta for one file
+    private static final class DriveFileMeta {
+        String id;
+        String mimeType;
+        Long size;
+    }
+
+    // Response for list children
+    private static final class DriveListResponse {
+        String nextPageToken;
+        List<DriveFileMeta> files;
+    }
+
+    /**
+     * Traverse a folder tree (DFS) and add counts + sizes into total_no_of_files / total_size_of_files.
+     * Uses Drive files.list with pagination. Stops early when count reaches capPlusOne.
+     */
+    private void drivePopulateFolderTreeCapped(String rootFolderId,
+                                               String oauthToken,
+                                               boolean includeFolder,
+                                               int capPlusOne) {
+
+        Stack<String> folderStack = new Stack<>();
+        folderStack.push(rootFolderId);
+
+        while (!folderStack.isEmpty()) {
+            if (isCancelled()) return;
+
+            String currentFolderId = folderStack.pop();
+            String pageToken = null;
+
+            while (true) {
+                if (isCancelled()) return;
+
+                DriveListResponse res = driveListChildren(currentFolderId, oauthToken, pageToken);
+                if (res == null || res.files == null) return;
+
+                for (DriveFileMeta child : res.files) {
+                    if (isCancelled()) return;
+                    if (child == null) continue;
+
+                    boolean isFolder = DriveMime.FOLDER.equals(child.mimeType);
+
+                    if (isFolder) {
+                        if (includeFolder) {
+                            total_no_of_files += 1;
+                            if (total_no_of_files >= capPlusOne) {
+                                // Signal capped to UI:
+                                mutable_total_no_of_files.postValue(capPlusOne);
+                                mutable_size_of_files_to_be_archived_copied.postValue(
+                                        FileUtil.humanReadableByteCount(total_size_of_files) + "+"
+                                );
+                                return;
+                            }
+                        }
+                        folderStack.push(child.id);
+                    } else {
+                        total_no_of_files += 1;
+                        total_size_of_files += safeSize(child.size);
+
+                        if (total_no_of_files >= capPlusOne) {
+                            mutable_total_no_of_files.postValue(capPlusOne);
+                            mutable_size_of_files_to_be_archived_copied.postValue(
+                                    FileUtil.humanReadableByteCount(total_size_of_files) + "+"
+                            );
+                            return;
+                        }
+                    }
+
+                    // Update after each item (same pattern you used elsewhere)
+                    mutable_total_no_of_files.postValue(total_no_of_files);
+                    mutable_size_of_files_to_be_archived_copied.postValue(
+                            FileUtil.humanReadableByteCount(total_size_of_files)
+                    );
+                }
+
+                pageToken = res.nextPageToken;
+                if (pageToken == null || pageToken.isEmpty()) break;
+            }
+        }
+    }
+
+    private DriveFileMeta driveGetMeta(String fileId, String oauthToken) {
+        // GET https://www.googleapis.com/drive/v3/files/{fileId}?fields=id,mimeType,size
+        HttpUrl url = HttpUrl.parse("https://www.googleapis.com/drive/v3/files/" + fileId)
+                .newBuilder()
+                .addQueryParameter("fields", "id,mimeType,size")
+                .build();
+
+        Request req = new Request.Builder()
+                .url(url)
+                .header("Authorization", "Bearer " + oauthToken)
+                .get()
+                .build();
+
+        try (Response resp = CLOUD_HTTP.newCall(req).execute()) {
+            if (!resp.isSuccessful() || resp.body() == null) return null;
+            return CLOUD_GSON.fromJson(resp.body().charStream(), DriveFileMeta.class);
+        } catch (IOException e) {
+            Timber.tag(TAG).e("Drive meta error: %s", e.getMessage());
+            return null;
+        }
+    }
+
+    private DriveListResponse driveListChildren(String folderId, String oauthToken, String pageToken) {
+        // files.list with:
+        // q="'<folderId>' in parents and trashed=false"
+        // fields="nextPageToken,files(id,mimeType,size)"
+        HttpUrl.Builder b = HttpUrl.parse("https://www.googleapis.com/drive/v3/files")
+                .newBuilder()
+                .addQueryParameter("q", "'" + folderId + "' in parents and trashed=false")
+                .addQueryParameter("pageSize", "1000")
+                .addQueryParameter("fields", "nextPageToken,files(id,mimeType,size)");
+
+        if (pageToken != null && !pageToken.isEmpty()) {
+            b.addQueryParameter("pageToken", pageToken);
+        }
+
+        Request req = new Request.Builder()
+                .url(b.build())
+                .header("Authorization", "Bearer " + oauthToken)
+                .get()
+                .build();
+
+        try (Response resp = CLOUD_HTTP.newCall(req).execute()) {
+            if (!resp.isSuccessful() || resp.body() == null) return null;
+            return CLOUD_GSON.fromJson(resp.body().charStream(), DriveListResponse.class);
+        } catch (IOException e) {
+            Timber.tag(TAG).e("Drive list error: %s", e.getMessage());
+            return null;
+        }
+    }
+
 }
