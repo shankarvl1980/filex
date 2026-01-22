@@ -73,22 +73,25 @@ public class NetworkCloudHostPickerDialogViewModel extends ViewModel {
             List<String> cloudTypes = Arrays.asList(App.getAppContext().getResources().getStringArray(R.array.cloud_types));
             List<NetworkCloudTypeSelectDialog.PickerItem> out = new ArrayList<>(cloudTypes.size());
             for (String s : cloudTypes) {
-                FileObjectType fot = null;
+                FileObjectType fot;
                 switch (s) {
                     case "Google Drive":
                         fot = FileObjectType.GOOGLE_DRIVE_TYPE;
+                        out.add(new NetworkCloudTypeSelectDialog.PickerItem(R.drawable.google_drive_icon, s, fot));
                         break;
                     case "Drop Box":
                         fot = FileObjectType.DROP_BOX_TYPE;
+                        out.add(new NetworkCloudTypeSelectDialog.PickerItem(R.drawable.dropbox_icon, s, fot));
                         break;
                     case "MediaFire":
                         fot = FileObjectType.MEDIA_FIRE_TYPE;
+                        out.add(new NetworkCloudTypeSelectDialog.PickerItem(R.drawable.cloud_icon, s, fot));
                         break;
                     case "Yandex":
                         fot = FileObjectType.YANDEX_TYPE;
+                        out.add(new NetworkCloudTypeSelectDialog.PickerItem(R.drawable.cloud_icon, s, fot));
                         break;
                 }
-                out.add(new NetworkCloudTypeSelectDialog.PickerItem(R.drawable.cloud_icon, s, fot));
             }
             return out;
         }
