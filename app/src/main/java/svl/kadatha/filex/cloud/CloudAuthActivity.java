@@ -34,7 +34,7 @@ import svl.kadatha.filex.EquallyDistributedButtonsWithTextLayout;
 import svl.kadatha.filex.FileObjectType;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.IndexedLinkedHashMap;
-import svl.kadatha.filex.NetworkCloudTypeSelectDialog;
+import svl.kadatha.filex.network.NetworkCloudTypeSelectDialog;
 import svl.kadatha.filex.PermissionsUtil;
 import svl.kadatha.filex.R;
 import svl.kadatha.filex.network.DeleteNetworkAccountAlertDialog;
@@ -510,12 +510,16 @@ public class CloudAuthActivity extends BaseActivity {
             String type_display = "";
             if ("GOOGLE_DRIVE_TYPE".equals(cloudAccountPOJO.type)) {
                 type_display = "Google Drive";
+                holder.cloud_imageView.setImageResource(R.drawable.google_drive_icon);
             } else if ("DROP_BOX_TYPE".equals(cloudAccountPOJO.type)) {
                 type_display = "Dropbox";
+                holder.cloud_imageView.setImageResource(R.drawable.dropbox_icon);
             } else if ("YANDEX_TYPE".equals(cloudAccountPOJO.type)) {
                 type_display = "Yandex";
+                holder.cloud_imageView.setImageResource(R.drawable.cloud_icon);
             } else if ("MEDIA_FIRE_TYPE".equals(cloudAccountPOJO.type)) {
                 type_display = "MediaFire";
+                holder.cloud_imageView.setImageResource(R.drawable.cloud_icon);
             }
 
             holder.host.setText(type_display);
@@ -536,7 +540,7 @@ public class CloudAuthActivity extends BaseActivity {
 
         class VH extends RecyclerView.ViewHolder {
             final View v;
-            final ImageView cloud_account_select_indicator;
+            final ImageView cloud_imageView,cloud_account_select_indicator;
             final TextView cloud_account_display, host;
             final TextView cloud_account_user_id;
             final ImageView green_dot;
@@ -544,6 +548,7 @@ public class CloudAuthActivity extends BaseActivity {
             VH(View view) {
                 super(view);
                 v = view;
+                cloud_imageView=v.findViewById(R.id.network_list_recyclerview_network_image);
                 cloud_account_display = v.findViewById(R.id.network_list_recyclerview_display);
                 cloud_account_user_id = v.findViewById(R.id.network_list_recyclerview_user_name);
                 host = v.findViewById(R.id.network_list_recyclerview_host);

@@ -24,8 +24,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import svl.kadatha.filex.NetworkCloudHostPickerDialogViewModel;
-
 public final class NetworkScanUtil {
 
     private NetworkScanUtil() {}

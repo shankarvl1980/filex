@@ -34,7 +34,6 @@ import svl.kadatha.filex.EquallyDistributedDialogButtonsLayout;
 import svl.kadatha.filex.FileSelectorActivity;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.MainActivity;
-import svl.kadatha.filex.NetworkCloudTypeSelectDialog;
 import svl.kadatha.filex.PermissionsUtil;
 import svl.kadatha.filex.R;
 import svl.kadatha.filex.YesOrNoAlertDialog;

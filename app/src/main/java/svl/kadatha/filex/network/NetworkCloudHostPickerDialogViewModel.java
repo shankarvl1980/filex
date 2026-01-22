@@ -1,4 +1,4 @@
-package svl.kadatha.filex;
+package svl.kadatha.filex.network;
 
 import android.content.Context;
 
@@ -14,7 +14,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import svl.kadatha.filex.network.NetworkScanUtil;
+import svl.kadatha.filex.App;
+import svl.kadatha.filex.AsyncTaskStatus;
+import svl.kadatha.filex.FileObjectType;
+import svl.kadatha.filex.Global;
+import svl.kadatha.filex.MyExecutorService;
+import svl.kadatha.filex.R;
 import timber.log.Timber;
 
 public class NetworkCloudHostPickerDialogViewModel extends ViewModel {

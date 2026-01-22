@@ -1,4 +1,4 @@
-package svl.kadatha.filex;
+package svl.kadatha.filex.network;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -24,12 +24,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import svl.kadatha.filex.network.NetworkAccountsDetailsDialog;
+import svl.kadatha.filex.AsyncTaskStatus;
+import svl.kadatha.filex.EquallyDistributedDialogButtonsLayout;
+import svl.kadatha.filex.FileObjectType;
+import svl.kadatha.filex.Global;
+import svl.kadatha.filex.R;
 
 public class NetworkCloudTypeSelectDialog extends DialogFragment {
     public static final String NETWORK = "network";

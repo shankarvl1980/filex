@@ -39,7 +39,6 @@ import svl.kadatha.filex.FileSelectorActivity;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.IndexedLinkedHashMap;
 import svl.kadatha.filex.MainActivity;
-import svl.kadatha.filex.NetworkCloudTypeSelectDialog;
 import svl.kadatha.filex.PermissionsUtil;
 import svl.kadatha.filex.R;
 
@@ -591,7 +590,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
 
         private class VH extends RecyclerView.ViewHolder {
             final View v;
-            //final ImageView network_image;
+            final ImageView network_image;
             final ImageView network_account_select_indicator;
             final TextView network_account_display;
             final TextView network_account_host;
@@ -602,7 +601,8 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
             VH(View view) {
                 super(view);
                 v = view;
-                //network_image = v.findViewById(R.id.network_list_recyclerview_network_image);
+                network_image = v.findViewById(R.id.network_list_recyclerview_network_image);
+                network_image.setVisibility(View.GONE);
                 network_account_display = v.findViewById(R.id.network_list_recyclerview_display);
                 network_account_host = v.findViewById(R.id.network_list_recyclerview_host);
                 network_account_user_name = v.findViewById(R.id.network_list_recyclerview_user_name);
