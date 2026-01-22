@@ -193,11 +193,10 @@ public class NetworkAccountDetailsInputDialog extends DialogFragment {
         }
 
         Button host_pick=v.findViewById(R.id.fragment_network_details_input_host);
-        //TextView host_pick=v.findViewById(R.id.fragment_network_details_input_host);
         host_pick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NetworkCloudTypeSelectDialog networkCloudTypeSelectDialog=NetworkCloudTypeSelectDialog.getInstance(NetworkCloudTypeSelectDialog.HOST,HOST_REQUEST_CODE);
+                NetworkCloudTypeSelectDialog networkCloudTypeSelectDialog=NetworkCloudTypeSelectDialog.getInstance(NetworkCloudTypeSelectDialog.HOST,HOST_REQUEST_CODE,type);
                 networkCloudTypeSelectDialog.show(getParentFragmentManager(),"");
             }
         });

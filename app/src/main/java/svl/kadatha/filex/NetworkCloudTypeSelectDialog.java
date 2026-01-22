@@ -29,22 +29,26 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import svl.kadatha.filex.network.NetworkAccountsDetailsDialog;
+
 public class NetworkCloudTypeSelectDialog extends DialogFragment {
     public static final String NETWORK = "network";
     public static final String CLOUD = "cloud";
     public static final String HOST = "host";
     private Context context;
+    private String type;
     private String request_code, what_type_network_cloud;
 
     private NetworkCloudRecyclerAdapter adapter;
 
     private NetworkCloudHostPickerDialogViewModel viewModel;
 
-    public static NetworkCloudTypeSelectDialog getInstance(String what_type_network_cloud, String request_code) {
+    public static NetworkCloudTypeSelectDialog getInstance(String what_type_network_cloud, String request_code, String type) {
         NetworkCloudTypeSelectDialog dialog = new NetworkCloudTypeSelectDialog();
         Bundle bundle = new Bundle();
         bundle.putString("what_type_network_cloud", what_type_network_cloud);
         bundle.putString("request_code", request_code);
+        bundle.putString("type", type);
         dialog.setArguments(bundle);
         return dialog;
     }
@@ -62,6 +66,7 @@ public class NetworkCloudTypeSelectDialog extends DialogFragment {
         Bundle bundle = getArguments();
         request_code = bundle.getString("request_code");
         what_type_network_cloud = bundle.getString("what_type_network_cloud");
+        type=bundle.getString("type");
     }
 
     @Override
@@ -83,7 +88,28 @@ public class NetworkCloudTypeSelectDialog extends DialogFragment {
         viewModel = new ViewModelProvider(this).get(NetworkCloudHostPickerDialogViewModel.class);
 
         if (HOST.equals(what_type_network_cloud)) {
-            viewModel.scanHosts(requireContext().getApplicationContext(), NetworkCloudHostPickerDialogViewModel.ServiceFilter.SMB);
+            NetworkCloudHostPickerDialogViewModel.ServiceFilter filter;
+            if(type==null){
+                filter=NetworkCloudHostPickerDialogViewModel.ServiceFilter.ANY;
+            } else{
+                switch (type){
+                    case NetworkAccountsDetailsDialog.FTP:
+                        filter=NetworkCloudHostPickerDialogViewModel.ServiceFilter.FTP;
+                        break;
+                    case NetworkAccountsDetailsDialog.SFTP:
+                        filter=NetworkCloudHostPickerDialogViewModel.ServiceFilter.SFTP;
+                        break;
+                    case NetworkAccountsDetailsDialog.WebDAV:
+                        filter=NetworkCloudHostPickerDialogViewModel.ServiceFilter.WEBDAV;
+                        break;
+                    case NetworkAccountsDetailsDialog.SMB:
+                        filter=NetworkCloudHostPickerDialogViewModel.ServiceFilter.SMB;
+                        break;
+                    default:
+                        filter=NetworkCloudHostPickerDialogViewModel.ServiceFilter.ANY;
+                }
+            }
+            viewModel.scanHosts(requireContext().getApplicationContext(), filter);
         } else {
             viewModel.populateNetworkCloudServers(what_type_network_cloud);
         }
@@ -117,7 +143,6 @@ public class NetworkCloudTypeSelectDialog extends DialogFragment {
                 progress_bar.setVisibility(View.GONE);
             }
         });
-
         return v;
     }
 

@@ -606,7 +606,7 @@ public class CloudAuthActivity extends BaseActivity {
             if (id == R.id.toolbar_btn_1) {
                 clear_selection();
                 NetworkCloudTypeSelectDialog dialog =
-                        NetworkCloudTypeSelectDialog.getInstance(NetworkCloudTypeSelectDialog.CLOUD, CLOUD_ACCOUNT_TYPE_REQUEST_CODE);
+                        NetworkCloudTypeSelectDialog.getInstance(NetworkCloudTypeSelectDialog.CLOUD, CLOUD_ACCOUNT_TYPE_REQUEST_CODE,null);
                 dialog.show(getSupportFragmentManager(), "");
 
             } else if (id == R.id.toolbar_btn_2) {
