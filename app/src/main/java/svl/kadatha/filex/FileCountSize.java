@@ -310,60 +310,47 @@ public class FileCountSize {
 
                     for (String sel : files_selected_array) {
                         if (isCancelled()) return;
-                        if (sel == null) continue;
 
-                        // 1) FAST PATH: try to get FilePOJO by path/type and use cloudId + mimeType directly
-                        FilePOJO pojo = null;
-                        try {
-                            pojo = FilePOJOUtil.GET_FILE_POJO(sel, FileObjectType.GOOGLE_DRIVE_TYPE);
-                        } catch (Throwable t) {
-                            // ignore, fallback below
-                        }
+                        // ---- 1) Try fastest path: POJO -> cloudId + mime + size ----
+                        FilePOJO pojo = FilePOJOUtil.GET_FILE_POJO(sel, FileObjectType.GOOGLE_DRIVE_TYPE);
 
                         String driveId = null;
-                        String mimeFromPojo = null;
+                        String mimeHint = null;
+                        Long sizeHint = null;
 
                         if (pojo != null) {
-                            try {
-                                driveId = pojo.getCloudId();
-                            } catch (Throwable t) { /* ignore */ }
+                            driveId = safeTrim(pojo.getCloudId());
+                            mimeHint = safeTrim(pojo.getDriveMimeType());
 
-                            try {
-                                mimeFromPojo = pojo.getDriveMimeType(); // <-- your field name might differ
-                            } catch (Throwable t) { /* ignore */ }
+                            long s = pojo.getSizeLong(); // long primitive
+                            if (s > 0) sizeHint = s;     // 0 => unknown/not set
                         }
 
-                        // 2) If we still don't have id, fallback: treat sel as PATH and resolve to id
-                        if (driveId == null || driveId.trim().isEmpty()) {
+                        // ---- 2) If no driveId, fallback: resolve by path (your existing mechanism) ----
+                        if (driveId == null || driveId.isEmpty()) {
                             String path = normalizeGoogleDrivePath(sel);
                             if (path == null) continue;
 
                             driveId = driveResolveIdByPath(path, oauthToken);
-                            Timber.tag("DRIVE_PATH").d("FALLBACK sel=%s path=%s resolvedId=%s", sel, path, driveId);
+                            Timber.tag("DRIVE_PATH").d("SEL=%s  PATH=%s  RESOLVED_ID=%s", sel, path, driveId);
 
-                            if (driveId == null || driveId.trim().isEmpty()) continue;
-                        } else {
-                            driveId = driveId.trim();
+                            if (driveId == null || driveId.isEmpty()) continue;
                         }
 
-                        // 3) Decide folder/file:
-                        boolean isFolder;
-                        Long sizeHint = null;
+                        // ---- 3) Decide folder/file with minimal API calls ----
+                        boolean isFolder = DriveMime.FOLDER.equals(mimeHint);
 
-                        if (mimeFromPojo != null && !mimeFromPojo.trim().isEmpty()) {
-                            isFolder = DriveMime.FOLDER.equals(mimeFromPojo);
-                            // if you store size in pojo, set sizeHint here:
-                            // sizeHint = pojo.getSize();
-                        } else {
-                            // Need meta if mime missing
-                            DriveFileMeta rootMeta = driveGetMeta(driveId, oauthToken);
-                            if (rootMeta == null) continue;
-
-                            isFolder = DriveMime.FOLDER.equals(rootMeta.mimeType);
-                            sizeHint = rootMeta.size;
+                        // If mime unknown, fetch meta once to know folder/file + maybe size
+                        DriveFileMeta meta = null;
+                        if (mimeHint == null || mimeHint.isEmpty()) {
+                            meta = driveGetMeta(driveId, oauthToken);
+                            if (meta == null) continue;
+                            mimeHint = meta.mimeType;
+                            isFolder = DriveMime.FOLDER.equals(mimeHint);
                         }
 
                         if (isFolder) {
+                            // Count folder itself if include_folder
                             if (include_folder) {
                                 total_no_of_files += 1;
                                 if (total_no_of_files >= capPlusOne) {
@@ -373,11 +360,19 @@ public class FileCountSize {
                                 postDriveProgress();
                             }
 
+                            // Traverse descendants (folder sizes come from children)
                             drivePopulateFolderTreeCapped(driveId, oauthToken, include_folder, capPlusOne);
 
                             if (total_no_of_files >= capPlusOne) return;
 
                         } else {
+                            // ---- Single file ----
+                            // Prefer POJO size; else meta.size/quotaBytesUsed
+                            if (sizeHint == null) {
+                                if (meta == null) meta = driveGetMeta(driveId, oauthToken);
+                                sizeHint = bestDriveSize(meta);
+                            }
+
                             total_no_of_files += 1;
                             total_size_of_files += safeSize(sizeHint);
 
@@ -385,6 +380,7 @@ public class FileCountSize {
                                 postDriveCapped(capPlusOne);
                                 return;
                             }
+
                             postDriveProgress();
                         }
                     }
@@ -799,6 +795,19 @@ public class FileCountSize {
         return path;
     }
 
+    private static String safeTrim(String s) {
+        if (s == null) return null;
+        s = s.trim();
+        return s.isEmpty() ? null : s;
+    }
+
+    private static Long bestDriveSize(DriveFileMeta m) {
+        if (m == null) return null;
+        if (m.size != null && m.size >= 0) return m.size;
+        if (m.quotaBytesUsed != null && m.quotaBytesUsed >= 0) return m.quotaBytesUsed;
+        return null;
+    }
+
     private void postDriveProgress() {
         mutable_total_no_of_files.postValue(total_no_of_files);
         mutable_size_of_files_to_be_archived_copied.postValue(
@@ -812,6 +821,16 @@ public class FileCountSize {
                 FileUtil.humanReadableByteCount(total_size_of_files) + "+"
         );
     }
+
+    private static long safeSize(Long size) {
+        return (size == null || size < 0) ? 0L : size;
+    }
+
+
+
+
+
+
 
     private String driveResolveIdByPath(String path, String oauthToken) {
         if (path == null) return null;
@@ -894,17 +913,14 @@ public class FileCountSize {
         return "'" + out + "'";
     }
 
-
-    private static long safeSize(Long size) {
-        return (size == null || size < 0) ? 0L : size;
-    }
-
     // Minimal meta for one file
     private static final class DriveFileMeta {
         String id;
         String mimeType;
         Long size;
+        Long quotaBytesUsed;
     }
+
 
     // Response for list children
     private static final class DriveListResponse {
@@ -993,7 +1009,7 @@ public class FileCountSize {
 
         HttpUrl url = HttpUrl.parse("https://www.googleapis.com/drive/v3/files/" + fileId)
                 .newBuilder()
-                .addQueryParameter("fields", "id,mimeType,size")
+                .addQueryParameter("fields", "id,mimeType,size,quotaBytesUsed")
                 .build();
 
         // ✅ CREATE REQUEST
