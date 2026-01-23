@@ -95,7 +95,6 @@ public class PropertiesDialog extends DialogFragment {
                     }
                 }
             } else {
-                //FTPFile ftpFile=FileUtil.getFTPFile(files_selected_array.get(0));
                 filename_str = new File(files_selected_array.get(0)).getName();
                 file_path_str = files_selected_array.get(0);
                 //file_date_str=sdf.format(ftpFile.)
@@ -184,12 +183,10 @@ public class PropertiesDialog extends DialogFragment {
                         TableLayout.LayoutParams.MATCH_PARENT,
                         heightPx
                 );
-                //params.setMargins(marginPx, 0, marginPx, 0);
                 separator.setLayoutParams(params);
                 separator.setBackgroundColor(separatorColor);
                 properties_details_table_layout.addView(separator);
             }
-
         }
 
         TableLayout properties_rwh_table_layout = v.findViewById(R.id.fragment_properties_rwh_tablelayout);
@@ -241,7 +238,6 @@ public class PropertiesDialog extends DialogFragment {
                         TableLayout.LayoutParams.MATCH_PARENT,
                         heightPx
                 );
-                //params.setMargins(marginPx, 0, marginPx, 0);
                 separator.setLayoutParams(params);
                 separator.setBackgroundColor(separatorColor);
                 properties_rwh_table_layout.addView(separator);
@@ -266,7 +262,6 @@ public class PropertiesDialog extends DialogFragment {
             }
         });
 
-
         ViewGroup buttons_layout = v.findViewById(R.id.fragment_properties_button_layout);
         buttons_layout.addView(new EquallyDistributedDialogButtonsLayout(context, 1, Global.DIALOG_WIDTH, Global.DIALOG_WIDTH));
         Button OKBtn = buttons_layout.findViewById(R.id.first_button);
@@ -276,7 +271,6 @@ public class PropertiesDialog extends DialogFragment {
                 PropertiesDialog.this.getViewModelStore().clear();
                 dismissAllowingStateLoss();
             }
-
         });
 
         getParentFragmentManager().setFragmentResultListener(PROPERTIES_DIALOG_REQUEST_CODE, this, new FragmentResultListener() {
@@ -297,7 +291,6 @@ public class PropertiesDialog extends DialogFragment {
         Window window = getDialog().getWindow();
         window.setLayout(Global.DIALOG_WIDTH, LayoutParams.WRAP_CONTENT);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
     }
 
     public void getPermissions(File file) {

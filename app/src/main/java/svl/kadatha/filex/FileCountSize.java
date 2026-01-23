@@ -7,11 +7,11 @@ import static svl.kadatha.filex.SubFileCountUtil.CLOUD_HTTP;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.core.util.Pair;
 import androidx.lifecycle.MutableLiveData;
 
-import com.google.gson.Gson;
 import com.hierynomus.msfscc.FileAttributes;
 import com.hierynomus.msfscc.fileinformation.FileAllInformation;
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
@@ -37,12 +37,10 @@ import java.util.concurrent.Future;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import svl.kadatha.filex.asynctasks.CopyToAsyncTask;
 import svl.kadatha.filex.cloud.CloudAuthActivityViewModel;
-import svl.kadatha.filex.cloud.GoogleDriveAuthProvider;
 import svl.kadatha.filex.network.FtpClientRepository;
 import svl.kadatha.filex.network.NetworkAccountDetailsViewModel;
 import svl.kadatha.filex.network.SftpChannelRepository;
@@ -301,22 +299,28 @@ public class FileCountSize {
                     }
                 } else if (sourceFileObjectType == FileObjectType.GOOGLE_DRIVE_TYPE) {
 
-                    // ---- You must supply token here (wherever you keep it) ----
-                    // Example: from your Drive account POJO / ViewModel
-                    final String oauthToken = CloudAuthActivityViewModel.GOOGLE_DRIVE_ACCESS_TOKEN; // <-- replace
+                    final String oauthToken = CloudAuthActivityViewModel.GOOGLE_DRIVE_ACCESS_TOKEN; // replace with your token source
+                    if (oauthToken == null || oauthToken.trim().isEmpty()) {
+                        Timber.tag(TAG).e("GOOGLE_DRIVE_TYPE: oauthToken is null/empty");
+                        return;
+                    }
 
-                    // Reasonable caps (tune as you like)
-                    final int CAP = 100;           // show "100000+"
+                    final int CAP = 100;     // tune as you like
                     final int capPlusOne = CAP + 1;
 
-                    // Traverse each selected id
                     for (String sel : files_selected_array) {
                         if (isCancelled()) return;
 
-                        String rootId = extractDriveId(sel);
+                        // sel is a PATH like "/Apks" or "/My Drive/Apks"
+                        String path = normalizeGoogleDrivePath(sel);
+                        if (path == null) continue;
+
+                        // Resolve PATH -> ID (root is "root")
+                        String rootId = driveResolveIdByPath(path, oauthToken);
+                        Timber.tag("DRIVE_PATH").d("SEL=%s  PATH=%s  RESOLVED_ID=%s", sel, path, rootId);
+
                         if (rootId == null || rootId.isEmpty()) continue;
 
-                        // Fetch root metadata to know if it's folder or file
                         DriveFileMeta rootMeta = driveGetMeta(rootId, oauthToken);
                         if (rootMeta == null) continue;
 
@@ -326,24 +330,25 @@ public class FileCountSize {
                             // Count the folder itself if include_folder
                             if (include_folder) {
                                 total_no_of_files += 1;
+
                                 if (total_no_of_files >= capPlusOne) {
-                                    // capped
                                     mutable_total_no_of_files.postValue(capPlusOne);
                                     mutable_size_of_files_to_be_archived_copied.postValue(
                                             FileUtil.humanReadableByteCount(total_size_of_files) + "+"
                                     );
                                     return;
                                 }
+
                                 mutable_total_no_of_files.postValue(total_no_of_files);
+                                mutable_size_of_files_to_be_archived_copied.postValue(
+                                        FileUtil.humanReadableByteCount(total_size_of_files)
+                                );
                             }
 
-                            // Traverse all descendants
+                            // Traverse descendants
                             drivePopulateFolderTreeCapped(rootId, oauthToken, include_folder, capPlusOne);
 
-                            if (total_no_of_files >= capPlusOne) {
-                                // capped already inside populate
-                                return;
-                            }
+                            if (total_no_of_files >= capPlusOne) return;
 
                         } else {
                             // Single file
@@ -359,10 +364,13 @@ public class FileCountSize {
                             }
 
                             mutable_total_no_of_files.postValue(total_no_of_files);
-                            mutable_size_of_files_to_be_archived_copied.postValue(FileUtil.humanReadableByteCount(total_size_of_files));
+                            mutable_size_of_files_to_be_archived_copied.postValue(
+                                    FileUtil.humanReadableByteCount(total_size_of_files)
+                            );
                         }
                     }
                 }
+
             }
         });
     }
@@ -743,16 +751,115 @@ public class FileCountSize {
         static final String FOLDER = "application/vnd.google-apps.folder";
     }
 
-    // If your selection string is not a pure id, adjust this.
-    private static String extractDriveId(String sel) {
-        if (sel == null) return null;
-        sel = sel.trim();
-        if (sel.isEmpty()) return null;
+    private static String normalizeGoogleDrivePath(String path) {
+        if (path == null) return null;
 
-        // Common case: already an id
-        // If you store like "id=xxxx" or "drive://xxxx", parse here.
-        return sel;
+        path = path.trim();
+        if (path.isEmpty()) return null;
+
+        // Always forward slashes
+        path = path.replace('\\', '/');
+
+        // Ensure leading slash
+        if (!path.startsWith("/")) path = "/" + path;
+
+        // Strip UI label "My Drive"
+        if (path.equals("/My Drive")) return "/";
+        if (path.startsWith("/My Drive/")) {
+            path = path.substring("/My Drive".length()); // keeps leading '/'
+            if (path.isEmpty()) path = "/";
+        }
+
+        // Collapse multiple slashes
+        while (path.contains("//")) path = path.replace("//", "/");
+
+        // Trim trailing slash (except root)
+        if (path.length() > 1 && path.endsWith("/")) path = path.substring(0, path.length() - 1);
+
+        return path;
     }
+
+    private String driveResolveIdByPath(String path, String oauthToken) {
+        if (path == null) return null;
+
+        // If caller accidentally passed an ID, keep it (IDs do NOT contain '/')
+        // Example: "1AbCDefGhIJkLmNoPqR"
+        if (!path.contains("/")) return path;
+
+        path = normalizeGoogleDrivePath(path);
+        if (path == null) return null;
+
+        // Root folder
+        if ("/".equals(path)) return "root";
+
+        // "/Apks/Child" -> ["", "Apks", "Child"]
+        String[] parts = path.split("/");
+        String parentId = "root";
+
+        for (String name : parts) {
+            if (name == null || name.isEmpty()) continue;
+
+            String nextId = driveFindChildIdByName(parentId, name, oauthToken);
+            if (nextId == null) {
+                Timber.tag("DRIVE_PATH").e("Not found under parentId=%s: name=%s (path=%s)", parentId, name, path);
+                return null;
+            }
+            parentId = nextId;
+        }
+        return parentId;
+    }
+
+    private String driveFindChildIdByName(String parentId, String name, String oauthToken) {
+        // WARNING: if duplicates exist (same name under same parent), this returns the first match.
+        String q = "name = " + quoteDrive(name)
+                + " and '" + parentId + "' in parents"
+                + " and trashed = false";
+
+        HttpUrl url = HttpUrl.parse("https://www.googleapis.com/drive/v3/files")
+                .newBuilder()
+                .addQueryParameter("q", q)
+                .addQueryParameter("pageSize", "1")
+                .addQueryParameter("fields", "files(id,mimeType)")
+                .build();
+
+        Request req = new Request.Builder()
+                .url(url)
+                .header("Authorization", "Bearer " + oauthToken)
+                .get()
+                .build();
+
+        try (Response resp = CLOUD_HTTP.newCall(req).execute()) {
+
+            Timber.tag("DRIVE_PATH").d("FIND_CHILD URL: %s", url);
+            Timber.tag("DRIVE_PATH").d("HTTP CODE: %d", resp.code());
+
+            if (!resp.isSuccessful()) {
+                String err = resp.body() != null ? resp.body().string() : "null";
+                Timber.tag("DRIVE_PATH").e("ERROR BODY: %s", err);
+                return null;
+            }
+
+            if (resp.body() == null) return null;
+
+            DriveListResponse r = CLOUD_GSON.fromJson(resp.body().charStream(), DriveListResponse.class);
+            if (r == null || r.files == null || r.files.isEmpty()) return null;
+
+            DriveFileMeta f = r.files.get(0);
+            return (f != null) ? f.id : null;
+
+        } catch (Exception e) {
+            Timber.tag("DRIVE_PATH").e("EXCEPTION: %s", Log.getStackTraceString(e));
+            return null;
+        }
+    }
+
+    private static String quoteDrive(String s) {
+        if (s == null) return "''";
+        // Escape backslash and single quote for Drive q
+        String out = s.replace("\\", "\\\\").replace("'", "\\'");
+        return "'" + out + "'";
+    }
+
 
     private static long safeSize(Long size) {
         return (size == null || size < 0) ? 0L : size;
@@ -841,12 +948,21 @@ public class FileCountSize {
     }
 
     private DriveFileMeta driveGetMeta(String fileId, String oauthToken) {
-        // GET https://www.googleapis.com/drive/v3/files/{fileId}?fields=id,mimeType,size
+        if (fileId == null) return null;
+        fileId = fileId.trim();
+
+        // Drive file IDs never contain '/'
+        if (fileId.isEmpty() || fileId.contains("/")) {
+            Timber.tag("DRIVE_META").e("Invalid Drive fileId passed: %s", fileId);
+            return null;
+        }
+
         HttpUrl url = HttpUrl.parse("https://www.googleapis.com/drive/v3/files/" + fileId)
                 .newBuilder()
                 .addQueryParameter("fields", "id,mimeType,size")
                 .build();
 
+        // ✅ CREATE REQUEST
         Request req = new Request.Builder()
                 .url(url)
                 .header("Authorization", "Bearer " + oauthToken)
@@ -854,13 +970,34 @@ public class FileCountSize {
                 .build();
 
         try (Response resp = CLOUD_HTTP.newCall(req).execute()) {
-            if (!resp.isSuccessful() || resp.body() == null) return null;
-            return CLOUD_GSON.fromJson(resp.body().charStream(), DriveFileMeta.class);
-        } catch (IOException e) {
-            Timber.tag(TAG).e("Drive meta error: %s", e.getMessage());
+
+            Timber.tag("DRIVE_META").d("URL: %s", url);
+            Timber.tag("DRIVE_META").d("HTTP CODE: %d", resp.code());
+
+            if (!resp.isSuccessful()) {
+                String err = resp.body() != null ? resp.body().string() : "null";
+                Timber.tag("DRIVE_META").e("ERROR BODY: %s", err);
+                return null;
+            }
+
+            if (resp.body() == null) {
+                Timber.tag("DRIVE_META").e("Body is null");
+                return null;
+            }
+
+            DriveFileMeta meta = CLOUD_GSON.fromJson(resp.body().charStream(), DriveFileMeta.class);
+            Timber.tag("DRIVE_META").d("META: id=%s mime=%s size=%s",
+                    meta.id, meta.mimeType, meta.size);
+
+            return meta;
+
+        } catch (Exception e) {
+            Timber.tag("DRIVE_META").e("EXCEPTION: %s", Log.getStackTraceString(e));
             return null;
         }
     }
+
+
 
     private DriveListResponse driveListChildren(String folderId, String oauthToken, String pageToken) {
         // files.list with:
