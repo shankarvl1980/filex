@@ -79,31 +79,30 @@ public class PropertiesDialog extends DialogFragment {
                 readable_str = file.canRead() ? getString(R.string.yes) : getString(R.string.no);
                 writable_str = file.canWrite() ? getString(R.string.yes) : getString(R.string.no);
                 hidden_str = file.isHidden() ? getString(R.string.yes) : getString(R.string.no);
-            } else if (fileObjectType == FileObjectType.USB_TYPE) {
-                try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
-                    UsbFile usbFileRoot = access.getUsbFile();
-                    UsbFile file = FileUtil.getUsbFile(usbFileRoot, files_selected_array.get(0));
-                    if (file != null) {
-                        filename_str = file.getName();
-                        file_path_str = file.getAbsolutePath();
-                        file_date_str = Global.SDF.format(file.lastModified());
-                        file_type_str = file.isDirectory() ? getString(R.string.directory) : getString(R.string.file);
-                        //getPermissions(file);
-                        readable_str = getString(R.string.yes);
-                        writable_str = getString(R.string.yes);
-                        hidden_str = getString(R.string.yes);
-                    }
-                }
             } else {
-                filename_str = new File(files_selected_array.get(0)).getName();
-                file_path_str = files_selected_array.get(0);
-                //file_date_str=sdf.format(ftpFile.)
-                file_type_str = "";//ftpFile.isDirectory() ? getString(R.string.directory) : getString(R.string.file);
+                FilePOJO filePOJO=FilePOJOUtil.GET_FILE_POJO(files_selected_array.get(0),fileObjectType);
+                if(filePOJO!=null){
+                    filename_str = filePOJO.getName();
+                    file_path_str = files_selected_array.get(0);
+                    file_date_str=filePOJO.getDate();
+                    file_type_str = filePOJO.getIsDirectory() ? getString(R.string.directory) : getString(R.string.file);
 
-                //getPermissions(file);
-                readable_str = getString(R.string.yes);
-                writable_str = getString(R.string.yes);
-                hidden_str = getString(R.string.yes);
+                    //getPermissions(file);
+                    readable_str = getString(R.string.yes);
+                    writable_str = getString(R.string.yes);
+                    hidden_str = getString(R.string.yes);
+                } else{
+                    filename_str = new File(files_selected_array.get(0)).getName();
+                    file_path_str = files_selected_array.get(0);
+                    //file_date_str=sdf.format(ftpFile.)
+                    file_type_str = "";//ftpFile.isDirectory() ? getString(R.string.directory) : getString(R.string.file);
+
+                    //getPermissions(file);
+                    readable_str = getString(R.string.yes);
+                    writable_str = getString(R.string.yes);
+                    hidden_str = getString(R.string.yes);
+                }
+
             }
         } else if (files_selected_array.size() > 1) {
             filename_str = files_selected_array.size() + " " + getString(R.string.files);
