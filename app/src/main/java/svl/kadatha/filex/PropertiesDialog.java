@@ -228,6 +228,7 @@ public class PropertiesDialog extends DialogFragment {
                     property.setText(symbolic_link_str);
                     break;
             }
+
             properties_rwh_table_layout.addView(row_item);
 
             /// Add separator except after last item
@@ -245,7 +246,6 @@ public class PropertiesDialog extends DialogFragment {
 
         ViewModelFileCount.ViewModelFileCountFactory factory = new ViewModelFileCount.ViewModelFileCountFactory(context, files_selected_array, fileObjectType);
         ViewModelFileCount viewModel = new ViewModelProvider(this, factory).get(ViewModelFileCount.class);
-        //viewModel.countFile(source_folder,fileObjectType,files_selected_array,size,true);
 
         viewModel.total_no_of_files.observe(this, new androidx.lifecycle.Observer<Integer>() {
             @Override

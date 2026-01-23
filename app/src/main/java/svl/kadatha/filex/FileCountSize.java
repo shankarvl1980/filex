@@ -299,77 +299,97 @@ public class FileCountSize {
                     }
                 } else if (sourceFileObjectType == FileObjectType.GOOGLE_DRIVE_TYPE) {
 
-                    final String oauthToken = CloudAuthActivityViewModel.GOOGLE_DRIVE_ACCESS_TOKEN; // replace with your token source
+                    final String oauthToken = CloudAuthActivityViewModel.GOOGLE_DRIVE_ACCESS_TOKEN;
                     if (oauthToken == null || oauthToken.trim().isEmpty()) {
                         Timber.tag(TAG).e("GOOGLE_DRIVE_TYPE: oauthToken is null/empty");
                         return;
                     }
 
-                    final int CAP = 100;     // tune as you like
+                    final int CAP = 100;
                     final int capPlusOne = CAP + 1;
 
                     for (String sel : files_selected_array) {
                         if (isCancelled()) return;
+                        if (sel == null) continue;
 
-                        // sel is a PATH like "/Apks" or "/My Drive/Apks"
-                        String path = normalizeGoogleDrivePath(sel);
-                        if (path == null) continue;
+                        // 1) FAST PATH: try to get FilePOJO by path/type and use cloudId + mimeType directly
+                        FilePOJO pojo = null;
+                        try {
+                            pojo = FilePOJOUtil.GET_FILE_POJO(sel, FileObjectType.GOOGLE_DRIVE_TYPE);
+                        } catch (Throwable t) {
+                            // ignore, fallback below
+                        }
 
-                        // Resolve PATH -> ID (root is "root")
-                        String rootId = driveResolveIdByPath(path, oauthToken);
-                        Timber.tag("DRIVE_PATH").d("SEL=%s  PATH=%s  RESOLVED_ID=%s", sel, path, rootId);
+                        String driveId = null;
+                        String mimeFromPojo = null;
 
-                        if (rootId == null || rootId.isEmpty()) continue;
+                        if (pojo != null) {
+                            try {
+                                driveId = pojo.getCloudId();
+                            } catch (Throwable t) { /* ignore */ }
 
-                        DriveFileMeta rootMeta = driveGetMeta(rootId, oauthToken);
-                        if (rootMeta == null) continue;
+                            try {
+                                mimeFromPojo = pojo.getDriveMimeType(); // <-- your field name might differ
+                            } catch (Throwable t) { /* ignore */ }
+                        }
 
-                        boolean isFolder = DriveMime.FOLDER.equals(rootMeta.mimeType);
+                        // 2) If we still don't have id, fallback: treat sel as PATH and resolve to id
+                        if (driveId == null || driveId.trim().isEmpty()) {
+                            String path = normalizeGoogleDrivePath(sel);
+                            if (path == null) continue;
+
+                            driveId = driveResolveIdByPath(path, oauthToken);
+                            Timber.tag("DRIVE_PATH").d("FALLBACK sel=%s path=%s resolvedId=%s", sel, path, driveId);
+
+                            if (driveId == null || driveId.trim().isEmpty()) continue;
+                        } else {
+                            driveId = driveId.trim();
+                        }
+
+                        // 3) Decide folder/file:
+                        boolean isFolder;
+                        Long sizeHint = null;
+
+                        if (mimeFromPojo != null && !mimeFromPojo.trim().isEmpty()) {
+                            isFolder = DriveMime.FOLDER.equals(mimeFromPojo);
+                            // if you store size in pojo, set sizeHint here:
+                            // sizeHint = pojo.getSize();
+                        } else {
+                            // Need meta if mime missing
+                            DriveFileMeta rootMeta = driveGetMeta(driveId, oauthToken);
+                            if (rootMeta == null) continue;
+
+                            isFolder = DriveMime.FOLDER.equals(rootMeta.mimeType);
+                            sizeHint = rootMeta.size;
+                        }
 
                         if (isFolder) {
-                            // Count the folder itself if include_folder
                             if (include_folder) {
                                 total_no_of_files += 1;
-
                                 if (total_no_of_files >= capPlusOne) {
-                                    mutable_total_no_of_files.postValue(capPlusOne);
-                                    mutable_size_of_files_to_be_archived_copied.postValue(
-                                            FileUtil.humanReadableByteCount(total_size_of_files) + "+"
-                                    );
+                                    postDriveCapped(capPlusOne);
                                     return;
                                 }
-
-                                mutable_total_no_of_files.postValue(total_no_of_files);
-                                mutable_size_of_files_to_be_archived_copied.postValue(
-                                        FileUtil.humanReadableByteCount(total_size_of_files)
-                                );
+                                postDriveProgress();
                             }
 
-                            // Traverse descendants
-                            drivePopulateFolderTreeCapped(rootId, oauthToken, include_folder, capPlusOne);
+                            drivePopulateFolderTreeCapped(driveId, oauthToken, include_folder, capPlusOne);
 
                             if (total_no_of_files >= capPlusOne) return;
 
                         } else {
-                            // Single file
                             total_no_of_files += 1;
-                            total_size_of_files += safeSize(rootMeta.size);
+                            total_size_of_files += safeSize(sizeHint);
 
                             if (total_no_of_files >= capPlusOne) {
-                                mutable_total_no_of_files.postValue(capPlusOne);
-                                mutable_size_of_files_to_be_archived_copied.postValue(
-                                        FileUtil.humanReadableByteCount(total_size_of_files) + "+"
-                                );
+                                postDriveCapped(capPlusOne);
                                 return;
                             }
-
-                            mutable_total_no_of_files.postValue(total_no_of_files);
-                            mutable_size_of_files_to_be_archived_copied.postValue(
-                                    FileUtil.humanReadableByteCount(total_size_of_files)
-                            );
+                            postDriveProgress();
                         }
                     }
                 }
+
 
             }
         });
@@ -777,6 +797,20 @@ public class FileCountSize {
         if (path.length() > 1 && path.endsWith("/")) path = path.substring(0, path.length() - 1);
 
         return path;
+    }
+
+    private void postDriveProgress() {
+        mutable_total_no_of_files.postValue(total_no_of_files);
+        mutable_size_of_files_to_be_archived_copied.postValue(
+                FileUtil.humanReadableByteCount(total_size_of_files)
+        );
+    }
+
+    private void postDriveCapped(int capPlusOne) {
+        mutable_total_no_of_files.postValue(capPlusOne);
+        mutable_size_of_files_to_be_archived_copied.postValue(
+                FileUtil.humanReadableByteCount(total_size_of_files) + "+"
+        );
     }
 
     private String driveResolveIdByPath(String path, String oauthToken) {
