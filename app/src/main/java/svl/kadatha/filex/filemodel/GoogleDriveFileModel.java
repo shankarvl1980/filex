@@ -19,6 +19,7 @@ import java.util.TimeZone;
 
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -486,13 +487,14 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
             metadataMap.put("name", name);
             metadataMap.put("parents", Collections.singletonList(fileId));
 
-            RequestBody metadataPart = RequestBody.create(gson.toJson(metadataMap), JSON);
-            RequestBody filePart = RequestBody.create(new byte[0], OCTET);
+            // IMPORTANT: RequestBody.create(MediaType, content) (order matters depending on OkHttp version)
+            RequestBody metadataPart = RequestBody.create(JSON, gson.toJson(metadataMap));
+            RequestBody filePart = RequestBody.create(OCTET, new byte[0]);
 
-            okhttp3.MultipartBody multipartBody = new okhttp3.MultipartBody.Builder()
-                    .setType(okhttp3.MultipartBody.MIXED)
-                    .addPart(okhttp3.Headers.of("Content-Type", "application/json; charset=UTF-8"), metadataPart)
-                    .addPart(okhttp3.Headers.of("Content-Type", "application/octet-stream"), filePart)
+            MultipartBody multipartBody = new MultipartBody.Builder()
+                    .setType(MultipartBody.MIXED) // Drive expects related, but mixed usually works
+                    .addFormDataPart("metadata", null, metadataPart)
+                    .addFormDataPart("file", name, filePart)
                     .build();
 
             Request request = new Request.Builder()
