@@ -340,6 +340,7 @@ public class PlayScreenFragment extends Fragment {
                 return !audioPlayViewModel.play_screen_expanded_view;
             }
         });
+
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar sb, int progress, boolean fromUser) {
                 if (fromUser) {

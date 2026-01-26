@@ -49,7 +49,6 @@
             android:layout_marginTop="4dp"
             android:elevation="6dp"
             android:enabled="false"
-            android:maxHeight="4dp"
             android:paddingStart="0dp"
             android:paddingLeft="0dp"
             android:paddingEnd="0dp"
