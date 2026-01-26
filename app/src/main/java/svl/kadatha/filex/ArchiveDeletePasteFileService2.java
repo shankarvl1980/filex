@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.SystemClock;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,6 +53,9 @@ public class ArchiveDeletePasteFileService2 extends Service implements TaskProgr
     private String source_other_file_permission, dest_other_file_permission;
     private boolean storage_analyser_delete;
     private String zip_file_name;
+    private long lastNotifMs = 0L;
+    private int lastPercent = Integer.MIN_VALUE;
+    private long lastBytes = -1L;
 
     @Override
     public void onCreate() {
@@ -81,7 +85,7 @@ public class ArchiveDeletePasteFileService2 extends Service implements TaskProgr
         String notification_content = null;
         Bundle bundle = intent.getBundleExtra("bundle");
         intent_action = intent.getAction();
-
+        startForeground(notification_id, nm.buildADPPActivity2(intent_action, notification_content, notification_id));
         Uri source_uri;
         String source_uri_path;
         final ParcelableStringStringLinkedMap sourceFileDestNameMap;
@@ -200,7 +204,7 @@ public class ArchiveDeletePasteFileService2 extends Service implements TaskProgr
         dest_other_file_permission = Global.GET_OTHER_FILE_PERMISSION(dest_folder);
         source_other_file_permission = Global.GET_OTHER_FILE_PERMISSION(source_folder);
 
-        startForeground(notification_id, nm.buildADPPActivity2(intent_action, notification_content, notification_id));
+        updateForegroundProgressNotif();
         return START_NOT_STICKY;
     }
 
@@ -278,6 +282,7 @@ public class ArchiveDeletePasteFileService2 extends Service implements TaskProgr
         this.current_file_name = currentFileName;
         this.processed_file_name = processed_file_name;
         size_of_files_copied = FileUtil.humanReadableByteCount(counter_size_files);
+        updateForegroundProgressNotif();
     }
 
     @Override
@@ -380,5 +385,53 @@ public class ArchiveDeletePasteFileService2 extends Service implements TaskProgr
         public ArchiveDeletePasteFileService2 getService() {
             return ArchiveDeletePasteFileService2.this;
         }
+    }
+
+    private void updateForegroundProgressNotif() {
+        if (nm == null) return;
+
+        // throttle to avoid spamming NotificationManager
+        long now = SystemClock.uptimeMillis();
+        if (now - lastNotifMs < 350) return;
+
+        int percent = -1;          // -1 = indeterminate
+        String sizeLine = null;
+
+        // you said: unarchive can stay indeterminate
+        boolean isUnarchive = UnarchiveAsyncTask.TASK_TYPE.equals(intent_action);
+
+        if (!isUnarchive && fileCountSize != null && fileCountSize.total_size_of_files > 0) {
+            percent = (int) (counter_size_files * 100.0 / fileCountSize.total_size_of_files + 0.5);
+            if (percent < 0) percent = 0;
+            if (percent > 100) percent = 100;
+
+            String done = FileUtil.humanReadableByteCount(counter_size_files);
+            String total = FileUtil.humanReadableByteCount(fileCountSize.total_size_of_files);
+            sizeLine = done + " / " + total + " (" + percent + "%)";
+        } else {
+            // indeterminate mode: still show bytes if you want
+            if (counter_size_files > 0) sizeLine = FileUtil.humanReadableByteCount(counter_size_files);
+        }
+
+        // skip duplicates (optional but reduces churn)
+        if (percent == lastPercent && counter_size_files == lastBytes) return;
+
+        lastNotifMs = now;
+        lastPercent = percent;
+        lastBytes = counter_size_files;
+
+        // title + line (keep simple)
+        String title = "Working";
+        if (ArchiveAsyncTask.TASK_TYPE.equals(intent_action)) title = getString(R.string.archiving);
+        else if (UnarchiveAsyncTask.TASK_TYPE.equals(intent_action)) title = getString(R.string.extracting);
+        else if (DeleteAsyncTask.TASK_TYPE.equals(intent_action)) title = getString(R.string.deleting);
+        else if (CutCopyAsyncTask.TASK_TYPE_CUT.equals(intent_action)) title = getString(R.string.moving);
+        else if (CutCopyAsyncTask.TASK_TYPE_COPY.equals(intent_action) || CopyToAsyncTask.TASK_TYPE.equals(intent_action)) title = getString(R.string.copying);
+
+        String line = (current_file_name != null && !current_file_name.isEmpty())
+                ? current_file_name
+                : (processed_file_name != null ? processed_file_name : "");
+
+        nm.updateADPPActivity2Progress(notification_id, intent_action, title, line, percent, sizeLine);
     }
 }
