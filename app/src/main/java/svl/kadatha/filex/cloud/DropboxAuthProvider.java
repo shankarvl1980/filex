@@ -31,6 +31,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import svl.kadatha.filex.FileObjectType;
+import svl.kadatha.filex.Global;
 import svl.kadatha.filex.MyExecutorService;
 
 public final class DropboxAuthProvider implements CloudAuthProvider {
@@ -75,7 +76,7 @@ public final class DropboxAuthProvider implements CloudAuthProvider {
         this.activity = activity;
         this.authService = new AuthorizationService(activity);
         this.bg = MyExecutorService.getExecutorService();
-        this.http = new OkHttpClient();
+        this.http = Global.HTTP;
     }
 
     @Override

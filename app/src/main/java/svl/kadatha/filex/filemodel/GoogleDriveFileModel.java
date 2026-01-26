@@ -30,6 +30,7 @@ import okio.Source;
 import svl.kadatha.filex.FileObjectType;
 import svl.kadatha.filex.FilePOJO;
 import svl.kadatha.filex.FilePOJOUtil;
+import svl.kadatha.filex.Global;
 import svl.kadatha.filex.cloud.CloudAuthActivityViewModel;
 
 /**
@@ -60,8 +61,8 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
 
     public GoogleDriveFileModel(String path) throws IOException {
         this.accessToken = CloudAuthActivityViewModel.GOOGLE_DRIVE_ACCESS_TOKEN;
-        this.httpClient = new OkHttpClient();
-        this.gson = new Gson();
+        this.httpClient = Global.HTTP;
+        this.gson = Global.GSON;
 
         // ✅ Fast path: resolve from cached FilePOJO (already listed in UI)
         FilePOJO pojo = FilePOJOUtil.GET_FILE_POJO(path, FileObjectType.GOOGLE_DRIVE_TYPE);
@@ -118,8 +119,8 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
         List<GoogleDriveFileMetadata> out = new ArrayList<>();
         String pageToken = null;
 
-        OkHttpClient client = new OkHttpClient();
-        Gson gson = new Gson();
+        OkHttpClient client = Global.HTTP;
+        Gson gson = Global.GSON;
 
         try {
             do {

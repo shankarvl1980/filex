@@ -35,85 +35,157 @@ public class CreateRenameViewModel extends AndroidViewModel {
         FILE_OBJECT_TYPE = null;
     }
 
-    public synchronized void createFile(File file, FileObjectType fileObjectType, int file_type, String parent_folder, String tree_uri_path, Uri tree_uri) {
-        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
-            return;
-        }
+    public synchronized void createFile(
+            File file,
+            FileObjectType fileObjectType,
+            int file_type,
+            String parent_folder,
+            String tree_uri_path,
+            Uri tree_uri
+    ) {
+        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+
         FILE_OBJECT_TYPE = fileObjectType;
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+
         final String new_name = file.getName();
         ExecutorService executorService = MyExecutorService.getExecutorService();
+
         executorService.execute(new Runnable() {
             @Override
             public void run() {
                 file_created = false;
-                if (file_type == 0) {
-                    if (fileObjectType == FileObjectType.ROOT_TYPE) {
-                        if (!RootUtils.canRunRootCommands()) {
-                            file_created = false;
+                filePOJO = null;
+
+                try {
+                    if (file_type == 0) {
+                        // create file
+                        if (fileObjectType == FileObjectType.ROOT_TYPE) {
+                            file_created = RootUtils.canRunRootCommands(); // else false
+                        } else {
+                            FileModel fileModel = FileModelFactory.getFileModel(
+                                    parent_folder, fileObjectType, tree_uri, tree_uri_path
+                            );
+                            file_created = (fileModel != null) && fileModel.createFile(new_name);
+                        }
+
+                    } else if (file_type == 1) {
+                        // create dir
+                        if (fileObjectType == FileObjectType.ROOT_TYPE) {
+                            file_created = RootUtils.canRunRootCommands(); // else false
+                        } else {
+                            FileModel fileModel = FileModelFactory.getFileModel(
+                                    parent_folder, fileObjectType, tree_uri, tree_uri_path
+                            );
+                            file_created = (fileModel != null) && fileModel.makeDirIfNotExists(new_name);
                         }
                     } else {
-                        FileModel fileModel = FileModelFactory.getFileModel(parent_folder, fileObjectType, tree_uri, tree_uri_path);
-                        file_created = fileModel.createFile(new_name);
+                        file_created = false; // unknown type
                     }
 
-                } else if (file_type == 1) {
-                    if (fileObjectType == FileObjectType.ROOT_TYPE) {
-                        if (!RootUtils.canRunRootCommands()) {
-                            file_created = false;
-                        }
-                    } else {
-                        FileModel fileModel = FileModelFactory.getFileModel(parent_folder, fileObjectType, tree_uri, tree_uri_path);
-                        file_created = fileModel.makeDirIfNotExists(new_name);
+                    if (file_created) {
+                        filePOJO = FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(
+                                parent_folder, Collections.singletonList(new_name), fileObjectType, null
+                        );
                     }
+
+                } catch (Throwable t) {
+                    // Prevent crash due to any uncaught runtime exception/error
+                    file_created = false;
+                    // Optional: log it (use your Timber or Log)
+                    // Timber.e(t, "createFile failed: %s", parent_folder);
+
+                } finally {
+                    FILE_OBJECT_TYPE = null;
+                    asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
                 }
-                if (file_created) {
-                    filePOJO = FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(parent_folder, Collections.singletonList(new_name), fileObjectType, null);
-                }
-                FILE_OBJECT_TYPE = null;
-                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
 
 
-    public synchronized void renameFile(String parent_file_path, String existing_file_path, String existing_name, String new_file_path, String new_name, FileObjectType fileObjectType, boolean isDirectory, boolean overwrite, String tree_uri_path, Uri tree_uri, String filePOJOHashmapKeyPath, FileObjectType dfFileObjectType) {
-        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) {
-            return;
-        }
+    public synchronized void renameFile(
+            String parent_file_path,
+            String existing_file_path,
+            String existing_name,
+            String new_file_path,
+            String new_name,
+            FileObjectType fileObjectType,
+            boolean isDirectory,
+            boolean overwrite,
+            String tree_uri_path,
+            Uri tree_uri,
+            String filePOJOHashmapKeyPath,
+            FileObjectType dfFileObjectType
+    ) {
+        if (asyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+
         FILE_OBJECT_TYPE = fileObjectType;
         asyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
+
         ExecutorService executorService = MyExecutorService.getExecutorService();
         executorService.execute(new Runnable() {
             @Override
             public void run() {
                 fileNameChanged = false;
-                if (fileObjectType == FileObjectType.ROOT_TYPE) {
-                    if (!RootUtils.canRunRootCommands()) {
-                        fileNameChanged = false;
-                    }
-                } else {
-                    FileModel fileModel = FileModelFactory.getFileModel(Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path, existing_name), fileObjectType, tree_uri, tree_uri_path);
-                    fileNameChanged = fileModel.rename(new_name, overwrite);
-                }
+                filePOJO = null;
 
-                if (fileNameChanged) {
-                    if (dfFileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
-                        if (overwrite) {
-                            FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO_ON_REMOVAL_SEARCH_LIBRARY(filePOJOHashmapKeyPath, Collections.singletonList(new_file_path), fileObjectType);
-                        }
-                        filePOJO = FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO_ON_ADD_SEARCH_LIBRARY(filePOJOHashmapKeyPath, Collections.singletonList(new_file_path), fileObjectType, Collections.singletonList(existing_file_path));
+                try {
+                    if (fileObjectType == FileObjectType.ROOT_TYPE) {
+                        fileNameChanged = RootUtils.canRunRootCommands(); // else false
                     } else {
-                        if (overwrite) {
-                            FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(filePOJOHashmapKeyPath, Collections.singletonList(new_name), fileObjectType);
-                        }
-
-                        filePOJO = FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(filePOJOHashmapKeyPath, Collections.singletonList(new_name), fileObjectType, Collections.singletonList(existing_file_path));
+                        FileModel fileModel = FileModelFactory.getFileModel(
+                                Global.CONCATENATE_PARENT_CHILD_PATH(parent_file_path, existing_name),
+                                fileObjectType,
+                                tree_uri,
+                                tree_uri_path
+                        );
+                        fileNameChanged = (fileModel != null) && fileModel.rename(new_name, overwrite);
                     }
+
+                    if (fileNameChanged) {
+                        if (dfFileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {
+                            if (overwrite) {
+                                FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO_ON_REMOVAL_SEARCH_LIBRARY(
+                                        filePOJOHashmapKeyPath,
+                                        Collections.singletonList(new_file_path),
+                                        fileObjectType
+                                );
+                            }
+                            filePOJO = FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO_ON_ADD_SEARCH_LIBRARY(
+                                    filePOJOHashmapKeyPath,
+                                    Collections.singletonList(new_file_path),
+                                    fileObjectType,
+                                    Collections.singletonList(existing_file_path)
+                            );
+                        } else {
+                            if (overwrite) {
+                                FilePOJOUtil.REMOVE_FROM_HASHMAP_FILE_POJO(
+                                        filePOJOHashmapKeyPath,
+                                        Collections.singletonList(new_name),
+                                        fileObjectType
+                                );
+                            }
+
+                            filePOJO = FilePOJOUtil.ADD_TO_HASHMAP_FILE_POJO(
+                                    filePOJOHashmapKeyPath,
+                                    Collections.singletonList(new_name),
+                                    fileObjectType,
+                                    Collections.singletonList(existing_file_path)
+                            );
+                        }
+                    }
+
+                } catch (Throwable t) {
+                    fileNameChanged = false;
+                    // Optional: Timber.e(t, "renameFile failed: %s -> %s", existing_file_path, new_name);
+
+                } finally {
+                    FILE_OBJECT_TYPE = null;
+                    asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
                 }
-                FILE_OBJECT_TYPE = null;
-                asyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
     }
+
 }

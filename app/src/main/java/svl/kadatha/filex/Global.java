@@ -31,6 +31,8 @@ import androidx.core.content.FileProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 
+import com.google.gson.Gson;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -54,6 +56,7 @@ import java.util.Stack;
 import java.util.concurrent.ExecutorService;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import okhttp3.OkHttpClient;
 import svl.kadatha.filex.appmanager.AppManagerActivity;
 import svl.kadatha.filex.audio.AudioPlayerService;
 import svl.kadatha.filex.filemodel.FileModel;
@@ -80,6 +83,8 @@ public class Global {
     static public final String TAG = "shankar";
     public static final List<FileObjectType> NETWORK_FILE_OBJECT_TYPES = Arrays.asList(FileObjectType.FTP_TYPE, FileObjectType.SFTP_TYPE, FileObjectType.WEBDAV_TYPE, FileObjectType.SMB_TYPE);
     public static final List<FileObjectType> CLOUD_FILE_OBJECT_TYPES = Arrays.asList(FileObjectType.GOOGLE_DRIVE_TYPE, FileObjectType.ONE_DRIVE_TYPE, FileObjectType.DROP_BOX_TYPE, FileObjectType.MEDIA_FIRE_TYPE, FileObjectType.BOX_TYPE, FileObjectType.NEXT_CLOUD_TYPE, FileObjectType.YANDEX_TYPE);
+    public static final OkHttpClient HTTP = new OkHttpClient();
+    public static final Gson GSON = new Gson();
 
     public static final float DISABLE_ALFA = (float) 0.4;
     public static final float ENABLE_ALFA = (float) 1.0;

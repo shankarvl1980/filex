@@ -23,6 +23,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import svl.kadatha.filex.FileObjectType;
+import svl.kadatha.filex.Global;
 
 public final class MediaFireAuthProvider implements CloudAuthProvider {
 
@@ -56,8 +57,8 @@ public final class MediaFireAuthProvider implements CloudAuthProvider {
 
     public MediaFireAuthProvider(@NonNull Activity activity) {
         this.activity = activity;
-        this.http = new OkHttpClient();
-        this.gson = new Gson();
+        this.http = Global.HTTP;
+        this.gson = Global.GSON;
     }
 
     private static String enc(String s) {

@@ -24,6 +24,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okio.BufferedSink;
+import svl.kadatha.filex.Global;
 import svl.kadatha.filex.MakeCloudFilePOJOUtil;
 import timber.log.Timber;
 
@@ -54,7 +55,7 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
     private final String accessToken;
     private final String path; // app-level path: "/" or "/Folder/File"
     private final OkHttpClient client;
-    private final Gson gson = new Gson();
+    private final Gson gson = Global.GSON;
 
     private MakeCloudFilePOJOUtil.YandexResource metadata;
 

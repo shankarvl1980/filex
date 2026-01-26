@@ -27,6 +27,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import svl.kadatha.filex.FileObjectType;
+import svl.kadatha.filex.Global;
 import svl.kadatha.filex.MyExecutorService;
 
 public final class YandexAuthProvider implements CloudAuthProvider {
@@ -62,7 +63,7 @@ public final class YandexAuthProvider implements CloudAuthProvider {
         this.activity = activity;
         this.authService = new AuthorizationService(activity);
         this.bg = MyExecutorService.getExecutorService();
-        this.http = new OkHttpClient();
+        this.http = Global.HTTP;;
     }
 
     @Override

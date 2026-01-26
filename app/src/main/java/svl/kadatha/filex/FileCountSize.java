@@ -2,8 +2,7 @@ package svl.kadatha.filex;
 
 
 
-import static svl.kadatha.filex.SubFileCountUtil.CLOUD_GSON;
-import static svl.kadatha.filex.SubFileCountUtil.CLOUD_HTTP;
+
 
 import android.content.Context;
 import android.net.Uri;
@@ -12,6 +11,7 @@ import android.util.Log;
 import androidx.core.util.Pair;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.gson.Gson;
 import com.hierynomus.msfscc.FileAttributes;
 import com.hierynomus.msfscc.fileinformation.FileAllInformation;
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
@@ -37,6 +37,7 @@ import java.util.concurrent.Future;
 
 import me.jahnen.libaums.core.fs.UsbFile;
 import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import svl.kadatha.filex.asynctasks.CopyToAsyncTask;
@@ -64,6 +65,8 @@ public class FileCountSize {
     private boolean isCancelled;
     private List<Uri> data_list;
     private Future<?> future1, future2, future3, future4;
+    private static final OkHttpClient CLOUD_HTTP = Global.HTTP;
+    private static final Gson CLOUD_GSON = Global.GSON;
 
     FileCountSize(Context context, List<String> files_selected_array, FileObjectType sourceFileObjectType) {
         this.context = context;

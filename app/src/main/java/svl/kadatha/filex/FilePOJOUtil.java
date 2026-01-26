@@ -727,8 +727,8 @@ public class FilePOJOUtil {
             } else if (fileObjectType == FileObjectType.YANDEX_TYPE) {
                 try {
                     String accessToken = CloudAuthActivityViewModel.YANDEX_ACCESS_TOKEN;
-                    OkHttpClient client = new OkHttpClient();
-                    Gson gson = new Gson();
+                    OkHttpClient client = Global.HTTP;
+                    Gson gson = Global.GSON;
 
                     String yPath = (fileclickselected == null || fileclickselected.trim().isEmpty()) ? "/" : fileclickselected;
 
@@ -885,8 +885,8 @@ public class FilePOJOUtil {
 
     public static String getFileIdByPath(String file_path, String oauthToken) throws IOException {
         // Create the OkHttpClient and Gson instances here
-        OkHttpClient httpClient = new OkHttpClient();
-        Gson gson = new Gson();
+        OkHttpClient httpClient = Global.HTTP;
+        Gson gson = Global.GSON;
 
         // Normalize path
         if (!file_path.startsWith("/")) {

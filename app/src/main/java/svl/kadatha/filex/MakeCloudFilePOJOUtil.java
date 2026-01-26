@@ -139,7 +139,7 @@ public class MakeCloudFilePOJOUtil {
         String encodedQuery = java.net.URLEncoder.encode(query, "UTF-8");
         String url = "https://www.googleapis.com/drive/v3/files?q=" + encodedQuery + "&fields=" + fields;
 
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = Global.HTTP;
         Request request = new Request.Builder()
                 .url(url)
                 .addHeader("Authorization", "Bearer " + oauthToken)
