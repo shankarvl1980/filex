@@ -758,8 +758,9 @@ public class MakeFilePOJOUtil {
         } else if (fileObjectType == FileObjectType.YANDEX_TYPE) {
             try {
                 String accessToken = CloudAuthActivityViewModel.YANDEX_ACCESS_TOKEN;
-                OkHttpClient client =Global.HTTP;
-                Gson gson = Global.GSON;;
+                OkHttpClient client = Global.HTTP;
+                Gson gson = Global.GSON;
+                ;
                 HttpUrl url = HttpUrl.parse("https://cloud-api.yandex.net/v1/disk/resources")
                         .newBuilder()
                         .addQueryParameter("path", file_path)

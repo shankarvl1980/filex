@@ -29,10 +29,6 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import me.jahnen.libaums.core.fs.UsbFile;
-import svl.kadatha.filex.usb.ReadAccess;
-import svl.kadatha.filex.usb.UsbFileRootSingleton;
-
 public class PropertiesDialog extends DialogFragment {
     public static final String PROPERTIES_DIALOG_REQUEST_CODE = "properties_dialog_request_code";
     private Context context;
@@ -80,18 +76,18 @@ public class PropertiesDialog extends DialogFragment {
                 writable_str = file.canWrite() ? getString(R.string.yes) : getString(R.string.no);
                 hidden_str = file.isHidden() ? getString(R.string.yes) : getString(R.string.no);
             } else {
-                FilePOJO filePOJO=FilePOJOUtil.GET_FILE_POJO(files_selected_array.get(0),fileObjectType);
-                if(filePOJO!=null){
+                FilePOJO filePOJO = FilePOJOUtil.GET_FILE_POJO(files_selected_array.get(0), fileObjectType);
+                if (filePOJO != null) {
                     filename_str = filePOJO.getName();
                     file_path_str = files_selected_array.get(0);
-                    file_date_str=filePOJO.getDate();
+                    file_date_str = filePOJO.getDate();
                     file_type_str = filePOJO.getIsDirectory() ? getString(R.string.directory) : getString(R.string.file);
 
                     //getPermissions(file);
                     readable_str = getString(R.string.yes);
                     writable_str = getString(R.string.yes);
                     hidden_str = getString(R.string.yes);
-                } else{
+                } else {
                     filename_str = new File(files_selected_array.get(0)).getName();
                     file_path_str = files_selected_array.get(0);
                     //file_date_str=sdf.format(ftpFile.)

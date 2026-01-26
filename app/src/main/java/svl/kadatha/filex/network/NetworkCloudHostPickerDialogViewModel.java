@@ -25,22 +25,11 @@ import timber.log.Timber;
 public class NetworkCloudHostPickerDialogViewModel extends ViewModel {
 
     public final ArrayList<NetworkCloudTypeSelectDialog.PickerItem> items = new ArrayList<>();
-    public String what_type_network_cloud;
-
-    public enum ServiceFilter {
-        ANY,
-        FTP,
-        SFTP,
-        WEBDAV,
-        SMB
-    }
-
     public final MutableLiveData<AsyncTaskStatus> scanHostAsyncTaskStatus =
             new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-
     public final MutableLiveData<AsyncTaskStatus> populateNetworkCloudServersAsyncStatus =
             new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-
+    public String what_type_network_cloud;
     private volatile boolean isCancelled;
     private Future<?> future1, future2;
 
@@ -56,7 +45,8 @@ public class NetworkCloudHostPickerDialogViewModel extends ViewModel {
     }
 
     public void populateNetworkCloudServers(String what_type_network_cloud) {
-        if (populateNetworkCloudServersAsyncStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
+        if (populateNetworkCloudServersAsyncStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED)
+            return;
 
         this.what_type_network_cloud = what_type_network_cloud;
         populateNetworkCloudServersAsyncStatus.setValue(AsyncTaskStatus.STARTED);
@@ -72,7 +62,8 @@ public class NetworkCloudHostPickerDialogViewModel extends ViewModel {
         if (NetworkCloudTypeSelectDialog.NETWORK.equals(what_type_network_cloud)) {
             List<String> networkTypes = Arrays.asList(App.getAppContext().getResources().getStringArray(R.array.network_types));
             List<NetworkCloudTypeSelectDialog.PickerItem> out = new ArrayList<>(networkTypes.size());
-            for (String s : networkTypes) out.add(new NetworkCloudTypeSelectDialog.PickerItem(R.drawable.network_icon, s, null));
+            for (String s : networkTypes)
+                out.add(new NetworkCloudTypeSelectDialog.PickerItem(R.drawable.network_icon, s, null));
             return out;
         } else if (NetworkCloudTypeSelectDialog.CLOUD.equals(what_type_network_cloud)) {
             List<String> cloudTypes = Arrays.asList(App.getAppContext().getResources().getStringArray(R.array.cloud_types));
@@ -105,11 +96,11 @@ public class NetworkCloudHostPickerDialogViewModel extends ViewModel {
 
     /**
      * Call this with a filter:
-     *  - ServiceFilter.FTP    -> only port 21 hits
-     *  - ServiceFilter.SFTP   -> only port 22 hits
-     *  - ServiceFilter.WEBDAV -> only port 80/443 hits
-     *  - ServiceFilter.SMB    -> only port 445 hits
-     *  - ServiceFilter.ANY    -> common ports
+     * - ServiceFilter.FTP    -> only port 21 hits
+     * - ServiceFilter.SFTP   -> only port 22 hits
+     * - ServiceFilter.WEBDAV -> only port 80/443 hits
+     * - ServiceFilter.SMB    -> only port 445 hits
+     * - ServiceFilter.ANY    -> common ports
      */
     public void scanHosts(Context context, ServiceFilter filter) {
         if (scanHostAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
@@ -206,9 +197,20 @@ public class NetworkCloudHostPickerDialogViewModel extends ViewModel {
                         }
                 );
             } finally {
-                try { pool.shutdownNow(); } catch (Exception ignored) {}
+                try {
+                    pool.shutdownNow();
+                } catch (Exception ignored) {
+                }
                 scanHostAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
             }
         });
+    }
+
+    public enum ServiceFilter {
+        ANY,
+        FTP,
+        SFTP,
+        WEBDAV,
+        SMB
     }
 }

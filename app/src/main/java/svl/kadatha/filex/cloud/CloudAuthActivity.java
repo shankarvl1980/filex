@@ -34,10 +34,10 @@ import svl.kadatha.filex.EquallyDistributedButtonsWithTextLayout;
 import svl.kadatha.filex.FileObjectType;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.IndexedLinkedHashMap;
-import svl.kadatha.filex.network.NetworkCloudTypeSelectDialog;
 import svl.kadatha.filex.PermissionsUtil;
 import svl.kadatha.filex.R;
 import svl.kadatha.filex.network.DeleteNetworkAccountAlertDialog;
+import svl.kadatha.filex.network.NetworkCloudTypeSelectDialog;
 
 public class CloudAuthActivity extends BaseActivity {
     private static final String CLOUD_ACCOUNT_DELETE_REQUEST_CODE = "cloud_account_delete_request_code";
@@ -540,7 +540,7 @@ public class CloudAuthActivity extends BaseActivity {
 
         class VH extends RecyclerView.ViewHolder {
             final View v;
-            final ImageView cloud_imageView,cloud_account_select_indicator;
+            final ImageView cloud_imageView, cloud_account_select_indicator;
             final TextView cloud_account_display, host;
             final TextView cloud_account_user_id;
             final ImageView green_dot;
@@ -548,7 +548,7 @@ public class CloudAuthActivity extends BaseActivity {
             VH(View view) {
                 super(view);
                 v = view;
-                cloud_imageView=v.findViewById(R.id.network_list_recyclerview_network_image);
+                cloud_imageView = v.findViewById(R.id.network_list_recyclerview_network_image);
                 cloud_account_display = v.findViewById(R.id.network_list_recyclerview_display);
                 cloud_account_user_id = v.findViewById(R.id.network_list_recyclerview_user_name);
                 host = v.findViewById(R.id.network_list_recyclerview_host);
@@ -611,7 +611,7 @@ public class CloudAuthActivity extends BaseActivity {
             if (id == R.id.toolbar_btn_1) {
                 clear_selection();
                 NetworkCloudTypeSelectDialog dialog =
-                        NetworkCloudTypeSelectDialog.getInstance(NetworkCloudTypeSelectDialog.CLOUD, CLOUD_ACCOUNT_TYPE_REQUEST_CODE,null);
+                        NetworkCloudTypeSelectDialog.getInstance(NetworkCloudTypeSelectDialog.CLOUD, CLOUD_ACCOUNT_TYPE_REQUEST_CODE, null);
                 dialog.show(getSupportFragmentManager(), "");
 
             } else if (id == R.id.toolbar_btn_2) {

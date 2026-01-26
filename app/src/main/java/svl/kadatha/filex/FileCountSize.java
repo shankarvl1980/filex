@@ -1,9 +1,6 @@
 package svl.kadatha.filex;
 
 
-
-
-
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
@@ -53,6 +50,8 @@ import timber.log.Timber;
 
 public class FileCountSize {
     private static final String TAG = "FileCountSize";
+    private static final OkHttpClient CLOUD_HTTP = Global.HTTP;
+    private static final Gson CLOUD_GSON = Global.GSON;
     final Context context;
     final MutableLiveData<String> mutable_size_of_files_to_be_archived_copied = new MutableLiveData<>();
     final MutableLiveData<Integer> mutable_total_no_of_files = new MutableLiveData<>();
@@ -65,8 +64,6 @@ public class FileCountSize {
     private boolean isCancelled;
     private List<Uri> data_list;
     private Future<?> future1, future2, future3, future4;
-    private static final OkHttpClient CLOUD_HTTP = Global.HTTP;
-    private static final Gson CLOUD_GSON = Global.GSON;
 
     FileCountSize(Context context, List<String> files_selected_array, FileObjectType sourceFileObjectType) {
         this.context = context;
@@ -78,6 +75,58 @@ public class FileCountSize {
     FileCountSize(Context context, List<Uri> data_list) {
         this.context = context;
         this.data_list = data_list;
+    }
+
+    private static String normalizeGoogleDrivePath(String path) {
+        if (path == null) return null;
+
+        path = path.trim();
+        if (path.isEmpty()) return null;
+
+        // Always forward slashes
+        path = path.replace('\\', '/');
+
+        // Ensure leading slash
+        if (!path.startsWith("/")) path = "/" + path;
+
+        // Strip UI label "My Drive"
+        if (path.equals("/My Drive")) return "/";
+        if (path.startsWith("/My Drive/")) {
+            path = path.substring("/My Drive".length()); // keeps leading '/'
+            if (path.isEmpty()) path = "/";
+        }
+
+        // Collapse multiple slashes
+        while (path.contains("//")) path = path.replace("//", "/");
+
+        // Trim trailing slash (except root)
+        if (path.length() > 1 && path.endsWith("/")) path = path.substring(0, path.length() - 1);
+
+        return path;
+    }
+
+    private static String safeTrim(String s) {
+        if (s == null) return null;
+        s = s.trim();
+        return s.isEmpty() ? null : s;
+    }
+
+    private static Long bestDriveSize(DriveFileMeta m) {
+        if (m == null) return null;
+        if (m.size != null && m.size >= 0) return m.size;
+        if (m.quotaBytesUsed != null && m.quotaBytesUsed >= 0) return m.quotaBytesUsed;
+        return null;
+    }
+
+    private static long safeSize(Long size) {
+        return (size == null || size < 0) ? 0L : size;
+    }
+
+    private static String quoteDrive(String s) {
+        if (s == null) return "''";
+        // Escape backslash and single quote for Drive q
+        String out = s.replace("\\", "\\\\").replace("'", "\\'");
+        return "'" + out + "'";
     }
 
     public void cancel(boolean mayInterruptRunning) {
@@ -394,7 +443,6 @@ public class FileCountSize {
         });
     }
 
-
     private void populate(File[] source_list_files, boolean include_folder) {
         Stack<File> stack = new Stack<>();
         for (File f : source_list_files) {
@@ -433,7 +481,6 @@ public class FileCountSize {
             Timber.tag(TAG).d("Current totals - Files: %d, Size: %d", total_no_of_files, total_size_of_files);
         }
     }
-
 
     private void populate(UsbFile[] source_list_files, boolean include_folder) {
         Stack<UsbFile> stack = new Stack<>();
@@ -690,7 +737,6 @@ public class FileCountSize {
         Timber.tag(TAG).d("WebDAV file count completed. Total files: %d, Total size: %d", total_no_of_files, total_size_of_files);
     }
 
-
     private void populate(DiskShare share, String startPath, boolean include_folder) {
         Stack<String> stack = new Stack<>();
         stack.push(startPath);
@@ -757,58 +803,11 @@ public class FileCountSize {
         Timber.tag(TAG).d("Completed traversal of SMB directory structure.");
     }
 
-
     private String combinePaths(String dir, String file) {
         if (!dir.endsWith("/")) {
             dir += "/";
         }
         return dir + file;
-    }
-
-    // ---- Drive constants ----
-    private static final class DriveMime {
-        static final String FOLDER = "application/vnd.google-apps.folder";
-    }
-
-    private static String normalizeGoogleDrivePath(String path) {
-        if (path == null) return null;
-
-        path = path.trim();
-        if (path.isEmpty()) return null;
-
-        // Always forward slashes
-        path = path.replace('\\', '/');
-
-        // Ensure leading slash
-        if (!path.startsWith("/")) path = "/" + path;
-
-        // Strip UI label "My Drive"
-        if (path.equals("/My Drive")) return "/";
-        if (path.startsWith("/My Drive/")) {
-            path = path.substring("/My Drive".length()); // keeps leading '/'
-            if (path.isEmpty()) path = "/";
-        }
-
-        // Collapse multiple slashes
-        while (path.contains("//")) path = path.replace("//", "/");
-
-        // Trim trailing slash (except root)
-        if (path.length() > 1 && path.endsWith("/")) path = path.substring(0, path.length() - 1);
-
-        return path;
-    }
-
-    private static String safeTrim(String s) {
-        if (s == null) return null;
-        s = s.trim();
-        return s.isEmpty() ? null : s;
-    }
-
-    private static Long bestDriveSize(DriveFileMeta m) {
-        if (m == null) return null;
-        if (m.size != null && m.size >= 0) return m.size;
-        if (m.quotaBytesUsed != null && m.quotaBytesUsed >= 0) return m.quotaBytesUsed;
-        return null;
     }
 
     private void postDriveProgress() {
@@ -824,16 +823,6 @@ public class FileCountSize {
                 FileUtil.humanReadableByteCount(total_size_of_files) + "+"
         );
     }
-
-    private static long safeSize(Long size) {
-        return (size == null || size < 0) ? 0L : size;
-    }
-
-
-
-
-
-
 
     private String driveResolveIdByPath(String path, String oauthToken) {
         if (path == null) return null;
@@ -907,28 +896,6 @@ public class FileCountSize {
             Timber.tag("DRIVE_PATH").e("EXCEPTION: %s", Log.getStackTraceString(e));
             return null;
         }
-    }
-
-    private static String quoteDrive(String s) {
-        if (s == null) return "''";
-        // Escape backslash and single quote for Drive q
-        String out = s.replace("\\", "\\\\").replace("'", "\\'");
-        return "'" + out + "'";
-    }
-
-    // Minimal meta for one file
-    private static final class DriveFileMeta {
-        String id;
-        String mimeType;
-        Long size;
-        Long quotaBytesUsed;
-    }
-
-
-    // Response for list children
-    private static final class DriveListResponse {
-        String nextPageToken;
-        List<DriveFileMeta> files;
     }
 
     /**
@@ -1050,8 +1017,6 @@ public class FileCountSize {
         }
     }
 
-
-
     private DriveListResponse driveListChildren(String folderId, String oauthToken, String pageToken) {
         // files.list with:
         // q="'<folderId>' in parents and trashed=false"
@@ -1079,6 +1044,25 @@ public class FileCountSize {
             Timber.tag(TAG).e("Drive list error: %s", e.getMessage());
             return null;
         }
+    }
+
+    // ---- Drive constants ----
+    private static final class DriveMime {
+        static final String FOLDER = "application/vnd.google-apps.folder";
+    }
+
+    // Minimal meta for one file
+    private static final class DriveFileMeta {
+        String id;
+        String mimeType;
+        Long size;
+        Long quotaBytesUsed;
+    }
+
+    // Response for list children
+    private static final class DriveListResponse {
+        String nextPageToken;
+        List<DriveFileMeta> files;
     }
 
 }

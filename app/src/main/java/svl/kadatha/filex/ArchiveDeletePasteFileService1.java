@@ -376,17 +376,6 @@ public class ArchiveDeletePasteFileService1 extends Service implements TaskProgr
         serviceCompletionListener = listener;
     }
 
-
-    interface ServiceCompletionListener {
-        void onServiceCompletion(String intent_action, boolean service_result, String target, String dest_folder);
-    }
-
-    class ArchiveDeletePasteBinder extends Binder {
-        public ArchiveDeletePasteFileService1 getService() {
-            return ArchiveDeletePasteFileService1.this;
-        }
-    }
-
     private void updateForegroundProgressNotif() {
         if (nm == null) return;
 
@@ -410,7 +399,8 @@ public class ArchiveDeletePasteFileService1 extends Service implements TaskProgr
             sizeLine = done + " / " + total + " (" + percent + "%)";
         } else {
             // indeterminate mode: still show bytes if you want
-            if (counter_size_files > 0) sizeLine = FileUtil.humanReadableByteCount(counter_size_files);
+            if (counter_size_files > 0)
+                sizeLine = FileUtil.humanReadableByteCount(counter_size_files);
         }
 
         // skip duplicates (optional but reduces churn)
@@ -423,15 +413,29 @@ public class ArchiveDeletePasteFileService1 extends Service implements TaskProgr
         // title + line (keep simple)
         String title = "Working";
         if (ArchiveAsyncTask.TASK_TYPE.equals(intent_action)) title = getString(R.string.archiving);
-        else if (UnarchiveAsyncTask.TASK_TYPE.equals(intent_action)) title = getString(R.string.extracting);
-        else if (DeleteAsyncTask.TASK_TYPE.equals(intent_action)) title = getString(R.string.deleting);
-        else if (CutCopyAsyncTask.TASK_TYPE_CUT.equals(intent_action)) title = getString(R.string.moving);
-        else if (CutCopyAsyncTask.TASK_TYPE_COPY.equals(intent_action) || CopyToAsyncTask.TASK_TYPE.equals(intent_action)) title = getString(R.string.copying);
+        else if (UnarchiveAsyncTask.TASK_TYPE.equals(intent_action))
+            title = getString(R.string.extracting);
+        else if (DeleteAsyncTask.TASK_TYPE.equals(intent_action))
+            title = getString(R.string.deleting);
+        else if (CutCopyAsyncTask.TASK_TYPE_CUT.equals(intent_action))
+            title = getString(R.string.moving);
+        else if (CutCopyAsyncTask.TASK_TYPE_COPY.equals(intent_action) || CopyToAsyncTask.TASK_TYPE.equals(intent_action))
+            title = getString(R.string.copying);
 
         String line = (current_file_name != null && !current_file_name.isEmpty())
                 ? current_file_name
                 : (processed_file_name != null ? processed_file_name : "");
 
         nm.updateADPPActivity1Progress(notification_id, intent_action, title, line, percent, sizeLine);
+    }
+
+    interface ServiceCompletionListener {
+        void onServiceCompletion(String intent_action, boolean service_result, String target, String dest_folder);
+    }
+
+    class ArchiveDeletePasteBinder extends Binder {
+        public ArchiveDeletePasteFileService1 getService() {
+            return ArchiveDeletePasteFileService1.this;
+        }
     }
 }

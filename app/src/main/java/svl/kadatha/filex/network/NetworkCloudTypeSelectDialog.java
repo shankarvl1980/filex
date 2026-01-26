@@ -68,7 +68,7 @@ public class NetworkCloudTypeSelectDialog extends DialogFragment {
         Bundle bundle = getArguments();
         request_code = bundle.getString("request_code");
         what_type_network_cloud = bundle.getString("what_type_network_cloud");
-        type=bundle.getString("type");
+        type = bundle.getString("type");
     }
 
     @Override
@@ -91,24 +91,24 @@ public class NetworkCloudTypeSelectDialog extends DialogFragment {
 
         if (HOST.equals(what_type_network_cloud)) {
             NetworkCloudHostPickerDialogViewModel.ServiceFilter filter;
-            if(type==null){
-                filter=NetworkCloudHostPickerDialogViewModel.ServiceFilter.ANY;
-            } else{
-                switch (type){
+            if (type == null) {
+                filter = NetworkCloudHostPickerDialogViewModel.ServiceFilter.ANY;
+            } else {
+                switch (type) {
                     case NetworkAccountsDetailsDialog.FTP:
-                        filter=NetworkCloudHostPickerDialogViewModel.ServiceFilter.FTP;
+                        filter = NetworkCloudHostPickerDialogViewModel.ServiceFilter.FTP;
                         break;
                     case NetworkAccountsDetailsDialog.SFTP:
-                        filter=NetworkCloudHostPickerDialogViewModel.ServiceFilter.SFTP;
+                        filter = NetworkCloudHostPickerDialogViewModel.ServiceFilter.SFTP;
                         break;
                     case NetworkAccountsDetailsDialog.WebDAV:
-                        filter=NetworkCloudHostPickerDialogViewModel.ServiceFilter.WEBDAV;
+                        filter = NetworkCloudHostPickerDialogViewModel.ServiceFilter.WEBDAV;
                         break;
                     case NetworkAccountsDetailsDialog.SMB:
-                        filter=NetworkCloudHostPickerDialogViewModel.ServiceFilter.SMB;
+                        filter = NetworkCloudHostPickerDialogViewModel.ServiceFilter.SMB;
                         break;
                     default:
-                        filter=NetworkCloudHostPickerDialogViewModel.ServiceFilter.ANY;
+                        filter = NetworkCloudHostPickerDialogViewModel.ServiceFilter.ANY;
                 }
             }
             viewModel.scanHosts(requireContext().getApplicationContext(), filter);
@@ -119,9 +119,9 @@ public class NetworkCloudTypeSelectDialog extends DialogFragment {
         viewModel.populateNetworkCloudServersAsyncStatus.observe(this, new Observer<AsyncTaskStatus>() {
             @Override
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
-                if(viewModel.populateNetworkCloudServersAsyncStatus.getValue()==AsyncTaskStatus.STARTED){
+                if (viewModel.populateNetworkCloudServersAsyncStatus.getValue() == AsyncTaskStatus.STARTED) {
                     progress_bar.setVisibility(View.VISIBLE);
-                } else if (viewModel.populateNetworkCloudServersAsyncStatus.getValue()==AsyncTaskStatus.COMPLETED){
+                } else if (viewModel.populateNetworkCloudServersAsyncStatus.getValue() == AsyncTaskStatus.COMPLETED) {
                     adapter = new NetworkCloudRecyclerAdapter(viewModel.items);
                     recyclerview.setAdapter(adapter);
                     progress_bar.setVisibility(View.GONE);
@@ -147,7 +147,6 @@ public class NetworkCloudTypeSelectDialog extends DialogFragment {
         });
         return v;
     }
-
 
 
     @Override
@@ -182,13 +181,6 @@ public class NetworkCloudTypeSelectDialog extends DialogFragment {
             this.port = 0;
         }
 
-        static PickerItem forHost(@NonNull String title, @NonNull String host, int port) {
-            PickerItem p = new PickerItem(R.drawable.network_icon, title, null);
-            // hack-free: create a separate constructor if you prefer
-            // but keeping minimal changes:
-            return new PickerItem(R.drawable.network_icon, title, null, host, port);
-        }
-
         private PickerItem(@DrawableRes int iconResId, @NonNull String title, FileObjectType fileObjectType,
                            String host, int port) {
             this.iconResId = iconResId;
@@ -196,6 +188,13 @@ public class NetworkCloudTypeSelectDialog extends DialogFragment {
             this.fileObjectType = fileObjectType;
             this.host = host;
             this.port = port;
+        }
+
+        static PickerItem forHost(@NonNull String title, @NonNull String host, int port) {
+            PickerItem p = new PickerItem(R.drawable.network_icon, title, null);
+            // hack-free: create a separate constructor if you prefer
+            // but keeping minimal changes:
+            return new PickerItem(R.drawable.network_icon, title, null, host, port);
         }
     }
 

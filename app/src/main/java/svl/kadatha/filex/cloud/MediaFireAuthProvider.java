@@ -70,7 +70,6 @@ public final class MediaFireAuthProvider implements CloudAuthProvider {
     }
 
 
-
     private static long safeSecondsToMs(@Nullable String secondsStr) {
         try {
             long sec = Long.parseLong(secondsStr);

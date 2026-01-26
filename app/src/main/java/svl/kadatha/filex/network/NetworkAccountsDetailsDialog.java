@@ -679,7 +679,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
             if (id == R.id.toolbar_btn_1) {
                 clear_selection();
                 if (type.equals(ALL)) {
-                    NetworkCloudTypeSelectDialog networkCloudTypeSelectDialog = NetworkCloudTypeSelectDialog.getInstance(NetworkCloudTypeSelectDialog.NETWORK, NETWORK_ACCOUNT_TYPE_REQUEST_CODE,type);
+                    NetworkCloudTypeSelectDialog networkCloudTypeSelectDialog = NetworkCloudTypeSelectDialog.getInstance(NetworkCloudTypeSelectDialog.NETWORK, NETWORK_ACCOUNT_TYPE_REQUEST_CODE, type);
                     networkCloudTypeSelectDialog.show(getParentFragmentManager(), "");
                 } else {
                     NetworkAccountDetailsInputDialog networkAccountDetailsInputDialog = NetworkAccountDetailsInputDialog.getInstance(NETWORK_ACCOUNT_INPUT_DETAILS_REQUEST_CODE, viewModel.type, null);

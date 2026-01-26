@@ -26,42 +26,20 @@ import java.util.concurrent.TimeUnit;
 
 public final class NetworkScanUtil {
 
-    private NetworkScanUtil() {}
-
-    // ---- Contracts ----
-    public interface CancelledSupplier { boolean isCancelled(); }
-    public interface HitConsumer { void onHit(ScanHit hit); }
-
-    // ---- Outputs ----
-    public static final class ScanHit {
-        public final String host;
-        public final int port;
-        public final String serviceName;
-
-        public ScanHit(String host, int port, String serviceName) {
-            this.host = host;
-            this.port = port;
-            this.serviceName = serviceName;
-        }
-    }
-
-    public static final class NetContext {
-        public final int myIpInt;
-        public final int prefixLength;
-
-        public NetContext(int myIpInt, int prefixLength) {
-            this.myIpInt = myIpInt;
-            this.prefixLength = prefixLength;
-        }
+    private NetworkScanUtil() {
     }
 
     // ---- Service -> ports mapping ----
     public static int[] portsForFilter(NetworkCloudHostPickerDialogViewModel.ServiceFilter filter) {
         switch (filter) {
-            case FTP:    return new int[]{21};
-            case SFTP:   return new int[]{22};
-            case WEBDAV: return new int[]{80, 443};   // common WebDAV HTTP/HTTPS
-            case SMB:    return new int[]{445};
+            case FTP:
+                return new int[]{21};
+            case SFTP:
+                return new int[]{22};
+            case WEBDAV:
+                return new int[]{80, 443};   // common WebDAV HTTP/HTTPS
+            case SMB:
+                return new int[]{445};
             case ANY:
             default:
                 return new int[]{21, 22, 445, 80, 443};
@@ -70,12 +48,18 @@ public final class NetworkScanUtil {
 
     public static String serviceNameForPort(int port) {
         switch (port) {
-            case 21: return "FTP";
-            case 22: return "SFTP";
-            case 80: return "HTTP/WebDAV";
-            case 443: return "HTTPS/WebDAV";
-            case 445: return "SMB";
-            default: return "PORT-" + port;
+            case 21:
+                return "FTP";
+            case 22:
+                return "SFTP";
+            case 80:
+                return "HTTP/WebDAV";
+            case 443:
+                return "HTTPS/WebDAV";
+            case 445:
+                return "SMB";
+            default:
+                return "PORT-" + port;
         }
     }
 
@@ -137,7 +121,8 @@ public final class NetworkScanUtil {
                 try {
                     int second = Integer.parseInt(p[1]);
                     return second >= 16 && second <= 31;
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             }
         }
         return false;
@@ -209,7 +194,10 @@ public final class NetworkScanUtil {
         } catch (Exception ignored) {
             return false;
         } finally {
-            if (s != null) try { s.close(); } catch (Exception ignored2) {}
+            if (s != null) try {
+                s.close();
+            } catch (Exception ignored2) {
+            }
         }
     }
 
@@ -222,7 +210,10 @@ public final class NetworkScanUtil {
             String line;
             boolean first = true;
             while ((line = br.readLine()) != null) {
-                if (first) { first = false; continue; }
+                if (first) {
+                    first = false;
+                    continue;
+                }
                 String[] parts = line.trim().split("\\s+");
                 if (parts.length >= 1) {
                     int ip = ipv4ToInt(parts[0]);
@@ -231,7 +222,10 @@ public final class NetworkScanUtil {
             }
         } catch (Exception ignored) {
         } finally {
-            if (br != null) try { br.close(); } catch (Exception ignored2) {}
+            if (br != null) try {
+                br.close();
+            } catch (Exception ignored2) {
+            }
         }
         return new ArrayList<>(out);
     }
@@ -280,7 +274,8 @@ public final class NetworkScanUtil {
                     if (ipInt != 0) return ipInt;
                 }
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         return 0;
     }
 
@@ -304,5 +299,37 @@ public final class NetworkScanUtil {
                 + ((ip >> 16) & 0xFF) + "."
                 + ((ip >> 8) & 0xFF) + "."
                 + (ip & 0xFF);
+    }
+
+    // ---- Contracts ----
+    public interface CancelledSupplier {
+        boolean isCancelled();
+    }
+
+    public interface HitConsumer {
+        void onHit(ScanHit hit);
+    }
+
+    // ---- Outputs ----
+    public static final class ScanHit {
+        public final String host;
+        public final int port;
+        public final String serviceName;
+
+        public ScanHit(String host, int port, String serviceName) {
+            this.host = host;
+            this.port = port;
+            this.serviceName = serviceName;
+        }
+    }
+
+    public static final class NetContext {
+        public final int myIpInt;
+        public final int prefixLength;
+
+        public NetContext(int myIpInt, int prefixLength) {
+            this.myIpInt = myIpInt;
+            this.prefixLength = prefixLength;
+        }
     }
 }

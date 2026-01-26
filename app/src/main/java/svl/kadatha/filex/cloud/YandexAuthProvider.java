@@ -63,7 +63,8 @@ public final class YandexAuthProvider implements CloudAuthProvider {
         this.activity = activity;
         this.authService = new AuthorizationService(activity);
         this.bg = MyExecutorService.getExecutorService();
-        this.http = Global.HTTP;;
+        this.http = Global.HTTP;
+        ;
     }
 
     @Override
