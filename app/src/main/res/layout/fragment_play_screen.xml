@@ -28,20 +28,67 @@
             android:id="@+id/current_play_audio_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/layout_margin"
             android:elevation="10dp"
             android:ellipsize="end"
             android:outlineProvider="none"
-            android:paddingStart="@dimen/ten_dp"
-            android:paddingEnd="@dimen/ten_dp"
+
             android:singleLine="true"
             android:textColor="?attr/toolbar_text_color"
-            android:textSize="17sp"
+            android:textSize="18dp"
             app:layout_constraintBottom_toBottomOf="parent"
-
-
+            app:layout_constraintBottom_toTopOf="@id/audio_player_seekbar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/fragment_current_play_album_art"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <SeekBar
+            android:id="@+id/audio_player_seekbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/layout_margin"
+            android:elevation="6dp"
+            android:enabled="false"
+            android:maxHeight="6dp"
+            android:paddingStart="0dp"
+            android:paddingLeft="0dp"
+            android:paddingEnd="0dp"
+            android:paddingRight="0dp"
+            android:progressDrawable="@drawable/seek_bar_progress"
+            android:splitTrack="false"
+            android:thumb="@null"
+            android:thumbOffset="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/fragment_current_play_album_art"
+            app:layout_constraintTop_toBottomOf="@+id/current_play_audio_name" />
+
+        <TextView
+            android:id="@+id/audio_player_current_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:gravity="start"
+            android:textColor="?attr/recycler_second_text_color"
+            android:textSize="10dp"
+            app:layout_constraintStart_toEndOf="@+id/fragment_current_play_album_art"
+            app:layout_constraintTop_toBottomOf="@id/audio_player_seekbar"
+
+            />
+
+
+        <TextView
+            android:id="@+id/audio_player_total_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:gravity="end"
+            android:textColor="?attr/recycler_second_text_color"
+            android:textSize="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/audio_player_seekbar"
+
+             />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -143,41 +190,6 @@
             app:layout_constraintStart_toEndOf="@+id/play_pause_layout"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/audio_player_current_progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:gravity="start"
-            android:padding="10dp"
-            android:textColor="?attr/recycler_second_text_color"
-            app:layout_constraintBottom_toTopOf="@id/current_play_bottom_toolbar"
-            app:layout_constraintEnd_toStartOf="@+id/audio_player_seekbar"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <SeekBar
-            android:id="@+id/audio_player_seekbar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:elevation="6dp"
-            android:progressDrawable="@drawable/seek_bar_progress"
-            android:thumb="@drawable/seek_thumb"
-            app:layout_constraintBottom_toBottomOf="@+id/audio_player_total_time"
-            app:layout_constraintEnd_toStartOf="@+id/audio_player_total_time"
-            app:layout_constraintStart_toEndOf="@+id/audio_player_current_progress"
-            app:layout_constraintTop_toTopOf="@+id/audio_player_total_time" />
-
-        <TextView
-            android:id="@+id/audio_player_total_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:gravity="end"
-            android:padding="10dp"
-            android:textColor="?attr/recycler_second_text_color"
-            app:layout_constraintBottom_toTopOf="@id/current_play_bottom_toolbar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/audio_player_seekbar" />
 
     </LinearLayout>
 

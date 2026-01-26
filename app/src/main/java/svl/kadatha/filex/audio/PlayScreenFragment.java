@@ -19,6 +19,7 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -333,7 +334,12 @@ public class PlayScreenFragment extends Fragment {
         total_time_tv = v.findViewById(R.id.audio_player_total_time);
         current_progress_tv = v.findViewById(R.id.audio_player_current_progress);
         seekbar = v.findViewById(R.id.audio_player_seekbar);
-
+        seekbar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return !audioPlayViewModel.play_screen_expanded_view;
+            }
+        });
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar sb, int progress, boolean fromUser) {
                 if (fromUser) {
