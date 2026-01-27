@@ -839,13 +839,20 @@ public class Global {
         return path;
     }
 
-    public static boolean IS_CHILD_FILE(String child_path, String parent_path) {
-        if (parent_path.equals(File.separator)) {
-            return child_path.startsWith(parent_path);
-        } else {
-            return (child_path + File.separator).startsWith(parent_path + File.separator);
-        }
+    public static boolean IS_CHILD_FILE(String child, String parent) {
+        if (child == null || parent == null) return false;
+
+        // normalize trailing "/" except for root
+        if (child.endsWith("/") && child.length() > 1) child = child.substring(0, child.length() - 1);
+        if (parent.endsWith("/") && parent.length() > 1) parent = parent.substring(0, parent.length() - 1);
+
+        if (parent.equals("/")) return true;
+
+        // inclusive: parent itself OR descendants
+        return child.equals(parent) || child.startsWith(parent + "/");
     }
+
+
 
     public static boolean CHECK_WHETHER_STORAGE_DIR_CONTAINS_FILE_OBJECT(FileObjectType fileObjectType) {
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();

@@ -349,6 +349,7 @@ public class FilePOJOUtil {
         int size = file_path_list.size();
         for (int i = 0; i < size; ++i) {
             String file_path = file_path_list.get(i);
+            Timber.tag(Global.TAG).d("parent method " + fileObjectType + file_path);
             REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL__(file_path, fileObjectType);
         }
         if (size > 0) {
@@ -372,6 +373,7 @@ public class FilePOJOUtil {
         synchronized (file_pojo_lock) {
             while (iterator.hasNext()) {
                 Map.Entry<String, List<FilePOJO>> entry = iterator.next();
+                Timber.tag(Global.TAG).d("sub method " + entry.getKey());
                 if (Global.IS_CHILD_FILE(entry.getKey(), fileObjectType + file_path)) {
                     iterator.remove();
                 }
@@ -544,7 +546,6 @@ public class FilePOJOUtil {
                 } catch (Exception e) {
                     Timber.tag(Global.TAG).w(e, "USB_TYPE access failed: %s", fileclickselected);
                 }
-
             } else if (fileObjectType == FileObjectType.FTP_TYPE) {
                 FtpClientRepository ftpClientRepository = null;
                 FTPClient ftpClient = null;
@@ -573,7 +574,6 @@ public class FilePOJOUtil {
                         ftpClientRepository.releaseFtpClient(ftpClient);
                     }
                 }
-
             } else if (fileObjectType == FileObjectType.SFTP_TYPE) {
                 SftpChannelRepository sftpChannelRepository = null;
                 ChannelSftp channelSftp = null;
@@ -600,7 +600,6 @@ public class FilePOJOUtil {
                         sftpChannelRepository.releaseChannel(channelSftp);
                     }
                 }
-
             } else if (fileObjectType == FileObjectType.WEBDAV_TYPE) {
                 WebDavClientRepository webDavClientRepository;
                 Sardine sardine;
@@ -633,7 +632,6 @@ public class FilePOJOUtil {
                 } catch (IOException e) {
                     Timber.tag(Global.TAG).w(e, "WEBDAV_TYPE listing failed: %s", fileclickselected);
                 }
-
             } else if (fileObjectType == FileObjectType.SMB_TYPE) {
                 SmbClientRepository smbClientRepository = SmbClientRepository.getInstance(NetworkAccountDetailsViewModel.SMB_NETWORK_ACCOUNT_POJO);
                 SmbClientRepository.ShareHandle h = null;
@@ -666,7 +664,6 @@ public class FilePOJOUtil {
                         smbClientRepository.releaseShare(h);
                     }
                 }
-
             } else if (fileObjectType == FileObjectType.GOOGLE_DRIVE_TYPE) {
                 try {
                     String oauthToken = CloudAuthActivityViewModel.GOOGLE_DRIVE_ACCESS_TOKEN;
@@ -680,8 +677,7 @@ public class FilePOJOUtil {
                             FilePOJO filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO_FromDriveMeta(meta, path, false, fileObjectType);
 
                             if (filePOJO != null) {
-                                if (!filePOJO.getName().startsWith("."))
-                                    filePOJOS_filtered.add(filePOJO);
+                                filePOJOS_filtered.add(filePOJO);
                                 filePOJOS.add(filePOJO);
                             }
                         } catch (Exception itemEx) {
@@ -709,8 +705,7 @@ public class FilePOJOUtil {
                                 FilePOJO filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO(meta, false, fileObjectType, path);
 
                                 if (filePOJO != null) {
-                                    if (!filePOJO.getName().startsWith("."))
-                                        filePOJOS_filtered.add(filePOJO);
+                                    filePOJOS_filtered.add(filePOJO);
                                     filePOJOS.add(filePOJO);
                                 }
                             } catch (Exception itemEx) {
@@ -760,8 +755,7 @@ public class FilePOJOUtil {
                                         FilePOJO filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO(item, false, fileObjectType, path);
 
                                         if (filePOJO != null) {
-                                            if (!filePOJO.getName().startsWith("."))
-                                                filePOJOS_filtered.add(filePOJO);
+                                            filePOJOS_filtered.add(filePOJO);
                                             filePOJOS.add(filePOJO);
                                         }
                                     } catch (Exception itemEx) {

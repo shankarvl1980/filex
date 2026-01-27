@@ -32,6 +32,7 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
     public static String DROP_BOX_ACCESS_TOKEN;
     public static String MEDIA_FIRE_ACCESS_TOKEN;
     public static String YANDEX_ACCESS_TOKEN;
+    public boolean pop_up_top_fragment;
 
     // active accounts
     public static CloudAccountPOJO GOOGLE_DRIVE_ACCOUNT;
@@ -458,12 +459,9 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
 
         Bundle bundle = new Bundle();
         bundle.putSerializable("fileObjectType", fileObjectType);
-
         Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_REFRESH_STORAGE_DIR_ACTION, LocalBroadcastManager.getInstance(App.getAppContext()), null);
-
         Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT, LocalBroadcastManager.getInstance(App.getAppContext()), bundle);
-
-        FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), fileObjectType);
+        FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList("/"), fileObjectType);
         Global.DELETE_DIRECTORY_ASYNCHRONOUSLY(Global.CLOUD_CACHE_DIR);
     }
 

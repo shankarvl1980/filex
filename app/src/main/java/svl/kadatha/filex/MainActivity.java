@@ -769,7 +769,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                         Intent intent = new Intent(context, CloudAuthActivity.class);
                         FileObjectType fileObjectType = FileObjectType.GOOGLE_DRIVE_TYPE;
                         intent.putExtra("fileObjectType", fileObjectType);
-                        startActivity(intent);
+                        cloudAuthLauncher.launch(intent);
                         pbf.dismissAllowingStateLoss();
                     }
                 }, DRAWER_CLOSE_DELAY);
@@ -938,6 +938,19 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     }
+
+    private final ActivityResultLauncher<Intent> cloudAuthLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result){
+            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                boolean pop = result.getData().getBooleanExtra("POP_TOP_FRAGMENT", false);
+                if (pop) {
+                    onbackpressed(false);
+                }
+            }
+        }
+    });
+
 
     @Override
     public void onCreateView(String fileclickselected, FileObjectType fileObjectType) {
@@ -2434,10 +2447,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     }
                     storageRecyclerAdapter.notifyDataSetChanged();
 
-                    FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(
-                            Collections.singletonList(""),
-                            FileObjectType.USB_TYPE
-                    );
+                    FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList("/"), FileObjectType.USB_TYPE);
                     DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
                     if (df != null && df.fileObjectType == FileObjectType.USB_TYPE) {
                         df.progress_bar.setVisibility(View.VISIBLE);

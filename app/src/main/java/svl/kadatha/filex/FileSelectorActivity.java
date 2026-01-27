@@ -1194,7 +1194,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                 } catch (InterruptedException e) {
                 }
                 if (!MainActivity.USB_ATTACHED) {
-                    FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), FileObjectType.USB_TYPE);
+                    FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList("/"), FileObjectType.USB_TYPE);
                     FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
                     if (fileSelectorFragment != null && fileSelectorFragment.fileObjectType == FileObjectType.USB_TYPE) {
                         fileSelectorFragment.progress_bar.setVisibility(View.VISIBLE);

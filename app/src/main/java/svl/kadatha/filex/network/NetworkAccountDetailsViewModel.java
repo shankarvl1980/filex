@@ -149,7 +149,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
         Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_POP_UP_NETWORK_FILE_TYPE_FRAGMENT, lbm, bundle);
 
         // Cleanup child hashmap
-        FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList(""), type);
+        FilePOJOUtil.REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL(Collections.singletonList("/"), type);
 
         // Delete cache dir based on type (includes SMB)
         switch (type) {

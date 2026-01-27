@@ -61,7 +61,6 @@ public class CloudAuthActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         CloudAuthProvider provider = viewModel != null ? viewModel.getAuthProvider() : null;
         if (provider != null) {
             provider.onActivityResult(requestCode, resultCode, data);
@@ -104,6 +103,9 @@ public class CloudAuthActivity extends BaseActivity {
                 if (!viewModel.mselecteditems.isEmpty()) {
                     clear_selection();
                 } else {
+                    Intent data = new Intent();
+                    data.putExtra("POP_TOP_FRAGMENT", viewModel.pop_up_top_fragment);
+                    setResult(RESULT_OK, data);
                     finish();
                 }
             }
@@ -220,6 +222,7 @@ public class CloudAuthActivity extends BaseActivity {
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("fileObjectType", fileObjectType);
                     Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_CONNECTED_TO_CLOUD_ACTION, LocalBroadcastManager.getInstance(context), bundle);
+                    viewModel.pop_up_top_fragment=false;
                     viewModel.cloudAccountConnectionAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                     finish();
                 } else {
@@ -238,6 +241,7 @@ public class CloudAuthActivity extends BaseActivity {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("fileObjectType", fileObjectType);
                 Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_CONNECTED_TO_CLOUD_ACTION, LocalBroadcastManager.getInstance(context), bundle);
+                viewModel.pop_up_top_fragment=false;
                 viewModel.cloudAccountStorageDirFillAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                 finish();
             }
@@ -270,8 +274,10 @@ public class CloudAuthActivity extends BaseActivity {
             }
             if (status == AsyncTaskStatus.COMPLETED) {
                 clear_selection();
-                if (cloudAccountPojoListAdapter != null)
+                if (cloudAccountPojoListAdapter != null){
                     cloudAccountPojoListAdapter.notifyDataSetChanged();
+                }
+                viewModel.pop_up_top_fragment=true;
                 progress_bar.setVisibility(View.GONE);
                 viewModel.disconnectCloudConnectionAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
             }
