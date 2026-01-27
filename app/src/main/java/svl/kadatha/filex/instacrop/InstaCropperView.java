@@ -111,7 +111,6 @@ public class InstaCropperView extends View {
             updateGrid();
             invalidate();
         }
-
     };
     private GestureDetector mGestureDetector;
     private ScaleGestureDetector mScaleGestureDetector;
@@ -150,7 +149,6 @@ public class InstaCropperView extends View {
 
             updateGrid();
             invalidate();
-
             return true;
         }
 

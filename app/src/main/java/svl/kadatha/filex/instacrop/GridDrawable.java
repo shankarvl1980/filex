@@ -51,14 +51,11 @@ public class GridDrawable extends Drawable {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 mAlpha = (float) animation.getAnimatedValue();
-
                 invalidateSelf();
             }
-
         };
         mAnimator.addUpdateListener(mAnimatorUpdateListener);
         mAnimator.setInterpolator(new LinearInterpolator());
-
         mAnimator.start();
     }
 

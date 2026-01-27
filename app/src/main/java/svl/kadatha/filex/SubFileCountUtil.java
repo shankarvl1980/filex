@@ -36,7 +36,6 @@ import svl.kadatha.filex.usb.ReadAccess;
 import svl.kadatha.filex.usb.UsbFileRootSingleton;
 
 public final class SubFileCountUtil {
-    private static final int cap = 100;
     private static final OkHttpClient CLOUD_HTTP = Global.HTTP;
     private static final Gson CLOUD_GSON = Global.GSON;
     ;
@@ -50,8 +49,8 @@ public final class SubFileCountUtil {
         int count = computeSubFileCountBlocking(pojo);
         String si;
         if (Global.CLOUD_FILE_OBJECT_TYPES.contains(pojo.getFileObjectType())) {
-            int limitSignal = cap + 1;
-            si = (count >= limitSignal) ? "(" + cap + "+)" : "(" + count + ")";
+            int limitSignal = FileCountSize.CAP + 1;
+            si = (count >= limitSignal) ? "(" + FileCountSize.CAP + "+)" : "(" + count + ")";
         } else {
             si = "(" + count + ")";
         }
@@ -91,16 +90,16 @@ public final class SubFileCountUtil {
 
                 case GOOGLE_DRIVE_TYPE:
                     token = CloudAuthActivityViewModel.GOOGLE_DRIVE_ACCESS_TOKEN;
-                    return countDriveChildrenCapped(pojo, token, cap + 1);
+                    return countDriveChildrenCapped(pojo, token, FileCountSize.CAP + 1);
 
                 case DROP_BOX_TYPE: {
                     token = CloudAuthActivityViewModel.DROP_BOX_ACCESS_TOKEN;
-                    return countDropboxChildrenCapped(pojo, token, cap + 1);
+                    return countDropboxChildrenCapped(pojo, token, FileCountSize.CAP + 1);
                 }
 
                 case YANDEX_TYPE: {
                     token = CloudAuthActivityViewModel.YANDEX_ACCESS_TOKEN;
-                    return countYandexChildrenCapped(pojo, token, cap + 1);
+                    return countYandexChildrenCapped(pojo, token, FileCountSize.CAP + 1);
                 }
 
 //                case ONE_DRIVE_TYPE: {

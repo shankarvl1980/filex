@@ -64,6 +64,7 @@ public class FileCountSize {
     private boolean isCancelled;
     private List<Uri> data_list;
     private Future<?> future1, future2, future3, future4;
+    public final static int CAP = 500;
 
     FileCountSize(Context context, List<String> files_selected_array, FileObjectType sourceFileObjectType) {
         this.context = context;
@@ -357,7 +358,6 @@ public class FileCountSize {
                         return;
                     }
 
-                    final int CAP = 100;
                     final int capPlusOne = CAP + 1;
 
                     for (String sel : files_selected_array) {

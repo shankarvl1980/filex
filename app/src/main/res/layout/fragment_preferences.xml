@@ -184,6 +184,30 @@
                 android:background="?attr/recycler_second_text_color"
                 app:layout_constraintTop_toBottomOf="@id/preferences_switch_show_usb" />
 
+<!--            <TextView-->
+<!--                android:id="@+id/preferences_licences"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/fragment_preferences_divider4"-->
+
+<!--                android:layout_marginStart="@dimen/ten_dp"-->
+<!--                android:layout_marginTop="@dimen/ten_dp"-->
+<!--                android:layout_marginEnd="@dimen/ten_dp"-->
+<!--                android:text="@string/licences"-->
+<!--                android:textSize="17sp"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                />-->
+<!--            <View-->
+<!--                android:id="@+id/fragment_preferences_divider5"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="0.5dp"-->
+<!--                android:layout_marginStart="@dimen/divider_margin"-->
+<!--                android:layout_marginTop="@dimen/ten_dp"-->
+<!--                android:layout_marginEnd="@dimen/divider_margin"-->
+<!--                android:layout_marginBottom="@dimen/layout_margin"-->
+<!--                android:background="?attr/recycler_second_text_color"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/preferences_licences" />-->
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

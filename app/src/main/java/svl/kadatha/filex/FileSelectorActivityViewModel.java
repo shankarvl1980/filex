@@ -21,6 +21,7 @@ public class FileSelectorActivityViewModel extends AndroidViewModel {
     ArrayList<Uri> uri_list;
     ClipData clipData;
     private boolean isCancelled;
+    public boolean createNewFragmentTransaction;
     private Future<?> future1, future2;
 
     public FileSelectorActivityViewModel(@NonNull Application application) {

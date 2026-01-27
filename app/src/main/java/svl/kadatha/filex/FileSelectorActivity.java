@@ -268,7 +268,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         });
 
-
+        fileSelectorActivityViewModel = new ViewModelProvider(this).get(FileSelectorActivityViewModel.class);
         Intent intent = getIntent();
         on_intent(intent, savedInstanceState);
 
@@ -459,7 +459,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
         });
 
-        fileSelectorActivityViewModel = new ViewModelProvider(this).get(FileSelectorActivityViewModel.class);
         fileSelectorActivityViewModel.populateUriAsyncTaskStatus.observe(this, new Observer<AsyncTaskStatus>() {
             @Override
             public void onChanged(AsyncTaskStatus asyncTaskStatus) {
@@ -767,11 +766,11 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             setSearchBarVisibility(false);
         }
 
-
-        if (!(fileObjectType + file_path).equals(existingFilePOJOkey)) {
+        if (!(fileObjectType + file_path).equals(existingFilePOJOkey) || fileSelectorActivityViewModel.createNewFragmentTransaction) {
             FileSelectorFragment ff = FileSelectorFragment.getInstance(fileObjectType, action_sought_request_code);
             fm.beginTransaction().replace(R.id.file_selector_container, ff, file_path).addToBackStack(file_path)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
+            fileSelectorActivityViewModel.createNewFragmentTransaction = false;
         }
     }
 
@@ -1076,6 +1075,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                         FileObjectType fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
                         if (fileSelectorFragment != null && fileObjectType != null && fileObjectType == fileSelectorFragment.fileObjectType) {
                             if (!getLifecycle().getCurrentState().isAtLeast(androidx.lifecycle.Lifecycle.State.RESUMED)) {
+                                fileSelectorActivityViewModel.createNewFragmentTransaction=true;
                                 return;
                             }
                             onbackpressed(false); // now safe

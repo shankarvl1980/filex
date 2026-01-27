@@ -141,6 +141,10 @@ public class CloudAuthActivity extends BaseActivity {
         delete_btn.setOnClickListener(bottomToolbarClickListener);
         disconnect_btn.setOnClickListener(bottomToolbarClickListener);
         edit_btn.setOnClickListener(bottomToolbarClickListener);
+
+        edit_btn.setVisibility(View.GONE);
+        tb_layout.requestLayout();
+        tb_layout.invalidate();
     }
 
     private void setupViews() {

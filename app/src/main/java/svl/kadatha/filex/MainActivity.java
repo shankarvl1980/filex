@@ -1280,9 +1280,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             fm.beginTransaction().replace(R.id.detail_fragment, DetailFragment.getInstance(fileObjectType), file_path)
                     .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss(); //committing allowing state loss becuase it is committed after onsavedinstance
 
-        } else if (!(fileObjectType + file_path).equals(existingFilePOJOkey)) {
+        } else if (!(fileObjectType + file_path).equals(existingFilePOJOkey) || viewModel.createNewFragmentTransaction) {
             fm.beginTransaction().replace(R.id.detail_fragment, DetailFragment.getInstance(fileObjectType), file_path)
                     .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
+            viewModel.createNewFragmentTransaction = false;
         }
     }
 
@@ -2492,6 +2493,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                         FileObjectType fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
                         if (df != null && fileObjectType != null && fileObjectType == df.fileObjectType) {
                             if (!getLifecycle().getCurrentState().isAtLeast(androidx.lifecycle.Lifecycle.State.RESUMED)) {
+                                viewModel.createNewFragmentTransaction=true;
                                 return;
                             }
                             onbackpressed(false); // now safe
@@ -2634,8 +2636,4 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     }
-
-
-
-
 }
