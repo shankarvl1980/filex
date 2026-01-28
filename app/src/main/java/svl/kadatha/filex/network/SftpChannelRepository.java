@@ -14,6 +14,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import svl.kadatha.filex.FileObjectType;
+import svl.kadatha.filex.NavSessionStore;
 import timber.log.Timber;
 
 public class SftpChannelRepository {
@@ -203,6 +204,7 @@ public class SftpChannelRepository {
         NetworkAccountDetailsViewModel.SFTP_NETWORK_ACCOUNT_POJO = null;
         instance = null;
         NetworkAccountDetailsViewModel.clearNetworkFileObjectType(FileObjectType.SFTP_TYPE);
+        NavSessionStore.bump(FileObjectType.SFTP_TYPE);
     }
 
     public boolean testConnection(ChannelSftp channel) {

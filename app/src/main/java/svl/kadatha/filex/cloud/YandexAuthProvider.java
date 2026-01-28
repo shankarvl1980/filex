@@ -29,6 +29,7 @@ import okhttp3.Response;
 import svl.kadatha.filex.FileObjectType;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.MyExecutorService;
+import svl.kadatha.filex.NavSessionStore;
 
 public final class YandexAuthProvider implements CloudAuthProvider {
 
@@ -212,6 +213,7 @@ public final class YandexAuthProvider implements CloudAuthProvider {
     @Override
     public void logout(AuthCallback callback) {
         // local disconnect: just let app delete DB row and cached files
+        NavSessionStore.bump(FileObjectType.YANDEX_TYPE);
         if (callback != null) callback.onSuccess(null);
     }
 

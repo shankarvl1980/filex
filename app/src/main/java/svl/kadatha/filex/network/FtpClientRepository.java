@@ -18,6 +18,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import svl.kadatha.filex.FileObjectType;
+import svl.kadatha.filex.NavSessionStore;
 import timber.log.Timber;
 
 public class FtpClientRepository {
@@ -293,6 +294,7 @@ public class FtpClientRepository {
         NetworkAccountDetailsViewModel.FTP_NETWORK_ACCOUNT_POJO = null;
         instance = null;
         NetworkAccountDetailsViewModel.clearNetworkFileObjectType(FileObjectType.FTP_TYPE);
+        NavSessionStore.bump(FileObjectType.FTP_TYPE);
     }
 
     public boolean testConnection(FTPClient client) {

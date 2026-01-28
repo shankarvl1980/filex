@@ -1276,32 +1276,59 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     }
 
     public void createFragmentTransaction(String file_path, FileObjectType fileObjectType) {
-        String fragment_tag;
         String existingFilePOJOkey = "";
         DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
+        long existingSession = -1;
+
         if (df != null) {
-            fragment_tag = df.getTag();
+            String fragment_tag = df.getTag();
             existingFilePOJOkey = df.fileObjectType + fragment_tag;
-            action_mode_finish(df); //string provided to action_mode_finish method is file_path (which is clicked, not the existing file_path) to be created of fragemnttransaction
+            action_mode_finish(df);
+
+            Bundle ab = df.getArguments();
+            if (ab != null) existingSession = ab.getLong("NAV_SESSION", -1);
         }
 
+        long currentSession = NavSessionStore.current(fileObjectType);
+
+        DetailFragment dfNew = DetailFragment.getInstance(fileObjectType);
+        Bundle b = dfNew.getArguments();
+        b.putLong("NAV_SESSION", currentSession);
+        b.putString("FILE_PATH", file_path);
+
         if (file_path.equals(DetailFragment.SEARCH_RESULT)) {
-            fm.beginTransaction().replace(R.id.detail_fragment, DetailFragment.getInstance(fileObjectType), file_path)
-                    .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
+            fm.beginTransaction().replace(R.id.detail_fragment, dfNew, file_path)
+                    .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .commitAllowingStateLoss();
 
-        } else if (DetailFragment.TO_BE_MOVED_TO_FILE_POJO != null && !(fileObjectType + file_path).equals(existingFilePOJOkey)) {
-            fm.beginTransaction().replace(R.id.detail_fragment, DetailFragment.getInstance(fileObjectType), file_path)
-                    .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss(); //committing allowing state loss becuase it is committed after onsavedinstance
+        } else if (DetailFragment.TO_BE_MOVED_TO_FILE_POJO != null
+                && !(fileObjectType + file_path).equals(existingFilePOJOkey)) {
 
-        } else if (!(fileObjectType + file_path).equals(existingFilePOJOkey) || viewModel.createNewFragmentTransaction) {
-            fm.beginTransaction().replace(R.id.detail_fragment, DetailFragment.getInstance(fileObjectType), file_path)
-                    .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
-            viewModel.createNewFragmentTransaction = false;
+            fm.beginTransaction().replace(R.id.detail_fragment, dfNew, file_path)
+                    .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .commitAllowingStateLoss();
+
+        } else if (!(fileObjectType + file_path).equals(existingFilePOJOkey)
+                || existingSession != currentSession) {
+
+            fm.beginTransaction().replace(R.id.detail_fragment, dfNew, file_path)
+                    .addToBackStack(file_path).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .commitAllowingStateLoss();
+
         }
     }
 
+    private boolean isStale(DetailFragment df) {
+        if (df == null) return true;
+        if (df.fileObjectType == null) return true;
+        return df.navSession != NavSessionStore.current(df.fileObjectType);
+    }
+
+
     private void onbackpressed(boolean onBackPressed) {
         DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
+        if (df == null) { finish(); return; }
+
         boolean drawerOpen = drawerLayout.isDrawerOpen(drawer);
         if (drawerOpen) {
             drawerLayout.closeDrawer(drawer);
@@ -1317,6 +1344,7 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             df.viewModel.library_filter_path = null;
             df.adapter.getFilter().filter(null);
         } else {
+
             switch (viewModel.toolbar_shown) {
                 case "bottom":
                     bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
@@ -1329,38 +1357,61 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                     df.is_toolbar_visible = true;
                     break;
             }
-            int entry_count;
-            if ((entry_count = fm.getBackStackEntryCount()) > 1) {
-                fm.popBackStack();
-                int frag = 2;
-                df = (DetailFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count - frag).getName());
-                String df_tag = df.getTag();
-                while (!(df.fileObjectType == FileObjectType.FILE_TYPE && new File(df_tag).exists()) && !library_categories.contains(df_tag) && !df_tag.equals("Large Files")
-                        && !df_tag.equals("Duplicate Files") && df.currentUsbFile == null && !df_tag.equals(DetailFragment.SEARCH_RESULT)
-                        && !Global.WHETHER_FILE_OBJECT_TYPE_NETWORK_OR_CLOUD_TYPE_AND_CONTAINED_IN_STORAGE_DIR(df.fileObjectType)) {
-                    fm.popBackStack();
-                    ++frag;
-                    if (frag > entry_count) {
+
+            if (fm.getBackStackEntryCount() > 1) {
+
+                if (fm.isStateSaved()) return;
+                try { fm.popBackStackImmediate(); } catch (Throwable ignored) { return; }
+
+                while (fm.getBackStackEntryCount() > 1) {
+                    Fragment top = fm.findFragmentById(R.id.detail_fragment);
+                    if (!(top instanceof DetailFragment)) break;
+
+                    DetailFragment dfTop = (DetailFragment) top;
+                    String tag = dfTop.getTag();
+
+                    boolean exempt =
+                            (tag != null && library_categories != null && library_categories.contains(tag))
+                                    || "Large Files".equals(tag)
+                                    || "Duplicate Files".equals(tag)
+                                    || DetailFragment.SEARCH_RESULT.equals(tag);
+
+                    if (exempt) break;
+
+                    boolean missingDevicePath = dfTop.fileObjectType == FileObjectType.FILE_TYPE && (tag == null || !new File(tag).exists());
+
+                    boolean stale = isStale(dfTop);
+
+                    if (stale || missingDevicePath) {
+                        if (fm.isStateSaved()) break;
+                        try {
+                            if (!fm.popBackStackImmediate()) break;
+                        } catch (Throwable ignored) {
+                            break;
+                        }
+                    } else {
                         break;
                     }
-                    df = (DetailFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count - frag).getName());
-                    df_tag = df.getTag();
                 }
+
                 countBackPressed = 0;
-            } else {
-                if (onBackPressed) {
-                    countBackPressed++;
-                    if (countBackPressed == 1) {
-                        Global.print(context, getString(R.string.press_again_to_close_activity));
-                    } else {
-                        finish();
-                    }
+                return;
+            }
+
+            // exit logic...
+            if (onBackPressed) {
+                countBackPressed++;
+                if (countBackPressed == 1) {
+                    Global.print(context, getString(R.string.press_again_to_close_activity));
                 } else {
-                    Global.print(context, getString(R.string.click_exit_button_to_exit));
+                    finish();
                 }
+            } else {
+                Global.print(context, getString(R.string.click_exit_button_to_exit));
             }
         }
     }
+
 
     @Override
     protected void onPause() {
@@ -2503,7 +2554,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
                         FileObjectType fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
                         if (df != null && fileObjectType != null && fileObjectType == df.fileObjectType) {
                             if (!getLifecycle().getCurrentState().isAtLeast(androidx.lifecycle.Lifecycle.State.RESUMED)) {
-                                viewModel.createNewFragmentTransaction=true;
                                 return;
                             }
                             onbackpressed(false); // now safe

@@ -703,43 +703,80 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         context.unregisterReceiver(mediaMountReceiver);
     }
 
+    private boolean isStale(FileSelectorFragment fileSelectorFragment) {
+        if (fileSelectorFragment == null) return true;
+        if (fileSelectorFragment.fileObjectType == null) return true;
+        return fileSelectorFragment.navSession != NavSessionStore.current(fileSelectorFragment.fileObjectType);
+    }
+
     private void onbackpressed(boolean onBackPressed) {
         if (keyBoardUtil.getKeyBoardVisibility()) {
             imm.hideSoftInputFromWindow(search_edittext.getWindowToken(), 0);
-        } else if (search_toolbar_visible) {
-            setSearchBarVisibility(false);
-        } else {
-            if (fm.getBackStackEntryCount() > 1) {
-                fm.popBackStack();
-                int frag = 2, entry_count = fm.getBackStackEntryCount();
-                FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count - frag).getName());
-                String tag = fileSelectorFragment.getTag();
+            return;
+        }
 
-                while (tag != null && !(fileSelectorFragment.fileObjectType == FileObjectType.FILE_TYPE && new File(tag).exists()) && fileSelectorFragment.currentUsbFile == null
-                        && !Global.WHETHER_FILE_OBJECT_TYPE_NETWORK_OR_CLOUD_TYPE_AND_CONTAINED_IN_STORAGE_DIR(fileSelectorFragment.fileObjectType)) {
-                    fm.popBackStack();
-                    ++frag;
-                    if (frag > entry_count) {
+        if (search_toolbar_visible) {
+            setSearchBarVisibility(false);
+            return;
+        }
+
+        if (fm.getBackStackEntryCount() > 1) {
+
+            // If not safe to pop now, do nothing (no defer)
+            if (fm.isStateSaved()) return;
+
+            try {
+                fm.popBackStackImmediate();   // normal back step
+            } catch (Throwable ignored) {
+                return;
+            }
+
+            while (fm.getBackStackEntryCount() > 1) {
+
+                Fragment top = fm.findFragmentById(R.id.file_selector_container);
+                if (!(top instanceof FileSelectorFragment)) break;
+
+                FileSelectorFragment fsfTop = (FileSelectorFragment) top;
+                String tag = fsfTop.getTag();
+
+                // Missing device path (FILE_TYPE) -> pop
+                boolean missingDevicePath = fsfTop.fileObjectType == FileObjectType.FILE_TYPE && (tag == null || !new File(tag).exists());
+
+                // Stale based on NAV_SESSION mismatch
+                boolean stale = isStale(fsfTop);
+
+                // If stale or invalid -> pop and continue
+                if (stale || missingDevicePath) {
+                    if (fm.isStateSaved()) break;
+                    try {
+                        if (!fm.popBackStackImmediate()) break;
+                    } catch (Throwable ignored) {
                         break;
                     }
-                    fileSelectorFragment = (FileSelectorFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count - frag).getName());
-                    tag = fileSelectorFragment.getTag();
+                    continue;
                 }
-                countBackPressed = 0;
-            } else {
-                if (onBackPressed) {
-                    countBackPressed++;
-                    if (countBackPressed == 1) {
-                        Global.print(context, getString(R.string.press_again_to_close_activity));
-                    } else {
-                        finish();
-                    }
-                } else {
-                    Global.print(context, getString(R.string.click_OK_cancel_button_to_exit));
-                }
+
+                // Top is valid + not stale -> stop
+                break;
             }
+
+            countBackPressed = 0;
+            return;
+        }
+
+        // Exit logic
+        if (onBackPressed) {
+            countBackPressed++;
+            if (countBackPressed == 1) {
+                Global.print(context, getString(R.string.press_again_to_close_activity));
+            } else {
+                finish();
+            }
+        } else {
+            Global.print(context, getString(R.string.click_OK_cancel_button_to_exit));
         }
     }
+
 
     public List<FilePOJO> getFilePOJO_list() {
         List<FilePOJO> filePOJOS = new ArrayList<>();
@@ -756,23 +793,39 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
     }
 
     public void createFragmentTransaction(String file_path, FileObjectType fileObjectType) {
-        String fragment_tag;
         String existingFilePOJOkey = "";
+        long existingSession = -1;
 
-        FileSelectorFragment fileSelectorFragment = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
-        if (fileSelectorFragment != null) {
-            fragment_tag = fileSelectorFragment.getTag();
-            existingFilePOJOkey = fileSelectorFragment.fileObjectType + fragment_tag;
+        FileSelectorFragment fsf = (FileSelectorFragment) fm.findFragmentById(R.id.file_selector_container);
+        if (fsf != null) {
+            String fragment_tag = fsf.getTag(); // still path
+            existingFilePOJOkey = fsf.fileObjectType + fragment_tag;
             setSearchBarVisibility(false);
+
+            Bundle ab = fsf.getArguments();
+            if (ab != null) existingSession = ab.getLong("NAV_SESSION", -1);
         }
 
-        if (!(fileObjectType + file_path).equals(existingFilePOJOkey) || fileSelectorActivityViewModel.createNewFragmentTransaction) {
-            FileSelectorFragment ff = FileSelectorFragment.getInstance(fileObjectType, action_sought_request_code);
-            fm.beginTransaction().replace(R.id.file_selector_container, ff, file_path).addToBackStack(file_path)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
-            fileSelectorActivityViewModel.createNewFragmentTransaction = false;
+        long currentSession = NavSessionStore.current(fileObjectType);
+
+        if (!(fileObjectType + file_path).equals(existingFilePOJOkey) || existingSession != currentSession) {
+            FileSelectorFragment fsfNew =
+                    FileSelectorFragment.getInstance(fileObjectType, action_sought_request_code);
+
+            Bundle b = fsfNew.getArguments();
+            if (b == null) b = new Bundle(); // defensive, in case getInstance didn't set args
+            b.putLong("NAV_SESSION", currentSession);
+            b.putString("FILE_PATH", file_path);
+            fsfNew.setArguments(b);
+
+            fm.beginTransaction()
+                    .replace(R.id.file_selector_container, fsfNew, file_path)  // tag stays path
+                    .addToBackStack(file_path)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .commitAllowingStateLoss();
         }
     }
+
 
     @Override
     public void onMediaMount(String action) {
@@ -1075,7 +1128,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
                         FileObjectType fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
                         if (fileSelectorFragment != null && fileObjectType != null && fileObjectType == fileSelectorFragment.fileObjectType) {
                             if (!getLifecycle().getCurrentState().isAtLeast(androidx.lifecycle.Lifecycle.State.RESUMED)) {
-                                fileSelectorActivityViewModel.createNewFragmentTransaction=true;
                                 return;
                             }
                             onbackpressed(false); // now safe

@@ -31,6 +31,7 @@ import okhttp3.Response;
 import svl.kadatha.filex.FileObjectType;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.MyExecutorService;
+import svl.kadatha.filex.NavSessionStore;
 
 public final class GoogleDriveAuthProvider implements CloudAuthProvider {
 
@@ -212,6 +213,7 @@ public final class GoogleDriveAuthProvider implements CloudAuthProvider {
     @Override
     public void logout(AuthCallback callback) {
         cloudAccount = null;
+        NavSessionStore.bump(FileObjectType.GOOGLE_DRIVE_TYPE);
         if (callback != null) callback.onSuccess(null);
     }
 

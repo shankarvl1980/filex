@@ -458,7 +458,7 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
             SMB_NETWORK_ACCOUNT_POJO = networkAccountPOJO;
             NetworkAccountDetailsViewModel.this.networkAccountPOJO = networkAccountPOJO;
 
-            // ✅ New "connection test": can we acquire a share + do a minimal operation?
+            //  New "connection test": can we acquire a share + do a minimal operation?
             h = smbClientRepository.acquireShare();
             // If acquireShare() returns, we are connected enough.
             // Optionally do a tiny probe (this will throw if dead):
@@ -607,10 +607,8 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                         if (!isPojoConnected(pojo)) continue;
 
                         if (NetworkAccountsDetailsDialog.FTP.equals(pojo.type)) wantFtp = true;
-                        else if (NetworkAccountsDetailsDialog.SFTP.equals(pojo.type))
-                            wantSftp = true;
-                        else if (NetworkAccountsDetailsDialog.WebDAV.equals(pojo.type))
-                            wantWebdav = true;
+                        else if (NetworkAccountsDetailsDialog.SFTP.equals(pojo.type)) wantSftp = true;
+                        else if (NetworkAccountsDetailsDialog.WebDAV.equals(pojo.type)) wantWebdav = true;
                         else if (NetworkAccountsDetailsDialog.SMB.equals(pojo.type)) wantSmb = true;
                     }
                 }

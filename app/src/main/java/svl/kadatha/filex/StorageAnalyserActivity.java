@@ -701,59 +701,106 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
         listPopWindow.dismiss(); // to avoid memory leak on orientation change
     }
 
+    private boolean isStale(StorageAnalyserFragment storageAnalyserFragment) {
+        if (storageAnalyserFragment == null) return true;
+        if (storageAnalyserFragment.fileObjectType == null) return true;
+        return storageAnalyserFragment.navSession != NavSessionStore.current(storageAnalyserFragment.fileObjectType);
+    }
     private void onbackpressed(boolean onBackPressed) {
-        StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+
+        StorageAnalyserFragment saf =
+                (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+
+        if (saf == null) { finish(); return; }
+
         if (keyBoardUtil.getKeyBoardVisibility()) {
             imm.hideSoftInputFromWindow(search_edittext.getWindowToken(), 0);
-        } else if (!storageAnalyserFragment.viewModel.mselecteditems.isEmpty()) {
-            DeselectAllAndAdjustToolbars(storageAnalyserFragment);
-        } else if (search_toolbar_visible) {
+            return;
+        }
+
+        if (saf.viewModel != null && !saf.viewModel.mselecteditems.isEmpty()) {
+            DeselectAllAndAdjustToolbars(saf);
+            return;
+        }
+
+        if (search_toolbar_visible) {
             setSearchBarVisibility(false);
-        } else {
-            switch (toolbar_shown) {
-                case "bottom":
-                    bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-                    bottom_toolbar.setVisibility(View.VISIBLE);
-                    storageAnalyserFragment.is_toolbar_visible = true;
-                    break;
-                case "action_mode":
-                    actionmode_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
-                    actionmode_toolbar.setVisibility(View.VISIBLE);
-                    storageAnalyserFragment.is_toolbar_visible = true;
-                    break;
+            return;
+        }
+
+        switch (toolbar_shown) {
+            case "bottom":
+                bottom_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+                bottom_toolbar.setVisibility(View.VISIBLE);
+                saf.is_toolbar_visible = true;
+                break;
+            case "action_mode":
+                actionmode_toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(1));
+                actionmode_toolbar.setVisibility(View.VISIBLE);
+                saf.is_toolbar_visible = true;
+                break;
+        }
+
+        if (fm.getBackStackEntryCount() > 1) {
+
+            // If not safe to pop now, do nothing (no defer)
+            if (fm.isStateSaved()) return;
+
+            try {
+                fm.popBackStackImmediate(); // normal back step
+            } catch (Throwable ignored) {
+                return;
             }
 
-            if (fm.getBackStackEntryCount() > 1) {
-                fm.popBackStack();
-                int frag = 2, entry_count = fm.getBackStackEntryCount();
-                storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count - frag).getName());
-                String tag = storageAnalyserFragment.getTag();
+            while (fm.getBackStackEntryCount() > 1) {
 
-                while (tag != null && !new File(tag).exists() && !tag.equals("Large Files") && !tag.equals("Duplicate Files") && storageAnalyserFragment.currentUsbFile == null) {
-                    fm.popBackStack();
-                    ++frag;
-                    if (frag > entry_count) {
+                Fragment top = fm.findFragmentById(R.id.storage_analyser_container);
+                if (!(top instanceof StorageAnalyserFragment)) break;
+
+                StorageAnalyserFragment topFrag = (StorageAnalyserFragment) top;
+                String tag = topFrag.getTag();
+
+                // Exempt screens: never auto-pop even if stale
+                boolean exempt = "Large Files".equals(tag) || "Duplicate Files".equals(tag);
+
+                if (exempt) break;
+
+                // Missing path -> invalid (for storage analyser you were checking plain File.exists)
+                boolean missingPath = (tag == null || !new File(tag).exists());
+
+                // Stale based on NAV_SESSION mismatch
+                boolean stale = isStale(topFrag);
+
+                // Pop if stale OR missing path (but not exempt)
+                if (stale || missingPath) {
+                    if (fm.isStateSaved()) break;
+                    try {
+                        if (!fm.popBackStackImmediate()) break;
+                    } catch (Throwable ignored) {
                         break;
                     }
-                    storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentByTag(fm.getBackStackEntryAt(entry_count - frag).getName());
-                    tag = storageAnalyserFragment.getTag();
+                    continue;
                 }
-                countBackPressed = 0;
-
-            } else {
-                if (onBackPressed) {
-                    countBackPressed++;
-                    if (countBackPressed == 1) {
-                        Global.print(context, getString(R.string.press_again_to_close_activity));
-                    } else {
-                        finish();
-                    }
-                } else {
-                    Global.print(context, context.getString(R.string.click_close_button_to_exit));
-                }
+                break; // valid + not stale
             }
+
+            countBackPressed = 0;
+            return;
+        }
+
+        // Exit logic
+        if (onBackPressed) {
+            countBackPressed++;
+            if (countBackPressed == 1) {
+                Global.print(context, getString(R.string.press_again_to_close_activity));
+            } else {
+                finish();
+            }
+        } else {
+            Global.print(context, context.getString(R.string.click_close_button_to_exit));
         }
     }
+
 
     public List<FilePOJO> getFilePOJO_list() {
         List<FilePOJO> filePOJOS = new ArrayList<>();
@@ -766,20 +813,39 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
     }
 
     public void createFragmentTransaction(String file_path, FileObjectType fileObjectType) {
-        String fragment_tag;
         String existingFilePOJOkey = "";
-        StorageAnalyserFragment storageAnalyserFragment = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
-        if (storageAnalyserFragment != null) {
-            fragment_tag = storageAnalyserFragment.getTag();
-            existingFilePOJOkey = storageAnalyserFragment.fileObjectType + fragment_tag;
-            DeselectAllAndAdjustToolbars(storageAnalyserFragment);
+        long existingSession = -1;
+
+        StorageAnalyserFragment saf =
+                (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+
+        if (saf != null) {
+            String fragment_tag = saf.getTag(); // still path
+            existingFilePOJOkey = saf.fileObjectType + fragment_tag;
+            DeselectAllAndAdjustToolbars(saf);
+
+            Bundle ab = saf.getArguments();
+            if (ab != null) existingSession = ab.getLong("NAV_SESSION", -1);
         }
 
-        if (!(fileObjectType + file_path).equals(existingFilePOJOkey)) {
-            fm.beginTransaction().replace(R.id.storage_analyser_container, StorageAnalyserFragment.getInstance(fileObjectType), file_path).addToBackStack(file_path)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commitAllowingStateLoss();
+        long currentSession = NavSessionStore.current(fileObjectType);
+
+        if (!(fileObjectType + file_path).equals(existingFilePOJOkey) || existingSession != currentSession) {
+            StorageAnalyserFragment safNew = StorageAnalyserFragment.getInstance(fileObjectType);
+            Bundle b = safNew.getArguments();
+            if (b == null) b = new Bundle(); // defensive
+            b.putLong("NAV_SESSION", currentSession);
+            b.putString("FILE_PATH", file_path);
+            safNew.setArguments(b);
+
+            fm.beginTransaction()
+                    .replace(R.id.storage_analyser_container, safNew, file_path) // tag stays path
+                    .addToBackStack(file_path)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .commitAllowingStateLoss();
         }
     }
+
 
     public void DeselectAllAndAdjustToolbars(StorageAnalyserFragment sad) {
         bottom_toolbar.setVisibility(View.VISIBLE);

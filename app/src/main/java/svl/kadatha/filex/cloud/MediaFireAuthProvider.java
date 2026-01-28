@@ -24,6 +24,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import svl.kadatha.filex.FileObjectType;
 import svl.kadatha.filex.Global;
+import svl.kadatha.filex.NavSessionStore;
 
 public final class MediaFireAuthProvider implements CloudAuthProvider {
 
@@ -236,6 +237,7 @@ public final class MediaFireAuthProvider implements CloudAuthProvider {
         // You said “local disconnect”: DB delete + cache clear is enough.
         // Cookie clear is optional.
         clearCookies();
+        NavSessionStore.bump(FileObjectType.MEDIA_FIRE_TYPE);
         if (callback != null) callback.onSuccess(null);
     }
 

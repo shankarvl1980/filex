@@ -33,6 +33,7 @@ import okhttp3.Response;
 import svl.kadatha.filex.FileObjectType;
 import svl.kadatha.filex.Global;
 import svl.kadatha.filex.MyExecutorService;
+import svl.kadatha.filex.NavSessionStore;
 
 public final class DropboxAuthProvider implements CloudAuthProvider {
 
@@ -226,6 +227,7 @@ public final class DropboxAuthProvider implements CloudAuthProvider {
     public void logout(AuthCallback callback) {
         // For “local disconnect”, you don’t need to revoke. Just clear in-memory.
         cloudAccount = null;
+        NavSessionStore.bump(FileObjectType.DROP_BOX_TYPE);
         if (callback != null) callback.onSuccess(null);
     }
 

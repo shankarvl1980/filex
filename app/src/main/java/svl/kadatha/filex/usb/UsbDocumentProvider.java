@@ -33,7 +33,9 @@ import me.jahnen.libaums.core.fs.UsbFile;
 import me.jahnen.libaums.core.fs.UsbFileInputStream;
 import me.jahnen.libaums.core.fs.UsbFileOutputStream;
 import me.jahnen.libaums.core.partition.Partition;
+import svl.kadatha.filex.FileObjectType;
 import svl.kadatha.filex.Global;
+import svl.kadatha.filex.NavSessionStore;
 import svl.kadatha.filex.ParcelFileDescriptorUtil;
 import svl.kadatha.filex.R;
 import svl.kadatha.filex.TinyDB;
@@ -346,7 +348,7 @@ public class UsbDocumentProvider extends DocumentsProvider {
     // -----------------------------
     private void detachDevice(UsbDevice usbDevice) {
         Timber.tag(TAG).d("detachDevice() %s", usbDevice);
-
+        NavSessionStore.bump(FileObjectType.USB_TYPE);
         ArrayList<String> keysToRemove = new ArrayList<>();
         for (Map.Entry<String, UsbPartition> entry : mRoots.entrySet()) {
             UsbPartition part = entry.getValue();

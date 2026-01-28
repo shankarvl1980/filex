@@ -99,6 +99,8 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
     private Context context;
     private FileModifyObserver fileModifyObserver;
     private FilePOJO clicked_filepojo;
+    public long navSession;
+
 
     public static DetailFragment getInstance(FileObjectType fileObjectType) {
         DetailFragment df = new DetailFragment();
@@ -132,6 +134,7 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
         Bundle bundle = getArguments();
         fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
         fileclickselected = getTag();
+        navSession = bundle.getLong("NAV_SESSION", -1);
         if (fileObjectType == FileObjectType.ROOT_TYPE) {
             if (FileUtil.isFromInternal(FileObjectType.FILE_TYPE, fileclickselected) || FileUtil.isFilePathFromExternalStorage(FileObjectType.FILE_TYPE, fileclickselected)) {
                 fileObjectType = FileObjectType.FILE_TYPE;

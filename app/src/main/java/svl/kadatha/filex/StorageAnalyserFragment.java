@@ -57,6 +57,8 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
     private FileModifyObserver fileModifyObserver;
     private Uri tree_uri;
     private String tree_uri_path = "";
+    public long navSession;
+
 
     public static StorageAnalyserFragment getInstance(FileObjectType fileObjectType) {
         StorageAnalyserFragment storageAnalyserFragment = new StorageAnalyserFragment();
@@ -94,6 +96,7 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
         Bundle bundle = getArguments();
         if (bundle != null) {
             fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
+            navSession = bundle.getLong("NAV_SESSION", -1);
         }
 
         if (fileObjectType == FileObjectType.ROOT_TYPE) {

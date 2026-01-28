@@ -53,6 +53,8 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
     private Uri tree_uri;
     private String tree_uri_path = "";
     private int action_sought_request_code;
+    public long navSession;
+
 
     public static FileSelectorFragment getInstance(FileObjectType fileObjectType, int action_sought_request_code) {
         FileSelectorFragment fileSelectorFragment = new FileSelectorFragment();
@@ -90,6 +92,7 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
         if (bundle != null) {
             fileObjectType = (FileObjectType) bundle.getSerializable("fileObjectType");
             action_sought_request_code = bundle.getInt("action_sought_request_code", 0);
+            navSession = bundle.getLong("NAV_SESSION", -1);
         }
 
         if (fileObjectType == FileObjectType.ROOT_TYPE) {

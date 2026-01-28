@@ -13,6 +13,7 @@ import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import svl.kadatha.filex.FileObjectType;
+import svl.kadatha.filex.NavSessionStore;
 import timber.log.Timber;
 
 public class WebDavClientRepository {
@@ -147,6 +148,7 @@ public class WebDavClientRepository {
         NetworkAccountDetailsViewModel.WEBDAV_NETWORK_ACCOUNT_POJO = null;
         instance = null;
         NetworkAccountDetailsViewModel.clearNetworkFileObjectType(FileObjectType.WEBDAV_TYPE);
+        NavSessionStore.bump(FileObjectType.WEBDAV_TYPE);
     }
 
     public Sardine getSardine() {

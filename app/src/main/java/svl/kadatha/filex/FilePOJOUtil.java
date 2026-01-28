@@ -531,7 +531,6 @@ public class FilePOJOUtil {
                                     UsbFile f = file_array[i];
                                     try {
                                         FilePOJO filePOJO = MakeFilePOJOUtil.MAKE_FilePOJO(f, true);
-                                        // original code added all USB entries to filtered
                                         filePOJOS_filtered.add(filePOJO);
                                         filePOJOS.add(filePOJO);
                                     } catch (Exception itemEx) {
@@ -701,9 +700,7 @@ public class FilePOJOUtil {
                             try {
                                 String name = meta.getName();
                                 String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
-
                                 FilePOJO filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO(meta, false, fileObjectType, path);
-
                                 if (filePOJO != null) {
                                     filePOJOS_filtered.add(filePOJO);
                                     filePOJOS.add(filePOJO);
@@ -751,7 +748,6 @@ public class FilePOJOUtil {
                                     try {
                                         String name = item.name;
                                         String path = Global.CONCATENATE_PARENT_CHILD_PATH(fileclickselected, name);
-
                                         FilePOJO filePOJO = MakeCloudFilePOJOUtil.MAKE_FilePOJO(item, false, fileObjectType, path);
 
                                         if (filePOJO != null) {
@@ -770,7 +766,6 @@ public class FilePOJOUtil {
                 } catch (Exception e) {
                     Timber.tag(Global.TAG).w(e, "YANDEX_TYPE listing failed: %s", fileclickselected);
                 }
-
 
 //            } else if (fileObjectType == FileObjectType.ONE_DRIVE_TYPE) {
 //                try {

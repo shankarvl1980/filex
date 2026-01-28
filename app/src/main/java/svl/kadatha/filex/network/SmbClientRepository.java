@@ -19,6 +19,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
 import svl.kadatha.filex.FileObjectType;
+import svl.kadatha.filex.NavSessionStore;
 import timber.log.Timber;
 
 public class SmbClientRepository {
@@ -207,6 +208,7 @@ public class SmbClientRepository {
         }
         instance = null;
         NetworkAccountDetailsViewModel.clearNetworkFileObjectType(FileObjectType.SMB_TYPE);
+        NavSessionStore.bump(FileObjectType.SMB_TYPE);
     }
 
     private void ensureShareNameValid() throws IOException {
