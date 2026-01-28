@@ -392,38 +392,84 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
     public synchronized void authenticate() {
         if (cloudAccountConnectionAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED)
             return;
+
         ensureType();
+
         if (authProvider == null)
             throw new IllegalStateException("authProvider not set before authenticate()");
 
         cloudAccountConnectionAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         connected = false;
 
+        final CloudAccountPOJO active = getActiveForType(fileObjectType);
         ExecutorService executorService = MyExecutorService.getExecutorService();
-        future3 = executorService.submit(() -> {
-            authProvider.authenticate(new CloudAuthProvider.AuthCallback() {
-                @Override
-                public void onSuccess(CloudAccountPOJO account) {
-                    long l = cloudAccountsDatabaseHelper.updateOrInsert(account.type, account.userId, account);
-                    if (l != -1) {
-                        cloudAccount = account;
-                        setActive(fileObjectType, account);
-                        onCloudConnection();
-                        connected = true;
-                    } else {
-                        connected = false;
+
+        future3 = executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+
+                // -------- Helper: do actual authentication --------
+                final Runnable doAuth = new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            authProvider.authenticate(new CloudAuthProvider.AuthCallback() {
+                                @Override
+                                public void onSuccess(CloudAccountPOJO account) {
+                                    long l = cloudAccountsDatabaseHelper.updateOrInsert(account.type, account.userId, account);
+                                    if (l != -1) {
+                                        cloudAccount = account;
+                                        setActive(fileObjectType, account);
+                                        onCloudConnection();
+                                        connected = true;
+                                    } else {
+                                        connected = false;
+                                    }
+                                    cloudAccountConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+                                }
+
+                                @Override
+                                public void onError(Exception e) {
+                                    connected = false;
+                                    cloudAccountConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+                                }
+                            });
+                        } catch (Throwable t) {
+                            connected = false;
+                            cloudAccountConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+                        }
                     }
-                    cloudAccountConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+                };
+
+                // -------- Case 1: no active account → authenticate directly --------
+                if (active == null) {
+                    doAuth.run();
+                    return;
                 }
 
-                @Override
-                public void onError(Exception e) {
-                    connected = false;
-                    cloudAccountConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
+                // -------- Case 2: active exists → logout first --------
+                try {
+                    authProvider.logout(new CloudAuthProvider.AuthCallback() {
+                        @Override
+                        public void onSuccess(CloudAccountPOJO ignored) {
+                            clearAfterDisconnect(fileObjectType);
+                            doAuth.run();
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            clearAfterDisconnect(fileObjectType);
+                            doAuth.run();
+                        }
+                    });
+                } catch (Throwable t) {
+                    clearAfterDisconnect(fileObjectType);
+                    doAuth.run();
                 }
-            });
+            }
         });
     }
+
 
     public synchronized void populateStorageDir(FileObjectType type, CloudAccountPOJO account) {
         if (cloudAccountStorageDirFillAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED)
