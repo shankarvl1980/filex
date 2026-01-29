@@ -35,3 +35,36 @@
 -dontwarn org.ietf.jgss.GSSManager
 -dontwarn org.ietf.jgss.GSSName
 -dontwarn org.ietf.jgss.Oid
+
+
+# Keep annotations + generic signature (needed for Gson + collections)
+-keepattributes Signature, *Annotation*
+
+# Keep Gson internal stuff (optional; safe)
+-keep class com.google.gson.** { *; }
+
+# ---- Keep ONLY DTO fields Gson reads via reflection ----
+
+# GoogleDriveFileModel DTOs
+-keepclassmembers class svl.kadatha.filex.filemodel.GoogleDriveFileModel$GoogleDriveFileMetadata {
+    <fields>;
+}
+-keepclassmembers class svl.kadatha.filex.filemodel.GoogleDriveFileModel$DriveFilesListResponse {
+    <fields>;
+}
+
+# SubFileCountUtil DTOs
+-keepclassmembers class svl.kadatha.filex.SubFileCountUtil$YandexTotalResponse {
+    <fields>;
+}
+-keepclassmembers class svl.kadatha.filex.SubFileCountUtil$YandexEmbedded {
+    <fields>;
+}
+
+# FileCountSize DTOs
+-keepclassmembers class svl.kadatha.filex.FileCountSize$DriveFileMeta {
+    <fields>;
+}
+-keepclassmembers class svl.kadatha.filex.FileCountSize$DriveListResponse {
+    <fields>;
+}

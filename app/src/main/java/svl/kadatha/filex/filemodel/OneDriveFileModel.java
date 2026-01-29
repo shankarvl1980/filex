@@ -489,10 +489,22 @@
 //                                      long[] bytesRead) {
 //
 //        if (bytesRead != null && bytesRead.length > 0) bytesRead[0] = 0;
-//        if (!isDirectory()) return false;
 //
-//        if (contentLengthOrMinus1 <= 0) {
-//            Timber.tag(TAG).e("putChildFromStream requires known content length for OneDrive.");
+//        // If destination isn't a folder, do not leak the stream
+//        if (!isDirectory()) {
+//            try { in.close(); } catch (Exception ignored) {}
+//            return false;
+//        }
+//
+//        // ✅ 0-byte file: create empty file and return
+//        if (contentLengthOrMinus1 == 0) {
+//            try { in.close(); } catch (Exception ignored) {}
+//            return createFile(childName);
+//        }
+//
+//        // OneDrive upload session needs known positive length
+//        if (contentLengthOrMinus1 < 0) {
+//            try { in.close(); } catch (Exception ignored) {}
 //            return false;
 //        }
 //

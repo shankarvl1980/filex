@@ -273,6 +273,7 @@ public final class MediaFireAuthProvider implements CloudAuthProvider {
     }
 
     private static final class MediaFireTokenResponse {
+        @SerializedName("response")
         ResponseData response;
 
         static final class ResponseData {

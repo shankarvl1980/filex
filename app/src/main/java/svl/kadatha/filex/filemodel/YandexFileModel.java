@@ -335,9 +335,42 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
     public boolean createFile(String name) {
         if (!isDirectory()) return false;
 
-        // create empty file via upload link + empty PUT
-        return putChildFromStream(name, new ByteArrayInputStream(new byte[0]), 0, null);
+        // Do not call putChildFromStream() here to avoid recursion in future.
+        final String childPath = "/".equals(path) ? ("/" + name) : (path + "/" + name);
+
+        HttpUrl uUrl = HttpUrl.parse(UPLOAD_URL)
+                .newBuilder()
+                .addQueryParameter("path", childPath)
+                .addQueryParameter("overwrite", "true")
+                .build();
+
+        Request uReq = new Request.Builder()
+                .url(uUrl)
+                .header("Authorization", "OAuth " + accessToken)
+                .get()
+                .build();
+
+        try (Response uRes = client.newCall(uReq).execute()) {
+            if (!uRes.isSuccessful() || uRes.body() == null) return false;
+
+            MakeCloudFilePOJOUtil.YandexUploadResponse upl =
+                    gson.fromJson(uRes.body().charStream(), MakeCloudFilePOJOUtil.YandexUploadResponse.class);
+
+            if (upl == null || upl.href == null) return false;
+
+            Request putReq = new Request.Builder()
+                    .url(upl.href)
+                    .put(RequestBody.create(new byte[0], null))
+                    .build();
+
+            try (Response putRes = client.newCall(putReq).execute()) {
+                return putRes.isSuccessful();
+            }
+        } catch (IOException e) {
+            return false;
+        }
     }
+
 
     @Override
     public boolean makeDirIfNotExists(String dir_name) {
@@ -460,6 +493,7 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
                                       @NonNull InputStream in,
                                       long contentLengthOrMinus1,
                                       long[] bytesRead) {
+
         if (bytesRead != null && bytesRead.length > 0) bytesRead[0] = 0;
         if (!isDirectory()) return false;
 
@@ -469,7 +503,7 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
         HttpUrl uUrl = HttpUrl.parse(UPLOAD_URL)
                 .newBuilder()
                 .addQueryParameter("path", childPath)
-                .addQueryParameter("overwrite", "true") // match FileX behavior (copy should overwrite)
+                .addQueryParameter("overwrite", "true")
                 .build();
 
         Request uReq = new Request.Builder()
@@ -481,18 +515,21 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
         try (Response uRes = client.newCall(uReq).execute()) {
             if (!uRes.isSuccessful() || uRes.body() == null) {
                 Timber.tag(TAG).e("get upload href failed: %d %s", uRes.code(), uRes.message());
+                try { in.close(); } catch (Exception ignored) {}
                 return false;
             }
 
             MakeCloudFilePOJOUtil.YandexUploadResponse upl =
                     gson.fromJson(uRes.body().charStream(), MakeCloudFilePOJOUtil.YandexUploadResponse.class);
 
-            if (upl == null || upl.href == null) {
+            if (upl == null || upl.href == null || upl.href.trim().isEmpty()) {
                 Timber.tag(TAG).e("upload href missing");
+                try { in.close(); } catch (Exception ignored) {}
                 return false;
             }
 
-            // 2) PUT streaming body to href
+            final long len = (contentLengthOrMinus1 >= 0) ? contentLengthOrMinus1 : -1;
+
             RequestBody body = new RequestBody() {
                 @Override
                 public MediaType contentType() {
@@ -501,7 +538,8 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
 
                 @Override
                 public long contentLength() {
-                    return (contentLengthOrMinus1 > 0) ? contentLengthOrMinus1 : -1;
+                    // 0-byte => returns 0 (valid); -1 => chunked
+                    return len;
                 }
 
                 @Override
@@ -510,14 +548,11 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
                     int n;
                     long total = 0;
 
-                    try (InputStream input = in) {
-                        while ((n = input.read(buf)) != -1) {
-                            sink.write(buf, 0, n);
-                            total += n;
-                            if (bytesRead != null && bytesRead.length > 0) {
-                                bytesRead[0] = total;
-                            }
-                        }
+                    // IMPORTANT: do NOT close `in` here
+                    while ((n = in.read(buf)) != -1) {
+                        sink.write(buf, 0, n);
+                        total += n;
+                        if (bytesRead != null && bytesRead.length > 0) bytesRead[0] = total;
                     }
                 }
             };
@@ -532,15 +567,15 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
                     Timber.tag(TAG).e("upload PUT failed: %d %s", putRes.code(), putRes.message());
                     return false;
                 }
+            } finally {
+                // Upload owns the stream: close after request completes
+                try { in.close(); } catch (Exception ignored) {}
             }
 
-            // 3) refresh metadata best-effort (Yandex can be async sometimes)
-            try {
-                this.metadata = fetchMetadata(childPath);
-            } catch (Exception ignored) {
-            }
+            // refresh metadata best-effort
+            try { this.metadata = fetchMetadata(childPath); } catch (Exception ignored) {}
 
-            // strict length check if known
+            // strict length check if known and >0 (0-byte is fine)
             if (contentLengthOrMinus1 > 0 && bytesRead != null && bytesRead.length > 0) {
                 if (bytesRead[0] != contentLengthOrMinus1) return false;
             }
@@ -549,7 +584,9 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
 
         } catch (IOException e) {
             Timber.tag(TAG).e(e, "putChildFromStream failed");
+            try { in.close(); } catch (Exception ignored) {}
             return false;
         }
     }
+
 }

@@ -3,6 +3,7 @@ package svl.kadatha.filex;
 import android.os.Build;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
 import com.hierynomus.smbj.share.DiskShare;
 import com.jcraft.jsch.ChannelSftp;
@@ -322,6 +323,7 @@ public final class SubFileCountUtil {
     }
 
     private static final class YandexTotalResponse {
+        @SerializedName("_embedded")
         YandexEmbedded _embedded;
     }
 
@@ -379,7 +381,7 @@ public final class SubFileCountUtil {
 //    }
 
     private static final class YandexEmbedded {
+        @SerializedName("total")
         int total;
     }
 }
-

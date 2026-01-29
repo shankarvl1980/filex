@@ -183,18 +183,31 @@ public final class FileUtil {
         OutputStream outputStream = null;
 
         try {
+            long len = sourceFile.length(); // 0 is VALID
             fileInputStream = new FileInputStream(sourceFile);
 
+            // STREAM UPLOAD fast-path (WebDAV / Drive / Dropbox / Yandex / etc)
             if (destFileModel instanceof StreamUploadFileModel) {
-                long len = sourceFile.length();
+
+                // ✅ 0-byte file: do not stream-upload; create empty file directly
+                if (len == 0) {
+                    try { fileInputStream.close(); } catch (Exception ignored) {}
+                    boolean ok = destFileModel.createFile(child_name);
+                    if (ok && cut) sourceFile.delete();
+                    return ok;
+                }
+
                 long[] bytes_read_per_file = new long[1];
                 boolean ok = ((StreamUploadFileModel) destFileModel)
-                        .putChildFromStream(child_name, fileInputStream, len > 0 ? len : -1, bytes_read_per_file);
+                        .putChildFromStream(child_name, fileInputStream, len, bytes_read_per_file);
+
                 bytes_read[0] += bytes_read_per_file[0];
+
                 if (ok && cut) sourceFile.delete();
                 return ok;
             }
 
+            // fallback: classic OutputStream path
             outputStream = destFileModel.getChildOutputStream(child_name, 0);
             if (outputStream == null) return false;
 
@@ -222,6 +235,7 @@ public final class FileUtil {
         }
     }
 
+
     public static boolean copy_FileModel_FileModel(@NonNull final FileModel sourceFileModel,
                                                    @NonNull final FileModel destFileModel,
                                                    String child_name,
@@ -231,27 +245,49 @@ public final class FileUtil {
         OutputStream outputStream = null;
 
         try {
+            // ✅ For 0-byte files, InputStream may still be non-null; we handle based on length.
+            long len = -1;
+            try {
+                len = sourceFileModel.getLength();   // 0 is VALID
+                if (len < 0) len = -1;               // unknown => -1
+            } catch (Exception ignored) {
+                len = -1;
+            }
+
             inputStream = sourceFileModel.getInputStream();
-            if (inputStream == null) return false;
+            if (inputStream == null) {
+                // If some model returns null stream for empty files, still allow createFile() if len==0
+                if (len == 0 && (destFileModel instanceof StreamUploadFileModel)) {
+                    boolean ok = destFileModel.createFile(child_name);
+                    if (ok && cut) {
+                        try { sourceFileModel.delete(); } catch (Exception ignored) {}
+                    }
+                    return ok;
+                }
+                return false;
+            }
 
             // STREAM UPLOAD fast-path (WebDAV / Drive / Dropbox / Yandex / etc)
             if (destFileModel instanceof StreamUploadFileModel) {
-                long len = -1;
-                try {
-                    len = sourceFileModel.getLength(); // may be 0/-1 depending on model; ok
-                    if (len <= 0) len = -1;
-                } catch (Exception ignored) {
+
+                // ✅ 0-byte file: create empty file directly
+                if (len == 0) {
+                    try { inputStream.close(); } catch (Exception ignored) {}
+                    boolean ok = destFileModel.createFile(child_name);
+                    if (ok && cut) {
+                        try { sourceFileModel.delete(); } catch (Exception ignored) {}
+                    }
+                    return ok;
                 }
+
                 long[] bytes_read_per_file = new long[1];
                 boolean ok = ((StreamUploadFileModel) destFileModel)
                         .putChildFromStream(child_name, inputStream, len, bytes_read_per_file);
+
                 bytes_read[0] += bytes_read_per_file[0];
 
                 if (ok && cut) {
-                    try {
-                        sourceFileModel.delete();
-                    } catch (Exception ignored) {
-                    }
+                    try { sourceFileModel.delete(); } catch (Exception ignored) {}
                 }
                 return ok;
             }
@@ -302,7 +338,15 @@ public final class FileUtil {
 
             // STREAM UPLOAD fast-path (WebDAV / Drive / Dropbox / Yandex / etc)
             if (destFileModel instanceof StreamUploadFileModel) {
-                long len = tryGetUriLength(App.getAppContext(), data); // -1 if unknown
+                long len = tryGetUriLength(App.getAppContext(), data); // -1 unknown, 0 valid
+
+                // ✅ 0-byte uri: create empty file
+                if (len == 0) {
+                    try { inStream.close(); } catch (Exception ignored) {}
+                    boolean ok = destFileModel.createFile(file_name);
+                    return ok;
+                }
+
                 long[] bytes_read_per_file = new long[1];
                 boolean ok = ((StreamUploadFileModel) destFileModel)
                         .putChildFromStream(file_name, inStream, len, bytes_read_per_file);
@@ -357,20 +401,29 @@ public final class FileUtil {
                 return false;
             }
 
-            inStream = new BufferedInputStream(connection.getInputStream());
-
             // Streaming-upload destination (WebDAV/Drive/Dropbox/Yandex/etc.)
             if (destFileModel instanceof StreamUploadFileModel) {
-                long len = getHttpContentLengthCompat(connection); // API 21 safe, supports >2GB if header exists
-                long[] bytes_read_per_file = new long[1];
+                long len = getHttpContentLengthCompat(connection); // -1 unknown, 0 valid
 
+                // ✅ 0-byte response: create empty file and stop
+                if (len == 0) {
+                    boolean ok = destFileModel.createFile(fileName);
+                    return ok;
+                }
+
+                inStream = new BufferedInputStream(connection.getInputStream());
+
+                long[] bytes_read_per_file = new long[1];
                 boolean ok = ((StreamUploadFileModel) destFileModel)
                         .putChildFromStream(fileName, inStream, len, bytes_read_per_file);
+
                 bytesRead[0] += bytes_read_per_file[0];
                 return ok;
             }
 
-            //  Fallback: OutputStream-based destinations (local/SMB/FTP/etc.)
+            // Fallback: OutputStream-based destinations (local/SMB/FTP/etc.)
+            inStream = new BufferedInputStream(connection.getInputStream());
+
             outStream = destFileModel.getChildOutputStream(fileName, 0);
             if (outStream == null) return false;
 

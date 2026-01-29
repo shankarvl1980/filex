@@ -176,8 +176,15 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
         if (bytesRead != null && bytesRead.length > 0) bytesRead[0] = 0;
         if (!isDirectory()) return false;
 
-        // resumable upload requires total size
-        if (contentLengthOrMinus1 <= 0) return false;
+        // ✅ 0-byte file: use existing "createFile" (makes empty file)
+        if (contentLengthOrMinus1 == 0) {
+            try { in.close(); } catch (Exception ignored) {}
+            return createFile(childName);
+        }
+
+
+        // Resumable upload needs a known positive length
+        if (contentLengthOrMinus1 < 0) return false;
 
         try {
             String uploadUrl = startResumableSession(childName, contentLengthOrMinus1);
@@ -187,6 +194,7 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
             return false;
         }
     }
+
 
     private String startResumableSession(String fileName, long totalBytes) throws IOException {
         HttpUrl url = HttpUrl.parse("https://www.googleapis.com/upload/drive/v3/files")
@@ -803,15 +811,22 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
     // DTOs
     // ---------------------------------------------------------------------
     public static class GoogleDriveFileMetadata {
+        @SerializedName("id")
         public String id;
+        @SerializedName("name")
         public String name;
+        @SerializedName("mimeType")
         public String mimeType;
+        @SerializedName("size")
         public Long size;
+        @SerializedName("modifiedTime")
         public String modifiedTime;
+        @SerializedName("parents")
         public List<String> parents;
     }
 
     public static class DriveFilesListResponse {
+        @SerializedName("files")
         public List<GoogleDriveFileMetadata> files;
         @SerializedName("nextPageToken")
         public String nextPageToken;

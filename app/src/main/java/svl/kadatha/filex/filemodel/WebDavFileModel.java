@@ -182,14 +182,22 @@ public class WebDavFileModel implements FileModel, StreamUploadFileModel {
             url = repo.buildUrl(filePath);
         } catch (Exception e) {
             Timber.tag(TAG).e(e, "putChildFromStream init failed");
-            try {
-                in.close();
-            } catch (Exception ignored) {
-            }
+            try { in.close(); } catch (Exception ignored) {}
             return false;
         }
 
-        final long len = (contentLengthOrMinus1 > 0) ? contentLengthOrMinus1 : -1;
+        // ✅ IMPORTANT:
+        // 0  -> force Content-Length: 0 (no chunked) for best server compatibility
+        // >0 -> fixed length
+        // -1 -> unknown => chunked transfer
+        final long len;
+        if (contentLengthOrMinus1 == 0) {
+            len = 0;
+        } else if (contentLengthOrMinus1 > 0) {
+            len = contentLengthOrMinus1;
+        } else {
+            len = -1;
+        }
 
         RequestBody body = new RequestBody() {
             @Override
@@ -199,7 +207,7 @@ public class WebDavFileModel implements FileModel, StreamUploadFileModel {
 
             @Override
             public long contentLength() {
-                return len; // -1 => chunked transfer
+                return len;
             }
 
             @Override
@@ -216,7 +224,6 @@ public class WebDavFileModel implements FileModel, StreamUploadFileModel {
                         bytesRead[0] = total;
                     }
                 }
-                // No sink.flush() needed; OkHttp handles it.
             }
         };
 
@@ -224,8 +231,6 @@ public class WebDavFileModel implements FileModel, StreamUploadFileModel {
                 .url(url)
                 .put(body)
                 .header("Content-Type", "application/octet-stream")
-                // IMPORTANT: remove the empty Expect header; it can break some servers
-                // .header("Expect", "")
                 .build();
 
         try (Response resp = client.newCall(request).execute()) {
@@ -246,10 +251,7 @@ public class WebDavFileModel implements FileModel, StreamUploadFileModel {
 
         } finally {
             // Upload owns the stream: close it once the call finishes (success/fail).
-            try {
-                in.close();
-            } catch (Exception ignored) {
-            }
+            try { in.close(); } catch (Exception ignored) {}
         }
     }
 

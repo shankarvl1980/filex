@@ -120,7 +120,6 @@ public class FtpFileModel implements FileModel {
                 ftpClientRepository.releaseFtpClient(ftpClient);
             }
         }
-
     }
 
     @Override

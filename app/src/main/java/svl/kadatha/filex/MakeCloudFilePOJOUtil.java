@@ -433,32 +433,45 @@ public class MakeCloudFilePOJOUtil {
     // Helper DTOs (Drive + Yandex)
     // ---------------------------------------------------------------------
     static class DriveFileMetadata {
+        @SerializedName("id")
         String id;
+        @SerializedName("name")
         String name;
+        @SerializedName("mimeType")
         String mimeType;
         @SerializedName("modifiedTime")
         String modifiedTime; // RFC3339
+        @SerializedName("size")
         Long size;
+        @SerializedName("parents")
         List<String> parents;
     }
 
     static class DriveFileListResponse {
+        @SerializedName("files")
         List<DriveFileMetadata> files;
     }
 
     static class YandexResourceListResponse {
+        @SerializedName("items")
         List<YandexResource> items;
     }
 
     public static class YandexDownloadResponse {
+        @SerializedName("href")
         public String href;
+        @SerializedName("method")
         String method;
+        @SerializedName("templated")
         boolean templated;
     }
 
     public static class YandexUploadResponse {
+        @SerializedName("href")
         public String href;
+        @SerializedName("method")
         String method;
+        @SerializedName("templated")
         boolean templated;
     }
 
@@ -563,12 +576,18 @@ public class MakeCloudFilePOJOUtil {
         }
     }
 
-    public class YandexResource {
+    public static class YandexResource {
+        @SerializedName("name")
         public String name;
+        @SerializedName("path")
         public String path;       // e.g. "disk:/Folder/File.txt"
+        @SerializedName("modified")
         public String modified;   // RFC3339
+        @SerializedName("size")
         public Long size;
+        @SerializedName("_embedded")
         public YandexResourceEmbedded _embedded;
+        @SerializedName("type")
         String type;              // "file" or "dir"
 
         boolean isFile() {
@@ -580,7 +599,8 @@ public class MakeCloudFilePOJOUtil {
         }
     }
 
-    public class YandexResourceEmbedded {
+    public static class YandexResourceEmbedded {
+        @SerializedName("items")
         public java.util.List<YandexResource> items;
     }
 }

@@ -9,6 +9,7 @@ import androidx.core.util.Pair;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 import com.hierynomus.msfscc.FileAttributes;
 import com.hierynomus.msfscc.fileinformation.FileAllInformation;
 import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
@@ -1053,16 +1054,16 @@ public class FileCountSize {
 
     // Minimal meta for one file
     private static final class DriveFileMeta {
-        String id;
-        String mimeType;
-        Long size;
-        Long quotaBytesUsed;
+        @SerializedName("id") public String id;
+        @SerializedName("mimeType") public String mimeType;
+        @SerializedName("size") public Long size;
+        @SerializedName("quotaBytesUsed") public Long quotaBytesUsed;
     }
 
-    // Response for list children
     private static final class DriveListResponse {
-        String nextPageToken;
-        List<DriveFileMeta> files;
+        @SerializedName("nextPageToken") public String nextPageToken;
+        @SerializedName("files") public List<DriveFileMeta> files;
     }
+
 
 }

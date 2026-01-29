@@ -228,7 +228,6 @@ public class DropBoxFileModel implements FileModel, StreamUploadFileModel {
             int pendingLen = readFullyUpTo(input, pending, pending.length);
 
             if (pendingLen <= 0) {
-                // There was only 1 chunk total => finish with 0 bytes is OK
                 CommitInfo commit = CommitInfo.newBuilder(destPath)
                         .withMode(WriteMode.OVERWRITE)
                         .build();
