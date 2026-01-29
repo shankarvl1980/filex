@@ -53,6 +53,15 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
     // Row-click disconnect status (disconnect -> then Activity connects)
     public final MutableLiveData<AsyncTaskStatus> rowDisconnectAsyncTaskStatus =
             new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+
+    public final MutableLiveData<AsyncTaskStatus> logoutWhileAuthenticateAsyncTaskStatus =
+            new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+
+    public final MutableLiveData<AsyncTaskStatus> oauthResultProcessingStatus =
+            new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
+
+
+
     private final CloudAccountsDatabaseHelper cloudAccountsDatabaseHelper;
     // -------------------------------------------------------------------------
     // Sequential disconnect queue (BATCH only)
@@ -212,7 +221,6 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
 
     private void drainDisconnectQueueStep() {
         final FileObjectType type;
-
         synchronized (this) {
             type = disconnectQueue.pollFirst();
             if (type == null) {
@@ -373,7 +381,6 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
 
     public synchronized void deleteCloudAccountPojo(List<CloudAccountPOJO> cloudAccountPOJOS_for_delete) {
         if (deleteAsyncTaskStatus.getValue() != AsyncTaskStatus.NOT_YET_STARTED) return;
-
         deleteAsyncTaskStatus.setValue(AsyncTaskStatus.STARTED);
         ExecutorService executorService = MyExecutorService.getExecutorService();
         future2 = executorService.submit(() -> {
@@ -425,17 +432,20 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
                                     } else {
                                         connected = false;
                                     }
+                                    oauthResultProcessingStatus.postValue(AsyncTaskStatus.COMPLETED);
                                     cloudAccountConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
                                 }
 
                                 @Override
                                 public void onError(Exception e) {
                                     connected = false;
+                                    oauthResultProcessingStatus.postValue(AsyncTaskStatus.COMPLETED);
                                     cloudAccountConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
                                 }
                             });
                         } catch (Throwable t) {
                             connected = false;
+                            oauthResultProcessingStatus.postValue(AsyncTaskStatus.COMPLETED);
                             cloudAccountConnectionAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
                         }
                     }
@@ -449,16 +459,19 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
 
                 // -------- Case 2: active exists → logout first --------
                 try {
+                    logoutWhileAuthenticateAsyncTaskStatus.postValue(AsyncTaskStatus.STARTED);
                     authProvider.logout(new CloudAuthProvider.AuthCallback() {
                         @Override
                         public void onSuccess(CloudAccountPOJO ignored) {
                             clearAfterDisconnect(fileObjectType);
+                            logoutWhileAuthenticateAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
                             doAuth.run();
                         }
 
                         @Override
                         public void onError(Exception e) {
                             clearAfterDisconnect(fileObjectType);
+                            logoutWhileAuthenticateAsyncTaskStatus.postValue(AsyncTaskStatus.COMPLETED);
                             doAuth.run();
                         }
                     });

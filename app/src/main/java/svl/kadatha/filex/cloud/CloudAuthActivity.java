@@ -63,6 +63,7 @@ public class CloudAuthActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         CloudAuthProvider provider = viewModel != null ? viewModel.getAuthProvider() : null;
         if (provider != null) {
+            viewModel.oauthResultProcessingStatus.setValue(AsyncTaskStatus.STARTED);
             provider.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -197,7 +198,6 @@ public class CloudAuthActivity extends BaseActivity {
                 progress_bar.setVisibility(View.VISIBLE);
             } else if (status == AsyncTaskStatus.COMPLETED) {
                 progress_bar.setVisibility(View.GONE);
-
                 cloudAccountPojoListAdapter = new CloudAccountPojoListAdapter();
                 cloud_account_list_recyclerview.setAdapter(cloudAccountPojoListAdapter);
                 num_all_network_account = (viewModel.cloudAccountPOJOList == null) ? 0 : viewModel.cloudAccountPOJOList.size();
@@ -212,7 +212,6 @@ public class CloudAuthActivity extends BaseActivity {
 
                 refreshToolbarFromSelection();
                 cloud_number_text_view.setText(viewModel.mselecteditems.size() + "/" + num_all_network_account);
-                viewModel.asyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
             }
         });
 
@@ -296,6 +295,25 @@ public class CloudAuthActivity extends BaseActivity {
                 }
                 progress_bar.setVisibility(View.GONE);
                 viewModel.rowDisconnectAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+            }
+        });
+
+        viewModel.logoutWhileAuthenticateAsyncTaskStatus.observe(this, status -> {
+            if (status == AsyncTaskStatus.COMPLETED) {
+                if (cloudAccountPojoListAdapter != null) {
+                    cloudAccountPojoListAdapter.notifyDataSetChanged();
+                }
+                viewModel.pop_up_top_fragment=true;
+                viewModel.logoutWhileAuthenticateAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
+            }
+        });
+
+        viewModel.oauthResultProcessingStatus.observe(this, status -> {
+            if (status == AsyncTaskStatus.STARTED) {
+                progress_bar.setVisibility(View.VISIBLE);
+            } else if (status == AsyncTaskStatus.COMPLETED) {
+                progress_bar.setVisibility(View.GONE);
+                viewModel.oauthResultProcessingStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
             }
         });
     }

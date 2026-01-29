@@ -732,7 +732,6 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             }
 
             while (fm.getBackStackEntryCount() > 1) {
-
                 Fragment top = fm.findFragmentById(R.id.file_selector_container);
                 if (!(top instanceof FileSelectorFragment)) break;
 
@@ -809,8 +808,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
         long currentSession = NavSessionStore.current(fileObjectType);
 
         if (!(fileObjectType + file_path).equals(existingFilePOJOkey) || existingSession != currentSession) {
-            FileSelectorFragment fsfNew =
-                    FileSelectorFragment.getInstance(fileObjectType, action_sought_request_code);
+            FileSelectorFragment fsfNew = FileSelectorFragment.getInstance(fileObjectType, action_sought_request_code);
 
             Bundle b = fsfNew.getArguments();
             if (b == null) b = new Bundle(); // defensive, in case getInstance didn't set args
@@ -819,7 +817,7 @@ public class FileSelectorActivity extends BaseActivity implements MediaMountRece
             fsfNew.setArguments(b);
 
             fm.beginTransaction()
-                    .replace(R.id.file_selector_container, fsfNew, file_path)  // tag stays path
+                    .replace(R.id.file_selector_container, fsfNew, file_path)
                     .addToBackStack(file_path)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .commitAllowingStateLoss();

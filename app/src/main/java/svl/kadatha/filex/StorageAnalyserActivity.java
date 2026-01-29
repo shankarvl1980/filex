@@ -753,7 +753,6 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
             }
 
             while (fm.getBackStackEntryCount() > 1) {
-
                 Fragment top = fm.findFragmentById(R.id.storage_analyser_container);
                 if (!(top instanceof StorageAnalyserFragment)) break;
 
@@ -816,8 +815,7 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
         String existingFilePOJOkey = "";
         long existingSession = -1;
 
-        StorageAnalyserFragment saf =
-                (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
+        StorageAnalyserFragment saf = (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
 
         if (saf != null) {
             String fragment_tag = saf.getTag(); // still path
@@ -833,13 +831,13 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
         if (!(fileObjectType + file_path).equals(existingFilePOJOkey) || existingSession != currentSession) {
             StorageAnalyserFragment safNew = StorageAnalyserFragment.getInstance(fileObjectType);
             Bundle b = safNew.getArguments();
-            if (b == null) b = new Bundle(); // defensive
+            if (b == null) b = new Bundle();
             b.putLong("NAV_SESSION", currentSession);
             b.putString("FILE_PATH", file_path);
             safNew.setArguments(b);
 
             fm.beginTransaction()
-                    .replace(R.id.storage_analyser_container, safNew, file_path) // tag stays path
+                    .replace(R.id.storage_analyser_container, safNew, file_path)
                     .addToBackStack(file_path)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .commitAllowingStateLoss();

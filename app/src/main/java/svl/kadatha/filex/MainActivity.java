@@ -1359,7 +1359,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
 
             if (fm.getBackStackEntryCount() > 1) {
-
                 if (fm.isStateSaved()) return;
                 try { fm.popBackStackImmediate(); } catch (Throwable ignored) { return; }
 
