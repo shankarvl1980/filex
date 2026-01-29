@@ -43,8 +43,7 @@ public class SmbClientRepository {
         this.networkAccountPOJO = pojo;
 
         // ---- shareName MUST be a share, NOT "/" ----
-        String sn = (pojo.shareName == null) ? "" : pojo.shareName.trim();
-        this.shareName = sn;
+        this.shareName = (pojo.shareName == null) ? "" : pojo.shareName.trim();
 
         SmbConfig config = buildConfigFromPojo(pojo);
         this.smbClient = new SMBClient(config);

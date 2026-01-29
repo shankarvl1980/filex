@@ -697,8 +697,7 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                 progress_bar.setVisibility(View.VISIBLE);
                 if (type.equals(ALL)) {
                     // disconnect connected ones among selected rows
-                    List<NetworkAccountPOJO> selected = new ArrayList<>();
-                    selected.addAll(viewModel.mselecteditems.values());
+                    List<NetworkAccountPOJO> selected = new ArrayList<>(viewModel.mselecteditems.values());
                     viewModel.disconnectSelectedConnectedRows(selected);
                 } else {
                     if (connected_network_account_pojo == null) {
@@ -715,7 +714,6 @@ public class NetworkAccountsDetailsDialog extends DialogFragment {
                     String editType = selected.type;
                     NetworkAccountDetailsInputDialog networkAccountDetailsInputDialog = NetworkAccountDetailsInputDialog.getInstance(NETWORK_ACCOUNT_INPUT_DETAILS_REQUEST_CODE, editType, selected);
                     networkAccountDetailsInputDialog.show(getParentFragmentManager(), "");
-
                 }
                 clear_selection();
             } else if (id == R.id.toolbar_btn_5) {

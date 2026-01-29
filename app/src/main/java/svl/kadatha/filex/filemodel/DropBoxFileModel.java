@@ -271,8 +271,9 @@ public class DropBoxFileModel implements FileModel, StreamUploadFileModel {
                     } catch (Exception ignored) {
                     }
 
-                    if (contentLengthOrMinus1 > 0 && uploaded != contentLengthOrMinus1)
+                    if (contentLengthOrMinus1 > 0 && uploaded != contentLengthOrMinus1){
                         return false;
+                    }
                     return true;
                 }
 
