@@ -334,12 +334,18 @@ public class PlayScreenFragment extends Fragment {
         total_time_tv = v.findViewById(R.id.audio_player_total_time);
         current_progress_tv = v.findViewById(R.id.audio_player_current_progress);
         seekbar = v.findViewById(R.id.audio_player_seekbar);
-        seekbar.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                return !audioPlayViewModel.play_screen_expanded_view;
-            }
-        });
+        if (!audioPlayViewModel.play_screen_expanded_view) {
+            seekbar.setOnTouchListener((view, e) -> {
+                if (e.getAction() == MotionEvent.ACTION_UP) {
+                    View stub = view.getRootView().findViewById(R.id.fragment_current_play_expansion_stub);
+                    stub.performClick();
+                }
+                return true; // eat touch
+            });
+        } else {
+            seekbar.setOnTouchListener(null); // allow normal dragging
+        }
+
 
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar sb, int progress, boolean fromUser) {
@@ -557,18 +563,7 @@ public class PlayScreenFragment extends Fragment {
             //audio_album_tv.setText(getString(R.string.album_colon)+" null");
             String artists = "";//getString(R.string.artists_colon)+" null"
             audio_artists_tv.setText(artists);
-
         }
-//        if(next_btn.isEnabled() && AudioPlayerService.AUDIO_QUEUED_ARRAY.size()>AudioPlayerService.CURRENT_PLAY_NUMBER+1)
-//        {
-//            next_audio_tv.setText(getString(R.string.next_audio_colon)+" "+AudioPlayerService.AUDIO_QUEUED_ARRAY.get(AudioPlayerService.CURRENT_PLAY_NUMBER+1).getTitle());
-//
-//        }
-//        else
-//        {
-//            next_audio_tv.setText(getString(R.string.next_audio_colon)+" null");
-//        }
-
     }
 
     private void setupAudioServiceListeners() {
