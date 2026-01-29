@@ -358,7 +358,7 @@
     <string name="open_with">Open with</string>
     <string name="select_only_a_file">Select only a file</string>
     <string name="eject_usb">Eject Usb</string>
-    <string name="enable_usb_flash_drive">Enable Usb Flash Drive</string>
+    <string name="enable_usb_flash_drive_fat32">Enable Usb Flash Drive (FAT32)</string>
     <string name="file_is_large_copy_to_device_storage">File is large. Copy to device storage</string>
     <string name="wait_till_completion_on_going_operation_on_usb">Wait till completion of ongoing operation on USB drive</string>
     <string name="rescan_library">Rescan Library</string>

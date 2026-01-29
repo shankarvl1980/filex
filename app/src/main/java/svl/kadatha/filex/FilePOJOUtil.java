@@ -349,7 +349,6 @@ public class FilePOJOUtil {
         int size = file_path_list.size();
         for (int i = 0; i < size; ++i) {
             String file_path = file_path_list.get(i);
-            Timber.tag(Global.TAG).d("parent method " + fileObjectType + file_path);
             REMOVE_CHILD_HASHMAP_FILE_POJO_ON_REMOVAL__(file_path, fileObjectType);
         }
         if (size > 0) {
@@ -373,7 +372,6 @@ public class FilePOJOUtil {
         synchronized (file_pojo_lock) {
             while (iterator.hasNext()) {
                 Map.Entry<String, List<FilePOJO>> entry = iterator.next();
-                Timber.tag(Global.TAG).d("sub method " + entry.getKey());
                 if (Global.IS_CHILD_FILE(entry.getKey(), fileObjectType + file_path)) {
                     iterator.remove();
                 }
