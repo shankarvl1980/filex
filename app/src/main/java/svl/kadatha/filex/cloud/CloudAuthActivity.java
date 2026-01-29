@@ -1,6 +1,7 @@
 package svl.kadatha.filex.cloud;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
@@ -74,6 +76,24 @@ public class CloudAuthActivity extends BaseActivity {
 
         context = this;
         setContentView(R.layout.activity_cloud_auth);
+
+        if(savedInstanceState==null){
+            new AlertDialog.Builder(this)
+                    .setTitle("Information")
+                    .setMessage(
+                            "Google Cloud OAuth consent flow is under verification.\n\n" +
+                                    "At present, Google cloud authentication and connection is available only for test users."
+                    )
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setCancelable(true)
+                    .show();
+
+        }
 
         permissionsUtil = new PermissionsUtil(context, (AppCompatActivity) context);
         viewModel = new ViewModelProvider(this).get(CloudAuthActivityViewModel.class);
