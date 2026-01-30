@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.concurrent.ConcurrentHashMap;
 
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -251,7 +252,7 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
                         .put(chunkBody)
                         .build();
 
-                try (Response resp = httpClient.newCall(put).execute()) {
+                try (Response resp = Global.HTTP_STREAM.newCall(put).execute()) {
                     int code = resp.code();
 
                     if (code == 308) {
@@ -274,19 +275,41 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
         return true;
     }
 
+    private static final ConcurrentHashMap<String, Object> INFLIGHT_LOCKS =
+            new ConcurrentHashMap<>();
+
+    private void ensureMetadataLoaded() {
+        if (fileId == null) return;
+        if (metadata != null && metadata.name != null && metadata.mimeType != null) return;
+
+        Object lock = INFLIGHT_LOCKS.computeIfAbsent(fileId, k -> new Object());
+
+        synchronized (lock) {
+            // Another thread may have loaded it already
+            if (metadata != null && metadata.name != null && metadata.mimeType != null) return;
+
+            try {
+                metadata = getFileMetadata(fileId);
+            } catch (Exception ignored) {
+            } finally {
+                INFLIGHT_LOCKS.remove(fileId, lock);
+            }
+        }
+    }
+
     // ---------------------------------------------------------------------
     // FileModel API
     // ---------------------------------------------------------------------
     @Override
     public String getName() {
-        ensureMetadataBasicLoaded();
+        ensureMetadataLoaded();
         return metadata != null ? metadata.name : null;
     }
 
     @Override
     public String getParentName() {
         try {
-            ensureMetadataParentsLoaded();
+            ensureMetadataLoaded();
             if (metadata != null && metadata.parents != null && !metadata.parents.isEmpty()) {
                 String parentId = metadata.parents.get(0);
                 GoogleDriveFileMetadata parentMeta = getFileMetadata(parentId);
@@ -305,7 +328,7 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
     @Override
     public String getPath() {
         try {
-            ensureMetadataBasicLoaded();
+            ensureMetadataLoaded();
             return (metadata != null) ? buildPath(metadata) : null;
         } catch (IOException e) {
             return null;
@@ -329,7 +352,7 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
     @Override
     public String getParentPath() {
         try {
-            ensureMetadataParentsLoaded();
+            ensureMetadataLoaded();
             if (metadata != null && metadata.parents != null && !metadata.parents.isEmpty()) {
                 String parentId = metadata.parents.get(0);
                 if ("root".equals(parentId)) return "/";
@@ -344,7 +367,7 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
 
     @Override
     public boolean isDirectory() {
-        ensureMetadataBasicLoaded();
+        ensureMetadataLoaded();
         return metadata != null && "application/vnd.google-apps.folder".equals(metadata.mimeType);
     }
 
@@ -419,7 +442,7 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
                     .get()
                     .build();
 
-            Response response = httpClient.newCall(request).execute();
+            Response response = Global.HTTP_STREAM.newCall(request).execute();
             if (response.isSuccessful() && response.body() != null) {
                 return response.body().byteStream(); // caller closes
             } else {
@@ -487,29 +510,22 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
         if (!isDirectory()) return false;
 
         try {
-            HttpUrl url = HttpUrl.parse("https://www.googleapis.com/upload/drive/v3/files")
+            HttpUrl url = HttpUrl.parse("https://www.googleapis.com/drive/v3/files")
                     .newBuilder()
-                    .addQueryParameter("uploadType", "multipart")
+                    .addQueryParameter("supportsAllDrives", "true")
+                    .addQueryParameter("fields", "id,name,mimeType,parents,modifiedTime,size")
                     .build();
 
             Map<String, Object> metadataMap = new HashMap<>();
             metadataMap.put("name", name);
             metadataMap.put("parents", Collections.singletonList(fileId));
 
-            // IMPORTANT: RequestBody.create(MediaType, content) (order matters depending on OkHttp version)
-            RequestBody metadataPart = RequestBody.create(JSON, gson.toJson(metadataMap));
-            RequestBody filePart = RequestBody.create(OCTET, new byte[0]);
-
-            MultipartBody multipartBody = new MultipartBody.Builder()
-                    .setType(MultipartBody.MIXED) // Drive expects related, but mixed usually works
-                    .addFormDataPart("metadata", null, metadataPart)
-                    .addFormDataPart("file", name, filePart)
-                    .build();
+            RequestBody body = RequestBody.create(gson.toJson(metadataMap), JSON);
 
             Request request = new Request.Builder()
                     .url(url)
                     .addHeader("Authorization", "Bearer " + accessToken)
-                    .post(multipartBody)
+                    .post(body)
                     .build();
 
             try (Response response = httpClient.newCall(request).execute()) {
@@ -519,6 +535,7 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
             return false;
         }
     }
+
 
     @Override
     public boolean makeDirIfNotExists(String dir_name) {
@@ -643,7 +660,7 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
 
     @Override
     public long getLength() {
-        ensureMetadataSizeLoaded();
+        ensureMetadataLoaded();
         if (isDirectory()) return 0;
         return (metadata != null && metadata.size != null) ? metadata.size : 0;
     }
@@ -655,7 +672,7 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
 
     @Override
     public long lastModified() {
-        ensureMetadataModifiedLoaded();
+        ensureMetadataLoaded();
         if (metadata == null || metadata.modifiedTime == null) return 0;
 
         // RFC3339: "2026-01-16T12:34:56.000Z" OR "...56Z"
@@ -680,44 +697,10 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
 
     @Override
     public boolean isHidden() {
-        ensureMetadataBasicLoaded();
+        ensureMetadataLoaded();
         return metadata != null && metadata.name != null && metadata.name.startsWith(".");
     }
 
-    // ---------------------------------------------------------------------
-    // Metadata lazy loading (fetch ONLY when needed)
-    // ---------------------------------------------------------------------
-    private void ensureMetadataBasicLoaded() {
-        if (metadata != null && metadata.name != null && metadata.mimeType != null) return;
-        try {
-            metadata = getFileMetadata(fileId);
-        } catch (Exception ignored) {
-        }
-    }
-
-    private void ensureMetadataParentsLoaded() {
-        if (metadata != null && metadata.parents != null) return;
-        try {
-            metadata = getFileMetadata(fileId);
-        } catch (Exception ignored) {
-        }
-    }
-
-    private void ensureMetadataSizeLoaded() {
-        if (metadata != null && metadata.size != null) return;
-        try {
-            metadata = getFileMetadata(fileId);
-        } catch (Exception ignored) {
-        }
-    }
-
-    private void ensureMetadataModifiedLoaded() {
-        if (metadata != null && metadata.modifiedTime != null) return;
-        try {
-            metadata = getFileMetadata(fileId);
-        } catch (Exception ignored) {
-        }
-    }
 
     private String getFileIdByPath(String path) throws IOException {
         if (path == null) return null;

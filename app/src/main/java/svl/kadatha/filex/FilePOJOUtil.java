@@ -664,7 +664,25 @@ public class FilePOJOUtil {
             } else if (fileObjectType == FileObjectType.GOOGLE_DRIVE_TYPE) {
                 try {
                     String oauthToken = CloudAuthActivityViewModel.GOOGLE_DRIVE_ACCESS_TOKEN;
-                    String parentId = getFileIdByPath(fileclickselected, oauthToken);
+                    String parentId;
+
+                    if ("/".equals(fileclickselected) || fileclickselected == null || fileclickselected.isEmpty()) {
+                        parentId = "root";
+                    } else {
+                        // ✅ Fast path: get id from cached FilePOJO for the clicked folder
+                        FilePOJO clickedPojo = FilePOJOUtil.GET_FILE_POJO(fileclickselected, FileObjectType.GOOGLE_DRIVE_TYPE);
+                        parentId = (clickedPojo != null) ? clickedPojo.getCloudId() : null;
+
+                        // 🐢 Fallback only when id is missing (should be rare)
+                        if (parentId == null || parentId.isEmpty()) {
+                            parentId = getFileIdByPath(fileclickselected, oauthToken);
+                        }
+                    }
+
+                    if (parentId == null || parentId.isEmpty()) {
+                        throw new IllegalStateException("Drive parentId resolve failed for: " + fileclickselected);
+                    }
+
 
                     List<GoogleDriveFileModel.GoogleDriveFileMetadata> driveFiles = GoogleDriveFileModel.listFilesInFolder(parentId, oauthToken);
                     for (GoogleDriveFileModel.GoogleDriveFileMetadata meta : driveFiles) {

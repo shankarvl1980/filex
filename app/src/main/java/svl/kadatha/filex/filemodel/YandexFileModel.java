@@ -249,7 +249,7 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
                 .build();
 
         try {
-            Response dRes = client.newCall(dReq).execute();
+            Response dRes = Global.HTTP_STREAM.newCall(dReq).execute();
             if (!dRes.isSuccessful() || dRes.body() == null) {
                 if (dRes != null) dRes.close();
                 return null;
@@ -512,7 +512,7 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
                 .get()
                 .build();
 
-        try (Response uRes = client.newCall(uReq).execute()) {
+        try (Response uRes = Global.HTTP_STREAM.newCall(uReq).execute()) {
             if (!uRes.isSuccessful() || uRes.body() == null) {
                 Timber.tag(TAG).e("get upload href failed: %d %s", uRes.code(), uRes.message());
                 try { in.close(); } catch (Exception ignored) {}

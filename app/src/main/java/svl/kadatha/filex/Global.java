@@ -54,8 +54,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import me.jahnen.libaums.core.fs.UsbFile;
+import okhttp3.ConnectionPool;
+import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 import svl.kadatha.filex.appmanager.AppManagerActivity;
 import svl.kadatha.filex.audio.AudioPlayerService;
@@ -83,7 +86,12 @@ public class Global {
     static public final String TAG = "shankar";
     public static final List<FileObjectType> NETWORK_FILE_OBJECT_TYPES = Arrays.asList(FileObjectType.FTP_TYPE, FileObjectType.SFTP_TYPE, FileObjectType.WEBDAV_TYPE, FileObjectType.SMB_TYPE);
     public static final List<FileObjectType> CLOUD_FILE_OBJECT_TYPES = Arrays.asList(FileObjectType.GOOGLE_DRIVE_TYPE, FileObjectType.ONE_DRIVE_TYPE, FileObjectType.DROP_BOX_TYPE, FileObjectType.MEDIA_FIRE_TYPE, FileObjectType.BOX_TYPE, FileObjectType.NEXT_CLOUD_TYPE, FileObjectType.YANDEX_TYPE);
-    public static final OkHttpClient HTTP = new OkHttpClient();
+    public static final OkHttpClient HTTP_UI = buildHttpUi();
+    public static final OkHttpClient HTTP_STREAM = buildHttpStream();
+
+    // If your codebase expects Global.HTTP everywhere, decide ONE:
+    // Option 1 (recommended): keep HTTP = HTTP_UI and explicitly use HTTP_STREAM in streaming code
+    public static final OkHttpClient HTTP = HTTP_UI;
     public static final Gson GSON = new Gson();
 
     public static final float DISABLE_ALFA = (float) 0.4;
@@ -1021,11 +1029,17 @@ public class Global {
 
 
     public static String CONCATENATE_PARENT_CHILD_PATH(String parent_file_path, String child_file_name) {
-        if (parent_file_path == null) {
-            parent_file_path = "";
+        if (parent_file_path == null || parent_file_path.isEmpty()) {
+            return File.separator + child_file_name;
         }
-        return parent_file_path.endsWith(File.separator) ? parent_file_path + child_file_name : parent_file_path + File.separator + child_file_name;
+        if (File.separator.equals(parent_file_path)) {
+            return File.separator + child_file_name; // avoid "//child"
+        }
+        return parent_file_path.endsWith(File.separator)
+                ? parent_file_path + child_file_name
+                : parent_file_path + File.separator + child_file_name;
     }
+
 
     public static void CLEAR_CACHE() {
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
@@ -1198,5 +1212,46 @@ public class Global {
         // If the path starts with a slash, make sure we keep it
         String parentPath = parentPathBuilder.toString();
         return path.startsWith("/") && !parentPath.startsWith("/") ? "/" + parentPath : parentPath;
+    }
+
+    private static OkHttpClient baseClient() {
+        Dispatcher dispatcher = new Dispatcher();
+        dispatcher.setMaxRequests(32);
+        dispatcher.setMaxRequestsPerHost(8);
+
+        ConnectionPool pool = new ConnectionPool(
+                8, 5, TimeUnit.MINUTES
+        );
+
+        return new OkHttpClient.Builder()
+                .dispatcher(dispatcher)
+                .connectionPool(pool)
+                .retryOnConnectionFailure(true)
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .build();
+    }
+
+    private static OkHttpClient buildHttpUi() {
+        return baseClient().newBuilder()
+                // Fast, bounded calls for Drive metadata, list, rename, delete
+                .readTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
+                .callTimeout(3, TimeUnit.MINUTES)
+                .build();
+    }
+
+    private static OkHttpClient buildHttpStream() {
+        return baseClient().newBuilder()
+                // Streaming: allow long transfers, but still fail if stalled
+                //  - NO callTimeout (20GB on slow networks can take hours)
+                .callTimeout(0, TimeUnit.MILLISECONDS)
+
+                // If transfer is making progress, reads happen continuously.
+                // If it stalls for 2 minutes, fail and let your code retry/resume.
+                .readTimeout(2, TimeUnit.MINUTES)
+
+                // Upload chunk PUTs should complete; if a write stalls, bail.
+                .writeTimeout(2, TimeUnit.MINUTES)
+                .build();
     }
 }
