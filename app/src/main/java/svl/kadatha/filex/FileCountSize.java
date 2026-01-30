@@ -50,6 +50,7 @@ import svl.kadatha.filex.usb.UsbFileRootSingleton;
 import timber.log.Timber;
 
 public class FileCountSize {
+    public final static int CAP = 500;
     private static final String TAG = "FileCountSize";
     private static final OkHttpClient CLOUD_HTTP = Global.HTTP;
     private static final Gson CLOUD_GSON = Global.GSON;
@@ -65,7 +66,6 @@ public class FileCountSize {
     private boolean isCancelled;
     private List<Uri> data_list;
     private Future<?> future1, future2, future3, future4;
-    public final static int CAP = 500;
 
     FileCountSize(Context context, List<String> files_selected_array, FileObjectType sourceFileObjectType) {
         this.context = context;
@@ -1054,15 +1054,21 @@ public class FileCountSize {
 
     // Minimal meta for one file
     private static final class DriveFileMeta {
-        @SerializedName("id") public String id;
-        @SerializedName("mimeType") public String mimeType;
-        @SerializedName("size") public Long size;
-        @SerializedName("quotaBytesUsed") public Long quotaBytesUsed;
+        @SerializedName("id")
+        public String id;
+        @SerializedName("mimeType")
+        public String mimeType;
+        @SerializedName("size")
+        public Long size;
+        @SerializedName("quotaBytesUsed")
+        public Long quotaBytesUsed;
     }
 
     private static final class DriveListResponse {
-        @SerializedName("nextPageToken") public String nextPageToken;
-        @SerializedName("files") public List<DriveFileMeta> files;
+        @SerializedName("nextPageToken")
+        public String nextPageToken;
+        @SerializedName("files")
+        public List<DriveFileMeta> files;
     }
 
 

@@ -275,9 +275,7 @@ public final class SubFileCountUtil {
 
             // If it exactly filled the capPlusOne bucket => still cap+
             // (rare edge, but safe)
-            if (count >= capPlusOne) return capPlusOne;
-
-            return count;
+            return Math.min(count, capPlusOne);
 
         } catch (Exception ignored) {
             return 0;
@@ -310,7 +308,7 @@ public final class SubFileCountUtil {
                 if (r == null || r._embedded == null) return 0;
 
                 int total = r._embedded.total;
-                return (total >= capPlusOne) ? capPlusOne : total;
+                return Math.min(total, capPlusOne);
             }
 
         } catch (Exception ignored) {

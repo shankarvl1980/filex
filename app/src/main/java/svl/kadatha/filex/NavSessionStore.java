@@ -7,7 +7,10 @@ public final class NavSessionStore {
 
     public static synchronized long current(FileObjectType t) {
         Long v = map.get(t);
-        if (v == null) { v = 1L; map.put(t, v); }
+        if (v == null) {
+            v = 1L;
+            map.put(t, v);
+        }
         return v;
     }
 

@@ -182,7 +182,10 @@ public class WebDavFileModel implements FileModel, StreamUploadFileModel {
             url = repo.buildUrl(filePath);
         } catch (Exception e) {
             Timber.tag(TAG).e(e, "putChildFromStream init failed");
-            try { in.close(); } catch (Exception ignored) {}
+            try {
+                in.close();
+            } catch (Exception ignored) {
+            }
             return false;
         }
 
@@ -251,7 +254,10 @@ public class WebDavFileModel implements FileModel, StreamUploadFileModel {
 
         } finally {
             // Upload owns the stream: close it once the call finishes (success/fail).
-            try { in.close(); } catch (Exception ignored) {}
+            try {
+                in.close();
+            } catch (Exception ignored) {
+            }
         }
     }
 

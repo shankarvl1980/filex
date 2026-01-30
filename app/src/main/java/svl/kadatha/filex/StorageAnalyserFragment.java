@@ -53,12 +53,11 @@ public class StorageAnalyserFragment extends Fragment implements FileModifyObser
     public RecyclerView recycler_view;
     public TextView folder_empty_textview;
     public FilePOJO clicked_filepojo;
+    public long navSession;
     private Context context;
     private FileModifyObserver fileModifyObserver;
     private Uri tree_uri;
     private String tree_uri_path = "";
-    public long navSession;
-
 
     public static StorageAnalyserFragment getInstance(FileObjectType fileObjectType) {
         StorageAnalyserFragment storageAnalyserFragment = new StorageAnalyserFragment();

@@ -77,7 +77,7 @@ public class CloudAuthActivity extends BaseActivity {
         context = this;
         setContentView(R.layout.activity_cloud_auth);
 
-        if(savedInstanceState==null){
+        if (savedInstanceState == null) {
             new AlertDialog.Builder(this)
                     .setTitle("Information")
                     .setMessage(
@@ -241,7 +241,7 @@ public class CloudAuthActivity extends BaseActivity {
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("fileObjectType", fileObjectType);
                     Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_CONNECTED_TO_CLOUD_ACTION, LocalBroadcastManager.getInstance(context), bundle);
-                    viewModel.pop_up_top_fragment=false;
+                    viewModel.pop_up_top_fragment = false;
                     viewModel.cloudAccountConnectionAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                     finish();
                 } else {
@@ -260,7 +260,7 @@ public class CloudAuthActivity extends BaseActivity {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("fileObjectType", fileObjectType);
                 Global.LOCAL_BROADCAST(Global.LOCAL_BROADCAST_CONNECTED_TO_CLOUD_ACTION, LocalBroadcastManager.getInstance(context), bundle);
-                viewModel.pop_up_top_fragment=false;
+                viewModel.pop_up_top_fragment = false;
                 viewModel.cloudAccountStorageDirFillAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
                 finish();
             }
@@ -293,10 +293,10 @@ public class CloudAuthActivity extends BaseActivity {
             }
             if (status == AsyncTaskStatus.COMPLETED) {
                 clear_selection();
-                if (cloudAccountPojoListAdapter != null){
+                if (cloudAccountPojoListAdapter != null) {
                     cloudAccountPojoListAdapter.notifyDataSetChanged();
                 }
-                viewModel.pop_up_top_fragment=true;
+                viewModel.pop_up_top_fragment = true;
                 progress_bar.setVisibility(View.GONE);
                 viewModel.disconnectCloudConnectionAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
             }
@@ -323,7 +323,7 @@ public class CloudAuthActivity extends BaseActivity {
                 if (cloudAccountPojoListAdapter != null) {
                     cloudAccountPojoListAdapter.notifyDataSetChanged();
                 }
-                viewModel.pop_up_top_fragment=true;
+                viewModel.pop_up_top_fragment = true;
                 viewModel.logoutWhileAuthenticateAsyncTaskStatus.setValue(AsyncTaskStatus.NOT_YET_STARTED);
             }
         });

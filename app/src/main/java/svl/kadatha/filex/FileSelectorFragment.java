@@ -48,13 +48,12 @@ public class FileSelectorFragment extends Fragment implements FileModifyObserver
     public LinearLayoutManager llm;
     public RecyclerView recycler_view;
     public TextView folder_empty_textview;
+    public long navSession;
     private Context context;
     private FileModifyObserver fileModifyObserver;
     private Uri tree_uri;
     private String tree_uri_path = "";
     private int action_sought_request_code;
-    public long navSession;
-
 
     public static FileSelectorFragment getInstance(FileObjectType fileObjectType, int action_sought_request_code) {
         FileSelectorFragment fileSelectorFragment = new FileSelectorFragment();

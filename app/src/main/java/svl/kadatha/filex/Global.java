@@ -851,15 +851,16 @@ public class Global {
         if (child == null || parent == null) return false;
 
         // normalize trailing "/" except for root
-        if (child.endsWith("/") && child.length() > 1) child = child.substring(0, child.length() - 1);
-        if (parent.endsWith("/") && parent.length() > 1) parent = parent.substring(0, parent.length() - 1);
+        if (child.endsWith("/") && child.length() > 1)
+            child = child.substring(0, child.length() - 1);
+        if (parent.endsWith("/") && parent.length() > 1)
+            parent = parent.substring(0, parent.length() - 1);
 
         if (parent.equals("/")) return true;
 
         // inclusive: parent itself OR descendants
         return child.equals(parent) || child.startsWith(parent + "/");
     }
-
 
 
     public static boolean CHECK_WHETHER_STORAGE_DIR_CONTAINS_FILE_OBJECT(FileObjectType fileObjectType) {

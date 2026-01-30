@@ -137,10 +137,20 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     private LocalBroadcastReceiver localBroadcastReceiver;
     private USBReceiver usbReceiver;
     private InputMethodManager imm;
+    private final ActivityResultLauncher<Intent> cloudAuthLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                boolean pop = result.getData().getBooleanExtra("POP_TOP_FRAGMENT", false);
+                if (pop) {
+                    onbackpressed(false);
+                }
+            }
+        }
+    });
     private ListView listView;
     private MediaMountReceiver mediaMountReceiver;
     private FileDuplicationViewModel fileDuplicationViewModel;
-
     private final ActivityResultLauncher<Intent> activityResultLauncher_file_select = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -939,19 +949,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         }
     }
 
-    private final ActivityResultLauncher<Intent> cloudAuthLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result){
-            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                boolean pop = result.getData().getBooleanExtra("POP_TOP_FRAGMENT", false);
-                if (pop) {
-                    onbackpressed(false);
-                }
-            }
-        }
-    });
-
-
     @Override
     public void onCreateView(String fileclickselected, FileObjectType fileObjectType) {
         if (viewModel.send_intent != null) {
@@ -1327,7 +1324,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
     private void onbackpressed(boolean onBackPressed) {
         DetailFragment df = (DetailFragment) fm.findFragmentById(R.id.detail_fragment);
-        if (df == null) { finish(); return; }
+        if (df == null) {
+            finish();
+            return;
+        }
 
         boolean drawerOpen = drawerLayout.isDrawerOpen(drawer);
         if (drawerOpen) {
@@ -1360,7 +1360,11 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
 
             if (fm.getBackStackEntryCount() > 1) {
                 if (fm.isStateSaved()) return;
-                try { fm.popBackStackImmediate(); } catch (Throwable ignored) { return; }
+                try {
+                    fm.popBackStackImmediate();
+                } catch (Throwable ignored) {
+                    return;
+                }
 
                 while (fm.getBackStackEntryCount() > 1) {
                     Fragment top = fm.findFragmentById(R.id.detail_fragment);
@@ -1757,6 +1761,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             Global.WORKOUT_AVAILABLE_SPACE();
             storageRecyclerAdapter.notifyDataSetChanged();
         }
+    }
+
+    public interface RecentDialogListener {
+        void onMediaAttachedAndRemoved();
     }    private final ActivityResultLauncher<Intent> activityResultLauncher_all_file_access_permission = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
@@ -1796,10 +1804,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     });
-
-    public interface RecentDialogListener {
-        void onMediaAttachedAndRemoved();
-    }
 
     static class SearchParameters {
         final String search_file_name;
@@ -2695,4 +2699,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
             }
         }
     }
+
+
 }

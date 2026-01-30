@@ -173,7 +173,7 @@ public class DropBoxFileModel implements FileModel, StreamUploadFileModel {
         if (isDirectory() || "/".equals(path)) return null;
         try {
             String p = (metadata instanceof FileMetadata)
-                    ? ((FileMetadata) metadata).getPathLower()
+                    ? metadata.getPathLower()
                     : path;
             return dbxClient.files().download(p).getInputStream();
         } catch (DbxException e) {
@@ -270,7 +270,7 @@ public class DropBoxFileModel implements FileModel, StreamUploadFileModel {
                     } catch (Exception ignored) {
                     }
 
-                    if (contentLengthOrMinus1 > 0 && uploaded != contentLengthOrMinus1){
+                    if (contentLengthOrMinus1 > 0 && uploaded != contentLengthOrMinus1) {
                         return false;
                     }
                     return true;

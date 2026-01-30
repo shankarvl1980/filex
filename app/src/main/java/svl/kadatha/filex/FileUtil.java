@@ -191,7 +191,10 @@ public final class FileUtil {
 
                 // ✅ 0-byte file: do not stream-upload; create empty file directly
                 if (len == 0) {
-                    try { fileInputStream.close(); } catch (Exception ignored) {}
+                    try {
+                        fileInputStream.close();
+                    } catch (Exception ignored) {
+                    }
                     boolean ok = destFileModel.createFile(child_name);
                     if (ok && cut) sourceFile.delete();
                     return ok;
@@ -260,7 +263,10 @@ public final class FileUtil {
                 if (len == 0 && (destFileModel instanceof StreamUploadFileModel)) {
                     boolean ok = destFileModel.createFile(child_name);
                     if (ok && cut) {
-                        try { sourceFileModel.delete(); } catch (Exception ignored) {}
+                        try {
+                            sourceFileModel.delete();
+                        } catch (Exception ignored) {
+                        }
                     }
                     return ok;
                 }
@@ -272,10 +278,16 @@ public final class FileUtil {
 
                 // ✅ 0-byte file: create empty file directly
                 if (len == 0) {
-                    try { inputStream.close(); } catch (Exception ignored) {}
+                    try {
+                        inputStream.close();
+                    } catch (Exception ignored) {
+                    }
                     boolean ok = destFileModel.createFile(child_name);
                     if (ok && cut) {
-                        try { sourceFileModel.delete(); } catch (Exception ignored) {}
+                        try {
+                            sourceFileModel.delete();
+                        } catch (Exception ignored) {
+                        }
                     }
                     return ok;
                 }
@@ -287,7 +299,10 @@ public final class FileUtil {
                 bytes_read[0] += bytes_read_per_file[0];
 
                 if (ok && cut) {
-                    try { sourceFileModel.delete(); } catch (Exception ignored) {}
+                    try {
+                        sourceFileModel.delete();
+                    } catch (Exception ignored) {
+                    }
                 }
                 return ok;
             }
@@ -342,7 +357,10 @@ public final class FileUtil {
 
                 // ✅ 0-byte uri: create empty file
                 if (len == 0) {
-                    try { inStream.close(); } catch (Exception ignored) {}
+                    try {
+                        inStream.close();
+                    } catch (Exception ignored) {
+                    }
                     boolean ok = destFileModel.createFile(file_name);
                     return ok;
                 }
@@ -474,7 +492,7 @@ public final class FileUtil {
         // 2) Fallback to int-based API (may overflow for >2GB)
         try {
             int lenInt = conn.getContentLength();
-            if (lenInt > 0) return (long) lenInt;
+            if (lenInt > 0) return lenInt;
         } catch (Throwable ignored) {
         }
 

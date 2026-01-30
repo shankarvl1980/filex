@@ -706,12 +706,16 @@ public class StorageAnalyserActivity extends BaseActivity implements MediaMountR
         if (storageAnalyserFragment.fileObjectType == null) return true;
         return storageAnalyserFragment.navSession != NavSessionStore.current(storageAnalyserFragment.fileObjectType);
     }
+
     private void onbackpressed(boolean onBackPressed) {
 
         StorageAnalyserFragment saf =
                 (StorageAnalyserFragment) fm.findFragmentById(R.id.storage_analyser_container);
 
-        if (saf == null) { finish(); return; }
+        if (saf == null) {
+            finish();
+            return;
+        }
 
         if (keyBoardUtil.getKeyBoardVisibility()) {
             imm.hideSoftInputFromWindow(search_edittext.getWindowToken(), 0);

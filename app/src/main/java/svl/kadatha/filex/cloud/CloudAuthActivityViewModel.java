@@ -32,8 +32,6 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
     public static String DROP_BOX_ACCESS_TOKEN;
     public static String MEDIA_FIRE_ACCESS_TOKEN;
     public static String YANDEX_ACCESS_TOKEN;
-    public boolean pop_up_top_fragment;
-
     // active accounts
     public static CloudAccountPOJO GOOGLE_DRIVE_ACCOUNT;
     public static CloudAccountPOJO DROPBOX_ACCOUNT;
@@ -53,20 +51,16 @@ public class CloudAuthActivityViewModel extends AndroidViewModel {
     // Row-click disconnect status (disconnect -> then Activity connects)
     public final MutableLiveData<AsyncTaskStatus> rowDisconnectAsyncTaskStatus =
             new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-
     public final MutableLiveData<AsyncTaskStatus> logoutWhileAuthenticateAsyncTaskStatus =
             new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-
     public final MutableLiveData<AsyncTaskStatus> oauthResultProcessingStatus =
             new MutableLiveData<>(AsyncTaskStatus.NOT_YET_STARTED);
-
-
-
     private final CloudAccountsDatabaseHelper cloudAccountsDatabaseHelper;
     // -------------------------------------------------------------------------
     // Sequential disconnect queue (BATCH only)
     // -------------------------------------------------------------------------
     private final java.util.ArrayDeque<FileObjectType> disconnectQueue = new java.util.ArrayDeque<>();
+    public boolean pop_up_top_fragment;
     // Provider set by Activity for connect/auth flows (OAuth etc.)
     public CloudAuthProvider authProvider;
     public FileObjectType fileObjectType;

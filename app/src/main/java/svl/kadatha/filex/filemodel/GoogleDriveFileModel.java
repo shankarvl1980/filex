@@ -20,7 +20,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -52,11 +51,11 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
     private static final MediaType JSON = MediaType.parse("application/json; charset=UTF-8");
     private static final MediaType OCTET = MediaType.parse("application/octet-stream");
     private static final int RESUMABLE_CHUNK_SIZE = 8 * 1024 * 1024;
-
+    private static final ConcurrentHashMap<String, Object> INFLIGHT_LOCKS =
+            new ConcurrentHashMap<>();
     private final String accessToken;
     private final OkHttpClient httpClient;
     private final Gson gson;
-
     private final String fileId;               // Drive file/folder id (or "root")
     private GoogleDriveFileMetadata metadata;  // may be partial; lazy fetch if needed
 
@@ -179,7 +178,10 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
 
         // ✅ 0-byte file: use existing "createFile" (makes empty file)
         if (contentLengthOrMinus1 == 0) {
-            try { in.close(); } catch (Exception ignored) {}
+            try {
+                in.close();
+            } catch (Exception ignored) {
+            }
             return createFile(childName);
         }
 
@@ -195,7 +197,6 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
             return false;
         }
     }
-
 
     private String startResumableSession(String fileName, long totalBytes) throws IOException {
         HttpUrl url = HttpUrl.parse("https://www.googleapis.com/upload/drive/v3/files")
@@ -274,9 +275,6 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
 
         return true;
     }
-
-    private static final ConcurrentHashMap<String, Object> INFLIGHT_LOCKS =
-            new ConcurrentHashMap<>();
 
     private void ensureMetadataLoaded() {
         if (fileId == null) return;

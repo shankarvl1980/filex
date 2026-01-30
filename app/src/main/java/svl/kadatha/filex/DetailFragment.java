@@ -93,14 +93,13 @@ public class DetailFragment extends Fragment implements FileModifyObserver.FileO
     public TextView folder_empty;
     public DetailRecyclerViewAdapter adapter;
     public boolean is_toolbar_visible = true;
+    public long navSession;
     private TinyDB tinyDB;
     private long search_lower_limit_size = 0;
     private long search_upper_limit_size = 0;
     private Context context;
     private FileModifyObserver fileModifyObserver;
     private FilePOJO clicked_filepojo;
-    public long navSession;
-
 
     public static DetailFragment getInstance(FileObjectType fileObjectType) {
         DetailFragment df = new DetailFragment();

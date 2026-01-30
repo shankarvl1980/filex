@@ -607,8 +607,10 @@ public class NetworkAccountDetailsViewModel extends AndroidViewModel {
                         if (!isPojoConnected(pojo)) continue;
 
                         if (NetworkAccountsDetailsDialog.FTP.equals(pojo.type)) wantFtp = true;
-                        else if (NetworkAccountsDetailsDialog.SFTP.equals(pojo.type)) wantSftp = true;
-                        else if (NetworkAccountsDetailsDialog.WebDAV.equals(pojo.type)) wantWebdav = true;
+                        else if (NetworkAccountsDetailsDialog.SFTP.equals(pojo.type))
+                            wantSftp = true;
+                        else if (NetworkAccountsDetailsDialog.WebDAV.equals(pojo.type))
+                            wantWebdav = true;
                         else if (NetworkAccountsDetailsDialog.SMB.equals(pojo.type)) wantSmb = true;
                     }
                 }

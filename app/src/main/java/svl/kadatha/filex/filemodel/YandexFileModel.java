@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 
-import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -515,7 +514,10 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
         try (Response uRes = Global.HTTP_STREAM.newCall(uReq).execute()) {
             if (!uRes.isSuccessful() || uRes.body() == null) {
                 Timber.tag(TAG).e("get upload href failed: %d %s", uRes.code(), uRes.message());
-                try { in.close(); } catch (Exception ignored) {}
+                try {
+                    in.close();
+                } catch (Exception ignored) {
+                }
                 return false;
             }
 
@@ -524,7 +526,10 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
 
             if (upl == null || upl.href == null || upl.href.trim().isEmpty()) {
                 Timber.tag(TAG).e("upload href missing");
-                try { in.close(); } catch (Exception ignored) {}
+                try {
+                    in.close();
+                } catch (Exception ignored) {
+                }
                 return false;
             }
 
@@ -569,11 +574,17 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
                 }
             } finally {
                 // Upload owns the stream: close after request completes
-                try { in.close(); } catch (Exception ignored) {}
+                try {
+                    in.close();
+                } catch (Exception ignored) {
+                }
             }
 
             // refresh metadata best-effort
-            try { this.metadata = fetchMetadata(childPath); } catch (Exception ignored) {}
+            try {
+                this.metadata = fetchMetadata(childPath);
+            } catch (Exception ignored) {
+            }
 
             // strict length check if known and >0 (0-byte is fine)
             if (contentLengthOrMinus1 > 0 && bytesRead != null && bytesRead.length > 0) {
@@ -584,7 +595,10 @@ public class YandexFileModel implements FileModel, StreamUploadFileModel {
 
         } catch (IOException e) {
             Timber.tag(TAG).e(e, "putChildFromStream failed");
-            try { in.close(); } catch (Exception ignored) {}
+            try {
+                in.close();
+            } catch (Exception ignored) {
+            }
             return false;
         }
     }
