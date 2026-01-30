@@ -79,3 +79,13 @@
 
 # Reflection metadata (safe + helps multiple libs)
 -keepattributes *Annotation*,Signature,EnclosingMethod,InnerClasses
+
+
+# --- JSch (SFTP) uses reflection to load crypto / jce classes ---
+-keep class com.jcraft.jsch.** { *; }
+-dontwarn com.jcraft.jsch.**
+
+# If you use the fork com.github.mwiede:jsch, keep its packages too (safe)
+-keep class com.github.mwiede.jsch.** { *; }
+-dontwarn com.github.mwiede.jsch.**
+
