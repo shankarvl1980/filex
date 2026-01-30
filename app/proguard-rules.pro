@@ -37,9 +37,6 @@
 -dontwarn org.ietf.jgss.Oid
 
 
-# Keep annotations + generic signature (needed for Gson + collections)
--keepattributes Signature, *Annotation*
-
 # Keep Gson internal stuff (optional; safe)
 -keep class com.google.gson.** { *; }
 
@@ -68,3 +65,17 @@
 -keepclassmembers class svl.kadatha.filex.FileCountSize$DriveListResponse {
     <fields>;
 }
+
+# SMBJ core
+-keep class com.hierynomus.smbj.** { *; }
+-keep class com.hierynomus.msfscc.** { *; }
+-keep class com.hierynomus.mssmb2.** { *; }
+-dontwarn com.hierynomus.**
+
+# SMBJ uses MBassador (reflection-heavy)
+-keep class net.engio.mbassy.** { *; }
+-keepclassmembers class net.engio.mbassy.** { *; }
+-dontwarn net.engio.mbassy.**
+
+# Reflection metadata (safe + helps multiple libs)
+-keepattributes *Annotation*,Signature,EnclosingMethod,InnerClasses
