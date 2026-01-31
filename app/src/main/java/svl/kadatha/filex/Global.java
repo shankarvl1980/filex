@@ -86,12 +86,9 @@ public class Global {
     static public final String TAG = "shankar";
     public static final List<FileObjectType> NETWORK_FILE_OBJECT_TYPES = Arrays.asList(FileObjectType.FTP_TYPE, FileObjectType.SFTP_TYPE, FileObjectType.WEBDAV_TYPE, FileObjectType.SMB_TYPE);
     public static final List<FileObjectType> CLOUD_FILE_OBJECT_TYPES = Arrays.asList(FileObjectType.GOOGLE_DRIVE_TYPE, FileObjectType.ONE_DRIVE_TYPE, FileObjectType.DROP_BOX_TYPE, FileObjectType.MEDIA_FIRE_TYPE, FileObjectType.BOX_TYPE, FileObjectType.NEXT_CLOUD_TYPE, FileObjectType.YANDEX_TYPE);
-    public static final OkHttpClient HTTP_UI = buildHttpUi();
+    public static final OkHttpClient HTTP = buildHttpUi();
     public static final OkHttpClient HTTP_STREAM = buildHttpStream();
 
-    // If your codebase expects Global.HTTP everywhere, decide ONE:
-    // Option 1 (recommended): keep HTTP = HTTP_UI and explicitly use HTTP_STREAM in streaming code
-    public static final OkHttpClient HTTP = HTTP_UI;
     public static final Gson GSON = new Gson();
 
     public static final float DISABLE_ALFA = (float) 0.4;
