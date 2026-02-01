@@ -36,8 +36,6 @@ public class AudioListViewModel extends AndroidViewModel {
     public List<AudioPOJO> audio_list;
     public List<Long> audio_rowid_list = new ArrayList<>();
     public List<Long> selected_audio_rowid_list = new ArrayList<>();
-
-
     public IndexedLinkedHashMap<Integer, AlbumPOJO> album_pojo_selected_items = new IndexedLinkedHashMap<>();
     public List<AlbumPOJO> album_list;
 
@@ -138,22 +136,26 @@ public class AudioListViewModel extends AndroidViewModel {
                     String where = MediaStore.Audio.Media.ALBUM_ID + "=" + album_id;
 
                     Cursor cursor = application.getContentResolver().query(uri, null, where, null, null);
+                    try {
+                        if (cursor != null && cursor.getCount() > 0) {
+                            while (cursor.moveToNext()) {
+                                int id = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
+                                String data = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+                                String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+                                String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
+                                String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+                                String duration = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
 
-                    if (cursor != null && cursor.getCount() > 0) {
-                        while (cursor.moveToNext()) {
-                            int id = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
-                            String data = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-                            String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-                            String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
-                            String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                            String duration = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-
-                            if (new File(data).exists()) {
-                                audio_list.add(new AudioPOJO(id, data, title, album_id, album, artist, duration, FileObjectType.FILE_TYPE));
+                                if (new File(data).exists()) {
+                                    audio_list.add(new AudioPOJO(id, data, title, album_id, album, artist, duration, FileObjectType.FILE_TYPE));
+                                }
                             }
                         }
-                        cursor.close();
-
+                    }
+                    finally {
+                        if (cursor != null) {
+                            cursor.close();
+                        }
                     }
                 }
 

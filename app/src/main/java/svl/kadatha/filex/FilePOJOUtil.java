@@ -383,20 +383,26 @@ public class FilePOJOUtil {
     }
 
     public static FilePOJO GET_FILE_POJO(String file_path, FileObjectType fileObjectType) {
+        if (file_path == null) return null;
+
         String parent_path = Global.getParentPath(file_path);
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
+
         List<FilePOJO> filePOJOList = repositoryClass.hashmap_file_pojo.get(fileObjectType + parent_path);
         if (filePOJOList == null) return null;
-        Iterator<FilePOJO> iterator = filePOJOList.iterator();
-        FilePOJO filePOJO;
-        while (iterator.hasNext()) {
-            filePOJO = iterator.next();
-            if (filePOJO.getPath().equals(file_path)) {
-                return filePOJO;
+
+        synchronized (file_pojo_lock) {
+            final int size = filePOJOList.size();
+            for (int i = 0; i < size; i++) {
+                FilePOJO pojo = filePOJOList.get(i);
+                if (pojo != null && file_path.equals(pojo.getPath())) {
+                    return pojo;
+                }
             }
         }
         return null;
     }
+
 
     public static void SET_PARENT_HASHMAP_FILE_POJO_SIZE_NULL(String file_path, FileObjectType fileObjectType) {
         String parent_file_path = new File(file_path).getParent();

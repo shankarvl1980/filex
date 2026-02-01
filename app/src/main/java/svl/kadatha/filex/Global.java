@@ -862,27 +862,17 @@ public class Global {
 
     public static boolean CHECK_WHETHER_STORAGE_DIR_CONTAINS_FILE_OBJECT(FileObjectType fileObjectType) {
         RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
-        Iterator<FilePOJO> iterator = repositoryClass.storage_dir.iterator();
-        while (iterator.hasNext()) {
-            if (iterator.next().getFileObjectType() == fileObjectType) {
+        List<FilePOJO> list = repositoryClass.storage_dir;
+
+        for (int i = 0, n = list.size(); i < n; i++) {
+            FilePOJO p = list.get(i);
+            if (p != null && p.getFileObjectType() == fileObjectType) {
                 return true;
             }
         }
         return false;
     }
 
-    public static boolean WHETHER_FILE_OBJECT_TYPE_NETWORK_OR_CLOUD_TYPE_AND_CONTAINED_IN_STORAGE_DIR(FileObjectType fileObjectType) {
-        if (NETWORK_FILE_OBJECT_TYPES.contains(fileObjectType) || CLOUD_FILE_OBJECT_TYPES.contains(fileObjectType)) {
-            RepositoryClass repositoryClass = RepositoryClass.getRepositoryClass();
-            Iterator<FilePOJO> iterator = repositoryClass.storage_dir.iterator();
-            while (iterator.hasNext()) {
-                if (iterator.next().getFileObjectType() == fileObjectType) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
     public static boolean WHETHER_FILE_ALREADY_EXISTS(FileObjectType fileObjectType, String file_path, List<FilePOJO> destFilePOJOs) {
         if (fileObjectType == FileObjectType.FILE_TYPE || fileObjectType == FileObjectType.SEARCH_LIBRARY_TYPE) {

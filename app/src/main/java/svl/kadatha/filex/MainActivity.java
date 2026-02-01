@@ -1512,10 +1512,10 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
     }
 
     public ArrayList<File> iterate_to_attach_file(IndexedLinkedHashMap<Integer, String> file_list) {
-        ArrayList<File> file_list_excluding_dir = new ArrayList<>();
-        int size = file_list.size();
-        for (int i = 0; i < size; ++i) {
-            File f = new File(file_list.getValueAtIndex(i));
+        final ArrayList<File> file_list_excluding_dir = new ArrayList<>();
+        for (int i = 0, n = file_list.size(); i < n; ++i) {
+            final String path = file_list.getValueAtIndex(i);
+            final File f = new File(path);
             if (!f.isDirectory()) {
                 file_list_excluding_dir.add(f);
             }
@@ -1523,21 +1523,6 @@ public class MainActivity extends BaseActivity implements MediaMountReceiver.Med
         return file_list_excluding_dir;
     }
 
-    public ArrayList<Uri> iterate_to_attach_usb_file(IndexedLinkedHashMap<Integer, String> file_list, DetailFragment df) {
-        ArrayList<Uri> uri_list_excluding_dir = new ArrayList<>();
-        int size = file_list.size();
-        for (int i = 0; i < size; ++i) {
-            String file_path = file_list.getValueAtIndex(i);
-            try (ReadAccess access = UsbFileRootSingleton.getInstance().acquireUsbFileRootForRead()) {
-                UsbFile f = FileUtil.getUsbFile(access.getUsbFile(), file_path);
-                if (f != null && !f.isDirectory()) {
-                    uri_list_excluding_dir.add(FileUtil.getDocumentUri(file_path, df.tree_uri, df.tree_uri_path));
-                    break;
-                }
-            }
-        }
-        return uri_list_excluding_dir;
-    }
 
     @Override
     public void deleteDialogOKButtonClick() {
