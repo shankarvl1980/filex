@@ -272,7 +272,6 @@ public class GoogleDriveFileModel implements FileModel, StreamUploadFileModel {
                 }
             }
         }
-
         return true;
     }
 
