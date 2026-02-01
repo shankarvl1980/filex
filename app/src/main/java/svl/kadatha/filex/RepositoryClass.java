@@ -35,8 +35,8 @@ import svl.kadatha.filex.audio.AudioPlayerActivity;
 
 public class RepositoryClass {
 
-    public final HashMap<String, List<FilePOJO>> hashmap_file_pojo_filtered = new HashMap<>();
-    public final HashMap<String, List<FilePOJO>> hashmap_file_pojo = new HashMap<>();
+    public final ConcurrentHashMap<String, List<FilePOJO>> hashmap_file_pojo_filtered = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<String, List<FilePOJO>> hashmap_file_pojo = new ConcurrentHashMap<>();
     public final HashMap<String, List<AppManagerListFragment.AppPOJO>> app_pojo_hashmap = new HashMap<>();
     public final HashMap<String, List<AudioPOJO>> audio_pojo_hashmap = new HashMap<>();
     public final HashMap<String, List<AlbumPOJO>> album_pojo_hashmap = new HashMap<>();

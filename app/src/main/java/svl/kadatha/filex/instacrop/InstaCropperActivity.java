@@ -195,5 +195,4 @@ public class InstaCropperActivity extends BaseActivity {
     public void clearCache() {
         Global.CLEAR_CACHE();
     }
-
 }

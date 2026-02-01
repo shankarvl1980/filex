@@ -93,6 +93,4 @@ public class PdfViewActivity extends BaseActivity {
     public void clearCache() {
         Global.CLEAR_CACHE();
     }
-
-
 }
